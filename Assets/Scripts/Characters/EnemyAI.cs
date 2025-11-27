@@ -1,14 +1,13 @@
 using UnityEngine;
-using UnityEngine.AI;
 using System.Linq;
 
 public class EnemyAI : MonoBehaviour
 {
+    public float moveSpeed = 2f;
     public float attackRange = 1.2f;
     public float attackCooldown = 1.0f;
     public int attackDamage = 10;
 
-    private NavMeshAgent agent;
     private Animator animator;
     private CharacterStats myStats;
     private CharacterStats targetStats;
@@ -17,7 +16,6 @@ public class EnemyAI : MonoBehaviour
 
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         myStats = GetComponent<CharacterStats>();
     }
@@ -26,18 +24,25 @@ public class EnemyAI : MonoBehaviour
     {
         FindClosestEnemy();
 
-        if (targetStats == null) return;
+        if (targetStats == null)
+        {
+            animator.SetBool("isMoving", false);
+            return;
+        }
 
         float distance = Vector3.Distance(transform.position, targetStats.transform.position);
 
+        // if far, move to enemy
         if (distance > attackRange)
         {
-            agent.SetDestination(targetStats.transform.position);
+            Vector3 direction = (targetStats.transform.position - transform.position).normalized;
+
+            transform.position += direction * moveSpeed * Time.deltaTime;
+
             animator.SetBool("isMoving", true);
         }
-        else
+        else // in attack range
         {
-            agent.SetDestination(transform.position);
             animator.SetBool("isMoving", false);
 
             if (Time.time - lastAttackTime > attackCooldown)
@@ -49,10 +54,10 @@ public class EnemyAI : MonoBehaviour
 
     void FindClosestEnemy()
     {
-        CharacterStats[] allCharacters = FindObjectsOfType<CharacterStats>();
+        CharacterStats[] allCharacters = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
 
         var enemies = allCharacters
-            .Where(c => c.team != myStats.team) // not attacking my team
+            .Where(c => c.team != myStats.team)
             .Where(c => c.currentHealth > 0)
             .ToList();
 
@@ -73,6 +78,8 @@ public class EnemyAI : MonoBehaviour
         lastAttackTime = Time.time;
 
         if (targetStats != null)
+        {
             targetStats.TakeDamage(attackDamage);
+        }
     }
 }
