@@ -6,6 +6,7 @@ public class CharacterStats : MonoBehaviour
     public int currentHealth;
 
     public Team team;   //Character team
+    public MonsterType monsterType;
 
     private void Awake()
     {
