@@ -21,7 +21,7 @@ public class MonsterSpawnerUI : MonoBehaviour
         GameObject monsterPrefab = type == MonsterType.Melee ? meleePrefab : rangedPrefab;
         if (grid == null || monsterPrefab == null) return;
 
-        int count = Random.Range(1, 6);
+        int count = Random.Range(1, 3);
 
         for (int i = 0; i < count; i++)
         {
