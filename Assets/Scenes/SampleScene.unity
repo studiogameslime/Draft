@@ -11525,6 +11525,10 @@ PrefabInstance:
       propertyPath: team
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7239138018939454439, guid: 0812158088b600d4a842381138a45bf5, type: 3}
+      propertyPath: maxHealth
+      value: 120
+      objectReference: {fileID: 0}
     - target: {fileID: 8321544339706272805, guid: 0812158088b600d4a842381138a45bf5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.23
@@ -11564,6 +11568,10 @@ PrefabInstance:
     - target: {fileID: 8321544339706272805, guid: 0812158088b600d4a842381138a45bf5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8356553338029584722, guid: 0812158088b600d4a842381138a45bf5, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
