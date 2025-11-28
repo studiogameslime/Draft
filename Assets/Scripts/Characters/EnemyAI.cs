@@ -6,18 +6,21 @@ public class EnemyAI : MonoBehaviour
     public float moveSpeed = 2f;
     public float attackRange = 1.2f;
     public float attackCooldown = 1.0f;
-    public int attackDamage = 10;
 
     private Animator animator;
     private CharacterStats myStats;
     private CharacterStats targetStats;
-
     private float lastAttackTime;
+
+    private IAttackStrategy attackStrategy;
 
     void Start()
     {
         animator = GetComponent<Animator>();
         myStats = GetComponent<CharacterStats>();
+        myStats.lockedIn = true;
+
+        attackStrategy = GetComponent<IAttackStrategy>();
     }
 
     void Update()
@@ -32,23 +35,31 @@ public class EnemyAI : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, targetStats.transform.position);
 
-        // if far, move to enemy
         if (distance > attackRange)
         {
-            Vector3 direction = (targetStats.transform.position - transform.position).normalized;
-
-            transform.position += direction * moveSpeed * Time.deltaTime;
-
-            animator.SetBool("isMoving", true);
+            MoveTowardTarget();
         }
-        else // in attack range
+        else
         {
-            animator.SetBool("isMoving", false);
+            AttackTarget();
+        }
+    }
 
-            if (Time.time - lastAttackTime > attackCooldown)
-            {
-                Attack();
-            }
+    void MoveTowardTarget()
+    {
+        Vector3 direction = (targetStats.transform.position - transform.position).normalized;
+        transform.position += direction * moveSpeed * Time.deltaTime;
+        animator.SetBool("isMoving", true);
+    }
+
+    void AttackTarget()
+    {
+        animator.SetBool("isMoving", false);
+
+        if (Time.time - lastAttackTime > attackCooldown)
+        {
+            lastAttackTime = Time.time;
+            attackStrategy?.Attack(targetStats);
         }
     }
 
@@ -57,8 +68,7 @@ public class EnemyAI : MonoBehaviour
         CharacterStats[] allCharacters = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
 
         var enemies = allCharacters
-            .Where(c => c.team != myStats.team)
-            .Where(c => c.currentHealth > 0)
+            .Where(c => c.team != myStats.team && c.currentHealth > 0)
             .ToList();
 
         if (enemies.Count == 0)
@@ -70,16 +80,5 @@ public class EnemyAI : MonoBehaviour
         targetStats = enemies
             .OrderBy(e => Vector3.Distance(transform.position, e.transform.position))
             .First();
-    }
-
-    void Attack()
-    {
-        animator.SetTrigger("attack");
-        lastAttackTime = Time.time;
-
-        if (targetStats != null)
-        {
-            targetStats.TakeDamage(attackDamage);
-        }
     }
 }

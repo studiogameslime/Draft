@@ -11517,10 +11517,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Satyr_01
       objectReference: {fileID: 0}
-    - target: {fileID: 501027721989515594, guid: 0812158088b600d4a842381138a45bf5, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7239138018939454439, guid: 0812158088b600d4a842381138a45bf5, type: 3}
       propertyPath: team
       value: 1
@@ -12661,14 +12657,6 @@ PrefabInstance:
     - target: {fileID: 3672369371563529809, guid: d8eeed233f99b564e863f0df4b26e646, type: 3}
       propertyPath: m_Name
       value: Wraith_01
-      objectReference: {fileID: 0}
-    - target: {fileID: 3672369371563529809, guid: d8eeed233f99b564e863f0df4b26e646, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5616524506688898624, guid: d8eeed233f99b564e863f0df4b26e646, type: 3}
-      propertyPath: team
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7949160106671242810, guid: d8eeed233f99b564e863f0df4b26e646, type: 3}
       propertyPath: m_LocalPosition.x
@@ -17290,10 +17278,6 @@ PrefabInstance:
     - target: {fileID: 501027721989515594, guid: 0812158088b600d4a842381138a45bf5, type: 3}
       propertyPath: m_Name
       value: Satyr_01 (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 501027721989515594, guid: 0812158088b600d4a842381138a45bf5, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7239138018939454439, guid: 0812158088b600d4a842381138a45bf5, type: 3}
       propertyPath: team

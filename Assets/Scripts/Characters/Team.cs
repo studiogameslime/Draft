@@ -11,6 +11,12 @@ public enum Team
         EnemyTeam
     }
 
+public interface IAttackStrategy
+{
+    void Attack(CharacterStats target);
+}
+
+
 
 
 

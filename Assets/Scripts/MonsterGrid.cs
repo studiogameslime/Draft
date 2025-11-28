@@ -22,16 +22,18 @@ public class MonsterGrid : MonoBehaviour
 
         foreach (Transform child in transform)
         {
-            if (!child.gameObject.activeInHierarchy) continue;
-
             var data = child.GetComponent<CharacterStats>();
             if (data == null) continue;
+
+            // if character move so it w'ont be rearrange
+            if (data.lockedIn) continue;
 
             if (data.monsterType == MonsterType.Melee)
                 tanks.Add(child);
             else if (data.monsterType == MonsterType.Ranged)
                 rangers.Add(child);
         }
+
 
         PositionColumnCentered(tanks, tankColumnX);
 

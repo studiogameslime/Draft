@@ -7,6 +7,8 @@ public class CharacterStats : MonoBehaviour
 
     public Team team;   //Character team
     public MonsterType monsterType;
+    public bool lockedIn;  
+
 
     private void Awake()
     {
