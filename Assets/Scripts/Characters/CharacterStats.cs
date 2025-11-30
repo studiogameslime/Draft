@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterStats : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class CharacterStats : MonoBehaviour
     public bool lockedIn;
 
     private Animator animator;
+    [SerializeField] Image _hpBar;
     private bool isDead = false;
 
     private void Awake()
@@ -18,12 +20,20 @@ public class CharacterStats : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
+    private void Start()
+    {
+        if (team == Team.EnemyTeam)
+        {
+            _hpBar.color = Color.red;
+        }
+    }
+
     public void TakeDamage(int damage)
     {
         if (isDead) return; // Ignore damage after death
 
         currentHealth -= damage;
-
+        _hpBar.fillAmount = ((float)currentHealth / 100);
         if (currentHealth <= 0)
         {
             Die();
