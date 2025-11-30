@@ -9086,6 +9086,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Satyr_01
       objectReference: {fileID: 0}
+    - target: {fileID: 7500836998808367986, guid: 0812158088b600d4a842381138a45bf5, type: 3}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7500836998808367986, guid: 0812158088b600d4a842381138a45bf5, type: 3}
+      propertyPath: m_FlipY
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8321544339706272805, guid: 0812158088b600d4a842381138a45bf5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.84

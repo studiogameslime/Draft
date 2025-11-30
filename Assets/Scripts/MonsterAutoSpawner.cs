@@ -5,8 +5,8 @@ public class MonsterAutoSpawner : MonoBehaviour
     public MonsterGrid rightGrid;
     public GameObject meleePrefab;
     public GameObject rangedPrefab;
-
     public float spawnInterval = 5f; // spawn every 5 seconds
+
     private float timer;
 
     private void Update()
@@ -26,7 +26,6 @@ public class MonsterAutoSpawner : MonoBehaviour
 
         // Randomly choose unit type
         MonsterType type = (Random.value > 0.5f) ? MonsterType.Melee : MonsterType.Ranged;
-
         GameObject prefab = (type == MonsterType.Melee) ? meleePrefab : rangedPrefab;
 
         if (prefab == null) return;
@@ -37,13 +36,15 @@ public class MonsterAutoSpawner : MonoBehaviour
         {
             GameObject monster = rightGrid.AddMonster(prefab, type);
 
-            // Assign ENEMY team to the new unit
+            // Set team to Enemy
             var stats = monster.GetComponent<CharacterStats>();
             if (stats != null)
                 stats.team = Team.EnemyTeam;
 
-            monster.transform.rotation = Quaternion.Euler(0, 180, 0);
-
+            // Flip sprite instead of rotating
+            var sr = monster.GetComponentInChildren<SpriteRenderer>();
+            if (sr != null)
+                sr.flipX = true;
         }
     }
 }
