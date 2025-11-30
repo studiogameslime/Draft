@@ -59,9 +59,12 @@ public class EnemyAI : MonoBehaviour
         if (Time.time - lastAttackTime > attackCooldown)
         {
             lastAttackTime = Time.time;
+
+            // This only starts the animation now.
             attackStrategy?.Attack(targetStats);
         }
     }
+
 
     void FindClosestEnemy()
     {
