@@ -23,24 +23,23 @@ public class EnemyInitialSpawner : MonoBehaviour
         {
             GameObject prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
 
-            // Spawn manually instead of AddMonster (AddMonster forces team = MyTeam)
             GameObject monster = Instantiate(prefab, enemyGrid.transform);
 
             var stats = monster.GetComponent<CharacterStats>();
-            MonsterType type = stats.monsterType;
 
-            // Init as Enemy
+            MonsterType type = prefab.GetComponent<CharacterStats>().monsterType;
             stats.Init(Team.EnemyTeam, type);
+            stats.monsterType = type;
 
-            // Prevent grid from rearranging them later
-            stats.lockedIn = true;
+            // DO NOT lock here!
+            // stats.lockedIn = true;
 
             // Disable AI until battle starts
             var ai = monster.GetComponent<EnemyAI>();
             if (ai != null) ai.enabled = false;
         }
 
-        // Finally: arrange grid positions
+        // Now MonsterGrid can position them correctly (horizontal)
         enemyGrid.ArrangeMonsters();
     }
 }
