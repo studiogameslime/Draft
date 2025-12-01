@@ -17,3 +17,4 @@ MonoBehaviour:
   icon: {fileID: 5842733951393599697, guid: 374db10c0fc33304cba737759420544f, type: 3}
   prefab: {fileID: 501027721989515594, guid: 0812158088b600d4a842381138a45bf5, type: 3}
   monsterType: 0
+  spawnCount: 2

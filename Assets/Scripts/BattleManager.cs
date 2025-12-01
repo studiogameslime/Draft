@@ -31,7 +31,10 @@ public class BattleManager : MonoBehaviour
         if (battleStarted) return;
         if (def == null || def.prefab == null || myGrid == null) return;
 
-        myGrid.AddMonster(def.prefab, def.monsterType, Team.MyTeam);
+        for (int i = 0; i < def.spawnCount; i++)
+        {
+            myGrid.AddMonster(def.prefab, def.monsterType, Team.MyTeam);
+        }
 
         picksDone++;
 

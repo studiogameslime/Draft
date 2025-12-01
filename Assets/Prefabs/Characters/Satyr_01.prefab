@@ -135,8 +135,9 @@ MonoBehaviour:
   currentHealth: 0
   damage: 10
   moveSpeed: 2
-  attackRange: 1.2
+  attackRange: 1
   attackCooldown: 1
+  spawnCount: 0
   team: 0
   monsterType: 0
   lockedIn: 0

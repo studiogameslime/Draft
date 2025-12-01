@@ -13,5 +13,6 @@ public class UnitDefinition : ScriptableObject
 
     [Header("Gameplay")]
     public MonsterType monsterType; // Melee / Ranged etc.
+    public int spawnCount = 1; // default 1
     // public int cost;           // optional: price, mana cost, etc.
 }

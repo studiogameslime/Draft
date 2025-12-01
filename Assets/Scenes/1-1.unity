@@ -8695,7 +8695,7 @@ MonoBehaviour:
   - {fileID: 501027721989515594, guid: 0812158088b600d4a842381138a45bf5, type: 3}
   - {fileID: 3672369371563529809, guid: d8eeed233f99b564e863f0df4b26e646, type: 3}
   - {fileID: 1725816533779344097, guid: b34e38419712d5449959c0abd134846b, type: 3}
-  unitsToSpawn: 3
+  unitsToSpawn: 5
 --- !u!1 &956136115
 GameObject:
   m_ObjectHideFlags: 0

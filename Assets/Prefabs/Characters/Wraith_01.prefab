@@ -227,12 +227,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6700883c55fce044fba6b1979f705a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStats
-  maxHealth: 100
+  maxHealth: 40
   currentHealth: 0
   damage: 20
-  moveSpeed: 2
-  attackRange: 4.3
+  moveSpeed: 2.5
+  attackRange: 4.5
   attackCooldown: 1
+  spawnCount: 0
   team: 0
   monsterType: 1
   lockedIn: 0
