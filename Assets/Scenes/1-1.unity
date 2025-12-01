@@ -3991,6 +3991,55 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &499505880
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 499505882}
+  - component: {fileID: 499505881}
+  m_Layer: 0
+  m_Name: BattleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &499505881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 499505880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 367488de7a585494495ce6c3b8ff9887, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleManager
+  myGrid: {fileID: 124696145}
+  enemyGrid: {fileID: 1953682271}
+  selectionUI: {fileID: 1072325083}
+  picksToDo: 3
+  startBattleDelay: 3
+--- !u!4 &499505882
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 499505880}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.61977, y: -0.16826, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &500381547
 GameObject:
   m_ObjectHideFlags: 0
@@ -8590,6 +8639,7 @@ GameObject:
   m_Component:
   - component: {fileID: 910254724}
   - component: {fileID: 910254723}
+  - component: {fileID: 910254725}
   m_Layer: 0
   m_Name: EnemyMonsterSpawner
   m_TagString: Untagged
@@ -8604,7 +8654,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 910254722}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79ba2d7194a14b84fac4dbe732761005, type: 3}
   m_Name: 
@@ -8628,6 +8678,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910254725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910254722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbfae7c57bda56845b6e64e568d3c19e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyInitialSpawner
+  enemyGrid: {fileID: 1953682271}
+  enemyPrefabs:
+  - {fileID: 501027721989515594, guid: 0812158088b600d4a842381138a45bf5, type: 3}
+  - {fileID: 3672369371563529809, guid: d8eeed233f99b564e863f0df4b26e646, type: 3}
+  - {fileID: 1725816533779344097, guid: b34e38419712d5449959c0abd134846b, type: 3}
+  unitsToSpawn: 3
 --- !u!1 &956136115
 GameObject:
   m_ObjectHideFlags: 0
@@ -9676,7 +9744,7 @@ MonoBehaviour:
   buttonsPerRoll: 3
   buttonsParent: {fileID: 1072325082}
   buttonPrefab: {fileID: 8759413195871512815, guid: 3180728291a88d743877b20ea52f3561, type: 3}
-  leftGrid: {fileID: 124696145}
+  battleManager: {fileID: 0}
 --- !u!114 &1072325084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21638,3 +21706,4 @@ SceneRoots:
   - {fileID: 910254724}
   - {fileID: 124696146}
   - {fileID: 1953682272}
+  - {fileID: 499505882}

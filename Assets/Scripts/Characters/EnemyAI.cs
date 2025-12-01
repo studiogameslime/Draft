@@ -14,9 +14,9 @@ public class EnemyAI : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         myStats = GetComponent<CharacterStats>();
-        myStats.lockedIn = true;
-
         attackStrategy = GetComponent<IAttackStrategy>();
+
+
     }
 
     void Update()

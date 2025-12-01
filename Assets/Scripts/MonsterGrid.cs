@@ -7,8 +7,8 @@ public class MonsterGrid : MonoBehaviour
     public float cellHeight = 1.5f;
 
     [Header("Columns Y (local)")]
-    public float tankColumnY = 1.5f;    
-    public float rangerColumnY = 0f;    
+    public float tankColumnY = 1.5f;
+    public float rangerColumnY = 0f;
 
     private void OnTransformChildrenChanged()
     {
@@ -25,7 +25,7 @@ public class MonsterGrid : MonoBehaviour
             var data = child.GetComponent<CharacterStats>();
             if (data == null) continue;
 
-            // if character move so it w'ont be rearrange
+            // if character move so it won't be rearranged
             if (data.lockedIn) continue;
 
             if (data.monsterType == MonsterType.Melee)
@@ -34,9 +34,7 @@ public class MonsterGrid : MonoBehaviour
                 rangers.Add(child);
         }
 
-
         PositionColumnCentered(tanks, tankColumnY);
-
         PositionColumnCentered(rangers, rangerColumnY);
     }
 
@@ -45,29 +43,34 @@ public class MonsterGrid : MonoBehaviour
         int count = list.Count;
         if (count == 0) return;
 
-       
         float half = (count - 1) / 2f;
 
         for (int i = 0; i < count; i++)
         {
-            float offsetIndex = i - half;      
+            float offsetIndex = i - half;
             float x = -offsetIndex * cellHeight;
-
             list[i].localPosition = new Vector3(x, y, 0f);
         }
     }
 
     public GameObject AddMonster(GameObject prefab, MonsterType type)
     {
-        GameObject monster = Instantiate(prefab, transform);
+        return AddMonster(prefab, type, Team.MyTeam);
+    }
 
+    public GameObject AddMonster(GameObject prefab, MonsterType type, Team team)
+    {
+        GameObject monster = Instantiate(prefab, transform);
         var data = monster.GetComponent<CharacterStats>();
-        data.Init(Team.MyTeam, type);
+
         if (data != null)
         {
+            data.Init(team, type);
             data.monsterType = type;
         }
 
+        var ai = monster.GetComponent<EnemyAI>();
+        if (ai != null) ai.enabled = false;
         ArrangeMonsters();
         return monster;
     }
