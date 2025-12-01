@@ -29,6 +29,8 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
+        UpdateFacing();
+
         float distance = Vector3.Distance(transform.position, targetStats.transform.position);
 
         if (distance > myStats.attackRange)
@@ -39,6 +41,14 @@ public class EnemyAI : MonoBehaviour
         {
             AttackTarget();
         }
+    }
+
+    private void UpdateFacing()
+    {
+        var sr = GetComponent<SpriteRenderer>();
+        if (sr == null) return;
+
+        sr.flipX = targetStats.transform.position.x < transform.position.x;
     }
 
     void MoveTowardTarget()
