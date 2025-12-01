@@ -38,20 +38,34 @@ public class MonsterGrid : MonoBehaviour
         PositionColumnCentered(rangers, rangerColumnY);
     }
 
-    private void PositionColumnCentered(List<Transform> list, float y)
+    private void PositionColumnCentered(List<Transform> list, float startY)
     {
         int count = list.Count;
         if (count == 0) return;
 
-        float half = (count - 1) / 2f;
+        int maxPerRow = 8;          // how many units per row
+        float rowHeight = 1.2f;     // vertical spacing between rows
 
-        for (int i = 0; i < count; i++)
+        int rows = Mathf.CeilToInt(count / (float)maxPerRow);
+
+        int index = 0;
+
+        for (int row = 0; row < rows; row++)
         {
-            float offsetIndex = i - half;
-            float x = -offsetIndex * cellHeight;
-            list[i].localPosition = new Vector3(x, y, 0f);
+            int unitsInThisRow = Mathf.Min(maxPerRow, count - (row * maxPerRow));
+
+            float half = (unitsInThisRow - 1) / 2f;
+            float y = startY - (row * rowHeight);
+
+            for (int i = 0; i < unitsInThisRow; i++)
+            {
+                float x = (i - half) * cellHeight;
+                list[index].localPosition = new Vector3(x, y, 0f);
+                index++;
+            }
         }
     }
+
 
     public GameObject AddMonster(GameObject prefab, MonsterType type)
     {
