@@ -10,6 +10,8 @@ public class UnitDefinition : ScriptableObject
     [Header("Visuals")]
     public Sprite icon;          // icon for the UI button
     public GameObject prefab;    // prefab to spawn in the grid
+    public float iconScale = 1f;
+
 
     [Header("Gameplay")]
     public MonsterType monsterType; // Melee / Ranged etc.

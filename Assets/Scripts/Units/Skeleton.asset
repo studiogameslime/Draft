@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Skeleton
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: 1
-  displayName: Skeletor
+  displayName: Skeleton
   icon: {fileID: -9097720764886040989, guid: 4b303a7f02688944dac82c329644fa48, type: 3}
   prefab: {fileID: 1725816533779344097, guid: b34e38419712d5449959c0abd134846b, type: 3}
+  iconScale: 0.2
   monsterType: 0
   spawnCount: 4
