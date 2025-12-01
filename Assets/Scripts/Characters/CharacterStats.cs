@@ -11,6 +11,7 @@ public class CharacterStats : MonoBehaviour
     public float moveSpeed = 2f;
     public float attackRange = 1.2f;
     public float attackCooldown = 1.0f;
+    public int spawnCount;
 
     public Team team;              // Character team
     public MonsterType monsterType;

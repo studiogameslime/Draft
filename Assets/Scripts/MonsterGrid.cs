@@ -6,9 +6,9 @@ public class MonsterGrid : MonoBehaviour
     [Header("Vertical spacing")]
     public float cellHeight = 1.5f;
 
-    [Header("Columns X (local)")]
-    public float tankColumnX = 1.5f;    
-    public float rangerColumnX = 0f;    
+    [Header("Columns Y (local)")]
+    public float tankColumnY = 1.5f;    
+    public float rangerColumnY = 0f;    
 
     private void OnTransformChildrenChanged()
     {
@@ -35,12 +35,12 @@ public class MonsterGrid : MonoBehaviour
         }
 
 
-        PositionColumnCentered(tanks, tankColumnX);
+        PositionColumnCentered(tanks, tankColumnY);
 
-        PositionColumnCentered(rangers, rangerColumnX);
+        PositionColumnCentered(rangers, rangerColumnY);
     }
 
-    private void PositionColumnCentered(List<Transform> list, float x)
+    private void PositionColumnCentered(List<Transform> list, float y)
     {
         int count = list.Count;
         if (count == 0) return;
@@ -51,7 +51,7 @@ public class MonsterGrid : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             float offsetIndex = i - half;      
-            float y = -offsetIndex * cellHeight;
+            float x = -offsetIndex * cellHeight;
 
             list[i].localPosition = new Vector3(x, y, 0f);
         }
