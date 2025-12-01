@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Skeleton
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: 1
+  displayName: Skeletor
+  icon: {fileID: -9097720764886040989, guid: 4b303a7f02688944dac82c329644fa48, type: 3}
+  prefab: {fileID: 1725816533779344097, guid: b34e38419712d5449959c0abd134846b, type: 3}
+  monsterType: 0

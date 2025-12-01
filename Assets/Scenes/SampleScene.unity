@@ -5104,8 +5104,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterGrid
   cellHeight: 1.5
-  tankColumnX: 1.5
-  rangerColumnX: 0
+  tankColumnY: 1.5
+  rangerColumnY: 0
 --- !u!4 &536187062
 Transform:
   m_ObjectHideFlags: 0
@@ -17514,8 +17514,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterGrid
   cellHeight: 1.5
-  tankColumnX: -1.5
-  rangerColumnX: -2
+  tankColumnY: 1.5
+  rangerColumnY: 0
 --- !u!4 &2070606944
 Transform:
   m_ObjectHideFlags: 0

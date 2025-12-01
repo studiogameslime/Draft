@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Mage
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: 3
+  displayName: Mage
+  icon: {fileID: -3400982213634020427, guid: 2cca22e838a38c34e8c007e7a8d97af5, type: 3}
+  prefab: {fileID: 3672369371563529809, guid: d8eeed233f99b564e863f0df4b26e646, type: 3}
+  monsterType: 1
