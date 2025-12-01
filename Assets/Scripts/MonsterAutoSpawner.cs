@@ -35,16 +35,11 @@ public class MonsterAutoSpawner : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             GameObject monster = rightGrid.AddMonster(prefab, type);
-
+    
             // Set team to Enemy
             var stats = monster.GetComponent<CharacterStats>();
-            if (stats != null)
-                stats.team = Team.EnemyTeam;
+            stats.Init(Team.EnemyTeam, type);
 
-            // Flip sprite instead of rotating
-            var sr = monster.GetComponentInChildren<SpriteRenderer>();
-            if (sr != null)
-                sr.flipX = true;
         }
     }
 }

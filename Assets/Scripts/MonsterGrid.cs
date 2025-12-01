@@ -62,6 +62,7 @@ public class MonsterGrid : MonoBehaviour
         GameObject monster = Instantiate(prefab, transform);
 
         var data = monster.GetComponent<CharacterStats>();
+        data.Init(Team.MyTeam, type);
         if (data != null)
         {
             data.monsterType = type;

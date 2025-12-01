@@ -133,6 +133,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   maxHealth: 120
   currentHealth: 0
+  damage: 10
+  moveSpeed: 2
+  attackRange: 1.2
+  attackCooldown: 1
   team: 0
   monsterType: 0
   lockedIn: 0
@@ -149,9 +153,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a608d263df2d464e916d8bf6b08a732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  moveSpeed: 2
-  attackRange: 1
-  attackCooldown: 1
 --- !u!50 &5159539399863573130
 Rigidbody2D:
   serializedVersion: 5
@@ -191,7 +192,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fc731778ae85ad4b968e044a53d1c44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankAttack
-  damage: 10
 --- !u!58 &8384952033324481740
 CircleCollider2D:
   m_ObjectHideFlags: 0

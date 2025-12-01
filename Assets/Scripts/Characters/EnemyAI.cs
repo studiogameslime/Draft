@@ -3,10 +3,6 @@ using System.Linq;
 
 public class EnemyAI : MonoBehaviour
 {
-    public float moveSpeed = 2f;
-    public float attackRange = 1.2f;
-    public float attackCooldown = 1.0f;
-
     private Animator animator;
     private CharacterStats myStats;
     private CharacterStats targetStats;
@@ -35,7 +31,7 @@ public class EnemyAI : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, targetStats.transform.position);
 
-        if (distance > attackRange)
+        if (distance > myStats.attackRange)
         {
             MoveTowardTarget();
         }
@@ -48,7 +44,7 @@ public class EnemyAI : MonoBehaviour
     void MoveTowardTarget()
     {
         Vector3 direction = (targetStats.transform.position - transform.position).normalized;
-        transform.position += direction * moveSpeed * Time.deltaTime;
+        transform.position += direction * myStats.moveSpeed * Time.deltaTime;
         animator.SetBool("isMoving", true);
     }
 
@@ -56,7 +52,7 @@ public class EnemyAI : MonoBehaviour
     {
         animator.SetBool("isMoving", false);
 
-        if (Time.time - lastAttackTime > attackCooldown)
+        if (Time.time - lastAttackTime > myStats.attackCooldown)
         {
             lastAttackTime = Time.time;
 

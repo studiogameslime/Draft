@@ -2,13 +2,14 @@ using UnityEngine;
 
 public class TankAttack : MonoBehaviour, IAttackStrategy
 {
-    public int damage = 10;
-
     private CharacterStats currentTarget;
+    private CharacterStats stats;
     private Animator animator;
+    
 
     private void Awake()
     {
+        stats = GetComponent<CharacterStats>();
         animator = GetComponent<Animator>(); // or GetComponentInChildren<Animator>() if needed
     }
 
@@ -31,7 +32,7 @@ public class TankAttack : MonoBehaviour, IAttackStrategy
         if (currentTarget == null) return;
 
         // apply damage only at the hit frame
-        currentTarget.TakeDamage(damage);
+        currentTarget.TakeDamage(stats.damage);
 
         // optional: clear reference
         // currentTarget = null;
