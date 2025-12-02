@@ -9,18 +9,18 @@ public class CharacterStats : MonoBehaviour
 
     // --- Runtime Stats (after scaling by level) ---
     [Header("Runtime Stats")]
-    public int level = 1;
-    public int maxHealth;
-    public int currentHealth;
-    public int damage;
-    public float moveSpeed;
-    public float attackRange;
-    public float attackCooldown;
+    [HideInInspector] public int level = 1;
+    [HideInInspector] public int maxHealth;
+    [HideInInspector] public int currentHealth;
+    [HideInInspector] public int damage;
+    [HideInInspector] public float moveSpeed;
+    [HideInInspector] public float attackRange;
+    [HideInInspector] public float attackCooldown;
 
     // --- Other info ---
-    public Team team;
-    public MonsterType monsterType;
-    public bool lockedIn;
+    [HideInInspector] public Team team;
+    [HideInInspector] public MonsterType monsterType;
+    [HideInInspector] public bool lockedIn;
 
     // --- Components ---
     private Animator animator;

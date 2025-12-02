@@ -9665,6 +9665,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bd6b3059af3e4974aa8f46caa7d9ae8d, type: 2}
   - {fileID: 11400000, guid: 918856455c9d7c04aafc21b9bb9961c0, type: 2}
   - {fileID: 11400000, guid: 075c8f4e636299d409e881650e0866f2, type: 2}
+  - {fileID: 11400000, guid: ad4287dbc795daf4da4915b5d3fcd156, type: 2}
   buttonsPerRoll: 3
   buttonsParent: {fileID: 1072325082}
   buttonPrefab: {fileID: 8759413195871512815, guid: 3180728291a88d743877b20ea52f3561, type: 3}

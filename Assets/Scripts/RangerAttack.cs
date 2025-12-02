@@ -4,15 +4,17 @@ public class RangerAttack : MonoBehaviour, IAttackStrategy
 {
     public GameObject projectilePrefab;
     public Transform shootPoint;
-    public float attackCooldown = 1f;
 
     private float lastAttackTime;
     private CharacterStats currentTarget;
+    private CharacterStats stats;
     private Animator animator;
+
 
     private void Awake()
     {
         animator = GetComponent<Animator>(); // or GetComponentInChildren<Animator>() if needed
+        stats = GetComponent<CharacterStats>();
     }
 
     // Called by EnemyAI when ranger should attack
@@ -20,7 +22,7 @@ public class RangerAttack : MonoBehaviour, IAttackStrategy
     {
         if (target == null) return;
 
-        if (Time.time - lastAttackTime >= attackCooldown)
+        if (Time.time - lastAttackTime >= stats.attackCooldown)
         {
             lastAttackTime = Time.time;
 
@@ -44,7 +46,7 @@ public class RangerAttack : MonoBehaviour, IAttackStrategy
         var p = proj.GetComponent<Projectile>();
         if (p != null)
         {
-            p.target = currentTarget.transform;
+            p.Init(stats,currentTarget.transform);
         }
 
         // optional: clear target after shot

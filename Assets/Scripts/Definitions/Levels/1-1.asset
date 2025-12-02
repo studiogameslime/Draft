@@ -15,7 +15,7 @@ MonoBehaviour:
   rounds:
   - enemySpawns:
     - unit: {fileID: 11400000, guid: 918856455c9d7c04aafc21b9bb9961c0, type: 2}
-      count: 20
+      count: 4
       level: 1
     playerPicks: 2
   - enemySpawns:

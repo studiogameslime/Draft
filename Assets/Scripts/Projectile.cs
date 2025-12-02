@@ -3,21 +3,29 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     public float speed = 8f;
-    public int damage = 10;
-    public Transform target;
+    public Transform _target;
+    private CharacterStats _stats;
+
+
+    public void Init(CharacterStats stats, Transform target)
+    {
+        _stats = stats;
+        _target = target;
+    }
 
     void Update()
     {
-        if (target == null)
+        if (_target == null)
         {
             Destroy(gameObject);
             return;
         }
 
-        Vector3 dir = (target.position - transform.position).normalized;
+        Vector3 dir = (_target.position - transform.position).normalized;
         transform.position += dir * speed * Time.deltaTime;
+        //transform.LookAt(_target.position);
 
-        if (Vector3.Distance(transform.position, target.position) < 0.2f)
+        if (Vector3.Distance(transform.position, _target.position) < 0.2f)
         {
             HitTarget();
         }
@@ -25,9 +33,9 @@ public class Projectile : MonoBehaviour
 
     void HitTarget()
     {
-        CharacterStats stats = target.GetComponent<CharacterStats>();
+        CharacterStats stats = _target.GetComponent<CharacterStats>();
         if (stats != null)
-            stats.TakeDamage(damage);
+            stats.TakeDamage(_stats.damage);
 
         Destroy(gameObject);
     }
