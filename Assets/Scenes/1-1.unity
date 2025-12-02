@@ -8570,11 +8570,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyInitialSpawner
   enemyGrid: {fileID: 1953682271}
-  enemyPrefabs:
-  - {fileID: 501027721989515594, guid: 0812158088b600d4a842381138a45bf5, type: 3}
-  - {fileID: 3672369371563529809, guid: d8eeed233f99b564e863f0df4b26e646, type: 3}
-  - {fileID: 1725816533779344097, guid: b34e38419712d5449959c0abd134846b, type: 3}
+  enemyUnits:
+  - {fileID: 11400000, guid: 075c8f4e636299d409e881650e0866f2, type: 2}
+  - {fileID: 11400000, guid: bd6b3059af3e4974aa8f46caa7d9ae8d, type: 2}
+  - {fileID: 11400000, guid: 918856455c9d7c04aafc21b9bb9961c0, type: 2}
   unitsToSpawn: 7
+  enemyLevel: 200
 --- !u!1 &956136115
 GameObject:
   m_ObjectHideFlags: 0

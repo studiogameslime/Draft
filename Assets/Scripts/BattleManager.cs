@@ -33,7 +33,7 @@ public class BattleManager : MonoBehaviour
 
         for (int i = 0; i < def.spawnCount; i++)
         {
-            myGrid.AddMonster(def.prefab, def.monsterType, Team.MyTeam);
+            myGrid.AddMonster(def, Team.MyTeam);
         }
 
         picksDone++;

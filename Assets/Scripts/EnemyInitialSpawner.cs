@@ -3,8 +3,9 @@ using UnityEngine;
 public class EnemyInitialSpawner : MonoBehaviour
 {
     public MonsterGrid enemyGrid;
-    public GameObject[] enemyPrefabs;
+    public UnitDefinition[] enemyUnits;  // instead of GameObject[]
     public int unitsToSpawn = 3;
+    public int enemyLevel = 1;
 
     private void Start()
     {
@@ -19,24 +20,18 @@ public class EnemyInitialSpawner : MonoBehaviour
             return;
         }
 
+        if (enemyUnits == null || enemyUnits.Length == 0)
+        {
+            Debug.LogError("EnemyInitialSpawner: enemyUnits is empty! Assign UnitDefinitions.");
+            return;
+        }
+
         for (int i = 0; i < unitsToSpawn; i++)
         {
-            GameObject prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+            UnitDefinition def = enemyUnits[Random.Range(0, enemyUnits.Length)];
 
-            GameObject monster = Instantiate(prefab, enemyGrid.transform);
-
-            var stats = monster.GetComponent<CharacterStats>();
-
-            MonsterType type = prefab.GetComponent<CharacterStats>().monsterType;
-            stats.Init(Team.EnemyTeam, type);
-            stats.monsterType = type;
-
-            // DO NOT lock here!
-            // stats.lockedIn = true;
-
-            // Disable AI until battle starts
-            var ai = monster.GetComponent<EnemyAI>();
-            if (ai != null) ai.enabled = false;
+            // Enemy team, use UnitDefinition + level
+            enemyGrid.AddMonster(def, Team.EnemyTeam, enemyLevel);
         }
 
         // Now MonsterGrid can position them correctly (horizontal)

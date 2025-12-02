@@ -17,4 +17,11 @@ public class UnitDefinition : ScriptableObject
     public MonsterType monsterType; // Melee / Ranged etc.
     public int spawnCount = 1; // default 1
     // public int cost;           // optional: price, mana cost, etc.
+
+    [Header("Stats")]
+    public int maxHealth = 100;
+    public int damage;
+    public float moveSpeed = 2f;
+    public float attackRange = 1.2f;
+    public float attackCooldown = 1.0f;
 }

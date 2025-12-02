@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class MonsterGrid : MonoBehaviour
 {
-    [Header("Vertical spacing")]
+    [Header("Horizontal spacing")]
     public float cellHeight = 1.5f;
 
     [Header("Columns Y (local)")]
@@ -25,7 +25,7 @@ public class MonsterGrid : MonoBehaviour
             var data = child.GetComponent<CharacterStats>();
             if (data == null) continue;
 
-            // if character move so it won't be rearranged
+            // Do not rearrange locked units
             if (data.lockedIn) continue;
 
             if (data.monsterType == MonsterType.Melee)
@@ -47,13 +47,11 @@ public class MonsterGrid : MonoBehaviour
         float rowHeight = 1.2f;     // vertical spacing between rows
 
         int rows = Mathf.CeilToInt(count / (float)maxPerRow);
-
         int index = 0;
 
         for (int row = 0; row < rows; row++)
         {
             int unitsInThisRow = Mathf.Min(maxPerRow, count - (row * maxPerRow));
-
             float half = (unitsInThisRow - 1) / 2f;
             float y = startY - (row * rowHeight);
 
@@ -66,26 +64,37 @@ public class MonsterGrid : MonoBehaviour
         }
     }
 
-
-    public GameObject AddMonster(GameObject prefab, MonsterType type)
+    // New API: add by UnitDefinition
+    public GameObject AddMonster(UnitDefinition def, Team team, int level = 1)
     {
-        return AddMonster(prefab, type, Team.MyTeam);
-    }
-
-    public GameObject AddMonster(GameObject prefab, MonsterType type, Team team)
-    {
-        GameObject monster = Instantiate(prefab, transform);
-        var data = monster.GetComponent<CharacterStats>();
-
-        if (data != null)
+        if (def == null || def.prefab == null)
         {
-            data.Init(team, type);
-            data.monsterType = type;
+            Debug.LogError("MonsterGrid.AddMonster: UnitDefinition or prefab is null");
+            return null;
+        }
+
+        GameObject monster = Instantiate(def.prefab, transform);
+
+        var stats = monster.GetComponent<CharacterStats>();
+        if (stats != null)
+        {
+            stats.Init(team, def, level);
+        }
+        else
+        {
+            Debug.LogError("MonsterGrid.AddMonster: CharacterStats missing on prefab " + def.prefab.name);
         }
 
         var ai = monster.GetComponent<EnemyAI>();
         if (ai != null) ai.enabled = false;
+
         ArrangeMonsters();
         return monster;
+    }
+
+    // Convenience overload for "my team, level 1"
+    public GameObject AddMonster(UnitDefinition def)
+    {
+        return AddMonster(def, Team.MyTeam, 1);
     }
 }

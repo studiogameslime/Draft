@@ -19,3 +19,8 @@ MonoBehaviour:
   iconScale: 0.5
   monsterType: 0
   spawnCount: 2
+  maxHealth: 100
+  damage: 20
+  moveSpeed: 2
+  attackRange: 1.2
+  attackCooldown: 1

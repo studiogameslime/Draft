@@ -1,91 +1,176 @@
-using System;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CharacterStats : MonoBehaviour
 {
-    public int maxHealth = 100;
+    // --- Definition reference (base stats live here) ---
+    [Header("Definition")]
+    public UnitDefinition definition; // The unit type this instance was created from
+
+    // --- Runtime Stats (after scaling by level) ---
+    [Header("Runtime Stats")]
+    public int level = 1;
+
+    public int maxHealth;
     public int currentHealth;
     public int damage;
-    public float moveSpeed = 2f;
-    public float attackRange = 1.2f;
-    public float attackCooldown = 1.0f;
-    public int spawnCount;
+    public float moveSpeed;
+    public float attackRange;
+    public float attackCooldown;
 
-    public Team team;              // Character team
+    // --- Other info ---
+    public Team team;
     public MonsterType monsterType;
     public bool lockedIn;
 
+    // --- Components ---
     private Animator animator;
-    [SerializeField] Image _hpBar;
     private bool isDead = false;
+
+    [SerializeField] private Image _hpBar;
+
+
+    // ====================================================
+    // INIT
+    // ====================================================
 
     private void Awake()
     {
-        currentHealth = maxHealth;
         animator = GetComponent<Animator>();
     }
 
-    public void Init(Team currentTeam, MonsterType type)
+    /// <summary>
+    /// Initialize this unit with team, definition, and level.
+    /// </summary>
+    public void Init(Team currentTeam, UnitDefinition def, int level)
     {
-        monsterType = type;
+        definition = def;
         team = currentTeam;
+        monsterType = def.monsterType;
+        this.level = Mathf.Max(1, level);
 
-        if (currentTeam == Team.EnemyTeam) //Enemy
+        // Apply base stats scaled by level
+        maxHealth = CalcScaledStat(def.maxHealth, 0.05f, this.level);
+        currentHealth = maxHealth;
+        damage = CalcScaledStat(def.damage, 0.05f, this.level);
+
+        moveSpeed = def.moveSpeed;
+        attackRange = def.attackRange;
+        attackCooldown = def.attackCooldown;
+
+        // Enemy visuals
+        if (currentTeam == Team.EnemyTeam)
         {
-            // Flip sprite instead of rotating
             var sr = GetComponentInChildren<SpriteRenderer>();
             if (sr != null)
                 sr.flipX = true;
 
-            //Change hp bar color to red
             _hpBar.color = Color.red;
         }
-    }
-
-    public void TakeDamage(int damage)
-    {
-        if (isDead) return; // Ignore damage after death
-
-        currentHealth -= damage;
-        _hpBar.fillAmount = ((float)currentHealth / 100);
-        if (currentHealth <= 0)
+        else
         {
-            Die();
+            _hpBar.color = Color.green;
         }
+
+        UpdateHPBar();
     }
 
-    void Die()
+
+    // ====================================================
+    // STAT CALC
+    // ====================================================
+
+    /// <summary>
+    /// Returns baseValue * (1.05 ^ (level-1))
+    /// Level 1 = 100%
+    /// Level 2 = 105%
+    /// Level 3 = 110.25%
+    /// </summary>
+    private int CalcScaledStat(int baseValue, float perLevelPercent, int level)
+    {
+        if (level <= 1) return baseValue;
+
+        float factor = Mathf.Pow(1f + perLevelPercent, level - 1);
+        return Mathf.RoundToInt(baseValue * factor);
+    }
+
+
+    // ====================================================
+    // HP / DAMAGE
+    // ====================================================
+
+    public void TakeDamage(int amount)
+    {
+        if (isDead) return;
+
+        currentHealth -= amount;
+        UpdateHPBar();
+
+        if (currentHealth <= 0)
+            Die();
+    }
+
+    private void UpdateHPBar()
+    {
+        if (_hpBar != null && maxHealth > 0)
+            _hpBar.fillAmount = (float)currentHealth / maxHealth;
+    }
+
+
+    // ====================================================
+    // DEATH
+    // ====================================================
+
+    private void Die()
     {
         if (isDead) return;
         isDead = true;
 
-        Debug.Log(gameObject.name + " died!");
+        Debug.Log($"{gameObject.name} died!");
 
         // Play death animation
         if (animator != null)
-        {
             animator.SetTrigger("dying");
-        }
 
-        // Disable AI / attack scripts so the unit stops moving/attacking
-        EnemyAI ai = GetComponent<EnemyAI>();
-        if (ai != null) ai.enabled = false;
+        // Disable combat scripts
+        DisableAllCombatScripts();
 
-        RangerAttack rangerAttack = GetComponent<RangerAttack>();
-        if (rangerAttack != null) rangerAttack.enabled = false;
+        // Stop movement
+        var rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero;
 
-        TankAttack tankAttack = GetComponent<TankAttack>();
-        if (tankAttack != null) tankAttack.enabled = false;
-
-        // Optional: stop physics movement
-        Rigidbody2D rb = GetComponent<Rigidbody2D>();
-        if (rb != null) rb.linearVelocity = Vector2.zero;
-
-        // Destroy the game object after 2 seconds (so death animation can play)
+        // Destroy after death animation
         Destroy(gameObject, 2f);
     }
 
+    private void DisableAllCombatScripts()
+    {
+        var ai = GetComponent<EnemyAI>();
+        if (ai != null) ai.enabled = false;
 
+        var ranger = GetComponent<RangerAttack>();
+        if (ranger != null) ranger.enabled = false;
+
+        var tank = GetComponent<TankAttack>();
+        if (tank != null) tank.enabled = false;
+    }
+
+
+    // ====================================================
+    // LEVEL UP (OPTIONAL)
+    // ====================================================
+
+    public void SetLevel(int newLevel)
+    {
+        level = Mathf.Max(1, newLevel);
+
+        maxHealth = CalcScaledStat(definition.maxHealth, 0.05f, level);
+        damage = CalcScaledStat(definition.damage, 0.05f, level);
+
+        // Keep current health within the new max HP
+        currentHealth = Mathf.Min(currentHealth, maxHealth);
+
+        UpdateHPBar();
+    }
 }
