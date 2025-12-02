@@ -4170,7 +4170,8 @@ MonoBehaviour:
   myGrid: {fileID: 124696145}
   enemyGrid: {fileID: 1953682271}
   selectionUI: {fileID: 1072325083}
-  picksToDo: 3
+  levelDefinition: {fileID: 11400000, guid: 127a5a3037603594abc807ab938d0d08, type: 2}
+  playerUnitsLevel: 1
   startBattleDelay: 1
 --- !u!4 &499505882
 Transform:
@@ -8541,7 +8542,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &910254724
 Transform:
   m_ObjectHideFlags: 0

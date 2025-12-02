@@ -10,7 +10,6 @@ public class CharacterStats : MonoBehaviour
     // --- Runtime Stats (after scaling by level) ---
     [Header("Runtime Stats")]
     public int level = 1;
-
     public int maxHealth;
     public int currentHealth;
     public int damage;
@@ -29,11 +28,9 @@ public class CharacterStats : MonoBehaviour
 
     [SerializeField] private Image _hpBar;
 
-
     // ====================================================
     // INIT
     // ====================================================
-
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -53,7 +50,6 @@ public class CharacterStats : MonoBehaviour
         maxHealth = CalcScaledStat(def.maxHealth, 0.05f, this.level);
         currentHealth = maxHealth;
         damage = CalcScaledStat(def.damage, 0.05f, this.level);
-
         moveSpeed = def.moveSpeed;
         attackRange = def.attackRange;
         attackCooldown = def.attackCooldown;
@@ -75,11 +71,9 @@ public class CharacterStats : MonoBehaviour
         UpdateHPBar();
     }
 
-
     // ====================================================
     // STAT CALC
     // ====================================================
-
     /// <summary>
     /// Returns baseValue * (1.05 ^ (level-1))
     /// Level 1 = 100%
@@ -89,16 +83,13 @@ public class CharacterStats : MonoBehaviour
     private int CalcScaledStat(int baseValue, float perLevelPercent, int level)
     {
         if (level <= 1) return baseValue;
-
         float factor = Mathf.Pow(1f + perLevelPercent, level - 1);
         return Mathf.RoundToInt(baseValue * factor);
     }
 
-
     // ====================================================
     // HP / DAMAGE
     // ====================================================
-
     public void TakeDamage(int amount)
     {
         if (isDead) return;
@@ -116,11 +107,9 @@ public class CharacterStats : MonoBehaviour
             _hpBar.fillAmount = (float)currentHealth / maxHealth;
     }
 
-
     // ====================================================
     // DEATH
     // ====================================================
-
     private void Die()
     {
         if (isDead) return;
@@ -140,8 +129,8 @@ public class CharacterStats : MonoBehaviour
         if (rb != null)
             rb.linearVelocity = Vector2.zero;
 
-        // Destroy after death animation
-        Destroy(gameObject, 2f);
+        // IMPORTANT: לא הורסים את האובייקט כדי שנוכל לעשות Revive
+        // Destroy(gameObject, 2f);
     }
 
     private void DisableAllCombatScripts()
@@ -156,11 +145,21 @@ public class CharacterStats : MonoBehaviour
         if (tank != null) tank.enabled = false;
     }
 
+    private void EnableAllCombatScripts()
+    {
+        var ai = GetComponent<EnemyAI>();
+        if (ai != null) ai.enabled = true;
+
+        var ranger = GetComponent<RangerAttack>();
+        if (ranger != null) ranger.enabled = true;
+
+        var tank = GetComponent<TankAttack>();
+        if (tank != null) tank.enabled = true;
+    }
 
     // ====================================================
     // LEVEL UP (OPTIONAL)
     // ====================================================
-
     public void SetLevel(int newLevel)
     {
         level = Mathf.Max(1, newLevel);
@@ -172,5 +171,23 @@ public class CharacterStats : MonoBehaviour
         currentHealth = Mathf.Min(currentHealth, maxHealth);
 
         UpdateHPBar();
+    }
+
+    // ====================================================
+    // REVIVE
+    // ====================================================
+    public void Revive()
+    {
+        // bring unit back to life between rounds
+        isDead = false;
+        currentHealth = maxHealth;
+        UpdateHPBar();
+
+        // DO NOT enable AI here – BattleManager controls it
+        if (animator != null)
+        {
+            animator.ResetTrigger("dying");
+            animator.SetBool("isMoving", false);
+        }
     }
 }
