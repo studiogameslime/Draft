@@ -16,7 +16,6 @@ public class EnemyAI : MonoBehaviour
         myStats = GetComponent<CharacterStats>();
         attackStrategy = GetComponent<IAttackStrategy>();
 
-
     }
 
     void Update()
