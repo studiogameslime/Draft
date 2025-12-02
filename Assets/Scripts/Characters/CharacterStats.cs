@@ -177,16 +177,43 @@ public class CharacterStats : MonoBehaviour
     // ====================================================
     public void Revive()
     {
-        // bring unit back to life between rounds
+        // Bring back to life
         isDead = false;
+
+        // Restore stats
         currentHealth = maxHealth;
         UpdateHPBar();
 
-        // DO NOT enable AI here – BattleManager controls it
+        // Reset physics
+        var rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero;
+
+        // Re-enable combat scripts
+        var ranger = GetComponent<RangerAttack>();
+        if (ranger != null) ranger.enabled = true;
+
+        var tank = GetComponent<TankAttack>();
+        if (tank != null) tank.enabled = true;
+
+        var ai = GetComponent<EnemyAI>();
+        if (ai != null) ai.enabled = false;     
+
+        // Reset animator fully
         if (animator != null)
         {
             animator.ResetTrigger("dying");
+            animator.ResetTrigger("attack");
             animator.SetBool("isMoving", false);
+
+            animator.Rebind();   
+            animator.Update(0f);
         }
+
+        // Reset sprite direction
+        var sr = GetComponentInChildren<SpriteRenderer>();
+        if (sr != null)
+            sr.flipX = (team == Team.EnemyTeam);
     }
+
 }

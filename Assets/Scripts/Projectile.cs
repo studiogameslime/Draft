@@ -23,7 +23,8 @@ public class Projectile : MonoBehaviour
 
         Vector3 dir = (_target.position - transform.position).normalized;
         transform.position += dir * speed * Time.deltaTime;
-        //transform.LookAt(_target.position);
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
         if (Vector3.Distance(transform.position, _target.position) < 0.2f)
         {

@@ -227,13 +227,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6700883c55fce044fba6b1979f705a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStats
+  definition: {fileID: 0}
+  level: 1
   maxHealth: 40
   currentHealth: 0
   damage: 20
   moveSpeed: 2.5
   attackRange: 4.5
   attackCooldown: 1
-  spawnCount: 0
   team: 0
   monsterType: 1
   lockedIn: 0
@@ -286,7 +287,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   projectilePrefab: {fileID: 2746124533741529080, guid: 6f37128f8dc831f43ae2393faac854ba, type: 3}
   shootPoint: {fileID: 8471219728791289698}
-  attackCooldown: 1
 --- !u!58 &3133561545372563000
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -322,7 +322,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 1.4
+  m_Radius: 1.2
 --- !u!1001 &9142143742085104177
 PrefabInstance:
   m_ObjectHideFlags: 0
