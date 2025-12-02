@@ -129,7 +129,6 @@ public class CharacterStats : MonoBehaviour
         if (rb != null)
             rb.linearVelocity = Vector2.zero;
 
-        // IMPORTANT: לא הורסים את האובייקט כדי שנוכל לעשות Revive
         // Destroy(gameObject, 2f);
     }
 

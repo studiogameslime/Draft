@@ -1138,7 +1138,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0d28e7be7f5e064f9cb33c2b8115845, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterGrid
-  cellHeight: 0.7
+  cellHeight: 0.5
+  rowHeight: 1
   tankColumnY: 0
   rangerColumnY: -1
 --- !u!4 &124696146
@@ -19757,9 +19758,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0d28e7be7f5e064f9cb33c2b8115845, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterGrid
-  cellHeight: 0.7
-  tankColumnY: -1
-  rangerColumnY: 0
+  cellHeight: 0.6
+  rowHeight: 0.8
+  tankColumnY: 0
+  rangerColumnY: -1
 --- !u!4 &1953682272
 Transform:
   m_ObjectHideFlags: 0

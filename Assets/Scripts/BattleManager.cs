@@ -23,7 +23,6 @@ public class BattleManager : MonoBehaviour
     private int currentRoundIndex = 0;
     private int picksDone = 0;
     private int picksToDo = 3;
-
     private bool battleStarted = false;
     private bool gameOver = false;
 
@@ -53,20 +52,20 @@ public class BattleManager : MonoBehaviour
         currentRoundIndex = index;
         RoundDefinition round = levelDefinition.rounds[currentRoundIndex];
 
-        // ודאות שאין AI רץ בזמן ההחזרה
+        // Make sure no AI is running while we reset the board
         SetAllAIEnabled(false);
 
-        // 1) מחזירים את כל היחידות לחיים ומחזירים לעמדות מסודרות
+        // 1) Revive all units and put everyone back into a clean, ordered state
         ResetUnitsForNewRound();
 
-        // 2) איפוס בחירות
+        // 2) Reset player picks counter for this round
         picksDone = 0;
         picksToDo = Mathf.Max(1, round.playerPicks);
 
-        // 3) ספאון גל האויב של הסיבוב הזה
+        // 3) Spawn enemy wave for this round
         SpawnEnemyWave(round);
 
-        // 4) פתיחת UI בחירה
+        // 4) Show selection UI for player picks
         if (selectionUI != null)
         {
             selectionUI.gameObject.SetActive(true);
@@ -78,7 +77,8 @@ public class BattleManager : MonoBehaviour
     }
 
     /// <summary>
-    /// מחזיר יחידות לחיים, משחרר נעילות, מאפס מהירות ומסדר אותן מחדש בגריד.
+    /// Revive all units (both teams) and reset their animation/movement,
+    /// then let the grids arrange them back into formation.
     /// </summary>
     private void ResetUnitsForNewRound()
     {
@@ -86,23 +86,32 @@ public class BattleManager : MonoBehaviour
 
         foreach (var u in all)
         {
-            // revive stats + HP bar + animation state
+            // Bring unit back to life with full HP
             u.Revive();
 
-            // allow grid to move them back to formation
+            // Allow the grid to reposition this unit
             u.lockedIn = false;
 
-            // stop any residual movement
+            // Stop any remaining movement
             var rb = u.GetComponent<Rigidbody2D>();
             if (rb != null)
                 rb.linearVelocity = Vector2.zero;
 
+            // Hard reset animation to default (Idle) state
             var anim = u.GetComponent<Animator>();
             if (anim != null)
+            {
+                anim.ResetTrigger("dying");
+                anim.ResetTrigger("attack");
                 anim.SetBool("isMoving", false);
+
+                // Rebind puts the animator back to its initial pose/clip
+                anim.Rebind();
+                anim.Update(0f);
+            }
         }
 
-        // re-arrange both grids so everyone חוזר ל"עמדות המקוריות" בגריד
+        // Re-arrange both grids so everyone is back in a clean formation
         if (myGrid != null)
             myGrid.ArrangeMonsters();
 
@@ -116,7 +125,6 @@ public class BattleManager : MonoBehaviour
     private void SpawnEnemyWave(RoundDefinition round)
     {
         if (enemyGrid == null) return;
-
         if (round.enemySpawns == null) return;
 
         foreach (var entry in round.enemySpawns)
@@ -173,7 +181,6 @@ public class BattleManager : MonoBehaviour
     private void StartBattle()
     {
         battleStarted = true;
-
         LockAllUnits();
         SetAllAIEnabled(true);
     }
@@ -230,7 +237,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        // סיבוב חדש
+        // Start next round
         StartRound(currentRoundIndex);
     }
 
@@ -246,6 +253,7 @@ public class BattleManager : MonoBehaviour
             if (u.team == team && u.currentHealth > 0)
                 return true;
         }
+
         return false;
     }
 

@@ -20,7 +20,7 @@ MonoBehaviour:
   monsterType: 0
   spawnCount: 2
   maxHealth: 100
-  damage: 20
+  damage: 15
   moveSpeed: 2
-  attackRange: 1.2
+  attackRange: 0.8
   attackCooldown: 1

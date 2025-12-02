@@ -6,6 +6,9 @@ public class MonsterGrid : MonoBehaviour
     [Header("Horizontal spacing")]
     public float cellHeight = 1.5f;
 
+    [Header("Vertical spacing between rows")]
+    public float rowHeight = 0.8f;   // <-- change this per grid in the Inspector
+
     [Header("Columns Y (local)")]
     public float tankColumnY = 1.5f;
     public float rangerColumnY = 0f;
@@ -44,8 +47,6 @@ public class MonsterGrid : MonoBehaviour
         if (count == 0) return;
 
         int maxPerRow = 8;          // how many units per row
-        float rowHeight = 1.2f;     // vertical spacing between rows
-
         int rows = Mathf.CeilToInt(count / (float)maxPerRow);
         int index = 0;
 
@@ -53,7 +54,7 @@ public class MonsterGrid : MonoBehaviour
         {
             int unitsInThisRow = Mathf.Min(maxPerRow, count - (row * maxPerRow));
             float half = (unitsInThisRow - 1) / 2f;
-            float y = startY - (row * rowHeight);
+            float y = startY - (row * rowHeight);  // <-- uses the field now
 
             for (int i = 0; i < unitsInThisRow; i++)
             {
@@ -74,8 +75,8 @@ public class MonsterGrid : MonoBehaviour
         }
 
         GameObject monster = Instantiate(def.prefab, transform);
-
         var stats = monster.GetComponent<CharacterStats>();
+
         if (stats != null)
         {
             stats.Init(team, def, level);
