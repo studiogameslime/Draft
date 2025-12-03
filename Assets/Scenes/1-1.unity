@@ -8527,57 +8527,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &910254722
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 910254724}
-  - component: {fileID: 910254725}
-  m_Layer: 0
-  m_Name: EnemyMonsterSpawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &910254724
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910254722}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.36709, y: -2.95694, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &910254725
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910254722}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbfae7c57bda56845b6e64e568d3c19e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyInitialSpawner
-  enemyGrid: {fileID: 1953682271}
-  enemyUnits:
-  - {fileID: 11400000, guid: 075c8f4e636299d409e881650e0866f2, type: 2}
-  - {fileID: 11400000, guid: bd6b3059af3e4974aa8f46caa7d9ae8d, type: 2}
-  - {fileID: 11400000, guid: 918856455c9d7c04aafc21b9bb9961c0, type: 2}
-  unitsToSpawn: 7
-  enemyLevel: 200
 --- !u!1 &956136115
 GameObject:
   m_ObjectHideFlags: 0
@@ -9662,10 +9611,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSelectionUI
   allUnits:
-  - {fileID: 11400000, guid: bd6b3059af3e4974aa8f46caa7d9ae8d, type: 2}
-  - {fileID: 11400000, guid: 918856455c9d7c04aafc21b9bb9961c0, type: 2}
-  - {fileID: 11400000, guid: 075c8f4e636299d409e881650e0866f2, type: 2}
   - {fileID: 11400000, guid: ad4287dbc795daf4da4915b5d3fcd156, type: 2}
+  - {fileID: 11400000, guid: 681e39eeac684f2448e304010c689052, type: 2}
+  - {fileID: 11400000, guid: 624a24cba8fbd3b469665d2ac0fc3846, type: 2}
   buttonsPerRoll: 3
   buttonsParent: {fileID: 1072325082}
   buttonPrefab: {fileID: 8759413195871512815, guid: 3180728291a88d743877b20ea52f3561, type: 3}
@@ -21766,7 +21714,6 @@ SceneRoots:
   - {fileID: 1472678310}
   - {fileID: 426084392}
   - {fileID: 1800109870}
-  - {fileID: 910254724}
   - {fileID: 124696146}
   - {fileID: 1953682272}
   - {fileID: 499505882}
