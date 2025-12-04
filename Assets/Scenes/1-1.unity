@@ -479,6 +479,53 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &34198150
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 34198152}
+  - component: {fileID: 34198151}
+  m_Layer: 0
+  m_Name: Dropzones
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &34198151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 34198150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1da9c0165314dbb4c9311575a0583357, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DropZonesSpacePreview
+  holdDelay: 0.15
+--- !u!4 &34198152
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 34198150}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1641268344}
+  - {fileID: 1271281217}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &49045434
 GameObject:
   m_ObjectHideFlags: 0
@@ -11570,6 +11617,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!4 &1271281217 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+  m_PrefabInstance: {fileID: 1457867793}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1275694618
 GameObject:
   m_ObjectHideFlags: 0
@@ -12892,6 +12944,83 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1001 &1457867793
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 34198152}
+    m_Modifications:
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2.3301914
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.1604153
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1783638780959129429, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 1783638780959129429, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.1953125
+      objectReference: {fileID: 0}
+    - target: {fileID: 2101865940650079253, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_Size.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2101865940650079253, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_Size.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3901216891575972570, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4013114289650575160, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_Name
+      value: Dropzone (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
 --- !u!1 &1461021651
 GameObject:
   m_ObjectHideFlags: 0
@@ -15999,6 +16128,11 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!4 &1641268344 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+  m_PrefabInstance: {fileID: 6722488943003500433}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1656941865
 GameObject:
   m_ObjectHideFlags: 0
@@ -21706,6 +21840,63 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1001 &6722488943003500433
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 34198152}
+    m_Modifications:
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -4.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1748737037969096188, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4013114289650575160, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
+      propertyPath: m_Name
+      value: Dropzone
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c0d95d45fef74a44d914fe6a2d5fc775, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -21717,3 +21908,4 @@ SceneRoots:
   - {fileID: 124696146}
   - {fileID: 1953682272}
   - {fileID: 499505882}
+  - {fileID: 34198152}
