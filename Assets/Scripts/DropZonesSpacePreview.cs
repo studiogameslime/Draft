@@ -10,12 +10,10 @@ public class DropZonesSpacePreview : MonoBehaviour
 
     private void Update()
     {
-        // אם מחזיקים Space
         if (Input.GetKey(KeyCode.Space))
         {
             _holdTimer += Time.deltaTime;
 
-            // אחרי שהחזקנו מספיק זמן – נדליק היילייט
             if (!_isShowing && _holdTimer >= holdDelay)
             {
                 _isShowing = true;
@@ -24,7 +22,6 @@ public class DropZonesSpacePreview : MonoBehaviour
         }
         else 
         {
-            // שחררנו Space – לאפס ולהסתיר
             _holdTimer = 0f ;
 
             if (_isShowing)
@@ -37,7 +34,6 @@ public class DropZonesSpacePreview : MonoBehaviour
 
     private void OnDisable()
     {
-        // לוודא שלא נשארים היילייטים דולקים בטעות
         if (_isShowing)
         {
             _isShowing = false;
