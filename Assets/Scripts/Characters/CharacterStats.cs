@@ -25,6 +25,7 @@ public class CharacterStats : MonoBehaviour
     // --- Components ---
     private Animator animator;
     private bool isDead = false;
+    public Vector3 _initialPosition;
 
     [SerializeField] private Image _hpBar;
 
@@ -69,6 +70,13 @@ public class CharacterStats : MonoBehaviour
         }
 
         UpdateHPBar();
+
+    }
+
+    //Save the unit initial position
+    public void SetInitialPosition()
+    {
+        _initialPosition = transform.position;
     }
 
     // ====================================================
@@ -197,7 +205,7 @@ public class CharacterStats : MonoBehaviour
         if (tank != null) tank.enabled = true;
 
         var ai = GetComponent<EnemyAI>();
-        if (ai != null) ai.enabled = false;     
+        if (ai != null) ai.enabled = false;
 
         // Reset animator fully
         if (animator != null)
@@ -206,7 +214,7 @@ public class CharacterStats : MonoBehaviour
             animator.ResetTrigger("attack");
             animator.SetBool("isMoving", false);
 
-            animator.Rebind();   
+            animator.Rebind();
             animator.Update(0f);
         }
 
@@ -214,6 +222,9 @@ public class CharacterStats : MonoBehaviour
         var sr = GetComponentInChildren<SpriteRenderer>();
         if (sr != null)
             sr.flipX = (team == Team.EnemyTeam);
+
+        //Go back to initial position
+        transform.position = _initialPosition;
     }
 
 }

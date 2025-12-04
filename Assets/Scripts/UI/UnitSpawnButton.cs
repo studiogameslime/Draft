@@ -205,6 +205,13 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             }
         }
 
+        // Initialize stats
+        var stats = _dragUnitInstance.GetComponent<CharacterStats>();
+        if (stats != null)
+        {
+            stats.SetInitialPosition();
+        }
+
         _dragUnitInstance = null;
         _dragUnitRb = null;
         _dragUnitColliders = null;
