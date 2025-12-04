@@ -4133,6 +4133,7 @@ MonoBehaviour:
   levelDefinition: {fileID: 11400000, guid: 127a5a3037603594abc807ab938d0d08, type: 2}
   playerUnitsLevel: 1
   startBattleDelay: 1
+  deckUI: {fileID: 1072325087}
 --- !u!4 &499505882
 Transform:
   m_ObjectHideFlags: 0
@@ -9621,6 +9622,7 @@ GameObject:
   - component: {fileID: 1072325085}
   - component: {fileID: 1072325084}
   - component: {fileID: 1072325083}
+  - component: {fileID: 1072325087}
   m_Layer: 5
   m_Name: UpgragesButtonsContainer
   m_TagString: Untagged
@@ -9730,6 +9732,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1072325081}
   m_CullTransparentMesh: 1
+--- !u!114 &1072325087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1072325081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7e3b932dd6f78d4c9e8a80c92614bcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DeckUIController
+  cardsParent: {fileID: 1072325082}
 --- !u!1 &1076830396
 GameObject:
   m_ObjectHideFlags: 0

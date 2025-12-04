@@ -102,6 +102,9 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (data == null || data.prefab == null || battleManager == null)
             return;
 
+        if (battleManager.IsBattleRunning)
+            return;
+
         _dragStartScreenPos = eventData.position;
         _originalAnchoredPos = _rt.anchoredPosition;
         _originalSiblingIndex = _rt.GetSiblingIndex();
@@ -315,4 +318,17 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         pos.z = 0f;
         Gizmos.DrawWireSphere(pos, minDistanceFromOtherUnits);
     }
+    public void SetCardInteractable(bool interactable)
+    {
+        if (canvasGroup == null)
+            return;
+
+        // Block input
+        canvasGroup.interactable = interactable;
+        canvasGroup.blocksRaycasts = interactable;
+
+        // Visual feedback
+        canvasGroup.alpha = interactable ? 1f : 0.4f;   // 40% transparent when disabled
+    }
+
 }

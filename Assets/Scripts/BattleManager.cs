@@ -19,12 +19,20 @@ public class BattleManager : MonoBehaviour
     [Header("Timing")]
     public float startBattleDelay = 2f;
 
+    [Header("Deck UI Manager (for enabling/disabling cards)")]
+    public DeckUIController deckUI;
+
     // Internal state
     private int currentRoundIndex = 0;
     private int picksDone = 0;
     private int picksToDo = 3;
     private bool battleStarted = false;
     private bool gameOver = false;
+
+    // ============================================================
+    // PUBLIC ACCESSORS
+    // ============================================================
+    public bool IsBattleRunning => battleStarted;
 
     // ============================================================
     // START
@@ -52,20 +60,20 @@ public class BattleManager : MonoBehaviour
         currentRoundIndex = index;
         RoundDefinition round = levelDefinition.rounds[currentRoundIndex];
 
-        // Make sure no AI is running while we reset the board
+        // Turn off AI and reset board
         SetAllAIEnabled(false);
 
-        // 1) Revive all units and put everyone back into a clean, ordered state
+        // 1) Reset units
         ResetUnitsForNewRound();
 
-        // 2) Reset player picks counter for this round
+        // 2) Reset picks
         picksDone = 0;
         picksToDo = Mathf.Max(1, round.playerPicks);
 
-        // 3) Spawn enemy wave for this round
+        // 3) Spawn enemy wave
         SpawnEnemyWave(round);
 
-        // 4) Show selection UI for player picks
+        // 4) Show UI roll
         if (selectionUI != null)
         {
             selectionUI.gameObject.SetActive(true);
@@ -73,12 +81,15 @@ public class BattleManager : MonoBehaviour
             selectionUI.RollNewUnits();
         }
 
+        // 5) RE-ENABLE DECK (planning phase UI)
+        if (deckUI != null)
+            deckUI.SetCardsInteractable(true);
+
         battleStarted = false;
     }
 
     /// <summary>
-    /// Revive all units (both teams) and reset their animation/movement,
-    /// then let the grids arrange them back into formation.
+    /// Revive and reset all units, prepare both grids for a clean new round.
     /// </summary>
     private void ResetUnitsForNewRound()
     {
@@ -86,32 +97,24 @@ public class BattleManager : MonoBehaviour
 
         foreach (var u in all)
         {
-            // Bring unit back to life with full HP
             u.Revive();
-
-            // Allow the grid to reposition this unit
             u.lockedIn = false;
 
-            // Stop any remaining movement
             var rb = u.GetComponent<Rigidbody2D>();
             if (rb != null)
                 rb.linearVelocity = Vector2.zero;
 
-            // Hard reset animation to default (Idle) state
             var anim = u.GetComponent<Animator>();
             if (anim != null)
             {
                 anim.ResetTrigger("dying");
                 anim.ResetTrigger("attack");
                 anim.SetBool("isMoving", false);
-
-                // Rebind puts the animator back to its initial pose/clip
                 anim.Rebind();
                 anim.Update(0f);
             }
         }
 
-        // Re-arrange both grids so everyone is back in a clean formation
         if (myGrid != null)
             myGrid.ArrangeMonsters();
 
@@ -119,36 +122,13 @@ public class BattleManager : MonoBehaviour
             enemyGrid.ArrangeMonsters();
     }
 
-    public void StartBattleFromDeck()
-    {
-        // Enable AI for all alive units on both teams
-        var allUnits = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
-
-        foreach (var u in allUnits)
-        {
-            if (u == null || u.currentHealth <= 0)
-                continue;
-
-            var ai = u.GetComponent<EnemyAI>();
-            if (ai != null)
-                ai.enabled = true;
-        }
-
-        // Lock positions so units won't be moved anymore by planning systems
-        LockAllUnits();
-
-        // Mark battle as started so Update() will check win/lose
-        battleStarted = true;
-    }
-
-
     // ============================================================
     // ENEMY SPAWN
     // ============================================================
     private void SpawnEnemyWave(RoundDefinition round)
     {
-        if (enemyGrid == null) return;
-        if (round.enemySpawns == null) return;
+        if (enemyGrid == null || round.enemySpawns == null)
+            return;
 
         foreach (var entry in round.enemySpawns)
         {
@@ -164,7 +144,7 @@ public class BattleManager : MonoBehaviour
     }
 
     // ============================================================
-    // PLAYER PICKS
+    // PLAYER PICKS (old system)
     // ============================================================
     public void OnPlayerPickedUnit(UnitDefinition def)
     {
@@ -172,9 +152,7 @@ public class BattleManager : MonoBehaviour
         if (def == null || myGrid == null) return;
 
         for (int i = 0; i < def.spawnCount; i++)
-        {
             myGrid.AddMonster(def, Team.MyTeam, playerUnitsLevel);
-        }
 
         picksDone++;
 
@@ -204,12 +182,43 @@ public class BattleManager : MonoBehaviour
     private void StartBattle()
     {
         battleStarted = true;
+
+        // Disable deck visually + functionally
+        if (deckUI != null)
+            deckUI.SetCardsInteractable(false);
+
         LockAllUnits();
         SetAllAIEnabled(true);
     }
 
+    /// <summary>
+    /// This version is used when player places units manually via drag & drop deck.
+    /// </summary>
+    public void StartBattleFromDeck()
+    {
+        // Enable AI for all alive units
+        var allUnits = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
+
+        foreach (var u in allUnits)
+        {
+            if (u == null || u.currentHealth <= 0)
+                continue;
+
+            var ai = u.GetComponent<EnemyAI>();
+            if (ai != null)
+                ai.enabled = true;
+        }
+
+        LockAllUnits();
+        battleStarted = true;
+
+        // Disable deck UI
+        if (deckUI != null)
+            deckUI.SetCardsInteractable(false);
+    }
+
     // ============================================================
-    // UPDATE — CHECK FOR ROUND END
+    // UPDATE — CHECK END OF ROUND
     // ============================================================
     private void Update()
     {
@@ -219,9 +228,7 @@ public class BattleManager : MonoBehaviour
         bool enemyAlive = AnyAlive(Team.EnemyTeam);
 
         if (!myAlive || !enemyAlive)
-        {
             EndBattle(myAlive, enemyAlive);
-        }
     }
 
     private void EndBattle(bool myAlive, bool enemyAlive)
@@ -233,34 +240,28 @@ public class BattleManager : MonoBehaviour
         {
             Debug.Log("Player lost — stage failed.");
             gameOver = true;
-            // TODO: show lose screen
             return;
         }
 
         if (!enemyAlive)
-        {
             HandleRoundWin();
-        }
     }
 
     // ============================================================
-    // ROUND WON
+    // ROUND WIN
     // ============================================================
     private void HandleRoundWin()
     {
         Debug.Log($"ROUND {currentRoundIndex + 1} WON!");
-
         currentRoundIndex++;
 
         if (currentRoundIndex >= levelDefinition.RoundsCount)
         {
             Debug.Log("PLAYER WON THE ENTIRE LEVEL!");
             gameOver = true;
-            // TODO: show win screen
             return;
         }
 
-        // Start next round
         StartRound(currentRoundIndex);
     }
 
@@ -300,7 +301,6 @@ public class BattleManager : MonoBehaviour
     private void LockAllUnits()
     {
         var all = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
-
         foreach (var u in all)
             u.lockedIn = true;
     }
@@ -308,7 +308,6 @@ public class BattleManager : MonoBehaviour
     private void UnlockAllUnits()
     {
         var all = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
-
         foreach (var u in all)
             u.lockedIn = false;
     }
