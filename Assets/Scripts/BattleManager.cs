@@ -119,6 +119,29 @@ public class BattleManager : MonoBehaviour
             enemyGrid.ArrangeMonsters();
     }
 
+    public void StartBattleFromDeck()
+    {
+        // Enable AI for all alive units on both teams
+        var allUnits = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
+
+        foreach (var u in allUnits)
+        {
+            if (u == null || u.currentHealth <= 0)
+                continue;
+
+            var ai = u.GetComponent<EnemyAI>();
+            if (ai != null)
+                ai.enabled = true;
+        }
+
+        // Lock positions so units won't be moved anymore by planning systems
+        LockAllUnits();
+
+        // Mark battle as started so Update() will check win/lose
+        battleStarted = true;
+    }
+
+
     // ============================================================
     // ENEMY SPAWN
     // ============================================================
