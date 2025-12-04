@@ -7,6 +7,7 @@ public class UnitSpawnButton : MonoBehaviour
     public Image iconImage;  // drag the Image from the prefab here in the Inspector
     public TMP_Text unitName;
     public TMP_Text UnitToSpawn;
+    public TMP_Text UnitSoulCost;
     private UnitDefinition data;
     private UnitSelectionUI selectionUI;
     
@@ -19,6 +20,7 @@ public class UnitSpawnButton : MonoBehaviour
         unitName.text = def.displayName;
         iconImage.transform.localScale = Vector3.one * def.iconScale;
         UnitToSpawn.text = $"+{def.spawnCount}";
+        UnitSoulCost.text = def.soulCost.ToString();
 
         if (iconImage != null)
         {

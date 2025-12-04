@@ -16,11 +16,12 @@ MonoBehaviour:
   displayName: Wizard
   icon: {fileID: -5455630811309129204, guid: ee9c8600264c12f4c92cd4c1185c54a5, type: 3}
   prefab: {fileID: 501027721989515594, guid: 8cec8200b45e28b48bcd611ea8a31893, type: 3}
-  iconScale: 0.5
+  iconScale: 0.4
   monsterType: 1
   spawnCount: 1
+  soulCost: 4
   maxHealth: 80
-  damage: 10
+  damage: 15
   moveSpeed: 1
   attackRange: 7
   attackCooldown: 1.6

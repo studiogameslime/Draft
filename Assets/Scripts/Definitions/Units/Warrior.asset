@@ -16,9 +16,10 @@ MonoBehaviour:
   displayName: Warrior
   icon: {fileID: -5455630811309129204, guid: 290105db12d408342bc316647a1e35c5, type: 3}
   prefab: {fileID: 501027721989515594, guid: 037d4c6a00f2afe47b4a733f5e492d55, type: 3}
-  iconScale: 0.5
+  iconScale: 0.4
   monsterType: 0
   spawnCount: 1
+  soulCost: 2
   maxHealth: 100
   damage: 10
   moveSpeed: 2
