@@ -122,7 +122,6 @@ public class DropZone : MonoBehaviour
         {
             if (z != null)
             {
-                if (!on) 
                 z.SetHighlight(on);
             }
 
