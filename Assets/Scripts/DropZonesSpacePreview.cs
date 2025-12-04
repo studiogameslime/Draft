@@ -22,10 +22,10 @@ public class DropZonesSpacePreview : MonoBehaviour
                 DropZone.SetAllHighlights(true);
             }
         }
-        else
+        else 
         {
             // שחררנו Space – לאפס ולהסתיר
-            _holdTimer = 0f;
+            _holdTimer = 0f ;
 
             if (_isShowing)
             {
