@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class DropZonesSpacePreview : MonoBehaviour
 {
-    [Tooltip("כמה זמן צריך להחזיק את ה-Space עד שהאזוריים יופיעו (בשניות).")]
     public float holdDelay = 0.15f;
 
     private bool _isShowing = false;
