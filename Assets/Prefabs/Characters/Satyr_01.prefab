@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 5159539399863573130}
   - component: {fileID: -7123918890047948568}
   - component: {fileID: 8384952033324481740}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Satyr_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}

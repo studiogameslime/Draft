@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 8384952033324481740}
   - component: {fileID: 7916648649934679041}
   - component: {fileID: 6365947195347616706}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Wizard01
   m_TagString: Untagged
   m_Icon: {fileID: 0}

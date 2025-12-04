@@ -149,6 +149,7 @@ GameObject:
   - component: {fileID: 3612527412078991796}
   - component: {fileID: 331560780286120616}
   - component: {fileID: 8759413195871512815}
+  - component: {fileID: 4314627022048936849}
   m_Layer: 5
   m_Name: UnitSpawnButton
   m_TagString: Untagged
@@ -286,6 +287,25 @@ MonoBehaviour:
   unitName: {fileID: 6282668153874243430}
   UnitToSpawn: {fileID: 1192726252852669062}
   UnitSoulCost: {fileID: 7074044322931359865}
+  canvasGroup: {fileID: 4314627022048936849}
+  switchToWorldDistance: 40
+  unitsLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  minDistanceFromOtherUnits: 0.5
+  battleManager: {fileID: 0}
+--- !u!225 &4314627022048936849
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1847384807915474939}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &3169987162460062990
 GameObject:
   m_ObjectHideFlags: 0

@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 3193124059048499045}
   - component: {fileID: -3644312062606151111}
   - component: {fileID: 3133561545372563000}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Wraith_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
