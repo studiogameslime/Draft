@@ -23,7 +23,7 @@ public class BattleManager : MonoBehaviour
     public DeckUIController deckUI;
 
     // Internal state
-    private int currentRoundIndex = 0;
+    [HideInInspector] public int currentRoundIndex = 0;
     private int picksDone = 0;
     private int picksToDo = 3;
     private bool battleStarted = false;
@@ -39,6 +39,7 @@ public class BattleManager : MonoBehaviour
     // ============================================================
     private void Start()
     {
+        
         SetAllAIEnabled(false);
 
         if (levelDefinition == null || levelDefinition.RoundsCount == 0)
@@ -46,7 +47,7 @@ public class BattleManager : MonoBehaviour
             Debug.LogError("BattleManager: LevelDefinition missing or empty.");
             return;
         }
-
+        
         StartRound(0);
     }
 
@@ -55,8 +56,9 @@ public class BattleManager : MonoBehaviour
     // ============================================================
     private void StartRound(int index)
     {
+        StartBattleButton.instance.EnableButton();
         Debug.Log($"--- ROUND {index + 1}/{levelDefinition.RoundsCount} START ---");
-
+        SoulsManager.instance.AddRoundSouls();
         currentRoundIndex = index;
         RoundDefinition round = levelDefinition.rounds[currentRoundIndex];
 

@@ -185,7 +185,7 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         Vector3 worldPos = ScreenToWorld(eventData.position);
         DropZone zone = DropZone.GetZoneAtWorldPoint(worldPos);
 
-        if (zone == null || !IsPlacementFree(worldPos))
+        if (zone == null || !IsPlacementFree(worldPos) || !SoulsManager.instance.CheckIfThereIsEnoughSouls(data.soulCost))
         {
             // Invalid placement (no zone or overlapping another unit) - destroy the dragged unit
             Object.Destroy(_dragUnitInstance);
@@ -203,6 +203,7 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 foreach (var col in _dragUnitColliders)
                     col.enabled = true;
             }
+            SoulsManager.instance.UseSouls(data.soulCost);
         }
 
         // Initialize stats

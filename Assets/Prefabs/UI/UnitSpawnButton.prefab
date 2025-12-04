@@ -292,7 +292,7 @@ MonoBehaviour:
   unitsLayerMask:
     serializedVersion: 2
     m_Bits: 8
-  minDistanceFromOtherUnits: 0.5
+  minDistanceFromOtherUnits: 0.1
   battleManager: {fileID: 0}
 --- !u!225 &4314627022048936849
 CanvasGroup:

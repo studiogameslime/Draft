@@ -18,6 +18,9 @@ public class RoundDefinition
 
     [Header("How many unit picks the player gets this round")]
     public int playerPicks = 3;
+
+    [Header("Souls")]
+    public int souls = 10;
 }
 
 [Serializable]

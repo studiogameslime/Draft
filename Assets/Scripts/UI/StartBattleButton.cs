@@ -3,11 +3,13 @@ using UnityEngine.UI;
 
 public class StartBattleButton : MonoBehaviour
 {
+    public static StartBattleButton instance;
     public BattleManager battleManager;
     public Button startButton;
 
     private void Awake()
     {
+        instance = this;
         if (startButton == null)
             startButton = GetComponent<Button>();
 
@@ -26,4 +28,11 @@ public class StartBattleButton : MonoBehaviour
         // Optionally disable the button so it can't be pressed twice
         startButton.interactable = false;
     }
+
+    public void EnableButton()
+    {
+        startButton.interactable = true;
+    }
+
+
 }
