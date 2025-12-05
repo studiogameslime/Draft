@@ -260,6 +260,11 @@ public class BattleManager : MonoBehaviour
         if (currentRoundIndex >= levelDefinition.RoundsCount)
         {
             Debug.Log("PLAYER WON THE ENTIRE LEVEL!");
+
+            var all = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
+            foreach (var u in all)
+                u.Winning();
+
             gameOver = true;
             return;
         }

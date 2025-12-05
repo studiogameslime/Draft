@@ -227,4 +227,9 @@ public class CharacterStats : MonoBehaviour
         transform.position = _initialPosition;
     }
 
+    public void Winning()
+    {
+        animator.SetTrigger("winning");
+    }
+
 }
