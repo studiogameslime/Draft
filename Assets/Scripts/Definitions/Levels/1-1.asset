@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelDefinition
   rounds:
   - enemySpawns:
-    - unit: {fileID: 11400000, guid: 918856455c9d7c04aafc21b9bb9961c0, type: 2}
+    - unit: {fileID: 11400000, guid: bb4d2ca15090fb748918d6857809fd03, type: 2}
       count: 4
       level: 1
     playerPicks: 2
     souls: 20
   - enemySpawns:
-    - unit: {fileID: 11400000, guid: 918856455c9d7c04aafc21b9bb9961c0, type: 2}
-      count: 3
+    - unit: {fileID: 11400000, guid: bb4d2ca15090fb748918d6857809fd03, type: 2}
+      count: 4
       level: 1
     playerPicks: 2
     souls: 5

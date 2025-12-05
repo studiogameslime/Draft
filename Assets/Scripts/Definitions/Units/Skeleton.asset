@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
   m_Name: Skeleton
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
-  id: 1
+  id: 9
   displayName: Skeleton
-  icon: {fileID: -9097720764886040989, guid: 4b303a7f02688944dac82c329644fa48, type: 3}
-  prefab: {fileID: 1725816533779344097, guid: b34e38419712d5449959c0abd134846b, type: 3}
-  iconScale: 0.2
+  icon: {fileID: -1746593996306021751, guid: 49c9bdc6a94a48542bc46ff12f6b0237, type: 3}
+  prefab: {fileID: 501027721989515594, guid: c5d687e618389294e850de7fbb128154, type: 3}
+  iconScale: 0.4
   monsterType: 0
-  spawnCount: 4
-  soulCost: 5
+  spawnCount: 1
+  soulCost: 1
   maxHealth: 40
-  damage: 15
-  moveSpeed: 2
-  attackRange: 0.8
-  attackCooldown: 1
+  damage: 10
+  moveSpeed: 2.5
+  attackRange: 1
+  attackCooldown: 0.8
