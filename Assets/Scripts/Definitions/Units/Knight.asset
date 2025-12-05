@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Knight
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: 8
+  displayName: Knight
+  icon: {fileID: -5455630811309129204, guid: 3aa29cd6553ff4542a7c6676903a7f49, type: 3}
+  prefab: {fileID: 501027721989515594, guid: 79261859f482dfa49a1dc66df5ce2d67, type: 3}
+  iconScale: 0.5
+  monsterType: 0
+  spawnCount: 1
+  soulCost: 4
+  maxHealth: 200
+  damage: 8
+  moveSpeed: 1.6
+  attackRange: 1
+  attackCooldown: 0.7
