@@ -9,13 +9,13 @@ public class CharacterStats : MonoBehaviour
 
     // --- Runtime Stats (after scaling by level) ---
     [Header("Runtime Stats")]
-    [HideInInspector] public int level = 1;
-    [HideInInspector] public int maxHealth;
-    [HideInInspector] public int currentHealth;
-    [HideInInspector] public int damage;
-    [HideInInspector] public float moveSpeed;
-    [HideInInspector] public float attackRange;
-    [HideInInspector] public float attackCooldown;
+    public int level = 1;
+    public int maxHealth;
+    public int currentHealth;
+    public int damage;
+    public float moveSpeed;
+    public float attackRange;
+    public float attackCooldown;
 
     // --- Other info ---
     [HideInInspector] public Team team;
@@ -111,7 +111,6 @@ public class CharacterStats : MonoBehaviour
 
     private void UpdateHPBar()
     {
-        Debug.Log($"{(float)currentHealth / maxHealth}");
         if (_hpBar != null && maxHealth > 0)
             _hpBar.fillAmount = (float)currentHealth / maxHealth;
     }

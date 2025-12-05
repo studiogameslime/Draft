@@ -28,6 +28,8 @@ public class DropAreaGrid : MonoBehaviour
     // so we won't rebuild inside OnValidate (אסור DestroyImmediate שם)
     private bool _pendingEditorRebuild = false;
 
+
+
     [System.Serializable]
     public class SpecialCellConfig
     {
@@ -242,4 +244,5 @@ public class DropAreaGrid : MonoBehaviour
             Gizmos.DrawWireCube(pos, new Vector3(cellSize.x, cellSize.y, 0.01f));
         }
     }
+
 }

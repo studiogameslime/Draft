@@ -2,19 +2,25 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [Header("UI refs")]
-    public Image iconImage;             // Unit icon image
-    public TMP_Text unitName;           // Unit display name
-    public TMP_Text UnitToSpawn;        // "+X" amount to spawn
-    public TMP_Text UnitSoulCost;       // Cost text (souls / elixir)
-    public CanvasGroup canvasGroup;     // Used to hide/show card during drag
+    public Image iconImage;
+    public TMP_Text unitName;
+    public TMP_Text UnitToSpawn;
+    public TMP_Text UnitSoulCost;
+    public CanvasGroup canvasGroup;
 
     [Header("Drag settings")]
     [Tooltip("How far (in screen pixels) the card must move before switching to world-unit dragging")]
     public float switchToWorldDistance = 40f;
+
+    [Header("Grid placement")]
+    public DropAreaGrid dropGrid;       // יתמלא אוטומטית אם לא מחובר
+    [Tooltip("Max distance from a cell center to snap placement")]
+    public float maxCellSnapDistance = 0.6f;
 
     [Header("Placement rules")]
     [Tooltip("Layer mask for all units on the board (used to prevent overlapping placement)")]
@@ -34,18 +40,17 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     private Transform _originalParent;
     private Vector2 _originalAnchoredPos;
     private int _originalSiblingIndex;
-    private RectTransform _placeholderRT;   // placeholder inside the GridLayoutGroup
+    private RectTransform _placeholderRT;
 
     // Drag state
     private Vector2 _dragStartScreenPos;
-    private bool _usingCardGraphic = false; // True while dragging the card itself (UI)
-    private bool _spawnedWorldUnit = false; // True once we switched to world-unit dragging
+    private bool _usingCardGraphic = false;
+    private bool _spawnedWorldUnit = false;
 
     // Dragged world unit
     private GameObject _dragUnitInstance;
     private Rigidbody2D _dragUnitRb;
     private Collider2D[] _dragUnitColliders;
-
     private Camera _cam;
 
     // ======================================================================
@@ -62,6 +67,21 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             canvasGroup = GetComponent<CanvasGroup>();
 
         _cam = Camera.main;
+
+        ResolveGridReference();
+    }
+
+    // מוצא DropAreaGrid אוטומטית אם לא חיברת ידנית
+    private void ResolveGridReference()
+    {
+        if (dropGrid != null)
+            return;
+
+        dropGrid = FindObjectOfType<DropAreaGrid>();
+        if (dropGrid == null)
+        {
+            Debug.LogWarning("UnitSpawnButton: no DropAreaGrid found in scene.");
+        }
     }
 
     // Initialize card visuals & references
@@ -73,10 +93,8 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         if (unitName != null)
             unitName.text = def.displayName;
-
         if (UnitToSpawn != null)
             UnitToSpawn.text = "+" + def.spawnCount;
-
         if (UnitSoulCost != null)
             UnitSoulCost.text = def.soulCost.ToString();
 
@@ -86,6 +104,9 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             iconImage.transform.localScale = Vector3.one * def.iconScale;
             iconImage.SetNativeSize();
         }
+
+        // עוד פעם ביטחון – אם יצרת את הכרטיס בזמן ריצה אחרי Awake
+        ResolveGridReference();
     }
 
     public void OnClick()
@@ -96,14 +117,15 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     // ======================================================================
     // DRAG HANDLERS
     // ======================================================================
-
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (data == null || data.prefab == null || battleManager == null)
             return;
-
         if (battleManager.IsBattleRunning)
             return;
+
+        // ליתר ביטחון – אם הגריד עוד לא נמצא, ננסה שוב
+        ResolveGridReference();
 
         _dragStartScreenPos = eventData.position;
         _originalAnchoredPos = _rt.anchoredPosition;
@@ -121,9 +143,6 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         _rt.SetParent(transform.root, true); // keep world position
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 1f;
-
-        // Turn on highlight for all drop zones
-        DropZone.SetAllHighlights(true);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -135,7 +154,6 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (_usingCardGraphic)
         {
             _rt.position = eventData.position;
-
             float dist = Vector2.Distance(eventData.position, _dragStartScreenPos);
             if (dist >= switchToWorldDistance)
             {
@@ -153,15 +171,10 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        // Disable highlight for all drop zones
-        DropZone.SetAllHighlights(false);
-
         // Restore card to its original parent under the GridLayoutGroup.
         _rt.SetParent(_originalParent, false);
-
         if (_placeholderRT != null)
         {
-            // Put card where the placeholder was
             _rt.SetSiblingIndex(_placeholderRT.GetSiblingIndex());
             Destroy(_placeholderRT.gameObject);
             _placeholderRT = null;
@@ -181,57 +194,97 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             return;
         }
 
-        // Check if released over a valid DropZone AND there is no other unit too close
         Vector3 worldPos = ScreenToWorld(eventData.position);
-        DropZone zone = DropZone.GetZoneAtWorldPoint(worldPos);
 
-        if (zone == null || !IsPlacementFree(worldPos) || !SoulsManager.instance.CheckIfThereIsEnoughSouls(data.soulCost))
+        if (dropGrid == null)
         {
-            // Invalid placement (no zone or overlapping another unit) - destroy the dragged unit
-            Object.Destroy(_dragUnitInstance);
+            Debug.LogWarning("UnitSpawnButton: dropGrid is null on EndDrag, destroying ghost.");
+            Destroy(_dragUnitInstance);
+            CleanupDragState();
+            return;
+        }
+
+        // ===================== GRID PLACEMENT ==========================
+        float distToCell = 0;
+        DropAreaCell cell = dropGrid.GetClosestCell(worldPos, out distToCell);
+        bool hasSouls = SoulsManager.instance.CheckIfThereIsEnoughSouls(data.soulCost);
+        bool closeEnough = (cell != null && distToCell <= maxCellSnapDistance);
+        bool spaceFree = cell != null && IsPlacementFree(cell.transform.position);
+        bool valid = closeEnough && spaceFree && hasSouls;
+
+        if (!valid)
+        {
+            // Invalid placement - destroy the dragged unit
+            Destroy(_dragUnitInstance);
         }
         else
         {
-            // Valid placement - place unit and re-enable physics
-            _dragUnitInstance.transform.position = worldPos;
+            // Place unit on the cell center
+            Vector3 finalPos = cell.transform.position;
+            finalPos.z = 0f;
+            _dragUnitInstance.transform.position = finalPos;
 
+            // Enable physics & colliders
             if (_dragUnitRb != null)
                 _dragUnitRb.simulated = true;
-
             if (_dragUnitColliders != null)
             {
                 foreach (var col in _dragUnitColliders)
                     col.enabled = true;
             }
+
+            // Pay cost
             SoulsManager.instance.UseSouls(data.soulCost);
+
+            // Initialize stats and apply cell bonus
+            var stats = _dragUnitInstance.GetComponent<CharacterStats>();
+            if (stats != null)
+            {
+                stats.SetInitialPosition();
+                if (cell.IsSpecial)
+                {
+                    float p = cell.percentValue;
+                    if (Mathf.Abs(p) > 1f)
+                        p /= 100f;
+                    float multiplier = 1f + p;
+
+                    switch (cell.bonusType)
+                    {
+                        case CellBonusType.HpPercent:
+                            stats.maxHealth = (int)(stats.maxHealth * multiplier);
+                            stats.currentHealth = stats.maxHealth;
+                            break;
+                        case CellBonusType.AttackPercent:
+                            stats.damage = (int)(stats.damage * multiplier);
+                            break;
+                    }
+                }
+            }
         }
 
-        // Initialize stats
-        var stats = _dragUnitInstance.GetComponent<CharacterStats>();
-        if (stats != null)
-        {
-            stats.SetInitialPosition();
-        }
-
-        _dragUnitInstance = null;
-        _dragUnitRb = null;
-        _dragUnitColliders = null;
-
-        _spawnedWorldUnit = false;
-        _usingCardGraphic = false;
+        CleanupDragState();
     }
 
     // ======================================================================
     // INTERNAL HELPERS
     // ======================================================================
+    private void CleanupDragState()
+    {
+        _dragUnitInstance = null;
+        _dragUnitRb = null;
+        _dragUnitColliders = null;
+        _spawnedWorldUnit = false;
+        _usingCardGraphic = false;
+
+        if (canvasGroup != null)
+            canvasGroup.alpha = 1f;
+    }
 
     private void SwitchToWorldDrag(PointerEventData eventData)
     {
         _usingCardGraphic = false;
         _spawnedWorldUnit = true;
 
-        // Card stays under root while dragging world unit.
-        // We keep it invisible so only the unit is visible.
         if (canvasGroup != null)
             canvasGroup.alpha = 0f; // hide card during world dragging
 
@@ -243,7 +296,6 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         if (_cam == null)
             _cam = Camera.main;
-
         Vector3 worldPos = _cam.ScreenToWorldPoint(screenPos);
         worldPos.z = 0f;
         return worldPos;
@@ -251,38 +303,31 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     private void SpawnWorldUnit(Vector3 worldPos)
     {
-        // Instantiate the regular unit prefab in the world
         _dragUnitInstance = Object.Instantiate(data.prefab, worldPos, Quaternion.identity);
 
-        // Cache rigidbody & colliders
         _dragUnitRb = _dragUnitInstance.GetComponent<Rigidbody2D>();
         _dragUnitColliders = _dragUnitInstance.GetComponentsInChildren<Collider2D>();
 
-        // Disable physics & collisions while dragging so the ghost will not push anything
         if (_dragUnitRb != null)
             _dragUnitRb.simulated = false;
-
         if (_dragUnitColliders != null)
         {
             foreach (var col in _dragUnitColliders)
                 col.enabled = false;
         }
 
-        // Initialize stats
         var stats = _dragUnitInstance.GetComponent<CharacterStats>();
         if (stats != null)
         {
             stats.Init(Team.MyTeam, data, battleManager.playerUnitsLevel);
-            stats.lockedIn = false; // Still in planning phase
+            stats.lockedIn = false;
         }
 
-        // Ensure AI is disabled during setup phase
         var ai = _dragUnitInstance.GetComponent<EnemyAI>();
         if (ai != null)
             ai.enabled = false;
     }
 
-    // Create a dummy object inside the grid so the layout doesn't jump when the card leaves
     private void CreatePlaceholder()
     {
         if (_placeholderRT != null)
@@ -294,7 +339,6 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         _placeholderRT.SetSiblingIndex(_originalSiblingIndex);
         _placeholderRT.sizeDelta = _rt.sizeDelta;
 
-        // Copy LayoutElement settings if present
         LayoutElement myLE = GetComponent<LayoutElement>();
         if (myLE != null)
         {
@@ -308,17 +352,12 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
     }
 
-    /// <summary>
-    /// Returns true if there is enough space to place a new unit at the given position.
-    /// Uses Physics2D.OverlapCircleAll on unitsLayerMask.
-    /// </summary>
     private bool IsPlacementFree(Vector3 worldPos)
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(worldPos, minDistanceFromOtherUnits, unitsLayerMask);
         return hits == null || hits.Length == 0;
     }
 
-    // Optional: visualize placement radius in editor (for debugging)
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;
@@ -326,17 +365,14 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         pos.z = 0f;
         Gizmos.DrawWireSphere(pos, minDistanceFromOtherUnits);
     }
+
     public void SetCardInteractable(bool interactable)
     {
         if (canvasGroup == null)
             return;
 
-        // Block input
         canvasGroup.interactable = interactable;
         canvasGroup.blocksRaycasts = interactable;
-
-        // Visual feedback
-        canvasGroup.alpha = interactable ? 1f : 0.4f;   // 40% transparent when disabled
+        canvasGroup.alpha = interactable ? 1f : 0.4f;
     }
-
 }

@@ -22,6 +22,8 @@ public class BattleManager : MonoBehaviour
     [Header("Deck UI Manager (for enabling/disabling cards)")]
     public DeckUIController deckUI;
 
+    public DropAreaGrid[] dropAreaGrids;
+
     // Internal state
     [HideInInspector] public int currentRoundIndex = 0;
     private int picksDone = 0;
@@ -49,6 +51,8 @@ public class BattleManager : MonoBehaviour
         }
         
         StartRound(0);
+
+        dropAreaGrids = FindObjectsByType<DropAreaGrid>(FindObjectsSortMode.None);
     }
 
     // ============================================================
@@ -56,6 +60,7 @@ public class BattleManager : MonoBehaviour
     // ============================================================
     private void StartRound(int index)
     {
+        ShowDropAreasGrid();
         StartBattleButton.instance.EnableButton();
         Debug.Log($"--- ROUND {index + 1}/{levelDefinition.RoundsCount} START ---");
         SoulsManager.instance.AddRoundSouls();
@@ -217,6 +222,8 @@ public class BattleManager : MonoBehaviour
         // Disable deck UI
         if (deckUI != null)
             deckUI.SetCardsInteractable(false);
+        HideDropAreasGrid();
+
     }
 
     // ============================================================
@@ -317,5 +324,22 @@ public class BattleManager : MonoBehaviour
         var all = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
         foreach (var u in all)
             u.lockedIn = false;
+    }
+
+    public void HideDropAreasGrid()
+    {
+        foreach (var grid in dropAreaGrids)
+        {
+            Debug.Log(grid.name);
+            grid.gameObject.SetActive(false);
+        }
+    }
+
+    public void ShowDropAreasGrid()
+    {
+        foreach (var grid in dropAreaGrids)
+        {
+            grid.gameObject.SetActive(true);
+        }
     }
 }
