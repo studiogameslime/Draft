@@ -150,54 +150,6 @@ public class BattleManager : MonoBehaviour
         enemyGrid.ArrangeMonsters();
     }
 
-    // ============================================================
-    // PLAYER PICKS (old system)
-    // ============================================================
-    public void OnPlayerPickedUnit(UnitDefinition def)
-    {
-        if (battleStarted || gameOver) return;
-        if (def == null || myGrid == null) return;
-
-        for (int i = 0; i < def.spawnCount; i++)
-            myGrid.AddMonster(def, Team.MyTeam, playerUnitsLevel);
-
-        picksDone++;
-
-        if (picksDone >= picksToDo)
-        {
-            if (selectionUI != null)
-                selectionUI.gameObject.SetActive(false);
-
-            StartCoroutine(StartBattleAfterDelay());
-        }
-        else
-        {
-            if (selectionUI != null)
-                selectionUI.RollNewUnits();
-        }
-    }
-
-    private IEnumerator StartBattleAfterDelay()
-    {
-        yield return new WaitForSeconds(startBattleDelay);
-        StartBattle();
-    }
-
-    // ============================================================
-    // BATTLE START
-    // ============================================================
-    private void StartBattle()
-    {
-        battleStarted = true;
-
-        // Disable deck visually + functionally
-        if (deckUI != null)
-            deckUI.SetCardsInteractable(false);
-
-        LockAllUnits();
-        SetAllAIEnabled(true);
-    }
-
     /// <summary>
     /// This version is used when player places units manually via drag & drop deck.
     /// </summary>

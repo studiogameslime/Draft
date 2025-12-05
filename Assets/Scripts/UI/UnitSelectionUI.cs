@@ -5,7 +5,7 @@ public class UnitSelectionUI : MonoBehaviour
 {
     [Header("Units pool")]
     public UnitDefinition[] allUnits;
-    public int buttonsPerRoll = 3;
+    public int buttonsPerRoll = 4;
 
     [Header("UI")]
     public Transform buttonsParent;
@@ -46,10 +46,4 @@ public class UnitSelectionUI : MonoBehaviour
         }
     }
 
-    // Legacy: only used for old selection UI
-    public void OnUnitChosen(UnitDefinition def)
-    {
-        if (battleManager != null)
-            battleManager.OnPlayerPickedUnit(def);
-    }
 }
