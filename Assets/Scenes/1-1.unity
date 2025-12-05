@@ -9802,7 +9802,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ad4287dbc795daf4da4915b5d3fcd156, type: 2}
   - {fileID: 11400000, guid: 681e39eeac684f2448e304010c689052, type: 2}
   - {fileID: 11400000, guid: 624a24cba8fbd3b469665d2ac0fc3846, type: 2}
-  - {fileID: 11400000, guid: d9282f24b2268dd4688a50473d8bdee7, type: 2}
+  - {fileID: 11400000, guid: 6cab19afac977304e898761cc9185bd1, type: 2}
   buttonsPerRoll: 4
   buttonsParent: {fileID: 1072325082}
   buttonPrefab: {fileID: 8759413195871512815, guid: 3180728291a88d743877b20ea52f3561, type: 3}

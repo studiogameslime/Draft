@@ -111,6 +111,7 @@ public class CharacterStats : MonoBehaviour
 
     private void UpdateHPBar()
     {
+        Debug.Log($"{(float)currentHealth / maxHealth}");
         if (_hpBar != null && maxHealth > 0)
             _hpBar.fillAmount = (float)currentHealth / maxHealth;
     }
