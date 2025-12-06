@@ -289,6 +289,8 @@ MonoBehaviour:
   UnitSoulCost: {fileID: 7074044322931359865}
   canvasGroup: {fileID: 4314627022048936849}
   switchToWorldDistance: 40
+  dropGrid: {fileID: 0}
+  maxCellSnapDistance: 0.6
   unitsLayerMask:
     serializedVersion: 2
     m_Bits: 8
@@ -372,7 +374,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -4879236269570624066, guid: 01a785400d50c5e4da870fbf3e602bfa, type: 3}
+  m_Sprite: {fileID: -3627611937067758398, guid: 9437c6f94500638429d3014299a7d5d7, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -671,8 +673,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
