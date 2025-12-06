@@ -86,7 +86,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1561745135
   m_SortingLayer: 2
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -5455630811309129204, guid: 290105db12d408342bc316647a1e35c5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -135,6 +135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a608d263df2d464e916d8bf6b08a732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  stoppingBuffer: 0.1
 --- !u!50 &5159539399863573130
 Rigidbody2D:
   serializedVersion: 5
