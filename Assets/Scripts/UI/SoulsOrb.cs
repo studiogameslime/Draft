@@ -3,10 +3,25 @@ using UnityEngine;
 
 public class SoulOrb : MonoBehaviour
 {
-    [Header("Movement")]
-    public float totalTravelTime = 0.5f;
+    [Header("Phase 1: Rise up")]
+    [Tooltip("כמה יחידות למעלה הנשמה תעלה לפני שתתחיל לנוע למאגר")]
+    public float riseHeight = 1.0f;
+
+    [Tooltip("כמה זמן (בשניות) לוקח לעלות למעלה")]
+    public float riseDuration = 0.25f;
+
+    [Tooltip("עקומת תנועה לשלב העלייה")]
+    public AnimationCurve riseCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+    [Header("Phase 2: Move towards pool")]
+    [Tooltip("כמה זמן (בשניות) לוקח לנוע מהשיא אל המאגר")]
+    public float moveToTargetDuration = 0.5f;
+
+    [Tooltip("גובה הקשת מעל הקו בין נקודת השיא לבין המאגר")]
     public float arcHeight = 1.0f;
-    public AnimationCurve travelCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+    [Tooltip("עקומת תנועה לשלב ההתקדמות למאגר")]
+    public AnimationCurve moveCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     [Header("Amount")]
     public int soulsAmount = 1;
@@ -35,17 +50,38 @@ public class SoulOrb : MonoBehaviour
             yield break;
         }
 
-        Vector3 endPos = _target.position;
-        float t = 0f;
+        // ---------- Phase 1: Rise up ----------
+        Vector3 riseStart = _startWorldPos;
+        Vector3 riseEnd = _startWorldPos + Vector3.up * riseHeight;
 
-        Vector3 midPos = (_startWorldPos + endPos) * 0.5f + Vector3.up * arcHeight;
+        float t = 0f;
+        float safeRiseDuration = Mathf.Max(0.01f, riseDuration);
 
         while (t < 1f)
         {
-            t += Time.deltaTime / totalTravelTime;
-            float eval = travelCurve.Evaluate(Mathf.Clamp01(t));
+            t += Time.deltaTime / safeRiseDuration;
+            float eval = riseCurve.Evaluate(Mathf.Clamp01(t));
+            transform.position = Vector3.Lerp(riseStart, riseEnd, eval);
+            yield return null;
+        }
 
-            Vector3 p0 = _startWorldPos;
+        // נקודת ההתחלה של הפאזה השנייה היא אחרי העלייה
+        Vector3 phase2Start = riseEnd;
+        Vector3 endPos = _target.position;
+
+        // ---------- Phase 2: Move towards pool (Bezier arc) ----------
+        t = 0f;
+        float safeMoveDuration = Mathf.Max(0.01f, moveToTargetDuration);
+
+        // mid point for bezier (מעל הקו בין ההתחלה למאגר)
+        Vector3 midPos = (phase2Start + endPos) * 0.5f + Vector3.up * arcHeight;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime / safeMoveDuration;
+            float eval = moveCurve.Evaluate(Mathf.Clamp01(t));
+
+            Vector3 p0 = phase2Start;
             Vector3 p1 = midPos;
             Vector3 p2 = endPos;
 
@@ -54,10 +90,10 @@ public class SoulOrb : MonoBehaviour
             Vector3 pos = Vector3.Lerp(a, b, eval);
 
             transform.position = pos;
-
             yield return null;
         }
 
+        // ---------- Arrived ----------
         if (SoulsManager.instance != null)
         {
             SoulsManager.instance.AddSouls(soulsAmount);
