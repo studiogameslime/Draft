@@ -239,6 +239,8 @@ MonoBehaviour:
   secondaryDamageMultiplier: 0.5
   boltPrefab: {fileID: 1842789865196763483, guid: f9fcfe2fec13d084fbb00caf01599f1a, type: 3}
   shootPoint: {fileID: 5426564493991449101}
+  hitFlashColor: {r: 1, g: 1, b: 1, a: 0.6431373}
+  hitFlashDuration: 0.08
 --- !u!195 &8581160561373379852
 NavMeshAgent:
   m_ObjectHideFlags: 0
