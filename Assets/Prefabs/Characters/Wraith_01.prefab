@@ -106,6 +106,7 @@ GameObject:
   - component: {fileID: 3193124059048499045}
   - component: {fileID: -3644312062606151111}
   - component: {fileID: 3133561545372563000}
+  - component: {fileID: 3113338802156254818}
   m_Layer: 3
   m_Name: Wraith_01
   m_TagString: Untagged
@@ -238,6 +239,7 @@ MonoBehaviour:
   team: 0
   monsterType: 1
   lockedIn: 0
+  _initialPosition: {x: 0, y: 0, z: 0}
   _hpBar: {fileID: 6860828598525345421}
 --- !u!114 &6070557849473865786
 MonoBehaviour:
@@ -251,6 +253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a608d263df2d464e916d8bf6b08a732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
+  stoppingBuffer: 0.1
 --- !u!95 &3193124059048499045
 Animator:
   serializedVersion: 7
@@ -323,6 +326,28 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 1.2
+--- !u!195 &3113338802156254818
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3672369371563529809}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.97499996
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2.8699996
+  m_BaseOffset: 1.4349998
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1001 &9142143742085104177
 PrefabInstance:
   m_ObjectHideFlags: 0

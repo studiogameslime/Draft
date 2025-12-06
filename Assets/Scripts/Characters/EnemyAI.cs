@@ -9,7 +9,6 @@ public class EnemyAI : MonoBehaviour
     private CharacterStats targetStats;
     private float lastAttackTime;
     private IAttackStrategy attackStrategy;
-
     private NavMeshAgent agent;
 
     [Header("NavMesh")]
@@ -26,31 +25,25 @@ public class EnemyAI : MonoBehaviour
         {
             agent.updateRotation = false;
             agent.updateUpAxis = false;
-
-            if (myStats != null)
-                agent.speed = myStats.moveSpeed;
-
+            agent.speed = myStats.moveSpeed;
             agent.acceleration = 100f;
             agent.angularSpeed = 720f;
 
-            float stop = myStats != null
-                ? Mathf.Max(0f, myStats.attackRange - stoppingBuffer)
-                : agent.stoppingDistance;
-
-            agent.stoppingDistance = stop;
+            agent.stoppingDistance = Mathf.Max(0f, myStats.attackRange - stoppingBuffer);
         }
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
         if (agent != null)
         {
+            agent.enabled = true;
             agent.isStopped = false;
             agent.velocity = Vector3.zero;
         }
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
         if (agent != null)
         {
@@ -70,12 +63,8 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        if (agent != null)
-            Debug.Log("OnNavMesh? " + agent.isOnNavMesh);
-
         FindClosestEnemy();
-
-        if (targetStats == null || targetStats.currentHealth <= 0)
+        if (targetStats == null)
         {
             StopMoving();
             return;
@@ -99,54 +88,43 @@ public class EnemyAI : MonoBehaviour
     private void UpdateFacing()
     {
         if (targetStats == null) return;
-
         var sr = GetComponent<SpriteRenderer>();
-        if (sr == null) return;
-
+        if (!sr) return;
         sr.flipX = targetStats.transform.position.x < transform.position.x;
     }
 
     void MoveTowardTarget()
     {
-        if (targetStats == null) return;
-
-        bool canUseNavMesh = agent != null && agent.isOnNavMesh;
-
-        if (canUseNavMesh)
+        if (!agent || !agent.enabled || !agent.isOnNavMesh)
         {
-            agent.isStopped = false;
-            agent.speed = myStats.moveSpeed;
-
-            agent.SetDestination(targetStats.transform.position);
-
-            bool isMoving = agent.velocity.sqrMagnitude > 0.0001f;
-            animator.SetBool("isMoving", isMoving);
-        }
-        else
-        {
+            // FALLBACK MOVEMENT
             Vector3 direction = (targetStats.transform.position - transform.position).normalized;
             transform.position += direction * myStats.moveSpeed * Time.deltaTime;
-
             animator.SetBool("isMoving", true);
+            return;
         }
+
+        agent.isStopped = false;
+        agent.speed = myStats.moveSpeed;
+        agent.SetDestination(targetStats.transform.position);
+
+        bool moving = agent.velocity.sqrMagnitude > 0.01f;
+        animator.SetBool("isMoving", moving);
     }
 
     void StopMoving()
     {
-        if (agent != null)
+        if (agent && agent.enabled)
         {
             agent.isStopped = true;
             agent.velocity = Vector3.zero;
         }
 
-        if (animator != null)
-            animator.SetBool("isMoving", false);
+        animator?.SetBool("isMoving", false);
     }
 
     void AttackTarget()
     {
-        if (targetStats == null) return;
-
         if (Time.time - lastAttackTime > myStats.attackCooldown)
         {
             lastAttackTime = Time.time;
@@ -156,9 +134,7 @@ public class EnemyAI : MonoBehaviour
 
     void FindClosestEnemy()
     {
-        CharacterStats[] allCharacters = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
-
-        var enemies = allCharacters
+        var enemies = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None)
             .Where(c => c.team != myStats.team && c.currentHealth > 0)
             .ToList();
 
