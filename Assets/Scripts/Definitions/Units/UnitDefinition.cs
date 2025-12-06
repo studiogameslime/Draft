@@ -16,7 +16,11 @@ public class UnitDefinition : ScriptableObject
     [Header("Gameplay")]
     public MonsterType monsterType; // Melee / Ranged etc.
     public int spawnCount = 1; // default 1
+
+    [Header("Souls")]
     public int soulCost;
+    [Range(0f, 1f)]
+    public float soulDropChance = 0.25f; // 25% לדוגמה – תעדכן לכל יחידה באינספקטור
     // public int cost;           // optional: price, mana cost, etc.
 
     [Header("Stats")]

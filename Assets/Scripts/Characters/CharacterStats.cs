@@ -136,8 +136,23 @@ public class CharacterStats : MonoBehaviour
         var rb = GetComponent<Rigidbody2D>();
         if (rb != null)
             rb.linearVelocity = Vector2.zero;
+        TrySpawnSoulOnDeath();
+    }
 
-        // Destroy(gameObject, 2f);
+    private void TrySpawnSoulOnDeath()
+    {
+        if (team != Team.EnemyTeam) return;
+        if (definition == null) return;
+        if (SoulOrbSpawner.instance == null) return;
+
+        float chance = Mathf.Clamp01(definition.soulDropChance);
+        if (chance <= 0f) return;
+
+        if (Random.value <= chance)
+        {
+            Vector3 pos = transform.position + Vector3.up * 0.3f;
+            SoulOrbSpawner.instance.SpawnSoul(pos, 1);
+        }
     }
 
     private void DisableAllCombatScripts()
