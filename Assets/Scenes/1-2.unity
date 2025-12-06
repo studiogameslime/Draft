@@ -14891,7 +14891,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0625739d0279ab47823c7b8713c6439, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsManager
-  _battleManager: {fileID: 0}
+  _battleManager: {fileID: 709124510}
   _currentSoulsText: {fileID: 821616922}
   soulsLeft: 0
 --- !u!114 &777511559
