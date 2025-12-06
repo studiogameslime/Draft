@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
   m_Name: FireMage
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
-  id: 8
+  id: 9
   displayName: Fire Mage
   icon: {fileID: 7674125699001298711, guid: 97352762abec38447a52057c2a5126a6, type: 3}
   prefab: {fileID: 153394670701094284, guid: 220b9052bb302b94094855251cf1e45c, type: 3}
@@ -20,6 +20,7 @@ MonoBehaviour:
   monsterType: 1
   spawnCount: 1
   soulCost: 6
+  soulDropChance: 0.25
   maxHealth: 25
   damage: 30
   moveSpeed: 1

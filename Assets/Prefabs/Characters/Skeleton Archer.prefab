@@ -15,10 +15,10 @@ GameObject:
   - component: {fileID: 5159539399863573130}
   - component: {fileID: 8384952033324481740}
   - component: {fileID: 7916648649934679041}
-  - component: {fileID: 10799804561611815}
   - component: {fileID: 4881171535958103391}
+  - component: {fileID: 4658558375152146702}
   m_Layer: 3
-  m_Name: Archer01
+  m_Name: Skeleton Archer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -88,7 +88,7 @@ SpriteRenderer:
   m_SortingLayerID: -1561745135
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: -5455630811309129204, guid: e67152362f4e84d4fad9e9d081e15b46, type: 3}
+  m_Sprite: {fileID: 8055814443983777150, guid: fbf7431fa08a9254fbea8f2e6775c793, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -199,7 +199,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 1.2
+  m_Radius: 1
 --- !u!114 &7916648649934679041
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -214,28 +214,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RangerAttack
   projectilePrefab: {fileID: 4721636006212660218, guid: 07133a188565f83469dab101d20cb31f, type: 3}
   shootPoint: {fileID: 5426564493991449101}
---- !u!95 &10799804561611815
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 501027721989515594}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: b17900fa87104034b93e015b75430dd2, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!195 &4881171535958103391
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -258,6 +236,28 @@ NavMeshAgent:
   m_BaseOffset: 1.2349999
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!95 &4658558375152146702
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 501027721989515594}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0e661ce0c1155054d906da74573f1385, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &4222051301102025337
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,10 +356,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8321544339706272805}
     m_Modifications:
-    - target: {fileID: 324163497122328868, guid: c7ae0826dedb4064b8ec22e4b63c0342, type: 3}
-      propertyPath: m_PresetInfoIsWorld
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3985425927352957813, guid: c7ae0826dedb4064b8ec22e4b63c0342, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

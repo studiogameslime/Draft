@@ -10,18 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
-  m_Name: OldSkeleton
+  m_Name: SkeletonArcher
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
-  id: 1
-  displayName: Skeleton
-  icon: {fileID: -9097720764886040989, guid: 4b303a7f02688944dac82c329644fa48, type: 3}
-  prefab: {fileID: 1725816533779344097, guid: b34e38419712d5449959c0abd134846b, type: 3}
-  iconScale: 0.2
-  monsterType: 0
-  spawnCount: 4
-  soulCost: 5
+  id: 11
+  displayName: Skeleton Archer
+  icon: {fileID: 8055814443983777150, guid: fbf7431fa08a9254fbea8f2e6775c793, type: 3}
+  prefab: {fileID: 501027721989515594, guid: bb1cae93fa8bb3046b7b5b04d85ec182, type: 3}
+  iconScale: 0.4
+  monsterType: 1
+  spawnCount: 1
+  soulCost: 4
+  soulDropChance: 0.25
   maxHealth: 40
   damage: 15
   moveSpeed: 2
-  attackRange: 0.8
-  attackCooldown: 1
+  attackRange: 5
+  attackCooldown: 0.8

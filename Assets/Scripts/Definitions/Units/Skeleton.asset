@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
   m_Name: Skeleton
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
-  id: 9
+  id: 10
   displayName: Skeleton
   icon: {fileID: -1746593996306021751, guid: 49c9bdc6a94a48542bc46ff12f6b0237, type: 3}
   prefab: {fileID: 501027721989515594, guid: c5d687e618389294e850de7fbb128154, type: 3}
@@ -21,7 +21,7 @@ MonoBehaviour:
   spawnCount: 1
   soulCost: 1
   soulDropChance: 0.25
-  maxHealth: 40
+  maxHealth: 60
   damage: 10
   moveSpeed: 2.5
   attackRange: 1
