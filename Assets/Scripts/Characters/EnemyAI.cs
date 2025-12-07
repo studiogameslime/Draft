@@ -10,6 +10,7 @@ public class EnemyAI : MonoBehaviour
     private float lastAttackTime;
     private IAttackStrategy attackStrategy;
     private NavMeshAgent agent;
+    private NavMeshObstacle obstacle;
 
     [Header("NavMesh")]
     public float stoppingBuffer = 0.1f;      // small buffer so agent stops slightly before attack range
@@ -21,9 +22,15 @@ public class EnemyAI : MonoBehaviour
     [Header("Crowd / Around Target")]
     public float sideOffsetRadius = 0.8f;    // how much units spread around the target
 
+    [Header("Agent / Obstacle Switch")]
+    public bool useNavMeshObstacle = true;
+    public float minMoveSpeedToBeMoving = 0.05f; // if agent speed < this, we treat as idle
+    public float idleTimeToBecomeObstacle = 0.15f;
+
     // cached offset so we do not change destination every frame
     private Vector3 cachedOffset;
     private CharacterStats lastTarget;
+    private float idleTimer = 0f;
 
     void Awake()
     {
@@ -31,6 +38,7 @@ public class EnemyAI : MonoBehaviour
         myStats = GetComponent<CharacterStats>();
         attackStrategy = GetComponent<IAttackStrategy>();
         agent = GetComponent<NavMeshAgent>();
+        obstacle = GetComponent<NavMeshObstacle>();
 
         if (agent != null && myStats != null)
         {
@@ -43,6 +51,10 @@ public class EnemyAI : MonoBehaviour
             float stop = Mathf.Max(0f, myStats.attackRange - stoppingBuffer);
             agent.stoppingDistance = stop;
         }
+
+        // ensure default state: agent on, obstacle off
+        if (obstacle != null)
+            obstacle.enabled = false;
     }
 
     void OnEnable()
@@ -53,6 +65,11 @@ public class EnemyAI : MonoBehaviour
             agent.isStopped = false;
             agent.velocity = Vector3.zero;
         }
+
+        if (obstacle != null)
+            obstacle.enabled = false;
+
+        idleTimer = 0f;
     }
 
     void OnDisable()
@@ -61,7 +78,11 @@ public class EnemyAI : MonoBehaviour
         {
             agent.isStopped = true;
             agent.velocity = Vector3.zero;
+            agent.enabled = false;
         }
+
+        if (obstacle != null)
+            obstacle.enabled = false;
 
         if (animator != null)
             animator.SetBool("isMoving", false);
@@ -72,6 +93,7 @@ public class EnemyAI : MonoBehaviour
         if (myStats == null || myStats.currentHealth <= 0)
         {
             StopMoving();
+            UpdateAgentObstacleSwitch();
             return;
         }
 
@@ -80,6 +102,7 @@ public class EnemyAI : MonoBehaviour
         if (targetStats == null)
         {
             StopMoving();
+            UpdateAgentObstacleSwitch();
             return;
         }
 
@@ -97,7 +120,7 @@ public class EnemyAI : MonoBehaviour
         bool hasLos = HasLineOfSight(targetStats);
 
         // movement rule:
-        // if not in range OR no LOS - keep moving
+        // if not in range OR no LOS -> keep moving
         // only stop when in range AND has LOS
         if (!inRange || !hasLos)
         {
@@ -108,6 +131,8 @@ public class EnemyAI : MonoBehaviour
             StopMoving();
             AttackTarget();
         }
+
+        UpdateAgentObstacleSwitch();
     }
 
     // -------------------------------------------------
@@ -121,9 +146,27 @@ public class EnemyAI : MonoBehaviour
         // final desired point around the target
         Vector3 targetPos = targetStats.transform.position + cachedOffset;
 
-        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+        if (agent == null)
         {
             // fallback: simple movement without NavMesh
+            Vector3 dir = (targetPos - transform.position).normalized;
+            transform.position += dir * myStats.moveSpeed * Time.deltaTime;
+            if (animator != null) animator.SetBool("isMoving", true);
+            return;
+        }
+
+        // if we are currently acting as an obstacle, switch back to agent
+        if (useNavMeshObstacle && obstacle != null && obstacle.enabled)
+        {
+            obstacle.enabled = false;
+            agent.enabled = true;
+            agent.Warp(transform.position);
+            idleTimer = 0f;
+        }
+
+        if (!agent.enabled || !agent.isOnNavMesh)
+        {
+            // fallback if something failed
             Vector3 dir = (targetPos - transform.position).normalized;
             transform.position += dir * myStats.moveSpeed * Time.deltaTime;
             if (animator != null) animator.SetBool("isMoving", true);
@@ -148,6 +191,40 @@ public class EnemyAI : MonoBehaviour
 
         if (animator != null)
             animator.SetBool("isMoving", false);
+    }
+
+    // -------------------------------------------------
+    // AGENT / OBSTACLE SWITCH
+    // -------------------------------------------------
+    void UpdateAgentObstacleSwitch()
+    {
+        if (!useNavMeshObstacle || agent == null || obstacle == null)
+            return;
+
+        // if agent is disabled, we are already in obstacle mode – nothing to do
+        if (!agent.enabled)
+            return;
+
+        float speed = agent.velocity.magnitude;
+
+        if (speed > minMoveSpeedToBeMoving)
+        {
+            // moving - stay as agent
+            idleTimer = 0f;
+            if (obstacle.enabled)
+                obstacle.enabled = false;
+            return;
+        }
+
+        // not moving: count idle time
+        idleTimer += Time.deltaTime;
+
+        if (idleTimer >= idleTimeToBecomeObstacle)
+        {
+            // switch to obstacle mode
+            agent.enabled = false;
+            obstacle.enabled = true;
+        }
     }
 
     // -------------------------------------------------
@@ -187,7 +264,6 @@ public class EnemyAI : MonoBehaviour
     // choose a stable side offset around the target
     Vector3 GetSideOffset()
     {
-        // random direction on circle so units spread naturally
         Vector2 circle = Random.insideUnitCircle.normalized * sideOffsetRadius;
         return new Vector3(circle.x, circle.y, 0f);
     }
