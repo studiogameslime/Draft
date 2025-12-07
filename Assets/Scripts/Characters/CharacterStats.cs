@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -126,27 +125,19 @@ public class CharacterStats : MonoBehaviour
 
         Debug.Log($"{gameObject.name} died!");
 
+        // Play death animation
         if (animator != null)
             animator.SetTrigger("dying");
 
+        // Disable combat scripts
         DisableAllCombatScripts();
 
+        // Stop movement
         var rb = GetComponent<Rigidbody2D>();
         if (rb != null)
             rb.linearVelocity = Vector2.zero;
-
         TrySpawnSoulOnDeath();
-
-        // Destroy the unit after 1 second
-        StartCoroutine(DestroyAfterDelay(1f));
     }
-
-    private IEnumerator DestroyAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        Destroy(gameObject);
-    }
-
 
     private void TrySpawnSoulOnDeath()
     {

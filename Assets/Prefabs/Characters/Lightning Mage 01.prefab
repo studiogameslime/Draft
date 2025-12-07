@@ -87,7 +87,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -1561745135
   m_SortingLayer: 2
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -5455630811309129204, guid: ee9c8600264c12f4c92cd4c1185c54a5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -140,8 +140,11 @@ MonoBehaviour:
   obstaclesLayer:
     serializedVersion: 2
     m_Bits: 256
-  losRepathOffset: 0.5
-  losRepathCooldown: 0.3
+  losCheckOffset: 0.3
+  sideOffsetRadius: 0.8
+  useNavMeshObstacle: 1
+  minMoveSpeedToBeMoving: 0.05
+  idleTimeToBecomeObstacle: 0.15
 --- !u!50 &5159539399863573130
 Rigidbody2D:
   serializedVersion: 5
