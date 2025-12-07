@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class CharacterStats : MonoBehaviour
@@ -124,6 +125,8 @@ public class CharacterStats : MonoBehaviour
         isDead = true;
 
         Debug.Log($"{gameObject.name} died!");
+        GetComponent<CircleCollider2D>().enabled = false;
+        GetComponent<NavMeshAgent>().enabled = false;
 
         // Play death animation
         if (animator != null)
@@ -137,6 +140,7 @@ public class CharacterStats : MonoBehaviour
         if (rb != null)
             rb.linearVelocity = Vector2.zero;
         TrySpawnSoulOnDeath();
+
     }
 
     private void TrySpawnSoulOnDeath()

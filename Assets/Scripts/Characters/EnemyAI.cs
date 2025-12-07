@@ -12,11 +12,18 @@ public class EnemyAI : MonoBehaviour
     private NavMeshAgent agent;
 
     [Header("NavMesh")]
-    public float stoppingBuffer = 0.1f;
+    public float stoppingBuffer = 0.1f;      // small buffer so agent stops slightly before attack range
 
     [Header("Line Of Sight")]
-    public LayerMask obstaclesLayer;
-    public float losCheckOffset = 0.2f;
+    public LayerMask obstaclesLayer;         // layer of static obstacles (igloos etc.)
+    public float losCheckOffset = 0.3f;      // raycast a bit above ground
+
+    [Header("Crowd / Around Target")]
+    public float sideOffsetRadius = 0.8f;    // how much units spread around the target
+
+    // cached offset so we do not change destination every frame
+    private Vector3 cachedOffset;
+    private CharacterStats lastTarget;
 
     void Awake()
     {
@@ -25,14 +32,16 @@ public class EnemyAI : MonoBehaviour
         attackStrategy = GetComponent<IAttackStrategy>();
         agent = GetComponent<NavMeshAgent>();
 
-        if (agent != null)
+        if (agent != null && myStats != null)
         {
             agent.updateRotation = false;
             agent.updateUpAxis = false;
             agent.speed = myStats.moveSpeed;
             agent.acceleration = 100f;
             agent.angularSpeed = 720f;
-            agent.stoppingDistance = Mathf.Max(0f, myStats.attackRange - stoppingBuffer);
+
+            float stop = Mathf.Max(0f, myStats.attackRange - stoppingBuffer);
+            agent.stoppingDistance = stop;
         }
     }
 
@@ -74,17 +83,25 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
+        // if target changed – choose a new side offset once
+        if (targetStats != lastTarget)
+        {
+            lastTarget = targetStats;
+            cachedOffset = GetSideOffset();
+        }
+
         UpdateFacing();
 
         float distance = Vector3.Distance(transform.position, targetStats.transform.position);
         bool inRange = distance <= myStats.attackRange;
         bool hasLos = HasLineOfSight(targetStats);
 
-     
-
+        // movement rule:
+        // if not in range OR no LOS - keep moving
+        // only stop when in range AND has LOS
         if (!inRange || !hasLos)
         {
-            MoveTowardTarget();
+            MoveTowardsTargetWithOffset();
         }
         else
         {
@@ -93,46 +110,54 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // =========================
+    // -------------------------------------------------
     // MOVEMENT
-    // =========================
-
-    void MoveTowardTarget()
+    // -------------------------------------------------
+    void MoveTowardsTargetWithOffset()
     {
-        if (!agent || !agent.enabled || !agent.isOnNavMesh)
+        if (targetStats == null)
+            return;
+
+        // final desired point around the target
+        Vector3 targetPos = targetStats.transform.position + cachedOffset;
+
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
         {
-            // Fallback movement (no NavMesh)
-            Vector3 dir = (targetStats.transform.position - transform.position).normalized;
+            // fallback: simple movement without NavMesh
+            Vector3 dir = (targetPos - transform.position).normalized;
             transform.position += dir * myStats.moveSpeed * Time.deltaTime;
-            animator.SetBool("isMoving", true);
+            if (animator != null) animator.SetBool("isMoving", true);
             return;
         }
 
         agent.isStopped = false;
         agent.speed = myStats.moveSpeed;
-        agent.SetDestination(targetStats.transform.position);
+        agent.SetDestination(targetPos);
 
-        bool moving = agent.velocity.sqrMagnitude > 0.01f;
-        animator.SetBool("isMoving", moving);
+        bool moving = agent.velocity.sqrMagnitude > 0.0001f;
+        if (animator != null) animator.SetBool("isMoving", moving);
     }
 
     void StopMoving()
     {
-        if (agent && agent.enabled)
+        if (agent != null && agent.enabled)
         {
             agent.isStopped = true;
             agent.velocity = Vector3.zero;
         }
 
-        animator?.SetBool("isMoving", false);
+        if (animator != null)
+            animator.SetBool("isMoving", false);
     }
 
-    // =========================
+    // -------------------------------------------------
     // ATTACK
-    // =========================
-
+    // -------------------------------------------------
     void AttackTarget()
     {
+        if (targetStats == null)
+            return;
+
         if (Time.time - lastAttackTime > myStats.attackCooldown)
         {
             lastAttackTime = Time.time;
@@ -140,10 +165,9 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // =========================
-    // LOS CHECK
-    // =========================
-
+    // -------------------------------------------------
+    // LINE OF SIGHT
+    // -------------------------------------------------
     bool HasLineOfSight(CharacterStats target)
     {
         if (target == null)
@@ -156,22 +180,32 @@ public class EnemyAI : MonoBehaviour
 
         RaycastHit2D hit = Physics2D.Raycast(start, dir.normalized, dist, obstaclesLayer);
 
+        // if ray hit nothing on obstacles layer - clear LOS
         return hit.collider == null;
     }
 
-    // =========================
-    // TARGETING
-    // =========================
+    // choose a stable side offset around the target
+    Vector3 GetSideOffset()
+    {
+        // random direction on circle so units spread naturally
+        Vector2 circle = Random.insideUnitCircle.normalized * sideOffsetRadius;
+        return new Vector3(circle.x, circle.y, 0f);
+    }
 
+    // -------------------------------------------------
+    // TARGETING + FACING
+    // -------------------------------------------------
     void FindClosestEnemy()
     {
-        var enemies = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None)
+        var all = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
+        var enemies = all
             .Where(c => c.team != myStats.team && c.currentHealth > 0)
             .ToList();
 
         if (enemies.Count == 0)
         {
             targetStats = null;
+            lastTarget = null;
             return;
         }
 
@@ -180,16 +214,13 @@ public class EnemyAI : MonoBehaviour
             .First();
     }
 
-    // =========================
-    // FACING
-    // =========================
-
-    private void UpdateFacing()
+    void UpdateFacing()
     {
-        if (targetStats == null) return;
+        if (targetStats == null)
+            return;
 
         var sr = GetComponent<SpriteRenderer>();
-        if (!sr) return;
+        if (sr == null) return;
 
         sr.flipX = targetStats.transform.position.x < transform.position.x;
     }
