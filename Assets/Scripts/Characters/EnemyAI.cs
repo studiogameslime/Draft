@@ -14,6 +14,10 @@ public class EnemyAI : MonoBehaviour
     [Header("NavMesh")]
     public float stoppingBuffer = 0.1f;
 
+    [Header("Line Of Sight")]
+    public LayerMask obstaclesLayer;
+    public float losCheckOffset = 0.2f;
+
     void Awake()
     {
         animator = GetComponent<Animator>();
@@ -28,7 +32,6 @@ public class EnemyAI : MonoBehaviour
             agent.speed = myStats.moveSpeed;
             agent.acceleration = 100f;
             agent.angularSpeed = 720f;
-
             agent.stoppingDistance = Mathf.Max(0f, myStats.attackRange - stoppingBuffer);
         }
     }
@@ -64,6 +67,7 @@ public class EnemyAI : MonoBehaviour
         }
 
         FindClosestEnemy();
+
         if (targetStats == null)
         {
             StopMoving();
@@ -73,8 +77,12 @@ public class EnemyAI : MonoBehaviour
         UpdateFacing();
 
         float distance = Vector3.Distance(transform.position, targetStats.transform.position);
+        bool inRange = distance <= myStats.attackRange;
+        bool hasLos = HasLineOfSight(targetStats);
 
-        if (distance > myStats.attackRange)
+     
+
+        if (!inRange || !hasLos)
         {
             MoveTowardTarget();
         }
@@ -85,21 +93,17 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void UpdateFacing()
-    {
-        if (targetStats == null) return;
-        var sr = GetComponent<SpriteRenderer>();
-        if (!sr) return;
-        sr.flipX = targetStats.transform.position.x < transform.position.x;
-    }
+    // =========================
+    // MOVEMENT
+    // =========================
 
     void MoveTowardTarget()
     {
         if (!agent || !agent.enabled || !agent.isOnNavMesh)
         {
-            // FALLBACK MOVEMENT
-            Vector3 direction = (targetStats.transform.position - transform.position).normalized;
-            transform.position += direction * myStats.moveSpeed * Time.deltaTime;
+            // Fallback movement (no NavMesh)
+            Vector3 dir = (targetStats.transform.position - transform.position).normalized;
+            transform.position += dir * myStats.moveSpeed * Time.deltaTime;
             animator.SetBool("isMoving", true);
             return;
         }
@@ -123,6 +127,10 @@ public class EnemyAI : MonoBehaviour
         animator?.SetBool("isMoving", false);
     }
 
+    // =========================
+    // ATTACK
+    // =========================
+
     void AttackTarget()
     {
         if (Time.time - lastAttackTime > myStats.attackCooldown)
@@ -131,6 +139,29 @@ public class EnemyAI : MonoBehaviour
             attackStrategy?.Attack(targetStats);
         }
     }
+
+    // =========================
+    // LOS CHECK
+    // =========================
+
+    bool HasLineOfSight(CharacterStats target)
+    {
+        if (target == null)
+            return false;
+
+        Vector3 start = transform.position + Vector3.up * losCheckOffset;
+        Vector3 end = target.transform.position + Vector3.up * losCheckOffset;
+        Vector3 dir = end - start;
+        float dist = dir.magnitude;
+
+        RaycastHit2D hit = Physics2D.Raycast(start, dir.normalized, dist, obstaclesLayer);
+
+        return hit.collider == null;
+    }
+
+    // =========================
+    // TARGETING
+    // =========================
 
     void FindClosestEnemy()
     {
@@ -147,5 +178,19 @@ public class EnemyAI : MonoBehaviour
         targetStats = enemies
             .OrderBy(e => Vector3.Distance(transform.position, e.transform.position))
             .First();
+    }
+
+    // =========================
+    // FACING
+    // =========================
+
+    private void UpdateFacing()
+    {
+        if (targetStats == null) return;
+
+        var sr = GetComponent<SpriteRenderer>();
+        if (!sr) return;
+
+        sr.flipX = targetStats.transform.position.x < transform.position.x;
     }
 }

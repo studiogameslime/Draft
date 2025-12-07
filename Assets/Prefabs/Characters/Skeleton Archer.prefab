@@ -137,6 +137,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   stoppingBuffer: 0.1
+  obstaclesLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  losCheckOffset: 0.2
 --- !u!50 &5159539399863573130
 Rigidbody2D:
   serializedVersion: 5
