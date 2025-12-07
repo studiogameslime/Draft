@@ -10,16 +10,18 @@ public class BottomBarFunctions : MonoBehaviour
     public Button button3; // this one will change scenes
     public Button button4;
     public Button button5;
+    public Button buttonPlay;
+
 
     [Header("Scene Navigation")]
-    public string sceneNameForButton3; // ????? ?????? ?????? ?? ????? 3
+    public string sceneNameForButton3; 
 
     void Start()
     {
         // ????? listener ?????? ???? 3
-        button3.onClick.AddListener(() =>
+        buttonPlay.onClick.AddListener(() =>
         {
-            SceneManager.LoadScene(sceneNameForButton3); // ???? ???? ????
+            SceneManager.LoadScene(sceneNameForButton3); 
         });
     }
 }
