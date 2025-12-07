@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,13 +10,13 @@ public class CharacterStats : MonoBehaviour
 
     // --- Runtime Stats (after scaling by level) ---
     [Header("Runtime Stats")]
-    [HideInInspector] public int level = 1;
-    [HideInInspector] public int maxHealth;
-    [HideInInspector] public int currentHealth;
-    [HideInInspector] public int damage;
-    [HideInInspector] public float moveSpeed;
-    [HideInInspector] public float attackRange;
-    [HideInInspector] public float attackCooldown;
+    public int level = 1;
+    public int maxHealth;
+    public int currentHealth;
+    public int damage;
+    public float moveSpeed;
+    public float attackRange;
+    public float attackCooldown;
 
     // --- Other info ---
     [HideInInspector] public Team team;
@@ -111,7 +112,6 @@ public class CharacterStats : MonoBehaviour
 
     private void UpdateHPBar()
     {
-        Debug.Log($"{(float)currentHealth / maxHealth}");
         if (_hpBar != null && maxHealth > 0)
             _hpBar.fillAmount = (float)currentHealth / maxHealth;
     }
@@ -126,19 +126,42 @@ public class CharacterStats : MonoBehaviour
 
         Debug.Log($"{gameObject.name} died!");
 
-        // Play death animation
         if (animator != null)
             animator.SetTrigger("dying");
 
-        // Disable combat scripts
         DisableAllCombatScripts();
 
-        // Stop movement
         var rb = GetComponent<Rigidbody2D>();
         if (rb != null)
             rb.linearVelocity = Vector2.zero;
 
-        // Destroy(gameObject, 2f);
+        TrySpawnSoulOnDeath();
+
+        // Destroy the unit after 1 second
+        StartCoroutine(DestroyAfterDelay(1f));
+    }
+
+    private IEnumerator DestroyAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Destroy(gameObject);
+    }
+
+
+    private void TrySpawnSoulOnDeath()
+    {
+        if (team != Team.EnemyTeam) return;
+        if (definition == null) return;
+        if (SoulOrbSpawner.instance == null) return;
+
+        float chance = Mathf.Clamp01(definition.soulDropChance);
+        if (chance <= 0f) return;
+
+        if (Random.value <= chance)
+        {
+            Vector3 pos = transform.position + Vector3.up * 0.3f;
+            SoulOrbSpawner.instance.SpawnSoul(pos, 1);
+        }
     }
 
     private void DisableAllCombatScripts()

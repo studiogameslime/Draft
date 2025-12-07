@@ -1,17 +1,21 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class LightningMageAttack : MonoBehaviour, IAttackStrategy
 {
     [Header("Chain lightning settings")]
-    public float chainRange = 3f;          // max distance to jump from one enemy to the next
-    public int maxBounces = 1;            // how many extra enemies after the first
+    public float chainRange = 3f;                  // max distance to jump from one enemy to the next
+    public int maxBounces = 1;                     // how many extra enemies after the first
     public float secondaryDamageMultiplier = 0.5f; // 0.5 = 50% damage on jumps
 
-
     [Header("VFX")]
-    public LightningBoltVfx boltPrefab;   // prefab with LineRenderer effect
-    public Transform shootPoint;          // where the lightning originates from (hand / staff)
+    public LightningBoltVfx boltPrefab;            // prefab with LineRenderer effect
+    public Transform shootPoint;                   // where the lightning originates from (hand / staff)
+
+    [Header("Hit flash")]
+    public Color hitFlashColor = Color.white;      // color when hit
+    public float hitFlashDuration = 0.08f;         // how long the flash lasts
 
     private float lastAttackTime;
     private CharacterStats currentTarget;
@@ -37,7 +41,6 @@ public class LightningMageAttack : MonoBehaviour, IAttackStrategy
             lastAttackTime = Time.time;
             currentTarget = target;
 
-            // Trigger attack animation
             if (animator != null)
                 animator.SetTrigger("attack");
         }
@@ -56,22 +59,22 @@ public class LightningMageAttack : MonoBehaviour, IAttackStrategy
         if (chain.Count == 0)
             return;
 
-        // Apply damage
+        // Apply damage + flash on each target in the chain
         for (int i = 0; i < chain.Count; i++)
         {
             CharacterStats t = chain[i];
             if (t == null || t.currentHealth <= 0)
                 continue;
 
-            // First target gets full damage, others get reduced damage
             int dmg = (i == 0)
                 ? stats.damage
                 : Mathf.RoundToInt(stats.damage * secondaryDamageMultiplier);
 
             t.TakeDamage(dmg);
+            FlashTargetSprite(t);
         }
 
-        // Spawn VFX
+        // Spawn lightning VFX between all targets in the chain
         SpawnLightningVfx(chain);
     }
 
@@ -82,7 +85,6 @@ public class LightningMageAttack : MonoBehaviour, IAttackStrategy
     private List<CharacterStats> BuildTargetChain(CharacterStats firstTarget)
     {
         List<CharacterStats> result = new List<CharacterStats>();
-
         CharacterStats current = firstTarget;
         result.Add(current);
 
@@ -134,7 +136,6 @@ public class LightningMageAttack : MonoBehaviour, IAttackStrategy
         if (boltPrefab == null || chain.Count == 0)
             return;
 
-        // First segment starts from shootPoint (if defined) or from mage position
         Vector3 start = shootPoint != null ? shootPoint.position : transform.position;
 
         for (int i = 0; i < chain.Count; i++)
@@ -143,12 +144,43 @@ public class LightningMageAttack : MonoBehaviour, IAttackStrategy
             if (t == null) continue;
 
             Vector3 end = t.transform.position;
-
             LightningBoltVfx bolt = Instantiate(boltPrefab);
             bolt.Play(start, end);
 
-            // Next segment starts at this target
             start = end;
+        }
+    }
+
+    /// <summary>
+    /// Makes the target sprite flash with hitFlashColor for hitFlashDuration.
+    /// No extra component is required on the target.
+    /// </summary>
+    private void FlashTargetSprite(CharacterStats target)
+    {
+        if (target == null)
+            return;
+
+        SpriteRenderer sr = target.GetComponent<SpriteRenderer>();
+        if (sr == null)
+            return;
+
+        StartCoroutine(FlashCoroutine(sr));
+    }
+
+    private IEnumerator FlashCoroutine(SpriteRenderer sr)
+    {
+        if (sr == null)
+            yield break;
+
+        Color originalColor = sr.color;
+
+        sr.color = hitFlashColor;
+        yield return new WaitForSeconds(hitFlashDuration);
+
+        // Only revert if the renderer still exists
+        if (sr != null)
+        {
+            sr.color = originalColor;
         }
     }
 }

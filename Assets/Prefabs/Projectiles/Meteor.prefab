@@ -46,9 +46,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73c1290bea2b1c5429bc0495afc7274b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeteorProjectile
-  fallSpeed: 10
+  fallSpeed: 20
   impactRadius: 0.2
-  impactVfxPrefab: {fileID: 0}
+  splashRadius: 1.5
+  splashDamageFraction: 0.5
+  splashLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  impactVfxPrefab: {fileID: 6839809033501333621, guid: c24fedf436c65574aadb3e7fd9100e59, type: 3}
 --- !u!212 &7890497649732847412
 SpriteRenderer:
   m_ObjectHideFlags: 0

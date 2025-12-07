@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 6854601202460801054}
   - component: {fileID: 3504355993341416739}
   - component: {fileID: 2011817383968589255}
+  - component: {fileID: 7319337118839248167}
   m_Layer: 3
   m_Name: Fire Mage 01
   m_TagString: Untagged
@@ -135,6 +136,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a608d263df2d464e916d8bf6b08a732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  stoppingBuffer: 0.1
+  obstaclesLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  losRepathOffset: 0.5
+  losRepathCooldown: 0.3
 --- !u!50 &2683054115076242972
 Rigidbody2D:
   serializedVersion: 5
@@ -192,7 +199,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -235,7 +242,28 @@ MonoBehaviour:
   meteorPrefab: {fileID: 6302113137028731400, guid: a05be2d06ba7ffe42abf7a9a168fddef, type: 3}
   spawnHeight: 5
   horizontalRandomOffset: 0.5
-  damage: 15
+--- !u!195 &7319337118839248167
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 153394670701094284}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 1.1849998
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2.7799997
+  m_BaseOffset: 1.3899999
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &487820345301296132
 GameObject:
   m_ObjectHideFlags: 0

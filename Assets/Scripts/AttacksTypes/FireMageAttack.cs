@@ -3,9 +3,9 @@ using UnityEngine;
 public class FireMageAttack : MonoBehaviour, IAttackStrategy
 {
     [Header("Meteor settings")]
-    public GameObject meteorPrefab;          // meteor projectile prefab
-    public float spawnHeight = 5f;           // how high above the target the meteor starts
-    public float horizontalRandomOffset = 0.5f; // small random x, so meteors are not 100% identical
+    public GameObject meteorPrefab;               // meteor projectile prefab
+    public float spawnHeight = 5f;                // how high above the target the meteor starts
+    public float horizontalRandomOffset = 0.5f;   // small random x, so meteors are not 100% identical
 
     private float lastAttackTime;
     private CharacterStats currentTarget;
@@ -30,7 +30,6 @@ public class FireMageAttack : MonoBehaviour, IAttackStrategy
             lastAttackTime = Time.time;
             currentTarget = target;
 
-            // Trigger attack animation
             if (animator != null)
                 animator.SetTrigger("attack");
         }
@@ -40,7 +39,7 @@ public class FireMageAttack : MonoBehaviour, IAttackStrategy
     // This is the moment when the meteor should spawn
     public void SpawnMeteor()
     {
-        if (currentTarget == null || meteorPrefab == null)
+        if (currentTarget == null || meteorPrefab == null || stats == null)
             return;
 
         // Target position on the ground
@@ -48,9 +47,8 @@ public class FireMageAttack : MonoBehaviour, IAttackStrategy
 
         // Spawn above the target
         Vector3 spawnPos = targetPos + Vector3.up * spawnHeight;
-
-        // Optional: small horizontal randomness
         spawnPos.x += Random.Range(-horizontalRandomOffset, horizontalRandomOffset);
+
         // Instantiate meteor
         GameObject meteor = Instantiate(meteorPrefab, spawnPos, Quaternion.identity);
 
@@ -58,7 +56,8 @@ public class FireMageAttack : MonoBehaviour, IAttackStrategy
         MeteorProjectile proj = meteor.GetComponent<MeteorProjectile>();
         if (proj != null)
         {
-            proj.Init(currentTarget, stats.damage);
+            // Pass attacker team so splash will only damage enemies
+            proj.Init(currentTarget, stats.damage, stats.team);
         }
     }
 }

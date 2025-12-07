@@ -2,136 +2,111 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
-public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class UnitSpawnButton : MonoBehaviour,
+    IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [Header("UI refs")]
-    public Image iconImage;             // Unit icon image
-    public TMP_Text unitName;           // Unit display name
-    public TMP_Text UnitToSpawn;        // "+X" amount to spawn
-    public TMP_Text UnitSoulCost;       // Cost text (souls / elixir)
-    public CanvasGroup canvasGroup;     // Used to hide/show card during drag
+    public Image iconImage;
+    public TMP_Text unitName;
+    public TMP_Text UnitToSpawn;
+    public TMP_Text UnitSoulCost;
+    public CanvasGroup canvasGroup;
 
     [Header("Drag settings")]
-    [Tooltip("How far (in screen pixels) the card must move before switching to world-unit dragging")]
     public float switchToWorldDistance = 40f;
 
+    [Header("Grid placement")]
+    public float maxCellSnapDistance = 0.6f;
+
     [Header("Placement rules")]
-    [Tooltip("Layer mask for all units on the board (used to prevent overlapping placement)")]
     public LayerMask unitsLayerMask;
-    [Tooltip("Minimum distance from other units when placing a new one")]
     public float minDistanceFromOtherUnits = 0.5f;
 
-    [HideInInspector]
-    public BattleManager battleManager;  // Assigned from UnitSelectionUI (or manually)
+    [HideInInspector] public BattleManager battleManager;
 
     // Data
     private UnitDefinition data;
     private UnitSelectionUI selectionUI;
 
-    // Layout / transform state
+    // Layout state
     private RectTransform _rt;
     private Transform _originalParent;
     private Vector2 _originalAnchoredPos;
     private int _originalSiblingIndex;
-    private RectTransform _placeholderRT;   // placeholder inside the GridLayoutGroup
+    private RectTransform _placeholderRT;
 
     // Drag state
     private Vector2 _dragStartScreenPos;
-    private bool _usingCardGraphic = false; // True while dragging the card itself (UI)
-    private bool _spawnedWorldUnit = false; // True once we switched to world-unit dragging
+    private bool _usingCardGraphic = false;
+    private bool _spawnedWorldUnit = false;
 
-    // Dragged world unit
+    // Dragged unit object
     private GameObject _dragUnitInstance;
     private Rigidbody2D _dragUnitRb;
     private Collider2D[] _dragUnitColliders;
+    private UnityEngine.AI.NavMeshAgent _dragUnitAgent;
 
     private Camera _cam;
 
-    // ======================================================================
-    // LIFECYCLE
-    // ======================================================================
+    // ================================================================
     private void Awake()
     {
         _rt = GetComponent<RectTransform>();
         _originalParent = _rt.parent;
         _originalAnchoredPos = _rt.anchoredPosition;
         _originalSiblingIndex = _rt.GetSiblingIndex();
-
         if (canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
 
         _cam = Camera.main;
     }
 
-    // Initialize card visuals & references
     public void Init(UnitDefinition def, UnitSelectionUI ui)
     {
         data = def;
         selectionUI = ui;
         battleManager = ui != null ? ui.battleManager : null;
 
-        if (unitName != null)
-            unitName.text = def.displayName;
+        unitName.text = def.displayName;
+        UnitToSpawn.text = "+" + def.spawnCount;
+        UnitSoulCost.text = def.soulCost.ToString();
 
-        if (UnitToSpawn != null)
-            UnitToSpawn.text = "+" + def.spawnCount;
-
-        if (UnitSoulCost != null)
-            UnitSoulCost.text = def.soulCost.ToString();
-
-        if (iconImage != null)
-        {
-            iconImage.sprite = def.icon;
-            iconImage.transform.localScale = Vector3.one * def.iconScale;
-            iconImage.SetNativeSize();
-        }
+        iconImage.sprite = def.icon;
+        iconImage.transform.localScale = Vector3.one * def.iconScale;
+        iconImage.SetNativeSize();
     }
 
-    public void OnClick()
-    {
-        // Not used in the drag-based flow.
-    }
-
-    // ======================================================================
-    // DRAG HANDLERS
-    // ======================================================================
-
+    // ================================================================
+    // DRAG BEGIN
+    // ================================================================
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (data == null || data.prefab == null || battleManager == null)
             return;
-
         if (battleManager.IsBattleRunning)
             return;
 
         _dragStartScreenPos = eventData.position;
-        _originalAnchoredPos = _rt.anchoredPosition;
         _originalSiblingIndex = _rt.GetSiblingIndex();
-
         _usingCardGraphic = true;
         _spawnedWorldUnit = false;
-        _dragUnitInstance = null;
-        _dragUnitRb = null;
-        _dragUnitColliders = null;
 
         CreatePlaceholder();
 
-        // Detach from layout parent to freely move the card under the pointer
-        _rt.SetParent(transform.root, true); // keep world position
+        _rt.SetParent(transform.root, true);
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 1f;
-
-        // Turn on highlight for all drop zones
-        DropZone.SetAllHighlights(true);
     }
 
+    // ================================================================
+    // DRAG UPDATE
+    // ================================================================
     public void OnDrag(PointerEventData eventData)
     {
-        if (data == null || battleManager == null)
-            return;
+        if (data == null) return;
 
-        // Phase 1: dragging the UI card itself
         if (_usingCardGraphic)
         {
             _rt.position = eventData.position;
@@ -139,11 +114,9 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             float dist = Vector2.Distance(eventData.position, _dragStartScreenPos);
             if (dist >= switchToWorldDistance)
             {
-                // Switch to dragging a world-space unit prefab instead of the card
                 SwitchToWorldDrag(eventData);
             }
         }
-        // Phase 2: already dragging a world unit instance
         else if (_spawnedWorldUnit && _dragUnitInstance != null)
         {
             Vector3 worldPos = ScreenToWorld(eventData.position);
@@ -151,192 +124,208 @@ public class UnitSpawnButton : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
     }
 
+    // ================================================================
+    // DRAG END
+    // ================================================================
     public void OnEndDrag(PointerEventData eventData)
     {
-        // Disable highlight for all drop zones
-        DropZone.SetAllHighlights(false);
+        ResetCardToGrid();
 
-        // Restore card to its original parent under the GridLayoutGroup.
-        _rt.SetParent(_originalParent, false);
-
-        if (_placeholderRT != null)
-        {
-            // Put card where the placeholder was
-            _rt.SetSiblingIndex(_placeholderRT.GetSiblingIndex());
-            Destroy(_placeholderRT.gameObject);
-            _placeholderRT = null;
-        }
-        else
-        {
-            _rt.SetSiblingIndex(_originalSiblingIndex);
-        }
-
-        canvasGroup.blocksRaycasts = true;
-        canvasGroup.alpha = 1f;
-
-        // If we never spawned a world unit, it was just a small drag on the card
         if (!_spawnedWorldUnit || _dragUnitInstance == null)
         {
-            _usingCardGraphic = false;
+            CleanupDragState();
             return;
         }
 
-        // Check if released over a valid DropZone AND there is no other unit too close
-        Vector3 worldPos = ScreenToWorld(eventData.position);
-        DropZone zone = DropZone.GetZoneAtWorldPoint(worldPos);
+        DropAreaGrid closestGrid = null;
+        DropAreaCell closestCell = null;
+        float bestDist = float.MaxValue;
 
-        if (zone == null || !IsPlacementFree(worldPos) || !SoulsManager.instance.CheckIfThereIsEnoughSouls(data.soulCost))
+        foreach (var grid in battleManager.dropAreaGrids)
         {
-            // Invalid placement (no zone or overlapping another unit) - destroy the dragged unit
-            Object.Destroy(_dragUnitInstance);
-        }
-        else
-        {
-            // Valid placement - place unit and re-enable physics
-            _dragUnitInstance.transform.position = worldPos;
-
-            if (_dragUnitRb != null)
-                _dragUnitRb.simulated = true;
-
-            if (_dragUnitColliders != null)
+            float cellDist;
+            var cell = grid.GetClosestCell(_dragUnitInstance.transform.position, out cellDist);
+            if (cell != null && cellDist < bestDist)
             {
-                foreach (var col in _dragUnitColliders)
-                    col.enabled = true;
+                bestDist = cellDist;
+                closestCell = cell;
+                closestGrid = grid;
             }
-            SoulsManager.instance.UseSouls(data.soulCost);
         }
 
-        // Initialize stats
+        bool valid =
+            closestCell != null &&
+            bestDist <= maxCellSnapDistance &&
+            SoulsManager.instance.CheckIfThereIsEnoughSouls(data.soulCost) &&
+            IsPlacementFree(closestCell.transform.position);
+
+        if (!valid)
+        {
+            Destroy(_dragUnitInstance);
+            CleanupDragState();
+            return;
+        }
+
+        // --- Place ---
+        Vector3 finalPos = closestCell.transform.position;
+        finalPos.z = 0f;
+        _dragUnitInstance.transform.position = finalPos;
+
+        EnablePhysicsAfterPlace();
+        SoulsManager.instance.UseSouls(data.soulCost);
+
+        // Apply cell bonus
         var stats = _dragUnitInstance.GetComponent<CharacterStats>();
         if (stats != null)
         {
             stats.SetInitialPosition();
+
+            if (closestCell.IsSpecial)
+            {
+                float p = closestCell.percentValue;
+                if (Mathf.Abs(p) > 1f) p /= 100f;
+                float mul = 1f + p;
+
+                switch (closestCell.bonusType)
+                {
+                    case CellBonusType.HpPercent:
+                        stats.maxHealth = Mathf.RoundToInt(stats.maxHealth * mul);
+                        stats.currentHealth = stats.maxHealth;
+                        break;
+
+                    case CellBonusType.AttackPercent:
+                        stats.damage = Mathf.RoundToInt(stats.damage * mul);
+                        break;
+                }
+            }
         }
 
-        _dragUnitInstance = null;
-        _dragUnitRb = null;
-        _dragUnitColliders = null;
-
-        _spawnedWorldUnit = false;
-        _usingCardGraphic = false;
+        CleanupDragState();
     }
 
-    // ======================================================================
-    // INTERNAL HELPERS
-    // ======================================================================
-
-    private void SwitchToWorldDrag(PointerEventData eventData)
+    // ================================================================
+    // HELPERS
+    // ================================================================
+    void SwitchToWorldDrag(PointerEventData eventData)
     {
         _usingCardGraphic = false;
         _spawnedWorldUnit = true;
 
-        // Card stays under root while dragging world unit.
-        // We keep it invisible so only the unit is visible.
-        if (canvasGroup != null)
-            canvasGroup.alpha = 0f; // hide card during world dragging
+        canvasGroup.alpha = 0f;
 
         Vector3 worldPos = ScreenToWorld(eventData.position);
         SpawnWorldUnit(worldPos);
     }
 
-    private Vector3 ScreenToWorld(Vector2 screenPos)
+    void SpawnWorldUnit(Vector3 pos)
     {
-        if (_cam == null)
-            _cam = Camera.main;
+        _dragUnitInstance = Instantiate(data.prefab, pos, Quaternion.identity);
 
-        Vector3 worldPos = _cam.ScreenToWorldPoint(screenPos);
-        worldPos.z = 0f;
-        return worldPos;
-    }
-
-    private void SpawnWorldUnit(Vector3 worldPos)
-    {
-        // Instantiate the regular unit prefab in the world
-        _dragUnitInstance = Object.Instantiate(data.prefab, worldPos, Quaternion.identity);
-
-        // Cache rigidbody & colliders
         _dragUnitRb = _dragUnitInstance.GetComponent<Rigidbody2D>();
         _dragUnitColliders = _dragUnitInstance.GetComponentsInChildren<Collider2D>();
+        _dragUnitAgent = _dragUnitInstance.GetComponent<UnityEngine.AI.NavMeshAgent>();
 
-        // Disable physics & collisions while dragging so the ghost will not push anything
-        if (_dragUnitRb != null)
-            _dragUnitRb.simulated = false;
+        DisablePhysicsForDrag();
 
-        if (_dragUnitColliders != null)
-        {
-            foreach (var col in _dragUnitColliders)
-                col.enabled = false;
-        }
-
-        // Initialize stats
         var stats = _dragUnitInstance.GetComponent<CharacterStats>();
         if (stats != null)
         {
             stats.Init(Team.MyTeam, data, battleManager.playerUnitsLevel);
-            stats.lockedIn = false; // Still in planning phase
+            stats.lockedIn = false;
         }
 
-        // Ensure AI is disabled during setup phase
         var ai = _dragUnitInstance.GetComponent<EnemyAI>();
-        if (ai != null)
-            ai.enabled = false;
+        if (ai != null) ai.enabled = false;
     }
 
-    // Create a dummy object inside the grid so the layout doesn't jump when the card leaves
+    void DisablePhysicsForDrag()
+    {
+        if (_dragUnitRb != null)
+            _dragUnitRb.simulated = false;
+
+        if (_dragUnitColliders != null)
+            foreach (var col in _dragUnitColliders)
+                col.enabled = false;
+
+        if (_dragUnitAgent != null)
+            _dragUnitAgent.enabled = false;
+    }
+
+    void EnablePhysicsAfterPlace()
+    {
+        if (_dragUnitRb != null)
+            _dragUnitRb.simulated = true;
+
+        if (_dragUnitColliders != null)
+            foreach (var col in _dragUnitColliders)
+                col.enabled = true;
+
+        if (_dragUnitAgent != null)
+        {
+            _dragUnitAgent.enabled = true;
+            _dragUnitAgent.Warp(_dragUnitInstance.transform.position);
+        }
+    }
+
+    Vector3 ScreenToWorld(Vector2 s)
+    {
+        Vector3 w = _cam.ScreenToWorldPoint(s);
+        w.z = 0f;
+        return w;
+    }
+
     private void CreatePlaceholder()
     {
-        if (_placeholderRT != null)
-            return;
+        if (_placeholderRT != null) return;
 
         GameObject placeholderGO = new GameObject("CardPlaceholder", typeof(RectTransform));
         _placeholderRT = placeholderGO.GetComponent<RectTransform>();
         _placeholderRT.SetParent(_originalParent, false);
         _placeholderRT.SetSiblingIndex(_originalSiblingIndex);
         _placeholderRT.sizeDelta = _rt.sizeDelta;
-
-        // Copy LayoutElement settings if present
-        LayoutElement myLE = GetComponent<LayoutElement>();
-        if (myLE != null)
-        {
-            LayoutElement le = placeholderGO.AddComponent<LayoutElement>();
-            le.preferredWidth = myLE.preferredWidth;
-            le.preferredHeight = myLE.preferredHeight;
-            le.flexibleWidth = myLE.flexibleWidth;
-            le.flexibleHeight = myLE.flexibleHeight;
-            le.minWidth = myLE.minWidth;
-            le.minHeight = myLE.minHeight;
-        }
     }
 
-    /// <summary>
-    /// Returns true if there is enough space to place a new unit at the given position.
-    /// Uses Physics2D.OverlapCircleAll on unitsLayerMask.
-    /// </summary>
-    private bool IsPlacementFree(Vector3 worldPos)
+    private void ResetCardToGrid()
     {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(worldPos, minDistanceFromOtherUnits, unitsLayerMask);
+        _rt.SetParent(_originalParent, false);
+        _rt.SetSiblingIndex(_originalSiblingIndex);
+
+        if (_placeholderRT != null)
+        {
+            Destroy(_placeholderRT.gameObject);
+            _placeholderRT = null;
+        }
+
+        canvasGroup.blocksRaycasts = true;
+        canvasGroup.alpha = 1f;
+    }
+
+    bool IsPlacementFree(Vector3 pos)
+    {
+        var hits = Physics2D.OverlapCircleAll(pos, minDistanceFromOtherUnits, unitsLayerMask);
         return hits == null || hits.Length == 0;
     }
 
-    // Optional: visualize placement radius in editor (for debugging)
-    private void OnDrawGizmosSelected()
+    private void CleanupDragState()
     {
-        Gizmos.color = Color.cyan;
-        Vector3 pos = transform.position;
-        pos.z = 0f;
-        Gizmos.DrawWireSphere(pos, minDistanceFromOtherUnits);
+        _dragUnitInstance = null;
+        _dragUnitRb = null;
+        _dragUnitColliders = null;
+        _dragUnitAgent = null;
+
+        _spawnedWorldUnit = false;
+        _usingCardGraphic = false;
+
+        canvasGroup.alpha = 1f;
     }
+
     public void SetCardInteractable(bool interactable)
     {
         if (canvasGroup == null)
             return;
 
-        // Block input
         canvasGroup.interactable = interactable;
         canvasGroup.blocksRaycasts = interactable;
-
-        // Visual feedback
-        canvasGroup.alpha = interactable ? 1f : 0.4f;   // 40% transparent when disabled
+        canvasGroup.alpha = interactable ? 1f : 0.4f;
     }
-
 }

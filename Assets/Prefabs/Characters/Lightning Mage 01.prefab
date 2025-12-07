@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 8384952033324481740}
   - component: {fileID: 6365947195347616706}
   - component: {fileID: -3017228281980034500}
+  - component: {fileID: 8581160561373379852}
   m_Layer: 3
   m_Name: Lightning Mage 01
   m_TagString: Untagged
@@ -135,6 +136,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a608d263df2d464e916d8bf6b08a732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  stoppingBuffer: 0.1
+  obstaclesLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  losRepathOffset: 0.5
+  losRepathCooldown: 0.3
 --- !u!50 &5159539399863573130
 Rigidbody2D:
   serializedVersion: 5
@@ -192,7 +199,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -234,9 +241,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LightningMageAttack
   chainRange: 3
   maxBounces: 1
-  damagePerHit: 10
+  secondaryDamageMultiplier: 0.5
   boltPrefab: {fileID: 1842789865196763483, guid: f9fcfe2fec13d084fbb00caf01599f1a, type: 3}
   shootPoint: {fileID: 5426564493991449101}
+  hitFlashColor: {r: 1, g: 1, b: 1, a: 0.6431373}
+  hitFlashDuration: 0.08
+--- !u!195 &8581160561373379852
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 501027721989515594}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 1.2049999
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2.7099998
+  m_BaseOffset: 1.3549999
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &4222051301102025337
 GameObject:
   m_ObjectHideFlags: 0

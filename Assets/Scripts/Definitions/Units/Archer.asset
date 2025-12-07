@@ -20,8 +20,9 @@ MonoBehaviour:
   monsterType: 1
   spawnCount: 2
   soulCost: 3
+  soulDropChance: 0.25
   maxHealth: 70
   damage: 15
   moveSpeed: 2
-  attackRange: 5
+  attackRange: 3
   attackCooldown: 0.8
