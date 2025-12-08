@@ -19,6 +19,11 @@ public class SoulsManager : MonoBehaviour
             return;
         }
         instance = this;
+
+        if (_battleManager == null)
+        {
+            _battleManager = FindFirstObjectByType<BattleManager>();
+        }
     }
 
     public void UseSouls(int soulsUsed)

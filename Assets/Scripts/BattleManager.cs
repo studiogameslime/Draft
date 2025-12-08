@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BattleManager : MonoBehaviour
 {
@@ -41,7 +42,19 @@ public class BattleManager : MonoBehaviour
     // ============================================================
     private void Start()
     {
-        
+        {
+            Scene uiScene = SceneManager.GetSceneByName("CommonUI");
+            if (uiScene.isLoaded)
+            {
+                AssignUIReferences();
+            }
+            else
+            {
+               StartCoroutine(WaitForUIAndAssign());
+            }
+        }
+
+
         SetAllAIEnabled(false);
 
         if (levelDefinition == null || levelDefinition.RoundsCount == 0)
@@ -53,6 +66,37 @@ public class BattleManager : MonoBehaviour
         StartRound(0);
 
         dropAreaGrids = FindObjectsByType<DropAreaGrid>(FindObjectsSortMode.None);
+
+
+    }
+
+    // ============================================================
+    // Load selectionUI to script
+    // ============================================================
+    private IEnumerator WaitForUIAndAssign()
+    {
+        while (!SceneManager.GetSceneByName("CommonUI").isLoaded)
+            yield return null;
+
+        AssignUIReferences();
+    }
+
+    private void AssignUIReferences()
+    {
+        if (selectionUI == null)
+        { 
+            selectionUI = FindFirstObjectByType<UnitSelectionUI>();
+            deckUI = FindFirstObjectByType<DeckUIController>();
+        }
+
+        if (selectionUI == null)
+        {
+            Debug.LogError("BattleManager: UnitSelectionUI not found in CommonUI!");
+        }
+        else
+        {
+            Debug.Log("BattleManager: SelectionUI connected automatically");
+        }
     }
 
     // ============================================================
@@ -86,6 +130,7 @@ public class BattleManager : MonoBehaviour
             selectionUI.gameObject.SetActive(true);
             selectionUI.battleManager = this;
             selectionUI.RollNewUnits();
+            Debug.Log("Rolled Units!");
         }
 
         // 5) RE-ENABLE DECK (planning phase UI)

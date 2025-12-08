@@ -15,6 +15,11 @@ public class StartBattleButton : MonoBehaviour
 
         if (startButton != null)
             startButton.onClick.AddListener(OnStartBattleClicked);
+
+        if (battleManager == null)
+        {
+            battleManager = FindFirstObjectByType<BattleManager>();
+        }
     }
 
     private void OnStartBattleClicked()
