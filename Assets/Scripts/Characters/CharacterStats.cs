@@ -125,6 +125,11 @@ public class CharacterStats : MonoBehaviour
 
         Debug.Log($"{gameObject.name} died!");
 
+        // Stop movement
+        var rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero;
+
         // Play death animation
         if (animator != null)
             animator.SetTrigger("dying");
@@ -132,10 +137,6 @@ public class CharacterStats : MonoBehaviour
         // Disable combat scripts
         DisableAllCombatScripts();
 
-        // Stop movement
-        var rb = GetComponent<Rigidbody2D>();
-        if (rb != null)
-            rb.linearVelocity = Vector2.zero;
         TrySpawnSoulOnDeath();
     }
 

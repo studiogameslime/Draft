@@ -136,14 +136,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   stoppingBuffer: 0.1
-  obstaclesLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  losCheckOffset: 0.3
-  sideOffsetRadius: 0.8
-  useNavMeshObstacle: 1
-  minMoveSpeedToBeMoving: 0.05
-  idleTimeToBecomeObstacle: 0.15
 --- !u!50 &5159539399863573130
 Rigidbody2D:
   serializedVersion: 5
@@ -152,7 +144,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 501027721989515594}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -213,11 +205,11 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.19, y: 0}
+  m_Offset: {x: -0.19, y: -0.12}
   m_Radius: 1
 --- !u!95 &4525304073263896068
 Animator:
