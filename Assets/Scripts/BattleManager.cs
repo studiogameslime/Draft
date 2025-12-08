@@ -42,17 +42,7 @@ public class BattleManager : MonoBehaviour
     // ============================================================
     private void Start()
     {
-        {
-            Scene uiScene = SceneManager.GetSceneByName("CommonUI");
-            if (uiScene.isLoaded)
-            {
-                AssignUIReferences();
-            }
-            else
-            {
-               StartCoroutine(WaitForUIAndAssign());
-            }
-        }
+        StartCoroutine(InitAfterUIReady());
 
 
         SetAllAIEnabled(false);
@@ -63,7 +53,7 @@ public class BattleManager : MonoBehaviour
             return;
         }
         
-        StartRound(0);
+        //StartRound(0);
 
         dropAreaGrids = FindObjectsByType<DropAreaGrid>(FindObjectsSortMode.None);
 
@@ -73,31 +63,26 @@ public class BattleManager : MonoBehaviour
     // ============================================================
     // Load selectionUI to script
     // ============================================================
-    private IEnumerator WaitForUIAndAssign()
+    private IEnumerator InitAfterUIReady()
     {
         while (!SceneManager.GetSceneByName("CommonUI").isLoaded)
             yield return null;
 
-        AssignUIReferences();
-    }
+        selectionUI = FindFirstObjectByType<UnitSelectionUI>();
+        deckUI = FindFirstObjectByType<DeckUIController>();
 
-    private void AssignUIReferences()
-    {
-        if (selectionUI == null)
-        { 
+        while (selectionUI == null)
+        {
             selectionUI = FindFirstObjectByType<UnitSelectionUI>();
             deckUI = FindFirstObjectByType<DeckUIController>();
+            yield return null;
         }
 
-        if (selectionUI == null)
-        {
-            Debug.LogError("BattleManager: UnitSelectionUI not found in CommonUI!");
-        }
-        else
-        {
-            Debug.Log("BattleManager: SelectionUI connected automatically");
-        }
+        Debug.Log("BattleManager: UI ready, starting first round ");
+
+        StartRound(0);
     }
+
 
     // ============================================================
     // ROUND START
