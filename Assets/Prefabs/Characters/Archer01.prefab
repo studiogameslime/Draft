@@ -138,14 +138,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   stoppingBuffer: 0.1
-  obstaclesLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  losCheckOffset: 0.1
-  sideOffsetRadius: 0.2
-  useNavMeshObstacle: 1
-  minMoveSpeedToBeMoving: 0.05
-  idleTimeToBecomeObstacle: 0.15
 --- !u!50 &-2366946446134787753
 Rigidbody2D:
   serializedVersion: 5
@@ -274,7 +266,7 @@ NavMeshObstacle:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 501027721989515594}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Shape: 0
   m_Extents: {x: 0.6, y: 1.235, z: 0.6}

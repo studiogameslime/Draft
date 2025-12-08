@@ -4,38 +4,34 @@ using UnityEngine.UI;
 public class PageSwiper : MonoBehaviour
 {
     [Header("Panels Setup")]
-    [Tooltip("Drag your 5 panels here IN ORDER (left ? right)")]
-    public RectTransform[] panels;         
+    public RectTransform[] panels;
 
-    [Tooltip("Distance between panels (depends on your screen width)")]
-    public float panelSpacing = 1920f;     
+    [Tooltip("Extra space between panels (optional)")]
+    public float spacingOffset = 0f;
 
-    [Tooltip("Smooth movement speed")]
-    public float moveSpeed = 10f;           
+    public float moveSpeed = 10f;
 
     [Header("Buttons Setup")]
-    [Tooltip("Drag your 5 navigation buttons here (left ? right)")]
-    public Button[] navButtons;             
+    public Button[] navButtons;
 
-    private RectTransform parentRect;        
-    private Vector2 targetPosition;          
-    private int currentIndex = 0;           
+    private RectTransform parentRect;
+    private Vector2 targetPosition;
+    private int currentIndex = 2;
 
     void Awake()
     {
         parentRect = GetComponent<RectTransform>();
 
-        // Assign each button to move to its matching panel
         for (int i = 0; i < navButtons.Length; i++)
         {
-            int index = i;  // VERY IMPORTANT! closure fix
+            int index = i;
             navButtons[i].onClick.AddListener(() => MoveToPanel(index));
         }
     }
 
     void Start()
     {
-        PositionPanelsCorrectly();
+        //PositionPanelsBySize();
         targetPosition = GetTargetPos(currentIndex);
     }
 
@@ -45,29 +41,22 @@ public class PageSwiper : MonoBehaviour
             Vector2.Lerp(parentRect.anchoredPosition, targetPosition, Time.deltaTime * moveSpeed);
     }
 
-    // Places all panels horizontally without changing their size/scale/pivots
-    private void PositionPanelsCorrectly()
+    private void PositionPanelsBySize()
     {
+        float currentX = 0f;
+
         for (int i = 0; i < panels.Length; i++)
         {
             RectTransform p = panels[i];
 
-            // save original layout values
-            Vector2 originalSize = p.sizeDelta;
-            Vector3 originalScale = p.localScale;
-            Vector2 originalAnchorMin = p.anchorMin;
-            Vector2 originalAnchorMax = p.anchorMax;
-            Vector2 originalPivot = p.pivot;
+            // Get width of the panel
+            float width = p.rect.width;
 
-            // only move horizontally
-            p.anchoredPosition = new Vector2(i * panelSpacing, p.anchoredPosition.y);
+            // position panel without touching its size
+            p.anchoredPosition = new Vector2(currentX, p.anchoredPosition.y);
 
-            // restore layout values
-            p.sizeDelta = originalSize;
-            p.localScale = originalScale;
-            p.anchorMin = originalAnchorMin;
-            p.anchorMax = originalAnchorMax;
-            p.pivot = originalPivot;
+            // Move next panel by panel width (and optional spacing)
+            currentX += width + spacingOffset;
         }
     }
 
@@ -82,6 +71,8 @@ public class PageSwiper : MonoBehaviour
 
     private Vector2 GetTargetPos(int index)
     {
-        return new Vector2(-index * panelSpacing, 0);
+        // Find X of the selected panel
+        float x = -panels[index].anchoredPosition.x;
+        return new Vector2(x, 0);
     }
 }
