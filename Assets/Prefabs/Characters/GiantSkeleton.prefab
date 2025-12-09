@@ -15,10 +15,10 @@ GameObject:
   - component: {fileID: 5159539399863573130}
   - component: {fileID: -7123918890047948568}
   - component: {fileID: 8384952033324481740}
-  - component: {fileID: 4525304073263896068}
   - component: {fileID: 4800027199840389637}
+  - component: {fileID: 2499068801549271812}
   m_Layer: 3
-  m_Name: Skeleton01
+  m_Name: GiantSkeleton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34,7 +34,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7700524603261716288}
@@ -87,7 +87,7 @@ SpriteRenderer:
   m_SortingLayerID: -1561745135
   m_SortingLayer: 2
   m_SortingOrder: 1
-  m_Sprite: {fileID: 6187447314156163480, guid: 96a86279d0d59a542b9e35872d461633, type: 3}
+  m_Sprite: {fileID: 6976913724491762843, guid: b8d2a56a971c695448a2f3adb645d99a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -209,30 +209,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.19, y: -0.12}
-  m_Radius: 0.8
---- !u!95 &4525304073263896068
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 501027721989515594}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: ba7f77135cc626d40a2670efed130c8c, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  m_Offset: {x: -0.5, y: -0.21}
+  m_Radius: 1.3
 --- !u!195 &4800027199840389637
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -242,7 +220,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 501027721989515594}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 0.3
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -255,6 +233,28 @@ NavMeshAgent:
   m_BaseOffset: 1.1699998
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!95 &2499068801549271812
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 501027721989515594}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 11995db497d9aff4b9bfdbedcab341f9, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &6742682009590774837
 PrefabInstance:
   m_ObjectHideFlags: 0

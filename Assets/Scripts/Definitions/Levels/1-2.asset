@@ -24,10 +24,13 @@ MonoBehaviour:
     souls: 20
   - enemySpawns:
     - unit: {fileID: 11400000, guid: bb4d2ca15090fb748918d6857809fd03, type: 2}
-      count: 3
+      count: 1
       level: 2
     - unit: {fileID: 11400000, guid: 0613f25a4299fa1409255836974641cc, type: 2}
       count: 3
+      level: 2
+    - unit: {fileID: 11400000, guid: 0737b6b3644e5394b8c5f423fd98c4aa, type: 2}
+      count: 1
       level: 2
     playerPicks: 1
     souls: 5
