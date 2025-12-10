@@ -435,6 +435,7 @@ GameObject:
   - component: {fileID: 5455033022021881363}
   - component: {fileID: 5958475838730996649}
   - component: {fileID: 5786235341504141614}
+  - component: {fileID: 6495788494971764116}
   m_Layer: 5
   m_Name: UnitCard
   m_TagString: Untagged
@@ -502,6 +503,23 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6495788494971764116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5077794974770605087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 174b3cb527d23cf41928d1b28200a5cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitCardView
+  iconImage: {fileID: 3380325489017936793}
+  nameText: {fileID: 4629212766952782089}
+  lockedOverlay: {fileID: 0}
+  deckHighlight: {fileID: 0}
+  emptySlotVisual: {fileID: 0}
 --- !u!1 &5472973278114216605
 GameObject:
   m_ObjectHideFlags: 0
