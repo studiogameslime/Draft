@@ -13,7 +13,10 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
     void Start()
     {
-        targetPos = 0f;
+        float step = 1f / (pageCount - 1);
+        int middlePage = (pageCount - 1) / 2;  
+
+        targetPos = step * middlePage;
         scrollRect.horizontalNormalizedPosition = targetPos;
     }
 
