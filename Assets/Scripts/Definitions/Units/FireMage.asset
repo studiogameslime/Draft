@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: 9
   displayName: Fire Mage
+  rarity: 2
   icon: {fileID: 7674125699001298711, guid: 97352762abec38447a52057c2a5126a6, type: 3}
   prefab: {fileID: 153394670701094284, guid: 220b9052bb302b94094855251cf1e45c, type: 3}
   iconScale: 0.4

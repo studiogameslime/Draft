@@ -14,11 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: 3
   displayName: Mage
+  rarity: 1
   icon: {fileID: -3400982213634020427, guid: 2cca22e838a38c34e8c007e7a8d97af5, type: 3}
   prefab: {fileID: 3672369371563529809, guid: d8eeed233f99b564e863f0df4b26e646, type: 3}
   iconScale: 0.5
   monsterType: 1
   spawnCount: 2
+  soulCost: 0
+  soulDropChance: 0.25
   maxHealth: 50
   damage: 10
   moveSpeed: 2

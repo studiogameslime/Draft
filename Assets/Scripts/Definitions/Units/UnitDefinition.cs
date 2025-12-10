@@ -6,6 +6,7 @@ public class UnitDefinition : ScriptableObject
     [Header("Basic info")]
     public string id;
     public string displayName;
+    public UnitRarity rarity;
 
     [Header("Visuals")]
     public Sprite icon;          // icon for the UI button
@@ -29,4 +30,12 @@ public class UnitDefinition : ScriptableObject
     public float moveSpeed = 2f;
     public float attackRange = 1.2f;
     public float attackCooldown = 1.0f;
+}
+
+public enum UnitRarity
+{
+    Common = 0,
+    Rare = 1,
+    Epic = 2,
+    Legendary = 3
 }

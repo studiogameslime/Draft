@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: 11
   displayName: GiantSkeleton
+  rarity: 2
   icon: {fileID: 6976913724491762843, guid: b8d2a56a971c695448a2f3adb645d99a, type: 3}
   prefab: {fileID: 501027721989515594, guid: 9ef15c7d379a26248a985984bf0f6ced, type: 3}
   iconScale: 0.4

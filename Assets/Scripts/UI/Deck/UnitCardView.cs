@@ -2,24 +2,38 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class UnitCardView : MonoBehaviour, IPointerClickHandler
 {
     [Header("UI")]
     [SerializeField] private Image iconImage;
     [SerializeField] private TMP_Text nameText;
+    private Image cardImage;
 
     [Header("States")]
-    [SerializeField] private GameObject lockedOverlay;  
-    [SerializeField] private GameObject deckHighlight;  
-    [SerializeField] private GameObject emptySlotVisual; 
+    [SerializeField] private GameObject lockedOverlay;
+    [SerializeField] private GameObject deckHighlight;
+    [SerializeField] private GameObject emptySlotVisual;
 
     private UnitDefinition _definition;
     private UnitsDeckManager _deckManager;
     private bool _isLocked;
-    private bool _isDeckSlot; 
+    private bool _isDeckSlot;
+
+    [SerializeField] Color CommonRarityColor = Color.white;
+    [SerializeField] Color RareRarityColor = Color.white;
+    [SerializeField] Color EpicRarityColor = Color.white;
+    [SerializeField] Color LegendaryRarityColor = Color.white;
 
     public UnitDefinition Definition => _definition;
+
+    private void Awake()
+    {
+        cardImage = GetComponent<Image>();
+    }
+
+
 
     // ------------------ Setup ------------------
 
@@ -47,9 +61,31 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
             deckHighlight.SetActive(isInDeck && !isLocked);
 
         gameObject.SetActive(true);
+
+        SetRarityStyle(def);
     }
 
-   
+    private void SetRarityStyle(UnitDefinition def)
+    {
+        switch (def.rarity)
+        {
+            case UnitRarity.Common:
+                cardImage.color = CommonRarityColor;
+                break;
+            case UnitRarity.Rare:
+                cardImage.color = RareRarityColor;
+                break;
+            case UnitRarity.Epic:
+                cardImage.color = EpicRarityColor;
+                break;
+            case UnitRarity.Legendary:
+                cardImage.color = LegendaryRarityColor;
+                break;
+            default:
+                break;
+        }
+    }
+
     public void SetupEmptySlot()
     {
         _definition = null;
