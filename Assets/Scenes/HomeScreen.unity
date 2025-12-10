@@ -357,6 +357,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a896ad50275aa2449123f904927a409, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitsCollectionManager
+  unitsDatabase: {fileID: 11400000, guid: 09c25831cf329684bb16bc052011dbfa, type: 2}
   deckManager: {fileID: 414318360}
   cardPrefab: {fileID: 6495788494971764116, guid: 20b53ba0ceda8c34a89fdec8de566f84, type: 3}
   collectionParent: {fileID: 1365739247}
@@ -736,7 +737,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Stats
+  m_text: 'Units Stats
 
 '
   m_isRightToLeft: 0
@@ -765,7 +766,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 44.75
+  m_fontSize: 36.1
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1409,17 +1410,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7880ea421b1db6641a7bfc5573d36830, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitsDeckManager
-  allUnits:
-  - {fileID: 11400000, guid: ad4287dbc795daf4da4915b5d3fcd156, type: 2}
-  - {fileID: 11400000, guid: 075c8f4e636299d409e881650e0866f2, type: 2}
-  - {fileID: 11400000, guid: 6cab19afac977304e898761cc9185bd1, type: 2}
-  - {fileID: 11400000, guid: 0737b6b3644e5394b8c5f423fd98c4aa, type: 2}
-  - {fileID: 11400000, guid: d9282f24b2268dd4688a50473d8bdee7, type: 2}
-  - {fileID: 11400000, guid: bd6b3059af3e4974aa8f46caa7d9ae8d, type: 2}
-  - {fileID: 11400000, guid: bb4d2ca15090fb748918d6857809fd03, type: 2}
-  - {fileID: 11400000, guid: 0613f25a4299fa1409255836974641cc, type: 2}
-  - {fileID: 11400000, guid: 681e39eeac684f2448e304010c689052, type: 2}
-  - {fileID: 11400000, guid: 624a24cba8fbd3b469665d2ac0fc3846, type: 2}
   deckRowParent: {fileID: 130036144}
   deckCardPrefab: {fileID: 6495788494971764116, guid: 20b53ba0ceda8c34a89fdec8de566f84, type: 3}
 --- !u!4 &414318361
@@ -2385,7 +2375,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -1080, y: 0}
   m_SizeDelta: {x: 1080, y: 1920}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &854048014
@@ -2767,7 +2757,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1080, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1080, y: 1920}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1137295935
@@ -3703,6 +3693,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1368109881}
   m_CullTransparentMesh: 1
+--- !u!1 &1415093263
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1415093265}
+  - component: {fileID: 1415093264}
+  m_Layer: 0
+  m_Name: PlayerDeckProvider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1415093264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1415093263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd714febc5c8b2a48a5b5eecb7f1f7a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerDeckProvider
+  unitsDatabase: {fileID: 11400000, guid: 09c25831cf329684bb16bc052011dbfa, type: 2}
+--- !u!4 &1415093265
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1415093263}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1425805550
 GameObject:
   m_ObjectHideFlags: 0
@@ -5297,3 +5332,4 @@ SceneRoots:
   - {fileID: 379224210}
   - {fileID: 414318361}
   - {fileID: 52822798}
+  - {fileID: 1415093265}

@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class UnitsCollectionManager : MonoBehaviour
 {
+    [Header("Data")]
+    [SerializeField] private UnitsDatabase unitsDatabase;
+
     [Header("Refs")]
     [SerializeField] private UnitsDeckManager deckManager;
     [SerializeField] private UnitCardView cardPrefab;
@@ -12,8 +15,12 @@ public class UnitsCollectionManager : MonoBehaviour
 
     private void Start()
     {
+        deckManager.Initialize(unitsDatabase.allUnits);
+
         BuildCollection();
+
         deckManager.OnDeckChanged += RefreshDeckHighlights;
+
     }
 
     private void OnDestroy()
@@ -26,12 +33,12 @@ public class UnitsCollectionManager : MonoBehaviour
     {
         _cardsById.Clear();
 
-        foreach (var def in deckManager.AllUnits)
+        foreach (var def in unitsDatabase.allUnits)
         {
             if (def == null || string.IsNullOrEmpty(def.id))
                 continue;
 
-            bool isLocked = false; 
+            bool isLocked = false;
             bool isInDeck = deckManager.IsInDeck(def);
 
             var card = Instantiate(cardPrefab, collectionParent);

@@ -4,26 +4,24 @@ using UnityEngine;
 
 public class UnitsDeckManager : MonoBehaviour
 {
-    [Header("Data")]
-    [SerializeField] private UnitDefinition[] allUnits;  
-
     [Header("Deck UI")]
-    [SerializeField] private Transform deckRowParent;     
-    [SerializeField] private UnitCardView deckCardPrefab; 
+    [SerializeField] private Transform deckRowParent;
+    [SerializeField] private UnitCardView deckCardPrefab;
 
     public const int MaxDeckSize = 4;
 
     private readonly List<UnitDefinition> _deckUnits = new List<UnitDefinition>(MaxDeckSize);
+    private UnitDefinition[] _allUnitsSource;
 
     public System.Action OnDeckChanged;
 
     private const string DeckSlotKeyPrefix = "deck_slot_";
 
     public IReadOnlyList<UnitDefinition> CurrentDeck => _deckUnits;
-    public IReadOnlyList<UnitDefinition> AllUnits => allUnits;
 
-    private void Awake()
+    public void Initialize(UnitDefinition[] allUnits)
     {
+        _allUnitsSource = allUnits;
         LoadDeck();
         BuildDeckRow();
     }
@@ -33,6 +31,12 @@ public class UnitsDeckManager : MonoBehaviour
     {
         _deckUnits.Clear();
 
+        if (_allUnitsSource == null || _allUnitsSource.Length == 0)
+        {
+            Debug.LogError("DeckManager get empty array");
+            return;
+        }
+
         for (int i = 0; i < MaxDeckSize; i++)
         {
             string key = DeckSlotKeyPrefix + i;
@@ -40,17 +44,17 @@ public class UnitsDeckManager : MonoBehaviour
             if (string.IsNullOrEmpty(unitId))
                 continue;
 
-            var def = allUnits.FirstOrDefault(u => u != null && u.id == unitId);
+            var def = _allUnitsSource.FirstOrDefault(u => u != null && u.id == unitId);
             if (def != null)
                 _deckUnits.Add(def);
         }
 
         if (_deckUnits.Count == 0)
         {
-            for (int i = 0; i < MaxDeckSize && i < allUnits.Length; i++)
+            for (int i = 0; i < MaxDeckSize && i < _allUnitsSource.Length; i++)
             {
-                if (allUnits[i] != null)
-                    _deckUnits.Add(allUnits[i]);
+                if (_allUnitsSource[i] != null)
+                    _deckUnits.Add(_allUnitsSource[i]);
             }
         }
     }
@@ -73,8 +77,7 @@ public class UnitsDeckManager : MonoBehaviour
 
     public bool IsInDeck(UnitDefinition def)
     {
-        if (def == null) return false;
-        return _deckUnits.Contains(def);
+        return def != null && _deckUnits.Contains(def);
     }
 
     public bool IsInDeck(string unitId)
@@ -93,14 +96,17 @@ public class UnitsDeckManager : MonoBehaviour
         else
         {
             if (_deckUnits.Count >= MaxDeckSize)
-            {
                 return;
-            }
 
             _deckUnits.Add(def);
         }
 
         SaveDeck();
+        if (PlayerDeckProvider.Instance != null)
+        {
+            PlayerDeckProvider.Instance.ReloadDeck();
+        }
+
         BuildDeckRow();
         OnDeckChanged?.Invoke();
     }
@@ -112,6 +118,11 @@ public class UnitsDeckManager : MonoBehaviour
         if (_deckUnits.Remove(def))
         {
             SaveDeck();
+            if (PlayerDeckProvider.Instance != null)
+            {
+                PlayerDeckProvider.Instance.ReloadDeck();
+            }
+
             BuildDeckRow();
             OnDeckChanged?.Invoke();
         }
@@ -121,9 +132,7 @@ public class UnitsDeckManager : MonoBehaviour
     private void BuildDeckRow()
     {
         foreach (Transform child in deckRowParent)
-        {
             Destroy(child.gameObject);
-        }
 
         for (int i = 0; i < MaxDeckSize; i++)
         {

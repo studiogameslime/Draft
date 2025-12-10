@@ -1,49 +1,45 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitSelectionUI : MonoBehaviour
 {
-    [Header("Units pool")]
-    public UnitDefinition[] allUnits;
-    public int buttonsPerRoll = 4;
-
     [Header("UI")]
     public Transform buttonsParent;
     public UnitSpawnButton buttonPrefab;
 
     [HideInInspector]
-    public BattleManager battleManager; // Injected externally
+    public BattleManager battleManager;
 
-    private System.Random rng = new System.Random();
-
-    // Create random unit buttons
     public void RollNewUnits()
     {
-        // Clear previous buttons
+        Debug.Log("Provider = " + PlayerDeckProvider.Instance);
+        if (PlayerDeckProvider.Instance != null)
+        {
+            Debug.Log("Deck count = " + PlayerDeckProvider.Instance.CurrentDeck.Count);
+        }
+
         foreach (Transform child in buttonsParent)
             Destroy(child.gameObject);
 
-        if (allUnits == null || allUnits.Length == 0)
+        if (PlayerDeckProvider.Instance == null)
+        {
+            Debug.LogError("PlayerDeckProvider NOT FOUND");
             return;
-
-        List<int> used = new List<int>();
-        int countToSpawn = Mathf.Min(buttonsPerRoll, allUnits.Length);
-
-        // Select random unique indices
-        while (used.Count < countToSpawn)
-        {
-            int index = rng.Next(allUnits.Length);
-            if (!used.Contains(index))
-                used.Add(index);
         }
 
-        // Instantiate buttons
-        foreach (int i in used)
+        var deck = PlayerDeckProvider.Instance.CurrentDeck;
+
+        if (deck == null || deck.Count == 0)
         {
-            UnitDefinition def = allUnits[i];
+            Debug.LogError("Deck is EMPTY");
+            return;
+        }
+
+        foreach (var unit in deck)
+        {
             UnitSpawnButton btn = Instantiate(buttonPrefab, buttonsParent);
-            btn.Init(def, this);     // Pass unit definition + UI reference
+            btn.Init(unit, this);
         }
-    }
 
+        Debug.Log("Rolled Units FROM PLAYER DECK");
+    }
 }
