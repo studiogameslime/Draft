@@ -28,6 +28,7 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
 
     public UnitDefinition Definition => _definition;
 
+
     private void Awake()
     {
         cardImage = GetComponent<Image>();
@@ -125,6 +126,8 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
 
         if (_isLocked)
             return;
+        OnCardClicked();
+        return;
 
         if (_isDeckSlot)
         {
@@ -140,4 +143,13 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
             _deckManager.ToggleUnit(_definition);
         }
     }
+
+    public void OnCardClicked()
+    {
+        if (_definition == null)
+            return;
+
+        UnitDetailsPopupController.Instance.Show(_definition);
+    }
+
 }

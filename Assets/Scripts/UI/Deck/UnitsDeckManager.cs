@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class UnitsDeckManager : MonoBehaviour
 {
+    public static UnitsDeckManager Instance;
+
     [Header("Deck UI")]
     [SerializeField] private Transform deckRowParent;
     [SerializeField] private UnitCardView deckCardPrefab;
@@ -19,13 +21,38 @@ public class UnitsDeckManager : MonoBehaviour
 
     public IReadOnlyList<UnitDefinition> CurrentDeck => _deckUnits;
 
+    // ============================
+    // UNITY
+    // ============================
+
+    private void Awake()
+    {
+        // Singleton
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
+    // ============================
+    // INIT
+    // ============================
+
     public void Initialize(UnitDefinition[] allUnits)
     {
         _allUnitsSource = allUnits;
+
         LoadDeck();
         BuildDeckRow();
     }
 
+    // ============================
+    // LOAD / SAVE
+    // ============================
 
     private void LoadDeck()
     {
@@ -33,7 +60,7 @@ public class UnitsDeckManager : MonoBehaviour
 
         if (_allUnitsSource == null || _allUnitsSource.Length == 0)
         {
-            Debug.LogError("DeckManager get empty array");
+            Debug.LogError("UnitsDeckManager: allUnits source is EMPTY");
             return;
         }
 
@@ -41,6 +68,7 @@ public class UnitsDeckManager : MonoBehaviour
         {
             string key = DeckSlotKeyPrefix + i;
             string unitId = PlayerPrefs.GetString(key, string.Empty);
+
             if (string.IsNullOrEmpty(unitId))
                 continue;
 
@@ -74,6 +102,9 @@ public class UnitsDeckManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
+    // ============================
+    // QUERIES
+    // ============================
 
     public bool IsInDeck(UnitDefinition def)
     {
@@ -84,6 +115,10 @@ public class UnitsDeckManager : MonoBehaviour
     {
         return _deckUnits.Any(u => u != null && u.id == unitId);
     }
+
+    // ============================
+    // EDIT DECK
+    // ============================
 
     public void ToggleUnit(UnitDefinition def)
     {
@@ -102,10 +137,9 @@ public class UnitsDeckManager : MonoBehaviour
         }
 
         SaveDeck();
+
         if (PlayerDeckProvider.Instance != null)
-        {
             PlayerDeckProvider.Instance.ReloadDeck();
-        }
 
         BuildDeckRow();
         OnDeckChanged?.Invoke();
@@ -118,26 +152,30 @@ public class UnitsDeckManager : MonoBehaviour
         if (_deckUnits.Remove(def))
         {
             SaveDeck();
+
             if (PlayerDeckProvider.Instance != null)
-            {
                 PlayerDeckProvider.Instance.ReloadDeck();
-            }
 
             BuildDeckRow();
             OnDeckChanged?.Invoke();
         }
     }
 
+    // ============================
+    // UI
+    // ============================
 
     private void BuildDeckRow()
     {
+        if (deckRowParent == null || deckCardPrefab == null)
+            return;
+
         foreach (Transform child in deckRowParent)
             Destroy(child.gameObject);
 
         for (int i = 0; i < MaxDeckSize; i++)
         {
             UnitDefinition def = (i < _deckUnits.Count) ? _deckUnits[i] : null;
-
             var card = Instantiate(deckCardPrefab, deckRowParent);
 
             if (def != null)
