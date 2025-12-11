@@ -19,18 +19,14 @@ public class UnitsCollectionManager : MonoBehaviour
 
         BuildCollection();
 
-        deckManager.OnDeckChanged += RefreshDeckHighlights;
 
     }
 
-    private void OnDestroy()
-    {
-        if (deckManager != null)
-            deckManager.OnDeckChanged -= RefreshDeckHighlights;
-    }
+
 
     private void BuildCollection()
     {
+        Debug.Log($"BulidCollection {deckManager}");
         _cardsById.Clear();
 
         foreach (var def in unitsDatabase.allUnits)
@@ -48,12 +44,5 @@ public class UnitsCollectionManager : MonoBehaviour
         }
     }
 
-    private void RefreshDeckHighlights()
-    {
-        foreach (var kvp in _cardsById)
-        {
-            bool inDeck = deckManager.IsInDeck(kvp.Key);
-            kvp.Value.SetDeckState(inDeck);
-        }
-    }
 }
+

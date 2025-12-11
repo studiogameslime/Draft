@@ -1,97 +1,123 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System;
 
 public class UnitDetailsPopupController : MonoBehaviour
 {
     public static UnitDetailsPopupController Instance;
 
-    [Header("UI Refs")]
-    public GameObject root;
-    public Image iconImage;
-    public TMP_Text unitNameText;
-    public TMP_Text levelText;
-    public TMP_Text rarityText;
+    [Header("Root")]
+    [SerializeField] private GameObject root;
+    [SerializeField] private Button closeButton;
+    [SerializeField] private Button backgroundCloseButton;
 
-    public TMP_Text hpText;
-    public TMP_Text damageText;
-    public TMP_Text attackSpeedText;
-    public TMP_Text rangeText;
+    [Header("Unit UI")]
+    [SerializeField] private Image icon;
+    [SerializeField] private TMP_Text nameText;
+    [SerializeField] private TMP_Text rarityText;
+    [SerializeField] private TMP_Text hpText;
+    [SerializeField] private TMP_Text dmgText;
+    [SerializeField] private TMP_Text atkSpeedText;
+    [SerializeField] private TMP_Text rangeText;
+    [SerializeField] private TMP_Text levelText;
 
-    public TMP_Text inDeckText;
+    [Header("Main Button")]
+    [SerializeField] private Button toggleDeckButton;
+    [SerializeField] private TMP_Text toggleDeckButtonText;
 
-    [Header("Buttons")]
-    public Button toggleDeckButton;
-    public TMP_Text toggleDeckButtonText;
-    public Button closeButton;
+    [Header("Replace Panel")]
+    [SerializeField] private GameObject replacePanel;
+    [SerializeField] private Transform replaceButtonsParent;
+    [SerializeField] private Button replaceButtonPrefab;
 
-    private UnitDefinition currentUnit;
+    private UnitDefinition _unit;
+    private UnitsDeckManager _deckManager;
 
-    private void Awake()
+    void Awake()
     {
         Instance = this;
         root.SetActive(false);
+        replacePanel.SetActive(false);
+
+        closeButton.onClick.AddListener(Close);
+        backgroundCloseButton.onClick.AddListener(Close);
     }
 
-    private void Start()
+    public void Open(UnitDefinition unit, bool isDeckSlot, UnitsDeckManager deckManager)
     {
-        closeButton.onClick.AddListener(Hide);
-        toggleDeckButton.onClick.AddListener(OnToggleDeck);
-    }
+        _unit = unit;
+        _deckManager = deckManager;
 
-    public void Show(UnitDefinition unit)
-    {
-        if (unit == null) return;
+        FillData();
+        SetupButtons();
 
-        currentUnit = unit;
-
+        replacePanel.SetActive(false);
         root.SetActive(true);
-
-        iconImage.sprite = unit.icon;
-        iconImage.SetNativeSize();
-
-        unitNameText.text = unit.displayName;
-        rarityText.text = unit.rarity.ToString();
-
-        hpText.text = unit.maxHealth.ToString();
-        damageText.text = unit.damage.ToString();
-        attackSpeedText.text = unit.attackCooldown.ToString();
-        rangeText.text = unit.attackRange.ToString();
-
-        //int level = PlayerUnitsProgress.Instance.GetUnitLevel(unit.id);
-        //levelText.text = "Lv. " + level;
-
-        RefreshDeckState();
     }
 
-    private void RefreshDeckState()
-    {
-        bool inDeck = UnitsDeckManager.Instance.IsInDeck(currentUnit);
-
-        inDeckText.text = inDeck ? "In Deck" : "Not In Deck";
-        toggleDeckButtonText.text = inDeck ? "Remove From Deck" : "Add To Deck";
-    }
-
-    public void OnToggleDeck()
-    {
-        UnitsDeckManager.Instance.ToggleUnit(currentUnit);
-        RefreshDeckState();
-    }
-
-    public void Hide()
+    public void Close()
     {
         root.SetActive(false);
-        currentUnit = null;
     }
 
-    public void OnBackgroundClick()
+    private void FillData()
     {
-        Hide();
+        icon.sprite = _unit.icon;
+        nameText.text = _unit.displayName;
+        rarityText.text = _unit.rarity.ToString();
+        hpText.text = _unit.maxHealth.ToString();
+        dmgText.text = _unit.damage.ToString();
+        atkSpeedText.text = _unit.attackCooldown.ToString();
+        rangeText.text = _unit.attackRange.ToString();
+        levelText.text = "Lvl 1";
     }
 
-    internal void Open(UnitDefinition definition, bool isInDeck, UnitsDeckManager deckManager)
+    private void SetupButtons()
     {
-        throw new NotImplementedException();
+        toggleDeckButton.onClick.RemoveAllListeners();
+
+        if (!_deckManager.IsInDeck(_unit))
+        {
+            toggleDeckButtonText.text = "Add to Deck";
+            toggleDeckButton.onClick.AddListener(TryAddUnitToDeck);
+        }
+        else
+        {
+            toggleDeckButtonText.text = "Remove from Deck";
+            toggleDeckButton.onClick.AddListener(() =>
+            {
+                _deckManager.RemoveFromDeck(_unit);
+                Close();
+            });
+        }
+    }
+
+    private void TryAddUnitToDeck()
+    {
+        if (_deckManager.CurrentDeck.Count < UnitsDeckManager.MaxDeckSize)
+        {
+            _deckManager.ToggleUnit(_unit);
+            Close();
+            return;
+        }
+
+        BuildReplacePanel();
+    }
+
+    private void BuildReplacePanel()
+    {
+        replacePanel.SetActive(true);
+
+        foreach (Transform child in replaceButtonsParent)
+            Destroy(child.gameObject);
+
+        foreach (var oldUnit in _deckManager.CurrentDeck)
+        {
+            var btn = Instantiate(replaceButtonPrefab, replaceButtonsParent);
+            btn.GetComponentInChildren<TMP_Text>().text = oldUnit.displayName;
+
+            btn.gameObject.AddComponent<ReplaceDeckButton>()
+                .Setup(_unit, oldUnit, _deckManager);
+        }
     }
 }

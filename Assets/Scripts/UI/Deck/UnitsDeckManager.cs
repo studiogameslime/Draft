@@ -102,6 +102,22 @@ public class UnitsDeckManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
+    public void ReplaceUnitInDeck(UnitDefinition oldUnit, UnitDefinition newUnit)
+    {
+        int index = _deckUnits.IndexOf(oldUnit);
+        if (index == -1)
+            return;
+
+        _deckUnits[index] = newUnit;
+        SaveDeck();
+
+        BuildDeckRow();
+        OnDeckChanged?.Invoke();
+
+        PlayerDeckProvider.Instance?.ReloadDeck();
+    }
+
+
     // ============================
     // QUERIES
     // ============================
@@ -167,6 +183,8 @@ public class UnitsDeckManager : MonoBehaviour
 
     private void BuildDeckRow()
     {
+        Debug.Log($"BuildDeckRow {this}");
+
         if (deckRowParent == null || deckCardPrefab == null)
             return;
 

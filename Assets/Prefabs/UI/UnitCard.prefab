@@ -517,10 +517,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitCardView
   iconImage: {fileID: 3380325489017936793}
   nameText: {fileID: 4629212766952782089}
-  rarityText: {fileID: 0}
-  lockedOverlay: {fileID: 0}
-  deckMarker: {fileID: 0}
-  cardButton: {fileID: 0}
+  deckHighlight: {fileID: 0}
+  emptySlotVisual: {fileID: 0}
 --- !u!1 &5472973278114216605
 GameObject:
   m_ObjectHideFlags: 0
