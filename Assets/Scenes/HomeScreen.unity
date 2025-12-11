@@ -3536,6 +3536,7 @@ GameObject:
   - component: {fileID: 1365739250}
   - component: {fileID: 1365739249}
   - component: {fileID: 1365739248}
+  - component: {fileID: 1365739251}
   m_Layer: 5
   m_Name: UnitsCollection
   m_TagString: Untagged
@@ -3624,6 +3625,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1365739246}
   m_CullTransparentMesh: 1
+--- !u!114 &1365739251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1365739246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe9a6b1c9a403de4885c6e4fa34481e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitsGridController
+  extraHeight: 20
 --- !u!1 &1368109881
 GameObject:
   m_ObjectHideFlags: 0
@@ -5396,6 +5410,10 @@ PrefabInstance:
     - target: {fileID: 1807419515450646478, guid: 0687abd32b9db5f4b95e88e43efcd6e1, type: 3}
       propertyPath: m_Name
       value: UnitDetailsPopup
+      objectReference: {fileID: 0}
+    - target: {fileID: 1807419515450646478, guid: 0687abd32b9db5f4b95e88e43efcd6e1, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2106106496892919162, guid: 0687abd32b9db5f4b95e88e43efcd6e1, type: 3}
       propertyPath: m_SizeDelta.x

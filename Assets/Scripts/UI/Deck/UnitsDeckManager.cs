@@ -16,24 +16,27 @@ public class UnitsDeckManager : MonoBehaviour
     private UnitDefinition[] _allUnitsSource;
 
     public System.Action OnDeckChanged;
-
     private const string DeckSlotKeyPrefix = "deck_slot_";
 
     public IReadOnlyList<UnitDefinition> CurrentDeck => _deckUnits;
 
+    // ----- deck replace mode -----
+    private readonly List<UnitCardView> _deckCardViews = new();
+    private bool _replaceModeActive = false;
+    private UnitDefinition _pendingNewUnit;
+
+    public bool IsReplaceModeActive => _replaceModeActive;
+
     // ============================
     // UNITY
     // ============================
-
     private void Awake()
     {
-        // Singleton
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
@@ -41,11 +44,9 @@ public class UnitsDeckManager : MonoBehaviour
     // ============================
     // INIT
     // ============================
-
     public void Initialize(UnitDefinition[] allUnits)
     {
         _allUnitsSource = allUnits;
-
         LoadDeck();
         BuildDeckRow();
     }
@@ -53,7 +54,6 @@ public class UnitsDeckManager : MonoBehaviour
     // ============================
     // LOAD / SAVE
     // ============================
-
     private void LoadDeck()
     {
         _deckUnits.Clear();
@@ -68,7 +68,6 @@ public class UnitsDeckManager : MonoBehaviour
         {
             string key = DeckSlotKeyPrefix + i;
             string unitId = PlayerPrefs.GetString(key, string.Empty);
-
             if (string.IsNullOrEmpty(unitId))
                 continue;
 
@@ -92,13 +91,11 @@ public class UnitsDeckManager : MonoBehaviour
         for (int i = 0; i < MaxDeckSize; i++)
         {
             string key = DeckSlotKeyPrefix + i;
-
             if (i < _deckUnits.Count && _deckUnits[i] != null)
                 PlayerPrefs.SetString(key, _deckUnits[i].id);
             else
                 PlayerPrefs.DeleteKey(key);
         }
-
         PlayerPrefs.Save();
     }
 
@@ -110,18 +107,14 @@ public class UnitsDeckManager : MonoBehaviour
 
         _deckUnits[index] = newUnit;
         SaveDeck();
-
         BuildDeckRow();
         OnDeckChanged?.Invoke();
-
         PlayerDeckProvider.Instance?.ReloadDeck();
     }
-
 
     // ============================
     // QUERIES
     // ============================
-
     public bool IsInDeck(UnitDefinition def)
     {
         return def != null && _deckUnits.Contains(def);
@@ -135,7 +128,6 @@ public class UnitsDeckManager : MonoBehaviour
     // ============================
     // EDIT DECK
     // ============================
-
     public void ToggleUnit(UnitDefinition def)
     {
         if (def == null) return;
@@ -148,15 +140,11 @@ public class UnitsDeckManager : MonoBehaviour
         {
             if (_deckUnits.Count >= MaxDeckSize)
                 return;
-
             _deckUnits.Add(def);
         }
 
         SaveDeck();
-
-        if (PlayerDeckProvider.Instance != null)
-            PlayerDeckProvider.Instance.ReloadDeck();
-
+        PlayerDeckProvider.Instance?.ReloadDeck();
         BuildDeckRow();
         OnDeckChanged?.Invoke();
     }
@@ -168,19 +156,63 @@ public class UnitsDeckManager : MonoBehaviour
         if (_deckUnits.Remove(def))
         {
             SaveDeck();
-
-            if (PlayerDeckProvider.Instance != null)
-                PlayerDeckProvider.Instance.ReloadDeck();
-
+            PlayerDeckProvider.Instance?.ReloadDeck();
             BuildDeckRow();
             OnDeckChanged?.Invoke();
         }
     }
 
     // ============================
+    // DECK REPLACE MODE
+    // ============================
+    public void RegisterDeckCard(UnitCardView card)
+    {
+        if (!_deckCardViews.Contains(card))
+            _deckCardViews.Add(card);
+    }
+
+    private void ClearDeckCardViews()
+    {
+        _deckCardViews.Clear();
+    }
+
+    public void StartReplaceMode(UnitDefinition newUnit)
+    {
+        _pendingNewUnit = newUnit;
+        _replaceModeActive = true;
+        UpdateDeckReplaceVisuals(true);
+    }
+
+    public void CancelReplaceMode()
+    {
+        _pendingNewUnit = null;
+        _replaceModeActive = false;
+        UpdateDeckReplaceVisuals(false);
+    }
+
+    public void ReplaceWithDeckCard(UnitDefinition deckUnit)
+    {
+        if (!_replaceModeActive || _pendingNewUnit == null || deckUnit == null)
+            return;
+
+        ReplaceUnitInDeck(deckUnit, _pendingNewUnit);
+        _pendingNewUnit = null;
+        _replaceModeActive = false;
+        UpdateDeckReplaceVisuals(false);
+    }
+
+    private void UpdateDeckReplaceVisuals(bool active)
+    {
+        foreach (var card in _deckCardViews)
+        {
+            if (card != null)
+                card.SetReplaceModeVisual(active);
+        }
+    }
+
+    // ============================
     // UI
     // ============================
-
     private void BuildDeckRow()
     {
         Debug.Log($"BuildDeckRow {this}");
@@ -190,6 +222,8 @@ public class UnitsDeckManager : MonoBehaviour
 
         foreach (Transform child in deckRowParent)
             Destroy(child.gameObject);
+
+        ClearDeckCardViews();
 
         for (int i = 0; i < MaxDeckSize; i++)
         {
@@ -207,6 +241,8 @@ public class UnitsDeckManager : MonoBehaviour
             {
                 card.SetupEmptySlot();
             }
+
+            RegisterDeckCard(card);
         }
     }
 }
