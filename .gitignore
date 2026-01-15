@@ -75,3 +75,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 Assets/Firebase/Plugins/x86_64/
+
+*.psd
+Assets/**/Original artwork/
+Assets/**/SourceArt/
