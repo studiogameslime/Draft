@@ -8,6 +8,7 @@ using UnityEngine;
 using TMPro;
 #if UNITY_ANDROID
 using UnityEngine.Android;
+using Firebase.Analytics;
 #endif
 
 public class FirebaseBootstrap : MonoBehaviour
@@ -56,6 +57,7 @@ public class FirebaseBootstrap : MonoBehaviour
                 }
 
                 InitializeFirebase();
+                FirebaseAnalytics.LogEvent("Open_the_game");
             });
     }
 
@@ -82,6 +84,7 @@ public class FirebaseBootstrap : MonoBehaviour
                 }
 
                 HandleToken(t.Result);
+                
             });
     }
 

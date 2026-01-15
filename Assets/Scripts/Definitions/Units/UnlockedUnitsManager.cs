@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,51 +14,105 @@ public class UnlockedUnitsManager : MonoBehaviour, IUnlockedUnitsProvider
     [SerializeField] private UnitsUnlockConfig config;
 
     private readonly List<UnitDefinition> _unlockedUnits = new();
-    private const string PlayerPrefsKey = "UnlockedUnits";
+    private readonly HashSet<string> _unlockedIds = new();
 
     public IReadOnlyList<UnitDefinition> GetUnlockedUnits() => _unlockedUnits;
-    public bool IsUnlocked(UnitDefinition unit) => _unlockedUnits.Contains(unit);
+
+    public bool IsUnlocked(UnitDefinition unit)
+        => unit != null && !string.IsNullOrEmpty(unit.id) && _unlockedIds.Contains(unit.id);
 
     private void Awake()
     {
-        
-        Load();
-        if (_unlockedUnits.Count == 0 && config != null)
+        StartCoroutine(InitRoutine());
+    }
+
+    private IEnumerator InitRoutine()
+    {
+        while (GameData.Instance == null || GameData.Instance.Save == null)
+            yield return null;
+
+        RebuildFromSave();
+
+        if (_unlockedIds.Count == 0 && config != null && config.startingUnits != null)
         {
             foreach (var u in config.startingUnits)
-                UnlockUnit(u, false);
-            Save();
+                UnlockUnit(u, save: false);
+
+            SaveToGameData();
         }
     }
 
     public void UnlockUnit(UnitDefinition unit, bool save = true)
     {
-        if (unit == null || _unlockedUnits.Contains(unit)) return;
-        _unlockedUnits.Add(unit);
-        if (save) Save();
+        if (unit == null || string.IsNullOrEmpty(unit.id))
+            return;
+
+        // כבר פתוח
+        if (_unlockedIds.Contains(unit.id))
+            return;
+
+        _unlockedIds.Add(unit.id);
+
+        if (!_unlockedUnits.Contains(unit))
+            _unlockedUnits.Add(unit);
+
+        EnsureOwnedEntry(unit.id);
+
+        if (save)
+            SaveToGameData();
     }
 
-    private void Save()
+    private void EnsureOwnedEntry(string unitId)
     {
-        var ids = _unlockedUnits.Where(u => u != null).Select(u => u.id);
-        PlayerPrefs.SetString(PlayerPrefsKey, string.Join("|", ids));
-        PlayerPrefs.Save();
+        var save = GameData.Instance.Save;
+        if (save.ownedUnits == null)
+            save.ownedUnits = new List<UnitProgressData>();
+
+        bool exists = save.ownedUnits.Any(u => u != null && u.unitId == unitId);
+        if (exists) return;
+
+        save.ownedUnits.Add(new UnitProgressData
+        {
+            unitId = unitId,
+            level = 1,
+            partsOwned = 0,
+            isNew = true
+        });
     }
 
-    private void Load()
+    private void RebuildFromSave()
     {
         _unlockedUnits.Clear();
-        if (config == null || config.allUnits == null) return;
+        _unlockedIds.Clear();
 
-        if (!PlayerPrefs.HasKey(PlayerPrefsKey)) return;
+        if (config == null || config.allUnits == null)
+            return;
 
-        string data = PlayerPrefs.GetString(PlayerPrefsKey);
-        var ids = data.Split('|');
-        foreach (var id in ids)
+        var save = GameData.Instance.Save;
+        if (save.ownedUnits == null)
+            save.ownedUnits = new List<UnitProgressData>();
+
+        foreach (var p in save.ownedUnits)
         {
-            var unit = config.allUnits.FirstOrDefault(u => u != null && u.id == id);
-            if (unit != null)
-                _unlockedUnits.Add(unit);
+            if (p == null || string.IsNullOrEmpty(p.unitId))
+                continue;
+
+            _unlockedIds.Add(p.unitId);
+
+            var def = config.allUnits.FirstOrDefault(u => u != null && u.id == p.unitId);
+            if (def != null)
+                _unlockedUnits.Add(def);
         }
+    }
+
+    private void SaveToGameData()
+    {
+        GameData.Instance.SaveNow();
+    }
+
+    public void ReloadFromSave()
+    {
+        if (GameData.Instance == null || GameData.Instance.Save == null) return;
+        RebuildFromSave();
     }
 }

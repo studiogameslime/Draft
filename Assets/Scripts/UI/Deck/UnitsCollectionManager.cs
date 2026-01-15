@@ -17,6 +17,8 @@ public class UnitsCollectionManager : MonoBehaviour
     private void Awake()
     {
         deckManager = FindAnyObjectByType<UnitsDeckManager>();
+        unlockedUnitsManager = FindAnyObjectByType<UnlockedUnitsManager>();
+        
     }
 
     private void Start()
