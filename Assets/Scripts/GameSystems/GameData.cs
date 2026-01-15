@@ -11,6 +11,7 @@ public class GameData : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log("GameData Awake");
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -25,6 +26,8 @@ public class GameData : MonoBehaviour
 
     private void LoadOrCreate()
     {
+        Debug.Log("GameData LoadOrCreate start");
+
         Save = JsonSaveSystem.Load();
 
         if (Save == null)
@@ -34,6 +37,8 @@ public class GameData : MonoBehaviour
 
             JsonSaveSystem.Save(Save);
         }
+        Debug.Log("GameData LoadOrCreate end");
+
     }
 
     public void SaveNow()
