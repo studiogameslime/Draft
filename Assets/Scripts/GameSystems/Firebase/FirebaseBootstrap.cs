@@ -57,7 +57,8 @@ public class FirebaseBootstrap : MonoBehaviour
                 }
 
                 InitializeFirebase();
-                FirebaseAnalytics.LogEvent("Open_the_game");
+                FirebaseAnalytics.SetAnalyticsCollectionEnabled(true);
+                FirebaseAnalytics.LogEvent("open_the_game");
             });
     }
 
@@ -84,7 +85,7 @@ public class FirebaseBootstrap : MonoBehaviour
                 }
 
                 HandleToken(t.Result);
-                
+
             });
     }
 
@@ -170,7 +171,6 @@ public class FirebaseBootstrap : MonoBehaviour
 
         logText.text += $"[{DateTime.Now:HH:mm:ss}] {line}\n";
 
-        // שמירה על מספר שורות סביר
         var lines = logText.text.Split('\n');
         if (lines.Length > maxLines)
         {
