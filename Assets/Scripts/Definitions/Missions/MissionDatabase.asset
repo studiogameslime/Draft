@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a87a8a78ecd419b46976c3efaf42f0fc, type: 3}
+  m_Name: MissionDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::MissionDatabase
+  dailyMissions:
+  - {fileID: 11400000, guid: a4b03b27a0e36324aafee15ff9d4f910, type: 2}
+  - {fileID: 11400000, guid: a31393c2d98e68041934cc1a478f2f80, type: 2}
+  - {fileID: 11400000, guid: 516b8ac59f80cdc469907aec1bbc8d59, type: 2}
+  - {fileID: 11400000, guid: 56870b37aa9100043be5f1f5f68a2244, type: 2}
+  - {fileID: 11400000, guid: 723a68b2d2c47d247be38810fc36a987, type: 2}
+  - {fileID: 11400000, guid: 2f478b3deb0d6074e8b78402da9fa38d, type: 2}
+  - {fileID: 11400000, guid: 2c9de330dd93712419c6840e9483176a, type: 2}
+  - {fileID: 11400000, guid: 33408dea9392e134daf4bd59b19c6841, type: 2}
+  - {fileID: 11400000, guid: 317a2cf9187a8d7478cf33d7aa4bec20, type: 2}
+  weeklyMissions:
+  - {fileID: 11400000, guid: 85ec42dd1a2d5294b82ac3c708f296ee, type: 2}
+  - {fileID: 11400000, guid: 7e3b1098afa9bf54d8eab5903d5ff0c9, type: 2}
+  - {fileID: 11400000, guid: b5003b6d112b1fc4b8ca07052396f388, type: 2}
+  - {fileID: 11400000, guid: 070064512b9bead4d9585fa72abf4bde, type: 2}

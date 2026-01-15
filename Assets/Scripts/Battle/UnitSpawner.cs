@@ -1,0 +1,317 @@
+using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
+
+/// <summary>
+/// Lives on a grid cell spawner object.
+/// Responsible for spawning combat units based on UnitDefinition.
+/// One spawner = one cell = independent capacity.
+///
+/// Rules:
+/// - Capacity counts only active fighters.
+/// - This spawner also keeps one reserve unit waiting on the cell (not counted in capacity).
+/// - Reserve is created after spawnTime (no scale animation).
+/// - While spawning, we update only the progress UI.
+/// - When there is free attacker capacity, reserve is released immediately to battle.
+/// </summary>
+public class UnitSpawner : MonoBehaviour
+{
+    [Header("Setup")]
+    public UnitDefinition unitDef;
+    public Team team = Team.MyTeam;
+    public int unitLevel = 1;
+
+    [Header("Optional visuals (for planning phase)")]
+    [SerializeField] private SpriteRenderer iconRenderer;
+
+    [Header("Spawn Progress UI (optional)")]
+    private Image spawnProgressFill; // Set this to your radial/filled Image
+    [SerializeField] private float progressLerpSpeed = 12f; // Smooth UI follow speed
+
+    [Header("Runtime")]
+    private BattleManager battle;
+    private bool battleRunning = false;
+    private int attackersActive = 0;
+    private CharacterStats reserveStats = null;
+    private bool reserveReady = false;
+    private bool isSpawningReserve = false;
+    private float hpMul = 1f;
+    private float dmgMul = 1f;
+
+    // UI smoothing runtime
+    private float progressTarget = 0f;
+    private Coroutine progressRoutine;
+
+    public void Configure(UnitDefinition def, Team t, int level)
+    {
+        unitDef = def;
+        team = t;
+        unitLevel = level;
+
+        if (iconRenderer != null && def != null)
+        {
+            iconRenderer.sprite = def.icon;
+            if (def.prefab != null)
+                iconRenderer.transform.localScale = def.prefab.transform.localScale;
+        }
+    }
+
+    public void SetCellBonusMultipliers(float hpMultiplier, float dmgMultiplier)
+    {
+        hpMul = Mathf.Max(0.01f, hpMultiplier);
+        dmgMul = Mathf.Max(0.01f, dmgMultiplier);
+    }
+
+    public void StartSpawning(BattleManager bm)
+    {
+        if (battleRunning) return;
+
+        battle = bm;
+        battleRunning = true;
+        SetSpawnerAlpha(0.5f);
+
+        // Reset progress at battle start
+        SetProgressImmediate(0f);
+
+        StopAllCoroutines();
+        StartCoroutine(BrainLoop());
+    }
+
+    private IEnumerator BrainLoop()
+    {
+        if (unitDef == null || unitDef.prefab == null)
+            yield break;
+
+        while (battleRunning && battle != null && battle.IsBattleRunning && !battle.IsGameOver)
+        {
+            int cap = Mathf.Max(1, unitDef.baseCapacity);
+
+            // Ensure we have a reserve unit in progress or ready
+            if (!reserveReady && !isSpawningReserve)
+                StartCoroutine(SpawnReserveRoutine());
+
+            // If we have room for another attacker and reserve is ready, release immediately
+            if (reserveReady && attackersActive < cap)
+                ReleaseReserveToBattle();
+
+            yield return null;
+        }
+    }
+
+    private IEnumerator SpawnReserveRoutine()
+    {
+        if (isSpawningReserve) yield break;
+        isSpawningReserve = true;
+
+        if (unitDef == null || unitDef.prefab == null)
+        {
+            isSpawningReserve = false;
+            yield break;
+        }
+
+        if (reserveReady || reserveStats != null)
+        {
+            isSpawningReserve = false;
+            yield break;
+        }
+
+        // Start progress from 0 when reserve spawn begins
+        SetProgressImmediate(0f);
+
+        // Wait spawnTime while updating only the progress UI (no unit instantiation, no scale animation)
+        float duration = Mathf.Max(0.01f, unitDef.spawnTime);
+        float t = 0f;
+
+        while (t < duration && battleRunning && battle != null && battle.IsBattleRunning && !battle.IsGameOver)
+        {
+            t += Time.deltaTime;
+            float a = Mathf.Clamp01(t / duration);
+            SetProgressTarget(a);
+            yield return null;
+        }
+
+        // Battle ended mid-spawn
+        if (!battleRunning || battle == null || !battle.IsBattleRunning || battle.IsGameOver)
+        {
+            isSpawningReserve = false;
+            yield break;
+        }
+
+        // Ensure progress ends at 1 when reserve is ready
+        SetProgressTarget(1f);
+
+        // Now create the reserve unit at its normal scale
+        GameObject go = Instantiate(unitDef.prefab, transform.position, Quaternion.identity);
+
+        var stats = go.GetComponent<CharacterStats>();
+        if (stats == null)
+        {
+            Debug.LogError("Spawned prefab has no CharacterStats.");
+            Destroy(go);
+            isSpawningReserve = false;
+            yield break;
+        }
+
+        // Init stats
+        stats.Init(team, unitDef, unitLevel);
+        stats.SetInitialPosition();
+
+        // Apply cell bonus
+        stats.maxHealth = Mathf.RoundToInt(stats.maxHealth * hpMul);
+        stats.currentHealth = stats.maxHealth;
+        stats.damage = Mathf.RoundToInt(stats.damage * dmgMul);
+
+        // Reserve behavior: cannot be targeted, AI off
+        stats.isUntargetable = true;
+
+        var ai = go.GetComponent<UnitAI>();
+        if (ai != null) ai.enabled = false;
+
+        // Keep reserve from drifting while waiting
+        var rb = go.GetComponent<Rigidbody2D>();
+        if (rb != null) rb.linearVelocity = Vector2.zero;
+
+        reserveStats = stats;
+        reserveReady = true;
+        isSpawningReserve = false;
+    }
+
+    private void ReleaseReserveToBattle()
+    {
+        if (!reserveReady || reserveStats == null)
+            return;
+
+        // Make the reserve targetable now
+        reserveStats.isUntargetable = false;
+
+        // Ensure this released unit will notify us when it dies (capacity tracking)
+        var link = reserveStats.GetComponent<SpawnedUnitOwnerLink>();
+        if (link == null)
+            link = reserveStats.gameObject.AddComponent<SpawnedUnitOwnerLink>();
+        link.owner = this;
+
+        var ai = reserveStats.GetComponent<UnitAI>();
+        if (ai != null)
+        {
+            ai.enabled = true;
+            ai.LockInitialTargetAtBattleStart();
+        }
+
+        var ninja = reserveStats.GetComponent<NinjaStealthRun>();
+        if (ninja != null)
+            ninja.DoInitialStealthRun();
+
+        attackersActive++;
+        reserveStats = null;
+        reserveReady = false;
+
+        // After releasing, we will start a new reserve spawn, so reset progress
+        SetProgressTarget(0f);
+    }
+
+    public void NotifyUnitDied()
+    {
+        attackersActive = Mathf.Max(0, attackersActive - 1);
+        int cap = (unitDef != null) ? Mathf.Max(1, unitDef.baseCapacity) : 1;
+        if (battleRunning && reserveReady && attackersActive < cap)
+            ReleaseReserveToBattle();
+    }
+
+    public void StopBattle()
+    {
+        battleRunning = false;
+        StopAllCoroutines();
+        SetSpawnerAlpha(1f);
+
+        // Reset UI
+        SetProgressImmediate(0f);
+    }
+
+    public void ResetForNewRound()
+    {
+        StopAllCoroutines();
+        battleRunning = false;
+        attackersActive = 0;
+        reserveReady = false;
+        isSpawningReserve = false;
+
+        if (reserveStats != null)
+        {
+            Destroy(reserveStats.gameObject);
+            reserveStats = null;
+        }
+
+        SetSpawnerAlpha(1f);
+
+        // Reset UI
+        SetProgressImmediate(0f);
+    }
+
+    private void SetSpawnerAlpha(float alpha)
+    {
+        alpha = Mathf.Clamp01(alpha);
+        var renderers = GetComponentsInChildren<SpriteRenderer>(true);
+        foreach (var r in renderers)
+        {
+            Color c = r.color;
+            c.a = alpha;
+            r.color = c;
+        }
+    }
+
+    // -------------------------
+    // Progress UI helpers
+    // -------------------------
+    public void AttachCellProgressImage(DropAreaCell cell)
+    {
+        if (cell == null) return;
+        spawnProgressFill = cell.fillImage;
+    }
+
+    private void SetProgressTarget(float value01)
+    {
+        progressTarget = Mathf.Clamp01(value01);
+
+        if (spawnProgressFill == null)
+            return;
+
+        if (progressRoutine == null)
+            progressRoutine = StartCoroutine(ProgressSmoothRoutine());
+    }
+
+    private void SetProgressImmediate(float value01)
+    {
+        progressTarget = Mathf.Clamp01(value01);
+
+        if (spawnProgressFill != null)
+            spawnProgressFill.fillAmount = progressTarget;
+
+        if (progressRoutine != null)
+        {
+            StopCoroutine(progressRoutine);
+            progressRoutine = null;
+        }
+    }
+
+    private IEnumerator ProgressSmoothRoutine()
+    {
+        while (spawnProgressFill != null && battleRunning)
+        {
+            float current = spawnProgressFill.fillAmount;
+            float next = Mathf.Lerp(current, progressTarget, Time.deltaTime * progressLerpSpeed);
+            spawnProgressFill.fillAmount = next;
+
+            if (Mathf.Abs(next - progressTarget) < 0.002f)
+            {
+                spawnProgressFill.fillAmount = progressTarget;
+
+                if (progressTarget <= 0.0001f || progressTarget >= 0.9999f)
+                    break;
+            }
+
+            yield return null;
+        }
+
+        progressRoutine = null;
+    }
+}

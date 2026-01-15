@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcc63f68faccdf84da309a51d57a05b7, type: 3}
+  m_Name: UnitsUnlockConfig
+  m_EditorClassIdentifier: Assembly-CSharp::UnitsUnlockConfig
+  allUnits:
+  - {fileID: 11400000, guid: ad4287dbc795daf4da4915b5d3fcd156, type: 2}
+  - {fileID: 11400000, guid: 6cab19afac977304e898761cc9185bd1, type: 2}
+  - {fileID: 11400000, guid: d9282f24b2268dd4688a50473d8bdee7, type: 2}
+  - {fileID: 11400000, guid: 624a24cba8fbd3b469665d2ac0fc3846, type: 2}
+  - {fileID: 11400000, guid: b7fa78734c59dcf459d2349865d741bf, type: 2}
+  - {fileID: 11400000, guid: 681e39eeac684f2448e304010c689052, type: 2}
+  startingUnits:
+  - {fileID: 11400000, guid: ad4287dbc795daf4da4915b5d3fcd156, type: 2}
+  - {fileID: 11400000, guid: 681e39eeac684f2448e304010c689052, type: 2}

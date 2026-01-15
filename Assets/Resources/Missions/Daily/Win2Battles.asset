@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d949062025cd3f47aee99958fae9ef3, type: 3}
+  m_Name: Win2Battles
+  m_EditorClassIdentifier: Assembly-CSharp::MissionDefinition
+  id: mission_daily_win_2_battles
+  title: Win2Battles
+  description: Win 2 Battles
+  missionType: 0
+  action: 0
+  targetAmount: 2
+  requiredUnitClass: 0
+  requiredUnit: {fileID: 0}
+  goldReward: 0
+  partsReward: 0
+  chestReward: {fileID: 11400000, guid: 3dc7bbe10158e2f49a5c25def79a07f2, type: 2}

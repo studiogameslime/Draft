@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5f8d6c6bca3024994ab317ac82b464, type: 3}
+  m_Name: Soul Drop Chance
+  m_EditorClassIdentifier: Assembly-CSharp::MasteryItemDefinition
+  id: mastery_rare_soul_drop_percent
+  displayName: Soul Drop Chance
+  description: Increases the chance for monsters to drop Souls.
+  rarity: 1
+  icon: {fileID: -4697424154706883055, guid: ce3a82dc11a598040babe4d4356b303b, type: 3}
+  iconScale: 1.5
+  stat: 7
+  valueKind: 0
+  valuePerLevel: 1
+  maxLevel: 20

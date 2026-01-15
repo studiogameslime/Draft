@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: GiantSkeleton
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_giant_skeleton
+  displayName: GiantSkeleton
+  description: 
+  rarity: 2
+  icon: {fileID: 6976913724491762843, guid: b8d2a56a971c695448a2f3adb645d99a, type: 3}
+  prefab: {fileID: 501027721989515594, guid: 9ef15c7d379a26248a985984bf0f6ced, type: 3}
+  iconScale: 0.3
+  unitTeam: 1
+  unitClass: 1
+  targetPriorityClass: 1
+  soulCost: 7
+  soulDropChance: 0.25
+  maxHealth: 250
+  damage: 10
+  moveSpeed: 1
+  attackRange: 0.8
+  attackCooldown: 1.5
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []

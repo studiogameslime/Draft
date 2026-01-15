@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d949062025cd3f47aee99958fae9ef3, type: 3}
+  m_Name: Play3BattlesWithWarrior
+  m_EditorClassIdentifier: Assembly-CSharp::MissionDefinition
+  id: mission_daily_win_3_battles_with_warrior
+  title: Win3BattlesWithWarrior
+  description: Win 3 Battles With Warrior
+  missionType: 0
+  action: 5
+  targetAmount: 3
+  requiredUnitClass: 0
+  requiredUnit: {fileID: 11400000, guid: 681e39eeac684f2448e304010c689052, type: 2}
+  goldReward: 120
+  partsReward: 0
+  chestReward: {fileID: 0}

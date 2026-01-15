@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Warrior
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_warrior
+  displayName: Warrior
+  description: A quick little fighter who skips heavy armor and wins with speed and
+    charm.
+  rarity: 0
+  icon: {fileID: -5455630811309129204, guid: 290105db12d408342bc316647a1e35c5, type: 3}
+  prefab: {fileID: 501027721989515594, guid: 037d4c6a00f2afe47b4a733f5e492d55, type: 3}
+  iconScale: 0.4
+  unitTeam: 0
+  unitClass: 1
+  targetPriorityClass: 0
+  soulCost: 2
+  soulDropChance: 0.25
+  maxHealth: 100
+  damage: 10
+  moveSpeed: 0.6
+  attackRange: 0.7
+  attackCooldown: 1
+  spawnTime: 4
+  animatorController: {fileID: 9100000, guid: a70770eaf9533314a891db17faa90433, type: 2}
+  maxTier: 3
+  partSlots:
+  - slot: 0
+  - slot: 1
+  - slot: 2
+  - slot: 3
+  - slot: 4
+  - slot: 5
+  - slot: 6
+  baseCapacity: 2
+  headPrefabForBattlePreview: {fileID: 0}

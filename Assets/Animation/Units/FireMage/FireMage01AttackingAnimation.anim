@@ -1,0 +1,112 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!74 &7400000
+AnimationClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: FireMage01AttackingAnimation
+  serializedVersion: 7
+  m_Legacy: 0
+  m_Compressed: 0
+  m_UseHighQualityCurve: 1
+  m_RotationCurves: []
+  m_CompressedRotationCurves: []
+  m_EulerCurves: []
+  m_PositionCurves: []
+  m_ScaleCurves: []
+  m_FloatCurves: []
+  m_PPtrCurves:
+  - serializedVersion: 2
+    curve:
+    - time: 0
+      value: {fileID: 8565098385204487536, guid: 54d9534ce1a269c41ae471dc0a4c6b03, type: 3}
+    - time: 0.1
+      value: {fileID: 8142094521226676549, guid: 2a4e585f591036b4c9ff18c2b9782579, type: 3}
+    - time: 0.2
+      value: {fileID: 3686697365509621867, guid: b067642d139728a43a9b6af454982083, type: 3}
+    - time: 0.3
+      value: {fileID: -1271199785127189520, guid: 007a88308c715e3459cdd5dadbf95252, type: 3}
+    - time: 0.4
+      value: {fileID: 7488901222759622250, guid: 92bdb5f19f0ba14429f186e018f15f39, type: 3}
+    - time: 0.5
+      value: {fileID: 9059457643426694581, guid: 605df44572b36fb46a8ff1ee1d2d5953, type: 3}
+    - time: 0.6
+      value: {fileID: 7139679790696600889, guid: 9f19e622a289edf4bb454815a1df0c92, type: 3}
+    - time: 0.7
+      value: {fileID: 8027435341922411570, guid: c6b7d46e2b30e0746b5b65006e2d205d, type: 3}
+    - time: 0.8
+      value: {fileID: -8048576707453575316, guid: ecaf6ee49edbc6647a69956481116e87, type: 3}
+    - time: 0.9
+      value: {fileID: -7516590442034006195, guid: 18d63ec15b89e9a40a5c28d4cf92e9c1, type: 3}
+    - time: 1
+      value: {fileID: -8028603197007022428, guid: 383a6741b8ac6d543ad21bbb40fe8628, type: 3}
+    - time: 1.1
+      value: {fileID: 2789135748628638434, guid: e2f8c522a17838a4c8d92622e6e4197f, type: 3}
+    attribute: m_Sprite
+    path: 
+    classID: 212
+    script: {fileID: 0}
+    flags: 2
+  m_SampleRate: 10
+  m_WrapMode: 0
+  m_Bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  m_ClipBindingConstant:
+    genericBindings:
+    - serializedVersion: 2
+      path: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+    pptrCurveMapping:
+    - {fileID: 8565098385204487536, guid: 54d9534ce1a269c41ae471dc0a4c6b03, type: 3}
+    - {fileID: 8142094521226676549, guid: 2a4e585f591036b4c9ff18c2b9782579, type: 3}
+    - {fileID: 3686697365509621867, guid: b067642d139728a43a9b6af454982083, type: 3}
+    - {fileID: -1271199785127189520, guid: 007a88308c715e3459cdd5dadbf95252, type: 3}
+    - {fileID: 7488901222759622250, guid: 92bdb5f19f0ba14429f186e018f15f39, type: 3}
+    - {fileID: 9059457643426694581, guid: 605df44572b36fb46a8ff1ee1d2d5953, type: 3}
+    - {fileID: 7139679790696600889, guid: 9f19e622a289edf4bb454815a1df0c92, type: 3}
+    - {fileID: 8027435341922411570, guid: c6b7d46e2b30e0746b5b65006e2d205d, type: 3}
+    - {fileID: -8048576707453575316, guid: ecaf6ee49edbc6647a69956481116e87, type: 3}
+    - {fileID: -7516590442034006195, guid: 18d63ec15b89e9a40a5c28d4cf92e9c1, type: 3}
+    - {fileID: -8028603197007022428, guid: 383a6741b8ac6d543ad21bbb40fe8628, type: 3}
+    - {fileID: 2789135748628638434, guid: e2f8c522a17838a4c8d92622e6e4197f, type: 3}
+  m_AnimationClipSettings:
+    serializedVersion: 2
+    m_AdditiveReferencePoseClip: {fileID: 0}
+    m_AdditiveReferencePoseTime: 0
+    m_StartTime: 0
+    m_StopTime: 1.2
+    m_OrientationOffsetY: 0
+    m_Level: 0
+    m_CycleOffset: 0
+    m_HasAdditiveReferencePose: 0
+    m_LoopTime: 0
+    m_LoopBlend: 0
+    m_LoopBlendOrientation: 0
+    m_LoopBlendPositionY: 0
+    m_LoopBlendPositionXZ: 0
+    m_KeepOriginalOrientation: 0
+    m_KeepOriginalPositionY: 1
+    m_KeepOriginalPositionXZ: 0
+    m_HeightFromFeet: 0
+    m_Mirror: 0
+  m_EditorCurves: []
+  m_EulerEditorCurves: []
+  m_HasGenericRootTransform: 0
+  m_HasMotionFloatCurves: 0
+  m_Events:
+  - time: 0.8
+    functionName: SpawnMeteor
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

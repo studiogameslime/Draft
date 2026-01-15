@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Lightning Mage
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_lightning_mage
+  displayName: Lightning Mage
+  description: A calm mage whose lightning strikes faster than anyone can react.
+  rarity: 3
+  icon: {fileID: -5455630811309129204, guid: ee9c8600264c12f4c92cd4c1185c54a5, type: 3}
+  prefab: {fileID: 501027721989515594, guid: 8cec8200b45e28b48bcd611ea8a31893, type: 3}
+  iconScale: 0.4
+  unitClass: 4
+  targetPriorityClass: 1
+  soulCost: 4
+  soulDropChance: 0.25
+  maxHealth: 80
+  damage: 15
+  moveSpeed: 1
+  attackRange: 7
+  attackCooldown: 1.6
+  animatorController: {fileID: 9100000, guid: 6e387bc49275cb84798c2467ae219008, type: 2}
+  maxTier: 3
+  partSlots: []

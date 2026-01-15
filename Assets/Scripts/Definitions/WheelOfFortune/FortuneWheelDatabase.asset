@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b126717ee7c0374c93f7b3875795306, type: 3}
+  m_Name: FortuneWheelDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::FortuneWheelDatabase
+  slots:
+  - {fileID: 11400000, guid: 345f1c04cf9bffb4894fa8d3955b66fb, type: 2}
+  - {fileID: 11400000, guid: 31b84a7327424df42969c235b8b62a6e, type: 2}
+  - {fileID: 11400000, guid: 415b699d5a74c1843a0ff149e46b07ef, type: 2}
+  - {fileID: 11400000, guid: fa1b47fb95445f44bb91a854f3b83b10, type: 2}
+  - {fileID: 11400000, guid: c46e45c77c35d46418a3b006251309ad, type: 2}
+  - {fileID: 11400000, guid: 19e0ac9f83960a04abcc9b10305cadd8, type: 2}
+  - {fileID: 11400000, guid: dcc8e03e98422b64e87cecf12372fb6c, type: 2}
+  commonChance: 0
+  rareChance: 0
+  epicChance: 100

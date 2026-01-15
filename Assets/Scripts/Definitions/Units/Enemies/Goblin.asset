@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Goblin
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_goblin
+  displayName: Goblin
+  description: 
+  rarity: 0
+  icon: {fileID: -5455630811309129204, guid: 9ac4b89c2bb99a0499d216eb33474cbd, type: 3}
+  prefab: {fileID: 1962212957759589538, guid: 86654c0814329e347b269c8778cdb847, type: 3}
+  iconScale: 0.4
+  unitTeam: 1
+  unitClass: 1
+  targetPriorityClass: 0
+  soulCost: 0
+  soulDropChance: 0.25
+  maxHealth: 40
+  damage: 10
+  moveSpeed: 0.6
+  attackRange: 1
+  attackCooldown: 1
+  spawnTime: 5
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: d6fbab3502fa9d44f9eacf15387e9549, type: 3}
