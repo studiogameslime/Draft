@@ -23,7 +23,7 @@ public class SoulOrbSpawner : MonoBehaviour
     /// </summary>
     public void SpawnSoul(Vector3 worldPos, int amount = 1)
     {
-       // if (!soulPoolTarget) soulPoolTarget = FindAnyObjectByType<SoulsManager>()?.GetComponent<RectTransform>();
+        if (!soulPoolTarget) soulPoolTarget = FindAnyObjectByType<SoulsManager>()?.GetComponent<RectTransform>();
 
         if (soulOrbPrefab == null || soulPoolTarget == null)
         {

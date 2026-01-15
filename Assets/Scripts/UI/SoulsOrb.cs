@@ -3,89 +3,99 @@ using UnityEngine;
 
 public class SoulOrb : MonoBehaviour
 {
-    [Header("Canvas refs")]
-    [SerializeField] private Canvas canvas;                 // ה-Canvas של ה-HUD
-    [SerializeField] private RectTransform canvasRoot;      // בדרך כלל: (RectTransform)canvas.transform
-    [SerializeField] private Transform selfRect;        // ה-RectTransform של האורב עצמו
-    [SerializeField] private Camera uiCamera;               // אם Canvas = ScreenSpaceCamera/WorldSpace, לשים פה את הקאמרה. אם Overlay -> null
+    [Header("References")]
+    [SerializeField] private Camera worldCamera;          // לרוב Camera.main
+    [SerializeField] private Canvas uiCanvas;             // ה-Canvas שבו נמצא היעד
+    [SerializeField] private Camera uiCamera;             // Overlay = null, ScreenSpaceCamera/WorldSpace = canvas.worldCamera
+    [SerializeField] private float screenDepthOffset = 0f; // אופציונלי: להזיז קצת קדימה/אחורה
 
-    [Header("Phase 1: Rise up")]
-    public float riseHeight = 80f;            // ב-UI זה פיקסלים, לא מטרים
+    [Header("Phase 1: Rise up (in SCREEN pixels)")]
+    public float riseHeight = 80f;
     public float riseDuration = 0.25f;
     public AnimationCurve riseCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    [Header("Phase 2: Move towards pool")]
+    [Header("Phase 2: Move towards UI target (in SCREEN pixels)")]
     public float moveToTargetDuration = 0.5f;
-    public float arcHeight = 120f;           // פיקסלים
+    public float arcHeight = 120f;
     public AnimationCurve moveCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     [Header("Amount")]
     public int soulsAmount = 1;
 
     private RectTransform _targetUI;
-    private bool _initialized;
+    private Vector3 _startWorldPos;
+    private float _depth; // עומק מסך קבוע (z ב-ScreenPoint)
 
-    // startPos זה עדיין WORLD (מהדמות)
-    public void Init(Vector3 startWorldPos, RectTransform targetUI, int amount = 1)
+    public void Init(Vector3 startPosWorld, RectTransform targetUI, int amount = 1)
     {
-        soulsAmount = Mathf.Max(1, amount);
+        _startWorldPos = startPosWorld;
         _targetUI = targetUI;
+        soulsAmount = Mathf.Max(1, amount);
 
-        if (canvas == null) canvas = GetComponentInParent<Canvas>();
-        if (canvasRoot == null && canvas != null) canvasRoot = (RectTransform)canvas.transform;
-        if (selfRect == null) selfRect = transform;
+        if (worldCamera == null) worldCamera = Camera.main;
+        if (uiCanvas != null && uiCanvas.renderMode != RenderMode.ScreenSpaceOverlay && uiCamera == null)
+            uiCamera = uiCanvas.worldCamera;
 
-        // אם Overlay -> uiCamera = null. אם ScreenSpaceCamera/WorldSpace -> תן את canvas.worldCamera
-        if (uiCamera == null && canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
-            uiCamera = canvas.worldCamera;
+        // קובעים עומק קבוע לפי נקודת ההתחלה (כדי שהאורב "יישאר" באותו מרחק מהמצלמה)
+        var startScreen3 = worldCamera.WorldToScreenPoint(_startWorldPos);
+        _depth = startScreen3.z + screenDepthOffset;
 
-        // להציב את האורב על נקודת התחלה ב-UI
-        //selfRect.anchoredPosition = WorldToCanvasLocal(startWorldPos);
+        // מציבים את האורב על נקודת ההתחלה
+        transform.position = _startWorldPos;
 
-        _initialized = true;
-        StartCoroutine(FlyToTargetRoutine(startWorldPos));
+        StartCoroutine(FlyToTarget());
     }
 
-    private IEnumerator FlyToTargetRoutine(Vector3 startWorldPos)
+    private IEnumerator FlyToTarget()
     {
-        if (!_initialized || _targetUI == null || canvasRoot == null)
+        if (worldCamera == null || _targetUI == null)
         {
             Destroy(gameObject);
             yield break;
         }
 
-        // ---------- Phase 1: Rise up (UI) ----------
-        Vector2 riseStart = WorldToCanvasLocal(startWorldPos);
-        Vector2 riseEnd = riseStart + Vector2.up * riseHeight;
+        // --- Screen start/end ---
+        Vector2 startScreen = (Vector2)worldCamera.WorldToScreenPoint(_startWorldPos);
+        Vector2 endScreen = GetTargetScreenPos(); // יעד ב-Screen
+
+        // ---------- Phase 1: Rise up ----------
+        Vector2 riseStart = startScreen;
+        Vector2 riseEnd = startScreen + Vector2.up * riseHeight;
 
         float t = 0f;
-        float safeRiseDuration = Mathf.Max(0.01f, riseDuration);
-
+        float safeRise = Mathf.Max(0.01f, riseDuration);
         while (t < 1f)
         {
-            t += Time.deltaTime / safeRiseDuration;
+            t += Time.deltaTime / safeRise;
             float k = riseCurve.Evaluate(Mathf.Clamp01(t));
+
+            Vector2 screenPos = Vector2.Lerp(riseStart, riseEnd, k);
+            SetWorldFromScreen(screenPos);
+
             yield return null;
         }
 
-        // ---------- Phase 2: Bezier arc to target (UI) ----------
+        // ---------- Phase 2: Bezier arc to UI target ----------
         t = 0f;
-        float safeMoveDuration = Mathf.Max(0.01f, moveToTargetDuration);
+        float safeMove = Mathf.Max(0.01f, moveToTargetDuration);
 
-        // שים לב: היעד יכול לזוז (Layout וכו'), אז נחשב end כל פריים
         while (t < 1f)
         {
-            t += Time.deltaTime / safeMoveDuration;
+            t += Time.deltaTime / safeMove;
             float k = moveCurve.Evaluate(Mathf.Clamp01(t));
 
+            // יעד יכול לזוז (Layout/UI), אז מחשבים אותו כל פריים
+            endScreen = GetTargetScreenPos();
+
             Vector2 p0 = riseEnd;
+            Vector2 p2 = endScreen;
+            Vector2 p1 = (p0 + p2) * 0.5f + Vector2.up * arcHeight;
 
-            Vector2 end = GetTargetAnchoredPos(); // יעד ב-anchoredPosition ביחס ל-canvasRoot
-            Vector2 mid = (p0 + end) * 0.5f + Vector2.up * arcHeight;
+            Vector2 a = Vector2.Lerp(p0, p1, k);
+            Vector2 b = Vector2.Lerp(p1, p2, k);
+            Vector2 screenPos = Vector2.Lerp(a, b, k);
 
-            Vector2 a = Vector2.Lerp(p0, mid, k);
-            Vector2 b = Vector2.Lerp(mid, end, k);
-            Vector2 pos = Vector2.Lerp(a, b, k);
+            SetWorldFromScreen(screenPos);
 
             yield return null;
         }
@@ -97,18 +107,17 @@ public class SoulOrb : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private Vector2 WorldToCanvasLocal(Vector3 worldPos)
+    private Vector2 GetTargetScreenPos()
     {
-        Vector2 screen = RectTransformUtility.WorldToScreenPoint(uiCamera, worldPos);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRoot, screen, uiCamera, out Vector2 local);
-        return local;
+        // עובד לכל סוגי Canvas: Overlay/Camera/WorldSpace
+        return RectTransformUtility.WorldToScreenPoint(uiCamera, _targetUI.position);
     }
 
-    private Vector2 GetTargetAnchoredPos()
+    private void SetWorldFromScreen(Vector2 screenPos)
     {
-        // ממיר את מיקום ה-target (UI) ל-local של canvasRoot
-        Vector2 screen = RectTransformUtility.WorldToScreenPoint(uiCamera, _targetUI.position);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRoot, screen, uiCamera, out Vector2 local);
-        return local;
+        // ScreenToWorldPoint צריך z=depth (מרחק מהמצלמה)
+        var sp = new Vector3(screenPos.x, screenPos.y, Mathf.Max(0.01f, _depth));
+        Vector3 world = worldCamera.ScreenToWorldPoint(sp);
+        transform.position = world;
     }
 }
