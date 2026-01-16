@@ -242,7 +242,6 @@ public class BattleManager : MonoBehaviour
         currentRoundIndex++;
         if (currentRoundIndex >= levelDefinition.RoundsCount) // Win condition
         {
-            PlayerXPManager.Instance.AddXP(levelDefinition.xpOnLevelComplete);
 
             // ============================================
             // MISSIONS PROGRESS
@@ -270,9 +269,11 @@ public class BattleManager : MonoBehaviour
 
             // ============================================
 
-            EndGameUI.Instance.ShowWinScreen(
-                levelDefinition.goldOnLevelComplete,
-                levelDefinition.GetGoldFromRounds(),
+            PlayerXPManager.Instance.AddXP(levelDefinition.xpOnLevelComplete);
+            PlayerCurrencyWallet.Instance.AddGold(levelDefinition.goldOnLevelComplete);
+            PlayerCurrencyWallet.Instance.AddGold(levelDefinition.GetGoldFromRounds());
+            Debug.Log($"complete - {levelDefinition.goldOnLevelComplete} + round {levelDefinition.GetGoldFromRounds()}");
+            EndGameUI.Instance.ShowWinScreen(levelDefinition.goldOnLevelComplete, levelDefinition.GetGoldFromRounds(),
                 PlayerCurrencyWallet.Instance.Gold
             );
 

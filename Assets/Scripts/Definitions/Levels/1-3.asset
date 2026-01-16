@@ -15,7 +15,7 @@ MonoBehaviour:
   rounds:
   - playerPicks: 0
     souls: 5
-    goldOnRoundWin: 0
+    goldOnRoundWin: 15
     enemyPhases:
     - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
       count: 3
@@ -24,7 +24,7 @@ MonoBehaviour:
     xpOnRoundWin: 20
   - playerPicks: 0
     souls: 10
-    goldOnRoundWin: 0
+    goldOnRoundWin: 10
     enemyPhases:
     - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
       count: 4
