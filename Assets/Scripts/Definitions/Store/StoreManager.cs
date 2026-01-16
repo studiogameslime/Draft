@@ -51,19 +51,17 @@ public class StoreManager : MonoBehaviour
         if (item.isDailyFree)
         {
             if (!DailyResetUtil.IsReady(save.nextDailyFreeGoldUtcTicks))
-            {
-                Debug.Log("Daily free gold not ready yet");
                 return;
-            }
 
-            // grant reward
             wallet.AddGold(item.goldAmount);
 
-            // set next reset
-            save.nextDailyFreeGoldUtcTicks = DailyResetUtil.GetNextResetTicks();
+            save.nextDailyFreeGoldUtcTicks =
+                DailyResetUtil.GetNextDailyResetUtc(DateTime.UtcNow).Ticks;
+
             GameData.Instance.SaveNow();
             return;
         }
+
 
         if (item.costType == CostType.Gems && wallet.Gems < item.priceInGems)
         {

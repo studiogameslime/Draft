@@ -5,8 +5,6 @@ public class DailyLoginManager : MonoBehaviour
 {
     public static DailyLoginManager instance;
 
-    [Header("Daily Reset Hour (UTC)")]
-    [SerializeField] private int resetHourUtc = 8;
 
     private void Awake()
     {
@@ -15,32 +13,20 @@ public class DailyLoginManager : MonoBehaviour
 
     public void CheckDailyLogin()
     {
-        if (GameData.Instance == null || GameData.Instance.Save == null)
+        if (GameData.Instance?.Save == null)
             return;
 
-        DateTime now = DateTime.UtcNow;
-        DateTime currentResetTime = GetCurrentResetTime(now);
+        DateTime nowUtc = DateTime.UtcNow;
+        DateTime currentReset = DailyResetUtil.GetCurrentDailyResetUtc(nowUtc);
 
-        long lastClaimedResetTicks = GameData.Instance.Save.lastDailyLoginUtcTicks;
-
-        // First time ever OR reset window passed
-        if (lastClaimedResetTicks < currentResetTime.Ticks)
+        if (GameData.Instance.Save.lastDailyLoginUtcTicks < currentReset.Ticks)
         {
-            TriggerLogin(currentResetTime);
+            OnNewDailyLogin();
+            GameData.Instance.Save.lastDailyLoginUtcTicks = currentReset.Ticks;
+            GameData.Instance.SaveNow();
         }
     }
 
-    private DateTime GetCurrentResetTime(DateTime now)
-    {
-        DateTime todayReset =
-            new DateTime(now.Year, now.Month, now.Day, resetHourUtc, 0, 0, DateTimeKind.Utc);
-
-        // If we haven't reached today's reset yet – use yesterday's reset
-        if (now < todayReset)
-            todayReset = todayReset.AddDays(-1);
-
-        return todayReset;
-    }
 
     private void TriggerLogin(DateTime resetTime)
     {

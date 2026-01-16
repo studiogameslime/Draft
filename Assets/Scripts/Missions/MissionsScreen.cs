@@ -57,17 +57,22 @@ public class MissionsScreen : MonoBehaviour
     // =========================================================
     private void UpdateDaily()
     {
-        DateTime next = MissionsManager.Instance.GetNextDailyResetTime();
-        TimeSpan left = next - DateTime.Now;
+        DateTime nextUtc = DailyResetUtil.GetNextDailyResetUtc(DateTime.UtcNow);
+        TimeSpan left = nextUtc - DateTime.UtcNow;
+
         dailyResetText.text = FormatTime(left);
     }
 
+
+
     private void UpdateWeekly()
     {
-        DateTime next = MissionsManager.Instance.GetNextWeeklyResetTime();
-        TimeSpan left = next - DateTime.Now;
+        DateTime nextUtc = DailyResetUtil.GetNextWeeklyResetUtc(DateTime.UtcNow);
+        TimeSpan left = nextUtc - DateTime.UtcNow;
+
         weeklyResetText.text = FormatTime(left);
     }
+
 
     private string FormatTime(TimeSpan t)
     {
@@ -168,6 +173,7 @@ public class MissionsScreen : MonoBehaviour
         root.SetActive(true);
 
         popupAnimator.OpenFromRect(buttonRect);
+        Debug.Log(DateTime.UtcNow);
     }
 
     /// <summary>

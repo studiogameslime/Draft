@@ -73,71 +73,30 @@ public class MissionsManager : MonoBehaviour
     // ======================
     private void HandleResetsIfNeeded()
     {
-        DateTime now = DateTime.Now;
+        DateTime nowUtc = DateTime.UtcNow;
         var save = GameData.Instance.Save;
 
-        DateTime lastDailyReset = save.dailyMissionsLastResetTicks > 0
-            ? new DateTime(save.dailyMissionsLastResetTicks)
-            : DateTime.MinValue;
+        DateTime dailyReset = DailyResetUtil.GetCurrentDailyResetUtc(nowUtc);
+        DateTime weeklyReset = DailyResetUtil.GetCurrentWeeklyResetUtc(nowUtc);
 
-        DateTime lastWeeklyReset = save.weeklyMissionsLastResetTicks > 0
-            ? new DateTime(save.weeklyMissionsLastResetTicks)
-            : DateTime.MinValue;
-
-        if (ShouldResetDaily(now, lastDailyReset))
+        if (save.dailyMissionsLastResetTicks < dailyReset.Ticks)
         {
-            Debug.Log("Reset daily");
             activeDailyMissions.Clear();
             save.activeDailyMissions.Clear();
-            save.dailyMissionsLastResetTicks = now.Ticks;
+            save.dailyMissionsLastResetTicks = dailyReset.Ticks;
         }
 
-        if (ShouldResetWeekly(now, lastWeeklyReset))
+        if (save.weeklyMissionsLastResetTicks < weeklyReset.Ticks)
         {
-            Debug.Log("Reset weekly");
             activeWeeklyMissions.Clear();
             save.activeWeeklyMissions.Clear();
-            save.weeklyMissionsLastResetTicks = now.Ticks;
+            save.weeklyMissionsLastResetTicks = weeklyReset.Ticks;
         }
     }
 
-    private bool ShouldResetDaily(DateTime now, DateTime lastReset)
-    {
-        if (lastReset == DateTime.MinValue)
-            return true;
 
-        DateTime todayReset = new DateTime(now.Year, now.Month, now.Day, 8, 0, 0);
-        return lastReset < todayReset && now >= todayReset;
-    }
 
-    private bool ShouldResetWeekly(DateTime now, DateTime lastReset)
-    {
-        if (lastReset == DateTime.MinValue)
-            return true;
 
-        int daysFromSunday = (int)now.DayOfWeek;
-        DateTime sunday = now.Date.AddDays(-daysFromSunday);
-        DateTime weeklyReset = new DateTime(sunday.Year, sunday.Month, sunday.Day, 8, 0, 0);
-
-        return lastReset < weeklyReset && now >= weeklyReset;
-    }
-
-    public DateTime GetNextDailyResetTime()
-    {
-        DateTime now = DateTime.Now;
-        DateTime todayReset = new DateTime(now.Year, now.Month, now.Day, 8, 0, 0);
-        return now < todayReset ? todayReset : todayReset.AddDays(1);
-    }
-
-    public DateTime GetNextWeeklyResetTime()
-    {
-        DateTime now = DateTime.Now;
-        int daysFromSunday = (int)now.DayOfWeek;
-        DateTime sunday = now.Date.AddDays(-daysFromSunday);
-        DateTime weeklyReset = new DateTime(sunday.Year, sunday.Month, sunday.Day, 8, 0, 0);
-
-        return now < weeklyReset ? weeklyReset : weeklyReset.AddDays(7);
-    }
 
 
     private void SyncNewMissions()

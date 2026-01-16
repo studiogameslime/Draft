@@ -35,8 +35,7 @@ public class StoreItemUI : MonoBehaviour
         }
         else
         {
-            TimeSpan left = new TimeSpan(save.nextDailyFreeGoldUtcTicks - DateTime.UtcNow.Ticks);
-            timerText.text = $"{left.Hours:D2}:{left.Minutes:D2}:{left.Seconds:D2}";
+            UpdateDaily();
             buyButton.interactable = false;
 
             RectTransform rt = timerText.GetComponent<RectTransform>();
@@ -113,5 +112,12 @@ public class StoreItemUI : MonoBehaviour
     private void OnBuyClicked()
     {
         StoreManager.Instance.TryBuy(definition);
+    }
+
+    private void UpdateDaily()
+    {
+        DateTime nextUtc = DailyResetUtil.GetNextDailyResetUtc(DateTime.UtcNow);
+        TimeSpan left = nextUtc - DateTime.UtcNow;
+        timerText.text = $"{left.Hours:D2}:{left.Minutes:D2}:{left.Seconds:D2}";
     }
 }
