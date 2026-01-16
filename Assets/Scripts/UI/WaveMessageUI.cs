@@ -17,6 +17,9 @@ public class WaveMessageUI : MonoBehaviour
 
     public void ShowMessage(string msg, float duration = 2f)
     {
+        if (!this || !gameObject.activeInHierarchy)
+            return;
+
         StartCoroutine(ShowMessageRoutine(msg, duration));
     }
 

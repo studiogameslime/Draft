@@ -37,6 +37,7 @@ public class BattleManager : MonoBehaviour
     private bool battleStarted = false;
     private bool gameOver = false;
     private bool waitingForRoundEnd = false;
+    public bool IsExitingBattle { get; private set; }
 
     [HideInInspector] public int currentRoundIndex = 0;
 
@@ -55,7 +56,10 @@ public class BattleManager : MonoBehaviour
     {
         StartCoroutine(InitAfterUIReady());
         Initialize();
-        CameraAnimation.instance.EnterGridMode();
+        if (CameraAnimation.instance != null)
+        {
+            CameraAnimation.instance.EnterGridMode();
+        }
     }
 
     public void Initialize()
@@ -237,6 +241,10 @@ public class BattleManager : MonoBehaviour
     }
     private void HandleRoundWin()
     {
+
+        if (IsExitingBattle)
+            return;
+
         Debug.Log("HandleRoundWin");
 
         currentRoundIndex++;
@@ -294,9 +302,15 @@ public class BattleManager : MonoBehaviour
 
         ClearPreviousRoundUnits();
 
-        WaveMessageUI.Instance.ShowMessage($"YOU WON WAVE {currentRoundIndex}!", 2f);
+        if (WaveMessageUI.Instance != null)
+        {
+            WaveMessageUI.Instance.ShowMessage($"YOU WON WAVE {currentRoundIndex}!",2f);
+        }
         StartCoroutine(StartNextWaveAfterDelay());
-        CameraAnimation.instance.EnterGridMode();
+        if (CameraAnimation.instance != null)
+        {
+            CameraAnimation.instance.EnterGridMode();
+        }
     }
 
     // =======================
@@ -402,6 +416,10 @@ public class BattleManager : MonoBehaviour
         {
                 Destroy(u.gameObject);
         }
+    }
+    public void ExitBattle()
+    {
+        IsExitingBattle = true;
     }
 
 }
