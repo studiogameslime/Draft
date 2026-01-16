@@ -98,4 +98,9 @@ public class EndGameUI : MonoBehaviour
     {
         SceneManager.LoadScene(0);
     }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+    }
 }

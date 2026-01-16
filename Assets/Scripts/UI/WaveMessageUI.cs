@@ -45,4 +45,9 @@ public class WaveMessageUI : MonoBehaviour
         }
         panel.alpha = 0f;
     }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+    }
 }
