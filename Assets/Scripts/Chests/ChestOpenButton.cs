@@ -4,38 +4,55 @@ using UnityEngine.UI;
 public class ChestOpenButton : MonoBehaviour
 {
     [Header("Config")]
-    public ChestDefinition chestDefinition;      // which chest this button will open
+    public ChestDefinition chestDefinition;
 
     [Header("UI")]
-    public ChestOpeningUI chestOpeningUI;        // reference to the main chest opening panel
+    public ChestOpeningUI chestOpeningUI;
 
     private Button _button;
 
     private void Awake()
     {
         _button = GetComponent<Button>();
-        if (_button != null)
-        {
-            _button.onClick.RemoveAllListeners();
-            _button.onClick.AddListener(OnClick);
-        }
+        _button.onClick.RemoveAllListeners();
+        _button.onClick.AddListener(OnClick);
     }
 
     private void OnClick()
     {
-        if (chestOpeningUI == null)
+        if (chestOpeningUI == null || chestDefinition == null)
         {
-            Debug.LogWarning("ChestOpenButton: chestOpeningUI is not assigned.");
+            Debug.LogWarning("ChestOpenButton: Missing references.");
             return;
         }
 
-        if (chestDefinition == null)
+        if (AdsManager.Instance == null)
         {
-            Debug.LogWarning("ChestOpenButton: chestDefinition is not assigned.");
+            Debug.LogWarning("ChestOpenButton: AdsManager not available.");
             return;
         }
 
-        // Show the chest opening screen for this specific chest
+        bool started = AdsManager.Instance.ShowRewarded(
+            onReward: OpenChest,
+            onClosed: OnAdClosed
+        );
+
+        if (!started)
+        {
+            Debug.Log("ChestOpenButton: Rewarded not ready.");
+        }
+    }
+
+    private void OpenChest()
+    {
+        Debug.Log("ChestOpenButton: Reward granted - opening chest");
+
+        chestOpeningUI.gameObject.SetActive(true);
         chestOpeningUI.Show(chestDefinition);
+    }
+
+    private void OnAdClosed()
+    {
+        Debug.Log("ChestOpenButton: Ad closed");
     }
 }
