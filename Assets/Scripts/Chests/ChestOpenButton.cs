@@ -1,15 +1,14 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ChestOpenButton : MonoBehaviour
 {
-    [Header("Config")]
     public ChestDefinition chestDefinition;
-
-    [Header("UI")]
     public ChestOpeningUI chestOpeningUI;
 
     private Button _button;
+    private bool _rewardGranted;
 
     private void Awake()
     {
@@ -20,39 +19,38 @@ public class ChestOpenButton : MonoBehaviour
 
     private void OnClick()
     {
-        if (chestOpeningUI == null || chestDefinition == null)
-        {
-            Debug.LogWarning("ChestOpenButton: Missing references.");
-            return;
-        }
+        if (!chestOpeningUI || chestDefinition == null) return;
+        if (AdsManager.Instance == null) return;
 
-        if (AdsManager.Instance == null)
-        {
-            Debug.LogWarning("ChestOpenButton: AdsManager not available.");
-            return;
-        }
+        _rewardGranted = false;
+        if (_button) _button.interactable = false;
 
+        // מציגים מודעה
         bool started = AdsManager.Instance.ShowRewarded(
-            onReward: OpenChest,
-            onClosed: OnAdClosed
-        );
+            AdRewardType.FreeChest,
+            onReward: () => { _rewardGranted = true; },   // רק מסמנים
+            onClosed: () =>
+            {
+                // חוזרים למשחק -> פותחים רק אחרי סגירה (ובפריים הבא)
+                StartCoroutine(AfterAdClosedRoutine());
+            });
 
         if (!started)
         {
-            Debug.Log("ChestOpenButton: Rewarded not ready.");
+            if (_button) _button.interactable = true;
         }
     }
 
-    private void OpenChest()
+    private IEnumerator AfterAdClosedRoutine()
     {
-        Debug.Log("ChestOpenButton: Reward granted - opening chest");
+        yield return null; // פריים אחד אחרי שחזרנו מהמודעה
 
-        chestOpeningUI.gameObject.SetActive(true);
-        chestOpeningUI.Show(chestDefinition);
-    }
+        if (_rewardGranted)
+        {
+            chestOpeningUI.gameObject.SetActive(true);
+            chestOpeningUI.Show(chestDefinition);
+        }
 
-    private void OnAdClosed()
-    {
-        Debug.Log("ChestOpenButton: Ad closed");
+        if (_button) _button.interactable = true;
     }
 }

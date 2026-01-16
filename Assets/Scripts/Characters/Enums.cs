@@ -71,6 +71,11 @@ public enum StoreCategory
     Specials
 }
 
+public enum AdRewardType
+{
+    FreeChest
+}
+
 
 
 
