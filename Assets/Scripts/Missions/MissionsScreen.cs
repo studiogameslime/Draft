@@ -173,9 +173,6 @@ public class MissionsScreen : MonoBehaviour
         root.SetActive(true);
 
         popupAnimator.OpenFromRect(buttonRect);
-        Debug.Log(DateTime.UtcNow);
-        Debug.Log($"GetCurrentDailyResetUtc - {DailyResetUtil.GetCurrentDailyResetUtc(DateTime.UtcNow)}");
-        Debug.Log($"lastDailyLoginUtcTicks - {GameData.Instance.Save.lastDailyLoginUtcTicks}");
     }
 
     /// <summary>
