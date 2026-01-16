@@ -53,14 +53,14 @@ public class MissionsManager : MonoBehaviour
 
         HandleResetsIfNeeded();
         LoadMissionsFromGameData();
-        //SyncNewMissions();
-        DailyLoginManager.instance.CheckDailyLogin();
 
         if (activeDailyMissions.Count == 0)
             GenerateDailyMissions();
 
         if (activeWeeklyMissions.Count == 0)
             GenerateWeeklyMissions();
+
+        DailyLoginManager.instance?.CheckDailyLogin();
 
         OnMissionsStateChanged?.Invoke();
         SaveMissionsToGameData();
@@ -93,47 +93,6 @@ public class MissionsManager : MonoBehaviour
             save.weeklyMissionsLastResetTicks = weeklyReset.Ticks;
         }
     }
-
-
-
-
-
-
-    private void SyncNewMissions()
-    {
-        SyncList(
-            missionDatabase.dailyMissions,
-            activeDailyMissions,
-            "DAILY"
-        );
-
-        SyncList(
-            missionDatabase.weeklyMissions,
-            activeWeeklyMissions,
-            "WEEKLY"
-        );
-    }
-
-    private void SyncList(
-        List<MissionDefinition> definitions,
-        List<MissionInstance> activeList,
-        string tag
-    )
-    {
-        foreach (var def in definitions)
-        {
-            if (def == null)
-                continue;
-
-            bool exists = activeList.Any(m => m.definition.id == def.id);
-            if (exists)
-                continue;
-
-            Debug.Log($"[Missions] Sync add {tag}: {def.id}");
-            activeList.Add(new MissionInstance(def));
-        }
-    }
-
 
     // ======================
     // GENERATION
@@ -207,6 +166,7 @@ public class MissionsManager : MonoBehaviour
 
             mission.AddProgress(amount);
             OnMissionsStateChanged?.Invoke();
+
 
         }
     }
