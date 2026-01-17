@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d949062025cd3f47aee99958fae9ef3, type: 3}
+  m_Name: Watch10Ads
+  m_EditorClassIdentifier: Assembly-CSharp::MissionDefinition
+  id: mission_daily_watch_10_ads
+  title: Watch10Ads
+  description: Watch 10 Ads
+  missionType: 1
+  action: 14
+  targetAmount: 10
+  requiredUnitClass: 0
+  requiredUnit: {fileID: 0}
+  goldReward: 0
+  gemsReward: 0
+  partsReward: 0
+  chestReward: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}

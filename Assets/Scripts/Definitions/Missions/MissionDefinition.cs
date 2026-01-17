@@ -21,7 +21,8 @@ public enum MissionAction
     SpendGold,
     Login,
     SpinWheelOfFortune,
-    KillSpecificEnemyUnit
+    KillSpecificEnemyUnit,
+    WatchAds
 }
 
 [CreateAssetMenu(menuName = "Missions/Mission Definition")]

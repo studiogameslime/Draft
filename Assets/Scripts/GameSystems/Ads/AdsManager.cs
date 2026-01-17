@@ -164,6 +164,8 @@ public class AdsManager : MonoBehaviour
             return false;
         }
         FirebaseAnalytics.LogEvent("watch_ad", new Parameter("reward_type", rewardType.ToString()));
+        MissionsManager.Instance.ReportAction(MissionAction.WatchAds, 1);
+
 
 #if UNITY_EDITOR
         if (!simulateInEditor)

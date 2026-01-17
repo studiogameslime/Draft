@@ -21,6 +21,7 @@ public class FirebaseBootstrap : MonoBehaviour
 
     private FirebaseFirestore db;
     private bool initialized;
+    private const string AllPlayersTopic = "all_players";
 
     private string DeviceId => SystemInfo.deviceUniqueIdentifier;
 
@@ -107,7 +108,33 @@ public class FirebaseBootstrap : MonoBehaviour
 
         Log("FCM Token received");
         SaveDeviceToFirestore(fcmToken);
+        SubscribeToAllPlayersTopicOnce(fcmToken);
+
     }
+
+    private void SubscribeToAllPlayersTopicOnce(string fcmToken)
+    {
+        string key = "fcm_topic_subscribed_token_" + AllPlayersTopic;
+        string lastToken = PlayerPrefs.GetString(key, "");
+
+        if (lastToken == fcmToken)
+            return;
+
+        FirebaseMessaging.SubscribeAsync(AllPlayersTopic)
+            .ContinueWithOnMainThread(t =>
+            {
+                if (t.IsFaulted || t.IsCanceled)
+                {
+                    LogError($"SubscribeAsync({AllPlayersTopic}) failed");
+                    return;
+                }
+
+                PlayerPrefs.SetString(key, fcmToken);
+                PlayerPrefs.Save();
+                Log($"Subscribed to topic: {AllPlayersTopic}");
+            });
+    }
+
 
     private void SaveDeviceToFirestore(string fcmToken)
     {

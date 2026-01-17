@@ -5,6 +5,8 @@ using Firebase.Auth;
 using Firebase.Extensions;
 using Firebase.Firestore;
 using UnityEngine;
+using System.Reflection;
+
 
 public class FirebaseSaveSync : MonoBehaviour
 {
@@ -138,21 +140,82 @@ public class FirebaseSaveSync : MonoBehaviour
         if (field != null)
             field.SetValue(GameData.Instance.Save, DateTime.UtcNow.Ticks);
 
-        string json = JsonUtility.ToJson(GameData.Instance.Save, true);
+        var saveMap = ToFirestoreMap(GameData.Instance.Save);
 
-        var data = new Dictionary<string, object>
-        {
-            { "saveJson", json },
-            { "updatedAtTicks", DateTime.UtcNow.Ticks },
-            { "updatedAt", FieldValue.ServerTimestamp },
-            { "appVersion", Application.version },
-            { "deviceModel", SystemInfo.deviceModel },
-        };
+        // "spread": כל השדות של הסייב יושבים בטופ-לבל של הדוקומנט
+        var data = new Dictionary<string, object>(saveMap)
+{
+    { "updatedAtTicks", DateTime.UtcNow.Ticks },
+    { "updatedAt", FieldValue.ServerTimestamp },
+    { "appVersion", Application.version },
+    { "deviceModel", SystemInfo.deviceModel },
+};
+        data["saveJson"] = JsonUtility.ToJson(GameData.Instance.Save);
+        // אופציונלי: אם אתה עדיין רוצה “גיבוי” אחד של JSON (לא חובה)
+        // data["saveJson"] = JsonUtility.ToJson(GameData.Instance.Save);
 
         PlayerDoc().SetAsync(data, SetOptions.MergeAll).ContinueWithOnMainThread(t =>
         {
             if (t.IsFaulted) Debug.LogError("Upload save failed: " + t.Exception);
             else Debug.Log("Save uploaded to cloud.");
         });
+
+
+        PlayerDoc().SetAsync(data, SetOptions.MergeAll).ContinueWithOnMainThread(t =>
+        {
+            if (t.IsFaulted) Debug.LogError("Upload save failed: " + t.Exception);
+            else Debug.Log("Save uploaded to cloud.");
+        });
+    }
+
+    private static Dictionary<string, object> ToFirestoreMap(object obj)
+    {
+        var map = new Dictionary<string, object>();
+        if (obj == null) return map;
+
+        var type = obj.GetType();
+        var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public);
+
+        foreach (var f in fields)
+        {
+            object v = f.GetValue(obj);
+            if (v == null) continue;
+
+            map[f.Name] = ConvertToFirestoreValue(v);
+        }
+
+        return map;
+    }
+
+    private static object ConvertToFirestoreValue(object v)
+    {
+        // primitives / strings
+        if (v is string || v is bool || v is int || v is long || v is float || v is double)
+            return v;
+
+        // enums -> string (מומלץ לקריאות) או int אם אתה מעדיף
+        var t = v.GetType();
+        if (t.IsEnum)
+            return v.ToString();
+
+        // List<T> / arrays
+        if (v is System.Collections.IEnumerable enumerable && v is not string)
+        {
+            var list = new List<object>();
+            foreach (var item in enumerable)
+            {
+                if (item == null) continue;
+                list.Add(ConvertToFirestoreValue(item));
+            }
+            return list;
+        }
+
+        // DateTime -> ticks (כי Firestore C# לא תמיד אוהב DateTime ישיר במיפוי ידני)
+        if (v is DateTime dt)
+            return dt.ToUniversalTime().Ticks;
+
+        // אובייקט מורכב -> map רקורסיבי
+        // (אם יש לך פה Unity types כמו Vector3 וכו' עדיף להמיר ידנית)
+        return ToFirestoreMap(v);
     }
 }
