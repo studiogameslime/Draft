@@ -22,8 +22,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2c9de330dd93712419c6840e9483176a, type: 2}
   - {fileID: 11400000, guid: 33408dea9392e134daf4bd59b19c6841, type: 2}
   - {fileID: 11400000, guid: 317a2cf9187a8d7478cf33d7aa4bec20, type: 2}
+  - {fileID: 11400000, guid: a44d691fdefe0bc44893729ec7ebcaf1, type: 2}
   weeklyMissions:
   - {fileID: 11400000, guid: 85ec42dd1a2d5294b82ac3c708f296ee, type: 2}
   - {fileID: 11400000, guid: 7e3b1098afa9bf54d8eab5903d5ff0c9, type: 2}
   - {fileID: 11400000, guid: b5003b6d112b1fc4b8ca07052396f388, type: 2}
   - {fileID: 11400000, guid: 070064512b9bead4d9585fa72abf4bde, type: 2}
+  - {fileID: 11400000, guid: ac37c99e2172faf4e8ef8cce74aea565, type: 2}
