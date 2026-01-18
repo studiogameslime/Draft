@@ -16,7 +16,7 @@ MonoBehaviour:
   title: DailyLogin
   description: Daily login
   missionType: 0
-  action: 10
+  action: 11
   targetAmount: 1
   requiredUnitClass: 0
   requiredUnit: {fileID: 0}

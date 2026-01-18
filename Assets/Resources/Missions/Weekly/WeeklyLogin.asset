@@ -16,7 +16,7 @@ MonoBehaviour:
   title: WekklyLogin
   description: Weekly login
   missionType: 1
-  action: 10
+  action: 11
   targetAmount: 7
   requiredUnitClass: 0
   requiredUnit: {fileID: 0}
