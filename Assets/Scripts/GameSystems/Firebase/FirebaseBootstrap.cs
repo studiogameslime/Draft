@@ -36,6 +36,7 @@ public class FirebaseBootstrap : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
         Instance = this;
 
         // IMPORTANT: must be on a ROOT GameObject
@@ -56,7 +57,7 @@ public class FirebaseBootstrap : MonoBehaviour
         }
 #endif
 
-        // Only this script calls dependencies check
+        // Only this script calls dependency check
         FirebaseApp.CheckAndFixDependenciesAsync()
             .ContinueWithOnMainThread(task =>
             {
@@ -73,6 +74,7 @@ public class FirebaseBootstrap : MonoBehaviour
                 }
 
                 InitializeFirebase();
+
                 FirebaseReady = true;
                 Log("FirebaseReady = true");
 
@@ -151,6 +153,7 @@ public class FirebaseBootstrap : MonoBehaviour
 
                 PlayerPrefs.SetString(key, fcmToken);
                 PlayerPrefs.Save();
+
                 Log("Subscribed to topic: " + AllPlayersTopic);
             });
     }
