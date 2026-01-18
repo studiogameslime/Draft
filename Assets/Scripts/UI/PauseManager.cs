@@ -45,6 +45,8 @@ public class PauseManager : MonoBehaviour
     public void RestartLevel()
     {
         Time.timeScale = 1f;
+        Debug.Log("Active scene is: " + SceneManager.GetActiveScene().name);
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 

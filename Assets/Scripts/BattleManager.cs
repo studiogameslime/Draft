@@ -335,7 +335,7 @@ public class BattleManager : MonoBehaviour
             return;
 
         bool canStart = !battleStarted && !gameOver && HasAnySpawnerPlaced();
-        Debug.Log($"can start {canStart}");
+        Debug.Log($"battleStarted = {battleStarted} gameOver = {gameOver} HasAnySpawnerPlaced() = {HasAnySpawnerPlaced()}");
         // Use whatever API you already have on StartBattleButton:
         // If you only have EnableButton(), keep that + add a DisableButton() in that class.
         if (canStart)

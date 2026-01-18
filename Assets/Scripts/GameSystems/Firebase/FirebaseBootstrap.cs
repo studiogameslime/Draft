@@ -6,6 +6,7 @@ using Firebase.Firestore;
 using Firebase.Messaging;
 using UnityEngine;
 using TMPro;
+
 #if UNITY_ANDROID
 using UnityEngine.Android;
 using Firebase.Analytics;
@@ -15,14 +16,17 @@ public class FirebaseBootstrap : MonoBehaviour
 {
     public static FirebaseBootstrap Instance;
 
+    // Global readiness flag for other scripts (FirebaseSaveSync will wait on this)
+    public static bool FirebaseReady { get; private set; }
+
     [Header("UI Logs")]
     [SerializeField] private TMP_Text logText;
     [SerializeField] private int maxLines = 50;
 
     private FirebaseFirestore db;
     private bool initialized;
-    private const string AllPlayersTopic = "all_players";
 
+    private const string AllPlayersTopic = "all_players";
     private string DeviceId => SystemInfo.deviceUniqueIdentifier;
 
     private void Awake()
@@ -33,7 +37,11 @@ public class FirebaseBootstrap : MonoBehaviour
             return;
         }
         Instance = this;
+
+        // IMPORTANT: must be on a ROOT GameObject
         DontDestroyOnLoad(gameObject);
+
+        FirebaseReady = false;
     }
 
     private void Start()
@@ -48,9 +56,16 @@ public class FirebaseBootstrap : MonoBehaviour
         }
 #endif
 
+        // Only this script calls dependencies check
         FirebaseApp.CheckAndFixDependenciesAsync()
             .ContinueWithOnMainThread(task =>
             {
+                if (task.IsFaulted || task.IsCanceled)
+                {
+                    LogError("CheckAndFixDependenciesAsync failed: " + task.Exception);
+                    return;
+                }
+
                 if (task.Result != DependencyStatus.Available)
                 {
                     LogError("Firebase deps not available: " + task.Result);
@@ -58,8 +73,13 @@ public class FirebaseBootstrap : MonoBehaviour
                 }
 
                 InitializeFirebase();
+                FirebaseReady = true;
+                Log("FirebaseReady = true");
+
+#if UNITY_ANDROID
                 FirebaseAnalytics.SetAnalyticsCollectionEnabled(true);
                 FirebaseAnalytics.LogEvent("open_the_game");
+#endif
             });
     }
 
@@ -74,6 +94,7 @@ public class FirebaseBootstrap : MonoBehaviour
         FirebaseMessaging.MessageReceived += OnMessageReceived;
 
         FirebaseMessaging.RequestPermissionAsync();
+
         Log("Firebase initialized (Firestore + Messaging)");
 
         FirebaseMessaging.GetTokenAsync()
@@ -81,12 +102,10 @@ public class FirebaseBootstrap : MonoBehaviour
             {
                 if (t.IsFaulted || t.IsCanceled)
                 {
-                    LogError("GetTokenAsync failed");
+                    LogError("GetTokenAsync failed: " + t.Exception);
                     return;
                 }
-
                 HandleToken(t.Result);
-
             });
     }
 
@@ -94,6 +113,9 @@ public class FirebaseBootstrap : MonoBehaviour
     {
         FirebaseMessaging.TokenReceived -= OnTokenReceived;
         FirebaseMessaging.MessageReceived -= OnMessageReceived;
+
+        if (Instance == this)
+            Instance = null;
     }
 
     private void OnTokenReceived(object sender, TokenReceivedEventArgs token)
@@ -109,14 +131,12 @@ public class FirebaseBootstrap : MonoBehaviour
         Log("FCM Token received");
         SaveDeviceToFirestore(fcmToken);
         SubscribeToAllPlayersTopicOnce(fcmToken);
-
     }
 
     private void SubscribeToAllPlayersTopicOnce(string fcmToken)
     {
         string key = "fcm_topic_subscribed_token_" + AllPlayersTopic;
         string lastToken = PlayerPrefs.GetString(key, "");
-
         if (lastToken == fcmToken)
             return;
 
@@ -125,16 +145,15 @@ public class FirebaseBootstrap : MonoBehaviour
             {
                 if (t.IsFaulted || t.IsCanceled)
                 {
-                    LogError($"SubscribeAsync({AllPlayersTopic}) failed");
+                    LogError("SubscribeAsync(" + AllPlayersTopic + ") failed: " + t.Exception);
                     return;
                 }
 
                 PlayerPrefs.SetString(key, fcmToken);
                 PlayerPrefs.Save();
-                Log($"Subscribed to topic: {AllPlayersTopic}");
+                Log("Subscribed to topic: " + AllPlayersTopic);
             });
     }
-
 
     private void SaveDeviceToFirestore(string fcmToken)
     {
@@ -161,8 +180,8 @@ public class FirebaseBootstrap : MonoBehaviour
         doc.SetAsync(data, SetOptions.MergeAll)
             .ContinueWithOnMainThread(t =>
             {
-                if (t.IsFaulted)
-                    LogError("Failed to save device to Firestore");
+                if (t.IsFaulted || t.IsCanceled)
+                    LogError("Failed to save device to Firestore: " + t.Exception);
                 else
                     Log("Device saved to Firestore");
             });
@@ -171,37 +190,26 @@ public class FirebaseBootstrap : MonoBehaviour
     private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
     {
         Log("FCM message received");
-
         var n = e.Message.Notification;
         if (n != null)
-            Log($"Notification: {n.Title} | {n.Body}");
+            Log("Notification: " + n.Title + " | " + n.Body);
     }
 
     // ======================
     // UI LOGGER
     // ======================
-
-    private void Log(string message)
-    {
-        AppendLine("Success " + message);
-    }
-
-    private void LogError(string message)
-    {
-        AppendLine("Error " + message);
-    }
+    private void Log(string message) => AppendLine("Success " + message);
+    private void LogError(string message) => AppendLine("Error " + message);
 
     private void AppendLine(string line)
     {
         if (logText == null)
             return;
 
-        logText.text += $"[{DateTime.Now:HH:mm:ss}] {line}\n";
+        logText.text += "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + line + "\n";
 
         var lines = logText.text.Split('\n');
         if (lines.Length > maxLines)
-        {
             logText.text = string.Join("\n", lines, lines.Length - maxLines, maxLines);
-        }
     }
 }

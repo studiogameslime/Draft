@@ -12,13 +12,7 @@ public class UnitCapacityManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     // Called once at battle start
