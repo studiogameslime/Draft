@@ -113,8 +113,8 @@ public class FirebaseBootstrap : MonoBehaviour
 
     private void OnDestroy()
     {
-        FirebaseMessaging.TokenReceived -= OnTokenReceived;
-        FirebaseMessaging.MessageReceived -= OnMessageReceived;
+        //FirebaseMessaging.TokenReceived -= OnTokenReceived;
+        //FirebaseMessaging.MessageReceived -= OnMessageReceived;
 
         if (Instance == this)
             Instance = null;

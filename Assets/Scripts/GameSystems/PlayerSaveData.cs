@@ -88,6 +88,10 @@ public class PlayerSaveData
     // how many missions completed (total)
     public int totalMissionsCompleted;
 
+    public bool dailySetRewardGranted;
+    public bool weeklySetRewardGranted;
+
+
     // in the future you can add: daily/weekly break down if needed
 
     // ==============================

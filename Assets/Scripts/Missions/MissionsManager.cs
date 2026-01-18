@@ -2,6 +2,7 @@ using Firebase.Analytics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class MissionsManager : MonoBehaviour
@@ -23,8 +24,17 @@ public class MissionsManager : MonoBehaviour
     public IReadOnlyList<MissionInstance> ActiveDailyMissions => activeDailyMissions;
     public IReadOnlyList<MissionInstance> ActiveWeeklyMissions => activeWeeklyMissions;
 
-    [SerializeField] private int dailyMissionCount = 8;
-    [SerializeField] private int weeklyMissionCount = 3;
+    [SerializeField] private int dailyMissionCount;
+    [SerializeField] private int weeklyMissionCount;
+
+    [Header("Set Completion Rewards")]
+    [SerializeField] private int dailyAllMissionsGoldReward = 0;
+    [SerializeField] private int dailyAllMissionsGemsReward = 0;
+    [SerializeField] private ChestDefinition dailyAllMissionsChestReward = null;
+
+    [SerializeField] private int weeklyAllMissionsGoldReward = 0;
+    [SerializeField] private int weeklyAllMissionsGemsReward = 0;
+    [SerializeField] private ChestDefinition weeklyAllMissionsChestReward = null;
 
     // ======================
     // UNITY
@@ -65,7 +75,6 @@ public class MissionsManager : MonoBehaviour
         OnMissionsStateChanged?.Invoke();
         SaveMissionsToGameData();
 
-
     }
 
     // ======================
@@ -84,6 +93,8 @@ public class MissionsManager : MonoBehaviour
             activeDailyMissions.Clear();
             save.activeDailyMissions.Clear();
             save.dailyMissionsLastResetTicks = dailyReset.Ticks;
+            // Reset daily set reward flag
+            save.dailySetRewardGranted = false;
         }
 
         if (save.weeklyMissionsLastResetTicks < weeklyReset.Ticks)
@@ -91,6 +102,8 @@ public class MissionsManager : MonoBehaviour
             activeWeeklyMissions.Clear();
             save.activeWeeklyMissions.Clear();
             save.weeklyMissionsLastResetTicks = weeklyReset.Ticks;
+            // Reset weekly set reward flag
+            save.weeklySetRewardGranted = false;
         }
     }
 
@@ -307,5 +320,103 @@ public class MissionsManager : MonoBehaviour
     {
         return activeWeeklyMissions.Count;
     }
+    
+    private void GrantDailySetReward(RectTransform from)
+    {
+        if (dailyAllMissionsGoldReward > 0)
+            PlayerCurrencyWallet.Instance.AddGold(dailyAllMissionsGoldReward, from);
+
+        if (dailyAllMissionsGemsReward > 0)
+            PlayerCurrencyWallet.Instance.AddGems(dailyAllMissionsGemsReward, from);
+
+        if (dailyAllMissionsChestReward != null && chestOpeningUI != null)
+        {
+            chestOpeningUI.gameObject.SetActive(true);
+            chestOpeningUI.Show(dailyAllMissionsChestReward);
+        }
+
+        Debug.Log("Daily set completion reward granted.");
+    }
+
+    private void GrantWeeklySetReward(RectTransform from)
+    {
+        if (weeklyAllMissionsGoldReward > 0)
+            PlayerCurrencyWallet.Instance.AddGold(weeklyAllMissionsGoldReward, from);
+
+        if (weeklyAllMissionsGemsReward > 0)
+            PlayerCurrencyWallet.Instance.AddGems(weeklyAllMissionsGemsReward, from);
+
+        if (weeklyAllMissionsChestReward != null && chestOpeningUI != null)
+        {
+            chestOpeningUI.gameObject.SetActive(true);
+            chestOpeningUI.Show(weeklyAllMissionsChestReward);
+        }
+
+        Debug.Log("Weekly set completion reward granted.");
+    }
+    // ======================
+    // SET COMPLETION (CLAIM BUTTON API)
+    // ======================
+
+    // Claim becomes available when ALL missions are completed (not necessarily claimed individually).
+    public bool CanClaimDailySetReward()
+    {
+        var save = GameData.Instance.Save;
+        if (save == null) return false;
+
+        return !save.dailySetRewardGranted
+               && activeDailyMissions.All(m => m.claimed);
+    }
+
+    public bool CanClaimWeeklySetReward()
+    {
+        var save = GameData.Instance.Save;
+        if (save == null) return false;
+
+        return !save.weeklySetRewardGranted
+               && activeWeeklyMissions.All(m => m.claimed);
+    }
+
+
+    public void ClaimDailySetReward(RectTransform from)
+    {
+        var save = GameData.Instance.Save;
+        if (save == null) return;
+        if (!CanClaimDailySetReward()) return;
+
+        GrantDailySetReward(from);
+        save.dailySetRewardGranted = true;
+
+        SaveMissionsToGameData();
+        OnMissionsStateChanged?.Invoke();
+        FirebaseAnalytics.LogEvent("daily_set_reward_claimed");
+    }
+
+    public void ClaimWeeklySetReward(RectTransform from)
+    {
+        var save = GameData.Instance.Save;
+        if (save == null) return;
+        if (!CanClaimWeeklySetReward()) return;
+
+        GrantWeeklySetReward(from);
+        save.weeklySetRewardGranted = true;
+
+        SaveMissionsToGameData();
+        OnMissionsStateChanged?.Invoke();
+        FirebaseAnalytics.LogEvent("weekly_set_reward_claimed");
+    }
+
+    public bool IsDailySetRewardClaimed()
+    {
+        var save = GameData.Instance.Save;
+        return save != null && save.dailySetRewardGranted;
+    }
+
+    public bool IsWeeklySetRewardClaimed()
+    {
+        var save = GameData.Instance.Save;
+        return save != null && save.weeklySetRewardGranted;
+    }
+
 
 }
