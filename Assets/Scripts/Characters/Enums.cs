@@ -19,10 +19,10 @@ public enum UnitClass
 
 
 public enum Team
-    {
-        MyTeam,
-        EnemyTeam
-    }
+{
+    MyTeam,
+    EnemyTeam
+}
 
 public interface IAttackStrategy
 {
@@ -76,7 +76,12 @@ public enum AdRewardType
     FreeChest
 }
 
-
+public enum CellBonusType
+{
+    None,
+    HpPercent,
+    AttackPercent
+}
 
 
 

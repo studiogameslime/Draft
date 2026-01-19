@@ -59,4 +59,18 @@ public class SoulsManager : MonoBehaviour
         if (_currentSoulsText != null)
             _currentSoulsText.text = soulsLeft.ToString();
     }
+
+    public bool CanAfford(int cost)
+    {
+        return CheckIfThereIsEnoughSouls(cost);
+    }
+
+    public bool TrySpend(int cost)
+    {
+        if (!CanAfford(cost))
+            return false;
+
+        UseSouls(cost);
+        return true;
+    }
 }

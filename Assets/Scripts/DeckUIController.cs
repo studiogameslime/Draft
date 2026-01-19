@@ -1,21 +1,25 @@
 using UnityEngine;
 
+/// <summary>
+/// Controls the deck panel visibility and interactivity.
+/// FIX: Hide/Show must toggle the entire parent container, not only the buttons,
+/// otherwise background/frames/placeholders may remain visible.
+/// </summary>
 public class DeckUIController : MonoBehaviour
 {
-    [Header("Parent that holds all the card buttons")]
+    [Header("Parent that holds the deck panel content (buttons + visuals)")]
     public Transform cardsParent;   // e.g. UpgragesButtonsContainer
 
     /// <summary>
-    /// Enable/disable all card buttons visually and functionally.
+    /// Enable/disable all card buttons functionally.
+    /// (We do NOT rely on this for hiding the deck.)
     /// </summary>
     public void SetCardsInteractable(bool interactable)
     {
         if (cardsParent == null)
             return;
 
-        // Find all current UnitSpawnButton under the parent (even if created at runtime)
         var cardButtons = cardsParent.GetComponentsInChildren<UnitSpawnButton>(true);
-
         foreach (var card in cardButtons)
         {
             if (card != null)
@@ -23,12 +27,17 @@ public class DeckUIController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Shows the entire deck panel.
+    /// </summary>
     public void ShowDeck()
     {
-        
         SetDeckActive(true);
     }
 
+    /// <summary>
+    /// Hides the entire deck panel.
+    /// </summary>
     public void HideDeck()
     {
         SetDeckActive(false);
@@ -36,12 +45,11 @@ public class DeckUIController : MonoBehaviour
 
     private void SetDeckActive(bool active)
     {
-        var cardButtons = cardsParent.GetComponentsInChildren<UnitSpawnButton>(true);
+        if (cardsParent == null)
+            return;
 
-        foreach (var card in cardButtons)
-        {
-            if (card != null)
-                card.gameObject.SetActive(active);
-        }
+        // IMPORTANT: Toggle the whole panel container.
+        // This prevents "empty cards" visuals from staying visible.
+        cardsParent.gameObject.SetActive(active);
     }
 }

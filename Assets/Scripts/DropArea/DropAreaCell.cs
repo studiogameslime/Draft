@@ -1,14 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum CellBonusType
-{
-    None,
-    HpPercent,
-    AttackPercent
-    // אפשר להרחיב בהמשך: AttackSpeedPercent, DefensePercent וכו'
-}
-
 public class DropAreaCell : MonoBehaviour
 {
     [Header("Logical grid index (0-based)")]
@@ -17,7 +9,6 @@ public class DropAreaCell : MonoBehaviour
 
     [Header("Bonus data")]
     public CellBonusType bonusType = CellBonusType.None;
-
     [Tooltip("Percent value, e.g. 0.2 = +20%, -0.3 = -30%")]
     public float percentValue = 0f;
 
@@ -25,18 +16,27 @@ public class DropAreaCell : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     public Image fillImage;
 
-    /// <summary>
-    /// True if this cell has any meaningful bonus.
-    /// </summary>
+    [Header("Selection Visual")]
+    [SerializeField] private float selectedBrightnessMul = 1.35f;
+
     public bool IsSpecial =>
         bonusType != CellBonusType.None && Mathf.Abs(percentValue) > 0.0001f;
+
+    private bool isSelected;
+    private Color baseColor;
+
+    private void Awake()
+    {
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+            baseColor = spriteRenderer.color;
+    }
 
     private void OnValidate()
     {
         if (spriteRenderer == null)
-        {
             spriteRenderer = GetComponent<SpriteRenderer>();
-        }
         UpdateColor();
     }
 
@@ -44,27 +44,49 @@ public class DropAreaCell : MonoBehaviour
     {
         if (spriteRenderer == null)
             return;
-        Color c = new Color(1,1,1,0.4f);
+
+        Color c = new Color(1, 1, 1, 0.4f);
         if (IsSpecial)
         {
-        c = percentValue >= 0f
-            ? new Color(0f, 1f, 0f, 0.7f)   // green with some alpha
-            : new Color(1f, 0f, 0f, 0.7f);  // red with some alpha
+            c = percentValue >= 0f
+                ? new Color(0f, 1f, 0f, 0.7f)
+                : new Color(1f, 0f, 0f, 0.7f);
         }
 
-        spriteRenderer.color = c;
+        baseColor = c;
+        ApplySelectionVisual();
     }
 
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
+    public void SetSelected(bool selected)
     {
-        if (!IsSpecial)
+        isSelected = selected;
+        ApplySelectionVisual();
+    }
+
+    private void ApplySelectionVisual()
+    {
+        if (spriteRenderer == null)
             return;
 
-        Color c = percentValue >= 0f ? Color.green : Color.red;
-        c.a = 0.35f;
-        Gizmos.color = c;
-        Gizmos.DrawSphere(transform.position, 0.1f);
+        if (!isSelected)
+        {
+            spriteRenderer.color = baseColor;
+            return;
+        }
+
+        Color boosted = baseColor;
+        boosted.r = Mathf.Clamp01(boosted.r * selectedBrightnessMul);
+        boosted.g = Mathf.Clamp01(boosted.g * selectedBrightnessMul);
+        boosted.b = Mathf.Clamp01(boosted.b * selectedBrightnessMul);
+        boosted.a = Mathf.Max(boosted.a, 0.85f);
+        spriteRenderer.color = boosted;
     }
-#endif
+
+    private void OnMouseDown()
+    {
+        if (!Application.isPlaying)
+            return;
+
+        BattleCellSelectionController.Instance?.SelectCell(this);
+    }
 }

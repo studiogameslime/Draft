@@ -283,19 +283,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f6ed4d198b1f1a4291d41a2d29de198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitSpawnButton
-  iconImage: {fileID: 8283579806703850390}
-  unitName: {fileID: 6282668153874243430}
-  UnitToSpawn: {fileID: 1192726252852669062}
-  UnitSoulCost: {fileID: 7074044322931359865}
-  canvasGroup: {fileID: 4314627022048936849}
-  switchToWorldDistance: 40
-  maxCellSnapDistance: 0.6
-  unitsLayerMask:
-    serializedVersion: 2
-    m_Bits: 8
-  minDistanceFromOtherUnits: 0.1
-  battleManager: {fileID: 0}
-  unitSpawnerPrefab: {fileID: 4731035408874856904, guid: fd9068e31477bbc4c85009c5d4781001, type: 3}
+  unitDefinition: {fileID: 0}
+  button: {fileID: 331560780286120616}
+  icon: {fileID: 8283579806703850390}
+  costText: {fileID: 7074044322931359865}
 --- !u!225 &4314627022048936849
 CanvasGroup:
   m_ObjectHideFlags: 0

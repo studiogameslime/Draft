@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -37,8 +36,8 @@ public class BattleManager : MonoBehaviour
     private bool battleStarted = false;
     private bool gameOver = false;
     private bool waitingForRoundEnd = false;
-    public bool IsExitingBattle { get; private set; }
 
+    public bool IsExitingBattle { get; private set; }
     [HideInInspector] public int currentRoundIndex = 0;
 
     private HashSet<UnitClass> unitClassUsedThisBattle = new();
@@ -56,50 +55,49 @@ public class BattleManager : MonoBehaviour
     {
         StartCoroutine(InitAfterUIReady());
         Initialize();
+
         if (CameraAnimation.instance != null)
-        {
             CameraAnimation.instance.EnterGridMode();
-        }
     }
 
     public void Initialize()
     {
         SetAllAIEnabled(false);
-
         enemyWaveSpawner = FindFirstObjectByType<EnemyWaveSpawner>();
         dropAreaGrids = FindObjectsByType<DropAreaGrid>(FindObjectsSortMode.None);
 
-        // Make sure button state is correct on scene start
+        // Make sure button state is correct on scene start.
         RefreshStartBattleButton();
     }
 
     public void ShowDeck()
     {
         PlanningPhase();
-
     }
 
     public void HideDeck()
     {
-        deckUI.HideDeck();
+        // Deck may not exist yet if CommonUI not loaded.
+        if (deckUI != null)
+            deckUI.HideDeck();
     }
-
 
     private IEnumerator InitAfterUIReady()
     {
+        // Wait until CommonUI scene is loaded.
         while (!SceneManager.GetSceneByName("CommonUI").isLoaded)
             yield return null;
 
         selectionUI = FindFirstObjectByType<UnitSelectionUI>();
         deckUI = FindFirstObjectByType<DeckUIController>();
 
-
-        while (selectionUI == null)
+        while (selectionUI == null || deckUI == null)
         {
             selectionUI = FindFirstObjectByType<UnitSelectionUI>();
             deckUI = FindFirstObjectByType<DeckUIController>();
             yield return null;
         }
+
         SoulsManager.instance.AddRoundSouls();
         RoundUIManager.instance.ChangeRoundText(currentRoundIndex + 1, levelDefinition.RoundsCount);
     }
@@ -113,10 +111,11 @@ public class BattleManager : MonoBehaviour
 
         unitClassUsedThisBattle.Clear();
         unitsUsedThisBattle.Clear();
-        deckUI.ShowDeck();
-        ShowDropAreasGrid();
 
-        
+        if (deckUI != null)
+            deckUI.ShowDeck();
+
+        ShowDropAreasGrid();
 
         SetAllAIEnabled(false);
 
@@ -129,7 +128,8 @@ public class BattleManager : MonoBehaviour
 
         if (deckUI != null)
             deckUI.SetCardsInteractable(true);
-        if(EnemyPreviewBubblesController.Instance != null)
+
+        if (EnemyPreviewBubblesController.Instance != null)
             EnemyPreviewBubblesController.Instance.BuildForRound(levelDefinition, currentRoundIndex);
 
         RemoveAllFallenWeapons();
@@ -138,7 +138,6 @@ public class BattleManager : MonoBehaviour
         battleStarted = false;
         waitingForRoundEnd = false;
 
-        // Button depends on whether at least 1 UnitSpawner is placed
         RefreshStartBattleButton();
     }
 
@@ -148,7 +147,7 @@ public class BattleManager : MonoBehaviour
     public void StartRound()
     {
         Debug.Log("StartRound");
-        // Do not start battle if there are no spawners placed
+
         if (!HasAnySpawnerPlaced())
         {
             RefreshStartBattleButton();
@@ -159,15 +158,12 @@ public class BattleManager : MonoBehaviour
             EnemyPreviewBubblesController.Instance.ClearBubbles();
 
         battleStarted = true;
-        CameraAnimation.instance.EnterBattleMode();
 
+        CameraAnimation.instance.EnterBattleMode();
 
         if (deckUI != null)
             deckUI.SetCardsInteractable(false);
 
-       // HideDropAreasGrid();
-
-        // Start ALL UnitSpawners (one per cell)
         var spawners = FindObjectsByType<UnitSpawner>(FindObjectsSortMode.None);
         foreach (var spawner in spawners)
         {
@@ -187,7 +183,6 @@ public class BattleManager : MonoBehaviour
         if (!battleStarted || gameOver)
             return;
 
-        bool myAlive = AnyAlive(Team.MyTeam);
         bool enemyAlive = AnyAlive(Team.EnemyTeam);
 
         if (enemyWaveSpawner.FinishedSpawning && !enemyAlive && !waitingForRoundEnd)
@@ -207,81 +202,49 @@ public class BattleManager : MonoBehaviour
     private void HandleRoundLost()
     {
         Debug.Log("The Wall is destroyed - Battle lost");
+
         battleStarted = false;
         SetAllAIEnabled(false);
         gameOver = true;
+
         EndGameUI.Instance.ShowLoseScreen();
 
-        // ============================================
-        // MISSIONS PROGRESS
-        //=============================================
-
         foreach (var unitClass in unitClassUsedThisBattle)
-        {
-            MissionsManager.Instance.ReportAction(
-                MissionAction.PlayWithUnitClass,
-                1,
-                null,
-                unitClass
-            );
-        }
+            MissionsManager.Instance.ReportAction(MissionAction.PlayWithUnitClass, 1, null, unitClass);
+
         foreach (var unitDef in unitsUsedThisBattle)
-        {
-            MissionsManager.Instance.ReportAction(
-                MissionAction.PlayWithSpecificUnit,
-                1,
-                unitDef
-            );
-        }
+            MissionsManager.Instance.ReportAction(MissionAction.PlayWithSpecificUnit, 1, unitDef);
 
         MissionsManager.Instance.ReportAction(MissionAction.PlayBattles, 1);
-
-        // ============================================
-
     }
+
     private void HandleRoundWin()
     {
-
         if (IsExitingBattle)
             return;
 
         Debug.Log("HandleRoundWin");
 
         currentRoundIndex++;
-        if (currentRoundIndex >= levelDefinition.RoundsCount) // Win condition
+
+        if (currentRoundIndex >= levelDefinition.RoundsCount)
         {
-
-            // ============================================
-            // MISSIONS PROGRESS
-            //=============================================
-
             foreach (var unitClass in unitClassUsedThisBattle)
-            {
-                MissionsManager.Instance.ReportAction(
-                    MissionAction.PlayWithUnitClass,
-                    1,
-                    null,
-                    unitClass
-                );
-            }
+                MissionsManager.Instance.ReportAction(MissionAction.PlayWithUnitClass, 1, null, unitClass);
+
             foreach (var unitDef in unitsUsedThisBattle)
-            {
-                MissionsManager.Instance.ReportAction(
-                    MissionAction.PlayWithSpecificUnit,
-                    1,
-                    unitDef
-                );
-            }
+                MissionsManager.Instance.ReportAction(MissionAction.PlayWithSpecificUnit, 1, unitDef);
+
             MissionsManager.Instance.ReportAction(MissionAction.WinBattles, 1);
             MissionsManager.Instance.ReportAction(MissionAction.PlayBattles, 1);
-
-            // ============================================
 
             PlayerXPManager.Instance.AddXP(levelDefinition.xpOnLevelComplete);
             PlayerCurrencyWallet.Instance.AddGold(levelDefinition.goldOnLevelComplete);
             PlayerCurrencyWallet.Instance.AddGold(levelDefinition.GetGoldFromRounds());
-            Debug.Log($"complete - {levelDefinition.goldOnLevelComplete} + round {levelDefinition.GetGoldFromRounds()}");
-            EndGameUI.Instance.ShowWinScreen(levelDefinition.goldOnLevelComplete, levelDefinition.GetGoldFromRounds(),
+
+            EndGameUI.Instance.ShowWinScreen(
+                levelDefinition.goldOnLevelComplete,
+                levelDefinition.GetGoldFromRounds(),
                 PlayerCurrencyWallet.Instance.Gold
             );
 
@@ -290,11 +253,8 @@ public class BattleManager : MonoBehaviour
         }
 
         SoulsManager.instance.AddRoundSouls();
+
         RoundUIManager.instance.ChangeRoundText(currentRoundIndex + 1, levelDefinition.RoundsCount);
-
-        var round = levelDefinition.rounds[currentRoundIndex];
-        PlayerXPManager.Instance.AddXP(round.xpOnRoundWin);
-
 
         var spawners = FindObjectsByType<UnitSpawner>(FindObjectsSortMode.None);
         foreach (var s in spawners)
@@ -303,51 +263,35 @@ public class BattleManager : MonoBehaviour
         ClearPreviousRoundUnits();
 
         if (WaveMessageUI.Instance != null)
-        {
-            WaveMessageUI.Instance.ShowMessage($"YOU WON WAVE {currentRoundIndex}!",2f);
-        }
+            WaveMessageUI.Instance.ShowMessage($"YOU WON WAVE {currentRoundIndex}!", 2f);
+
         StartCoroutine(StartNextWaveAfterDelay());
+
         if (CameraAnimation.instance != null)
-        {
             CameraAnimation.instance.EnterGridMode();
-        }
     }
 
     // =======================
-    // SPAWNER DETECTION (NEW)
+    // SPAWNER DETECTION
     // =======================
-
-    /// <summary>
-    /// True if at least one UnitSpawner exists on the board during planning phase.
-    /// </summary>
     public bool HasAnySpawnerPlaced()
     {
         var spawners = FindObjectsByType<UnitSpawner>(FindObjectsSortMode.None);
         return spawners != null && spawners.Length > 0;
     }
 
-    /// <summary>
-    /// Call this after placing/removing a spawner to update the Start Battle button.
-    /// </summary>
     public void RefreshStartBattleButton()
     {
         if (StartBattleButton.instance == null)
             return;
 
         bool canStart = !battleStarted && !gameOver && HasAnySpawnerPlaced();
-        Debug.Log($"battleStarted = {battleStarted} gameOver = {gameOver} HasAnySpawnerPlaced() = {HasAnySpawnerPlaced()}");
-        // Use whatever API you already have on StartBattleButton:
-        // If you only have EnableButton(), keep that + add a DisableButton() in that class.
+
         if (canStart)
             StartBattleButton.instance.EnableButton();
         else
-        {
-            // If you don't have DisableButton(), add it (recommended)
-            // or set interactable = false internally.
             StartBattleButton.instance.DisableButton();
-        }
     }
-
 
     // =======================
     // HELPERS
@@ -398,7 +342,6 @@ public class BattleManager : MonoBehaviour
         PlanningPhase();
     }
 
-
     public void RegisterUnitClassUsed(UnitClass unitClass)
     {
         unitClassUsedThisBattle.Add(unitClass);
@@ -413,13 +356,11 @@ public class BattleManager : MonoBehaviour
     {
         var units = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
         foreach (var u in units)
-        {
-                Destroy(u.gameObject);
-        }
+            Destroy(u.gameObject);
     }
+
     public void ExitBattle()
     {
         IsExitingBattle = true;
     }
-
 }
