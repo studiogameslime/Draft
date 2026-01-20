@@ -252,12 +252,7 @@ public class LevelRewardWindowController : MonoBehaviour
             rewardsDatabase.maxLevel
         );
 
-        int index = playerLevel - 1;
-        if (index < 0 || index >= _rows.Count)
-            return;
-
-        RectTransform rowRect = _rows[index].GetComponent<RectTransform>();
-        ScrollToRow(rowRect, smooth);
+        ScrollToLevel(playerLevel, smooth);
     }
     private void ScrollToRow(RectTransform row, bool smooth)
     {
