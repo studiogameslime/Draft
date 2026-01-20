@@ -31,6 +31,11 @@ public class LevelRewardRowView : MonoBehaviour
     [SerializeField] private GameObject evenRowBackground;
     [SerializeField] private GameObject oddRowBackground;
 
+    [SerializeField] private RectTransform levelAnchor;
+    public RectTransform LevelAnchor => levelAnchor;
+
+
+
 
     private int _level;
     private LevelRewardsDatabase _db;

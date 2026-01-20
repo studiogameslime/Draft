@@ -315,6 +315,15 @@ public class LevelRewardWindowController : MonoBehaviour
         return _rows[index].GetComponent<RectTransform>();
     }
 
+    public RectTransform GetLevelAnchor(int level)
+    {
+        int index = level - 1;
+        if (index < 0 || index >= _rows.Count)
+            return null;
+
+        return _rows[index].LevelAnchor;
+    }
+
 
 
 }

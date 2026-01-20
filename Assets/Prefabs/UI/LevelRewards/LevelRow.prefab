@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 1308828527428104370}
   - component: {fileID: 5143502251665707517}
   m_Layer: 5
-  m_Name: CenterLevelText
+  m_Name: LevelCircleText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -410,8 +410,9 @@ GameObject:
   - component: {fileID: 5310728001785283381}
   - component: {fileID: 2275094455848225829}
   - component: {fileID: 6187302230082121597}
+  - component: {fileID: 2758826021315116077}
   m_Layer: 5
-  m_Name: CenterLevel
+  m_Name: LevelCircle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -475,6 +476,29 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!223 &2758826021315116077
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4154972073127040209}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 2
+  m_TargetDisplay: 0
 --- !u!1 &4351458374771900099
 GameObject:
   m_ObjectHideFlags: 0
@@ -1003,6 +1027,7 @@ MonoBehaviour:
   rightClaimedCheckmark: {fileID: 7229442700985067028}
   evenRowBackground: {fileID: 2890174697316283249}
   oddRowBackground: {fileID: 1989741492428799958}
+  levelAnchor: {fileID: 5310728001785283381}
 --- !u!222 &6177797235496706394
 CanvasRenderer:
   m_ObjectHideFlags: 0

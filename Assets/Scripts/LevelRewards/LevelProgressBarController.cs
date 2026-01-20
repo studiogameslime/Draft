@@ -55,19 +55,25 @@ public class LevelProgressBarController : MonoBehaviour
         int currentLevel = Mathf.Max(1, xp.currentLevel);
         float xp01 = Mathf.Clamp01((float)xp.currentXP / xp.GetXPForNextLevel());
 
-        RectTransform rowA = window.GetRowRect(currentLevel);
-        RectTransform rowB = window.GetRowRect(currentLevel + 1);
+        RectTransform anchorA = window.GetLevelAnchor(currentLevel);
+        RectTransform anchorB = window.GetLevelAnchor(currentLevel + 1);
 
-        if (rowA == null) return;
 
-        float yA = GetRowCenterY_InContent(rowA);
-        float yB = (rowB != null) ? GetRowCenterY_InContent(rowB) : yA;
+        if (anchorA == null) return;
+
+        float yA = GetAnchorY_InContent(anchorA);
+        float yB = (anchorB != null) ? GetAnchorY_InContent(anchorB) : yA;
+
 
         float yTarget = Mathf.Lerp(yA, yB, xp01);
 
+        Debug.Log($"Level={currentLevel} xp01={xp01} yA={yA} yTarget={yTarget}");
+        Debug.Log($"AnchorA world={anchorA.position} contentLocal={content.InverseTransformPoint(anchorA.position)}");
+
+
         // 1) Fill amount based on position between first row and last row
-        RectTransform row1 = window.GetRowRect(1);
-        RectTransform rowLast = window.GetRowRect(windowMaxLevelGuess());
+        RectTransform row1 = window.GetLevelAnchor(1);
+        RectTransform rowLast = window.GetLevelAnchor(windowMaxLevelGuess());
 
         if (row1 != null && rowLast != null)
         {
@@ -100,4 +106,13 @@ public class LevelProgressBarController : MonoBehaviour
 
         return 30;
     }
+    private float GetAnchorY_InContent(RectTransform anchor)
+    {
+        Vector3 worldCenter = anchor.TransformPoint(anchor.rect.center);
+        Vector3 local = content.InverseTransformPoint(worldCenter);
+        return local.y;
+    }
+
+
+
 }
