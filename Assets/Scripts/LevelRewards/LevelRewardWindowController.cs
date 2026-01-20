@@ -22,6 +22,8 @@ public class LevelRewardWindowController : MonoBehaviour
     [SerializeField] private RectTransform viewport;             // Usually ScrollRect.viewport
     [SerializeField] private RectTransform content;              // ScrollView/Viewport/Content
     [SerializeField] private LevelRewardRowView rowPrefab;
+    [SerializeField] private RectTransform rowContainer; // Content/RowContainer
+
 
     [Header("Center Progress UI")]
     [SerializeField] private TMP_Text levelNumberText;
@@ -35,6 +37,8 @@ public class LevelRewardWindowController : MonoBehaviour
 
     private readonly List<LevelRewardRowView> _rows = new();
     private Coroutine _scrollRoutine;
+
+    public event System.Action OnRowsBuilt;
 
     private void Awake()
     {
@@ -73,21 +77,25 @@ public class LevelRewardWindowController : MonoBehaviour
             return;
         }
 
-        // Clear existing children
-        for (int i = content.childCount - 1; i >= 0; i--)
-            Destroy(content.GetChild(i).gameObject);
+        // Clear only rows (do NOT delete ProgressBarOverlay)
+        for (int i = rowContainer.childCount - 1; i >= 0; i--)
+            Destroy(rowContainer.GetChild(i).gameObject);
+        _rows.Clear();
+
 
         _rows.Clear();
 
         // Create rows 1..maxLevel
         for (int lvl = 1; lvl <= rewardsDatabase.maxLevel; lvl++)
         {
-            var row = Instantiate(rowPrefab, content);
+            var row = Instantiate(rowPrefab, rowContainer);
             _rows.Add(row);
         }
 
         // IMPORTANT: force layout rebuild so positions are valid
         ForceRebuildLayout();
+        OnRowsBuilt?.Invoke();
+
     }
 
     public void RefreshAll()
@@ -159,10 +167,10 @@ public class LevelRewardWindowController : MonoBehaviour
         level = Mathf.Clamp(level, 1, Mathf.Max(1, max));
 
         int index = level - 1;
-        if (index < 0 || index >= content.childCount)
-            return;
+        if (index < 0 || index >= rowContainer.childCount) return;
 
-        var target = content.GetChild(index) as RectTransform;
+
+        var target = rowContainer.GetChild(index) as RectTransform;
         if (target == null)
             return;
 
@@ -181,23 +189,7 @@ public class LevelRewardWindowController : MonoBehaviour
         _scrollRoutine = StartCoroutine(SmoothScrollRoutine(normalized));
     }
 
-    //private IEnumerator SmoothScrollRoutine(float targetNormalized)
-    //{
-    //    float start = scrollRect.verticalNormalizedPosition;
-    //    float t = 0f;
-
-    //    while (t < 1f)
-    //    {
-    //        t += Time.unscaledDeltaTime / Mathf.Max(0.01f, smoothDuration);
-    //        float eased = EaseOutCubic(Mathf.Clamp01(t));
-    //        scrollRect.verticalNormalizedPosition = Mathf.Lerp(start, targetNormalized, eased);
-    //        yield return null;
-    //    }
-
-    //    scrollRect.verticalNormalizedPosition = targetNormalized;
-    //    _scrollRoutine = null;
-    //}
-
+   
     private float CalculateVerticalNormalizedPositionForTarget(RectTransform target, float anchor01)
     {
         // Ensure viewport reference
@@ -206,7 +198,7 @@ public class LevelRewardWindowController : MonoBehaviour
             vp = scrollRect.GetComponent<RectTransform>();
 
         // If content smaller than viewport, no scrolling needed
-        float contentHeight = content.rect.height;
+        float contentHeight = rowContainer.rect.height;
         float viewportHeight = vp.rect.height;
         float scrollable = contentHeight - viewportHeight;
         if (scrollable <= 0.01f)
@@ -234,7 +226,7 @@ public class LevelRewardWindowController : MonoBehaviour
     private void ForceRebuildLayout()
     {
         Canvas.ForceUpdateCanvases();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(rowContainer);
         Canvas.ForceUpdateCanvases();
     }
 
@@ -316,6 +308,12 @@ public class LevelRewardWindowController : MonoBehaviour
         ScrollToCurrentLevel(true);
     }
 
+    public RectTransform GetRowRect(int level)
+    {
+        int index = level - 1;
+        if (index < 0 || index >= _rows.Count) return null;
+        return _rows[index].GetComponent<RectTransform>();
+    }
 
 
 
