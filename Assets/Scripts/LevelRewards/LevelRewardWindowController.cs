@@ -337,6 +337,8 @@ public class LevelRewardWindowController : MonoBehaviour
         root.SetActive(true);
 
         popupAnimator.OpenFromRect(buttonRect);
+        StartCoroutine(ScrollToCurrentLevelNextFrame());
+
     }
 
 
