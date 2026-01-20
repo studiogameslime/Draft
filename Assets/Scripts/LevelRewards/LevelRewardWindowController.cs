@@ -101,9 +101,9 @@ public class LevelRewardWindowController : MonoBehaviour
         {
             int level = i + 1;
             bool highlight = (level == playerLevel);
-
             _rows[i].Bind(
                 level: level,
+                rowIndex: i,
                 db: rewardsDatabase,
                 progress: progressController,
                 isCurrentLevelHighlight: highlight

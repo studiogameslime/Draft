@@ -10,6 +10,8 @@ public class LevelRewardRowView : MonoBehaviour
 {
     [Header("Row")]
     [SerializeField] private TMP_Text levelText;
+    [SerializeField] private GameObject rowHighlight;
+
 
     [Header("Left (Special)")]
     [SerializeField] private GameObject leftRoot;
@@ -22,8 +24,13 @@ public class LevelRewardRowView : MonoBehaviour
     [SerializeField] private GameObject rightRoot;
     [SerializeField] private Button rightButton;
     [SerializeField] private Image rightIcon;
-    [SerializeField] private GameObject rightHighlight;
+    [SerializeField] private GameObject rightLockOverlay;
     [SerializeField] private GameObject rightClaimedCheckmark;
+
+    [Header("Row Backgrounds")]
+    [SerializeField] private GameObject evenRowBackground;
+    [SerializeField] private GameObject oddRowBackground;
+
 
     private int _level;
     private LevelRewardsDatabase _db;
@@ -31,6 +38,7 @@ public class LevelRewardRowView : MonoBehaviour
 
     public void Bind(
         int level,
+        int rowIndex,
         LevelRewardsDatabase db,
         ILevelRewardsProgress progress,
         bool isCurrentLevelHighlight)
@@ -42,6 +50,16 @@ public class LevelRewardRowView : MonoBehaviour
         if (levelText != null)
             levelText.text = level.ToString();
 
+        // Alternating row backgrounds
+        bool isEven = (rowIndex % 2 == 0);
+        if (evenRowBackground != null)
+            evenRowBackground.SetActive(isEven);
+        if (oddRowBackground != null)
+            oddRowBackground.SetActive(!isEven);
+        // highlight the entire row
+        if (rowHighlight != null)
+            rowHighlight.SetActive(isCurrentLevelHighlight);
+
         // Right reward (always expected)
         var rightReward = db.GetReward(level, RewardLane.Right);
         ApplyRewardToLane(
@@ -50,10 +68,8 @@ public class LevelRewardRowView : MonoBehaviour
             root: rightRoot,
             button: rightButton,
             icon: rightIcon,
-            lockOverlay: null,
-            claimedCheckmark: rightClaimedCheckmark,
-            highlight: rightHighlight,
-            highlightOn: isCurrentLevelHighlight
+            lockOverlay: rightLockOverlay,
+            claimedCheckmark: rightClaimedCheckmark
         );
 
         // Left reward (optional)
@@ -65,9 +81,7 @@ public class LevelRewardRowView : MonoBehaviour
             button: leftButton,
             icon: leftIcon,
             lockOverlay: leftLockOverlay,
-            claimedCheckmark: leftClaimedCheckmark,
-            highlight: null,
-            highlightOn: false
+            claimedCheckmark: leftClaimedCheckmark
         );
     }
 
@@ -78,9 +92,7 @@ public class LevelRewardRowView : MonoBehaviour
         Button button,
         Image icon,
         GameObject lockOverlay,
-        GameObject claimedCheckmark,
-        GameObject highlight,
-        bool highlightOn)
+        GameObject claimedCheckmark)
     {
         if (root == null)
             return;
@@ -97,23 +109,26 @@ public class LevelRewardRowView : MonoBehaviour
         if (icon != null)
             icon.sprite = reward.icon;
 
-        if (highlight != null)
-            highlight.SetActive(highlightOn);
-
-        bool canClaim = _progress.CanClaim(_level, lane);
         bool claimed = _progress.IsClaimed(_level, lane);
+        bool unlocked = _progress.PlayerLevel >= _level;
+        bool canClaim = unlocked && !claimed;
+
 
         if (claimedCheckmark != null)
             claimedCheckmark.SetActive(claimed);
 
+        // Lock overlay (only if not unlocked yet)
         if (lockOverlay != null)
-            lockOverlay.SetActive(!canClaim && !claimed);
+            lockOverlay.SetActive(!unlocked);
 
+        // Button state
         if (button != null)
         {
-            button.interactable = canClaim && !claimed;
+            button.interactable = canClaim;
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => _progress.TryClaim(_level, lane,button));
+
+            if (canClaim)
+                button.onClick.AddListener(() => _progress.TryClaim(_level, lane, button));
         }
     }
 }
