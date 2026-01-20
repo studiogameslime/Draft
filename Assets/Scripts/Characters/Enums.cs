@@ -83,6 +83,21 @@ public enum CellBonusType
     AttackPercent
 }
 
+public enum RewardType
+{
+    Gold,
+    Gems,
+    Chest,
+    Part,
+}
+
+public enum RewardLane
+{
+    Right = 0, // Main reward (as in your UI right side)
+    Left = 1   // Special reward (as in your UI left side)
+}
+
+
 
 
 

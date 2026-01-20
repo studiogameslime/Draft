@@ -3,12 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum RewardType
-{
-    Gold,
-    Gems,
-    Part,
-}
+
 
 /// <summary>
 /// Spawns UI icons that fly from a source RectTransform to a fixed HUD target.
