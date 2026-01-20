@@ -35,6 +35,10 @@ public class LevelRewardWindowController : MonoBehaviour
     [SerializeField] private float smoothDuration = 0.4f;
     [SerializeField, Range(0f, 1f)] private float viewportAnchor = 0.5f; // 0=top, 0.5=center, 1=bottom
 
+    [Header("Popup Animation")]
+    [SerializeField] private PopupAnimator popupAnimator;
+    [SerializeField] private GameObject root;
+
     private readonly List<LevelRewardRowView> _rows = new();
     private Coroutine _scrollRoutine;
 
@@ -44,6 +48,8 @@ public class LevelRewardWindowController : MonoBehaviour
     {
         if (progressController != null)
             progressController.OnClaimed += HandleClaimed;
+
+        root.SetActive(true); // init
     }
 
     private void Start()
@@ -51,6 +57,8 @@ public class LevelRewardWindowController : MonoBehaviour
         Build();
         RefreshAll();
         StartCoroutine(ScrollToCurrentLevelNextFrame());
+
+        root.SetActive(false); // closed by default
     }
 
     private void OnDestroy()
@@ -324,6 +332,26 @@ public class LevelRewardWindowController : MonoBehaviour
         return _rows[index].LevelAnchor;
     }
 
+    public void OpenFromButton(RectTransform buttonRect)
+    {
+        if (popupAnimator == null)
+        {
+            Debug.LogWarning("MissionsScreen: PopupAnimator is not assigned.");
+            return;
+        }
+        root.SetActive(true);
 
+        popupAnimator.OpenFromRect(buttonRect);
+    }
+
+
+    public void Close()
+    {
+        if (popupAnimator == null)
+            return;
+
+        //root.SetActive(false);
+        popupAnimator.Close();
+    }
 
 }
