@@ -19892,7 +19892,7 @@ MonoBehaviour:
   activeDailyMissions: []
   activeWeeklyMissions: []
   chestOpeningUI: {fileID: 1024835610}
-  dailyMissionCount: 8
+  dailyMissionCount: 10
   weeklyMissionCount: 5
   dailyAllMissionsGoldReward: 0
   dailyAllMissionsGemsReward: 0
