@@ -163,7 +163,7 @@ public class AdsManager : MonoBehaviour
             Debug.LogWarning("[AdsManager] Already showing an ad.");
             return false;
         }
-        FirebaseAnalytics.LogEvent("watch_ad", new Parameter("reward_type", rewardType.ToString()));
+        FirebaseAnalyticsManager.Instance.LogEvent("watch_ad", new Parameter("reward_type", rewardType.ToString()));
         MissionsManager.Instance.ReportAction(MissionAction.WatchAds, 1);
 
 

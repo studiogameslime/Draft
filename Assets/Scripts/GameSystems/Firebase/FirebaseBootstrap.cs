@@ -80,7 +80,7 @@ public class FirebaseBootstrap : MonoBehaviour
 
 #if UNITY_ANDROID
                 FirebaseAnalytics.SetAnalyticsCollectionEnabled(true);
-                FirebaseAnalytics.LogEvent("open_the_game");
+                FirebaseAnalyticsManager.Instance.LogEvent("open_the_game");
 #endif
             });
     }

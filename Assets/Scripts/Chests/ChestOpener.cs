@@ -80,7 +80,7 @@ public class ChestOpener : MonoBehaviour
         MissionsManager.Instance.ReportAction(MissionAction.OpenChests, 1);
         PlayerXPManager.Instance.AddXP(10);
 
-        FirebaseAnalytics.LogEvent("Open_chest", new Parameter("chest_type", _currentChest.name));
+        FirebaseAnalyticsManager.Instance.LogEvent("Open_chest", new Parameter("chest_type", _currentChest.name));
 
     }
 

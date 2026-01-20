@@ -214,7 +214,7 @@ public class MissionsManager : MonoBehaviour
 
 
         SaveMissionsToGameData();
-        FirebaseAnalytics.LogEvent("complete_mission", new Parameter("mission_type", mission.definition.missionType.ToString()), new Parameter("mission_name", mission.definition.name));
+        FirebaseAnalyticsManager.Instance.LogEvent("complete_mission", new Parameter("mission_type", mission.definition.missionType.ToString()), new Parameter("mission_name", mission.definition.name));
 
     }
 
