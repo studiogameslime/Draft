@@ -105,6 +105,14 @@ public class PlayerSaveData
     public List<EnemyKillStatData> enemyKillStats = new List<EnemyKillStatData>();
 
     // ==============================
+    // LEVEL REWARDS (Progression UI)
+    // ==============================
+    /// <summary>
+    /// Keys of claimed rewards. Key format: LevelRewardsDatabase.MakeClaimKey(level, lane)
+    /// </summary>
+    public List<string> claimedLevelRewards = new List<string>();
+
+    // ==============================
     // BATTLES / SESSIONS
     // ==============================
 
@@ -197,3 +205,7 @@ public class MasteryLevelData
     public string id;
     public int level;
 }
+
+
+
+

@@ -113,7 +113,7 @@ public class LevelRewardRowView : MonoBehaviour
         {
             button.interactable = canClaim && !claimed;
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => _progress.TryClaim(_level, lane));
+            button.onClick.AddListener(() => _progress.TryClaim(_level, lane,button));
         }
     }
 }

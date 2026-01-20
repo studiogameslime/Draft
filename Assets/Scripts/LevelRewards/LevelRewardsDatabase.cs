@@ -12,10 +12,13 @@ public class LevelRewardEntry
 
     [Header("Reward")]
     public RewardType type = RewardType.Gold;
-    [Min(1)] public int amount = 1;
+    public int amount;
 
     [Header("UI")]
     public Sprite icon;
+
+    [Header("ChestDefinotion")]
+    public ChestDefinition chest;
 }
 
 /// <summary>
