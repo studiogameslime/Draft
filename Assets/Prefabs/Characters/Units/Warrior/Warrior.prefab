@@ -126,6 +126,7 @@ MonoBehaviour:
   _initialPosition: {x: 0, y: 0, z: 0}
   fallenWeaponPrefab: {fileID: 0}
   _hpBar: {fileID: 8969822015970705545}
+  floatingDamagePrefab: {fileID: 5435662357922782254, guid: edf8d4cdb46f4b542ad4f69652ff8174, type: 3}
 --- !u!114 &4947438431943674892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,6 +141,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   stoppingBuffer: 0.1
   shootPoint: {fileID: 0}
+  wall: {fileID: 0}
+  wallTarget: {fileID: 0}
 --- !u!50 &5159539399863573130
 Rigidbody2D:
   serializedVersion: 5
@@ -179,7 +182,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fc731778ae85ad4b968e044a53d1c44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankAttack
-  currentTarget: {fileID: 0}
 --- !u!58 &8384952033324481740
 CircleCollider2D:
   m_ObjectHideFlags: 0
