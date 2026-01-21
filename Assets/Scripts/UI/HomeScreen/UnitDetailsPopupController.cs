@@ -57,6 +57,9 @@ public class UnitDetailsPopupController : MonoBehaviour
     [Header("Parts Tab Controller")]
     [SerializeField] private UnitPartsTabController partsTabController;
 
+    [Header("Parts Tab Controller")]
+    [SerializeField] private UpgradeTreeUIController upgradesTabController;
+
     private UnitDefinition _unit;
     private UnitsDeckManager _deckManager;
     private RectTransform _lastOpenedCardRect;
@@ -255,5 +258,7 @@ public class UnitDetailsPopupController : MonoBehaviour
         if (upgradesTabButton != null) upgradesTabButton.interactable = false;
         if (partsTabButton != null) partsTabButton.interactable = true;
         if (statsTabButton != null) statsTabButton.interactable = true;
+
+        upgradesTabController.SetUnit(_unit);
     }
 }
