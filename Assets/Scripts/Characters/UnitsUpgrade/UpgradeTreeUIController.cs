@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UpgradeTreeUIController : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class UpgradeTreeUIController : MonoBehaviour
     [Header("Layers")]
     [SerializeField] private RectTransform nodesLayer;
     [SerializeField] private RectTransform linesLayer;
+
+    [Header("UI")]
+    [SerializeField] private TMP_Text availableSkillPointsText;
 
     [Header("Prefabs")]
     [SerializeField] private UnitUpgradeNodeView nodePrefab;
@@ -66,6 +70,13 @@ public class UpgradeTreeUIController : MonoBehaviour
         ClearChildren(linesLayer);
         _views.Clear();
         _lines.Clear();
+
+        if(availableSkillPointsText != null)
+        {
+            int availableSkillPoints = (_progress != null) ? _progress.skillPoints : 0;
+            availableSkillPointsText.text = $"{unit.displayName} skill points: {availableSkillPoints}";
+
+        }
 
         // 1) Spawn node views
         for (int i = 0; i < unit.nodes.Count; i++)

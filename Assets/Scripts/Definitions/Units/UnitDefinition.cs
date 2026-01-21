@@ -52,7 +52,7 @@ public class UnitDefinition : ScriptableObject
     public GameObject headPrefabForBattlePreview;
 
     [Header("Upgrade Tree")]
-    public UnitUpgradeNodeDefinition unlockNode;                 // << десу
+    public UnitUpgradeNodeDefinition unlockNode;               
     public List<UnitUpgradeNodeDefinition> nodes = new();
 
     public UnitUpgradeNodeDefinition GetNode(string nodeId)
