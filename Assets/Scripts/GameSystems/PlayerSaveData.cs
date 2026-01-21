@@ -154,6 +154,9 @@ public class UnitProgressData
 
     // for “NEW” tag in UI if you want
     public bool isNew;
+
+    public int skillPoints;
+    public List<string> unlockedUpgradeNodeIds = new(); // e.g. ["unlock","A1","B1"]
 }
 
 // amount of a generic part (if parts are not per-unit but global)

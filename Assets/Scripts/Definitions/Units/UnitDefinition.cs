@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Units/Unit Definition")]
@@ -36,12 +37,12 @@ public class UnitDefinition : ScriptableObject
     public RuntimeAnimatorController animatorController;
 
     [Header("Tier / Parts Config")]
-    public int maxTier = 3;  
+    public int maxTier = 3;
 
     [System.Serializable]
     public class PartSlotConfig
     {
-        public PartSlot slot;          // Head / Body / RightArm...
+        public PartSlot slot;
     }
 
     public PartSlotConfig[] partSlots;
@@ -49,7 +50,22 @@ public class UnitDefinition : ScriptableObject
 
     [Header("This head used for showing enemy count before the round")]
     public GameObject headPrefabForBattlePreview;
+
+    [Header("Upgrade Tree")]
+    public UnitUpgradeNodeDefinition unlockNode;                 // << десу
+    public List<UnitUpgradeNodeDefinition> nodes = new();
+
+    public UnitUpgradeNodeDefinition GetNode(string nodeId)
+    {
+        for (int i = 0; i < nodes.Count; i++)
+        {
+            if (nodes[i] != null && nodes[i].nodeId == nodeId)
+                return nodes[i];
+        }
+        return null;
+    }
 }
+
 
 public enum UnitRarity
 {
