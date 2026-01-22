@@ -147,7 +147,7 @@ public class LevelRewardRowView : MonoBehaviour
                 {
                     icon.sprite = SpriteManager.instance.newUnitSprite;
                     icon.SetNativeSize();
-                    icon.rectTransform.sizeDelta = new Vector2(icon.rectTransform.sizeDelta.x * 0.25f, icon.rectTransform.sizeDelta.y * 0.25f);
+                    icon.rectTransform.sizeDelta = new Vector2(icon.rectTransform.sizeDelta.x * 0.6f, icon.rectTransform.sizeDelta.y * 0.6f);
                     break;
                 }
         }

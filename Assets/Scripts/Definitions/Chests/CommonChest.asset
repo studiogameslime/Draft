@@ -17,7 +17,7 @@ MonoBehaviour:
   backgroundImage: {fileID: 4093272143986726598, guid: 7ea6928b236392949952aeca2581cba2, type: 3}
   chestOpenScreenIcon: {fileID: 21300000, guid: 3be80395f95ffb04694877d1fa859186, type: 3}
   buttonIcon: {fileID: 21300000, guid: c967415b7afa3ea4e8b629dc9762ad9f, type: 3}
-  chestRarity: 0
+  chestRarity: 1
   animatorController: {fileID: 9100000, guid: 7bfe4c27b84591d4aa9d81c883cfa1c7, type: 2}
   goldRange:
     min: 20
@@ -26,6 +26,7 @@ MonoBehaviour:
     min: 1
     max: 3
   partDropChance: 0.3
+  wheelOfFortuneChance: 0.1
   partRarityWeights:
   - rarity: 0
     weight: 100

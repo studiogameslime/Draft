@@ -38,6 +38,12 @@ MonoBehaviour:
     amount: 0
     chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
     rarity: 0
+  - level: 3
+    lane: 1
+    type: 4
+    amount: 0
+    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+    rarity: 1
   - level: 4
     lane: 0
     type: 2

@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: FireMageRightHand
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_fire_mage_right_arm_green
+  id: part_fire_mage_right_arm_epic
   unit: {fileID: 11400000, guid: 6cab19afac977304e898761cc9185bd1, type: 2}
   slot: 3
-  rarity: 0
+  rarity: 2
   prefab: {fileID: 4313251536505092926, guid: 942cd607e1765f44dbe389130372f86d, type: 3}
   upgradeTo: {fileID: 0}
