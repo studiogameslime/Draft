@@ -2,16 +2,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Controls one level row UI.
-/// Expects the hierarchy you showed: left reward block + right reward block.
-/// </summary>
 public class LevelRewardRowView : MonoBehaviour
 {
     [Header("Row")]
     [SerializeField] private TMP_Text levelText;
     [SerializeField] private GameObject rowHighlight;
 
+    [Header("Progress (between this level and next)")]
+    [SerializeField] private Image progressFill; 
 
     [Header("Left (Special)")]
     [SerializeField] private GameObject leftRoot;
@@ -31,11 +29,9 @@ public class LevelRewardRowView : MonoBehaviour
     [SerializeField] private GameObject evenRowBackground;
     [SerializeField] private GameObject oddRowBackground;
 
+    [Header("Anchor")]
     [SerializeField] private RectTransform levelAnchor;
     public RectTransform LevelAnchor => levelAnchor;
-
-
-
 
     private int _level;
     private LevelRewardsDatabase _db;
@@ -46,7 +42,9 @@ public class LevelRewardRowView : MonoBehaviour
         int rowIndex,
         LevelRewardsDatabase db,
         ILevelRewardsProgress progress,
-        bool isCurrentLevelHighlight)
+        bool isCurrentLevelHighlight,
+        int playerLevel,
+        float currentLevelXp01)
     {
         _level = level;
         _db = db;
@@ -55,17 +53,16 @@ public class LevelRewardRowView : MonoBehaviour
         if (levelText != null)
             levelText.text = level.ToString();
 
-        // Alternating row backgrounds
         bool isEven = (rowIndex % 2 == 0);
-        if (evenRowBackground != null)
-            evenRowBackground.SetActive(isEven);
-        if (oddRowBackground != null)
-            oddRowBackground.SetActive(!isEven);
-        // highlight the entire row
+        if (evenRowBackground != null) evenRowBackground.SetActive(isEven);
+        if (oddRowBackground != null) oddRowBackground.SetActive(!isEven);
+
         if (rowHighlight != null)
             rowHighlight.SetActive(isCurrentLevelHighlight);
 
-        // Right reward (always expected)
+        // NEW: per-row progress
+        SetProgress(playerLevel, currentLevelXp01);
+
         var rightReward = db.GetReward(level, RewardLane.Right);
         ApplyRewardToLane(
             lane: RewardLane.Right,
@@ -77,7 +74,6 @@ public class LevelRewardRowView : MonoBehaviour
             claimedCheckmark: rightClaimedCheckmark
         );
 
-        // Left reward (optional)
         var leftReward = db.GetReward(level, RewardLane.Left);
         ApplyRewardToLane(
             lane: RewardLane.Left,
@@ -90,6 +86,18 @@ public class LevelRewardRowView : MonoBehaviour
         );
     }
 
+    private void SetProgress(int playerLevel, float currentLevelXp01)
+    {
+        if (progressFill == null) return;
+
+        float fill01;
+        if (_level < playerLevel) fill01 = 1f;
+        else if (_level == playerLevel) fill01 = Mathf.Clamp01(currentLevelXp01);
+        else fill01 = 0f;
+
+        progressFill.fillAmount = fill01;
+    }
+
     private void ApplyRewardToLane(
         RewardLane lane,
         LevelRewardEntry reward,
@@ -99,10 +107,8 @@ public class LevelRewardRowView : MonoBehaviour
         GameObject lockOverlay,
         GameObject claimedCheckmark)
     {
-        if (root == null)
-            return;
+        if (root == null) return;
 
-        // If no reward on this lane, hide it completely.
         if (reward == null)
         {
             root.SetActive(false);
@@ -110,7 +116,6 @@ public class LevelRewardRowView : MonoBehaviour
         }
 
         root.SetActive(true);
-
         if (icon != null)
             icon.sprite = reward.icon;
 
@@ -118,20 +123,16 @@ public class LevelRewardRowView : MonoBehaviour
         bool unlocked = _progress.PlayerLevel >= _level;
         bool canClaim = unlocked && !claimed;
 
-
         if (claimedCheckmark != null)
             claimedCheckmark.SetActive(claimed);
 
-        // Lock overlay (only if not unlocked yet)
         if (lockOverlay != null)
             lockOverlay.SetActive(!unlocked);
 
-        // Button state
         if (button != null)
         {
             button.interactable = canClaim;
             button.onClick.RemoveAllListeners();
-
             if (canClaim)
                 button.onClick.AddListener(() => _progress.TryClaim(_level, lane, button));
         }

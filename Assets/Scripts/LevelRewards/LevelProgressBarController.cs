@@ -13,32 +13,39 @@ public class LevelProgressBarController : MonoBehaviour
     [SerializeField] private float markerYOffset = 0f;
 
 
+    private System.Action<int> _xpHandler;
+    private System.Action<int> _levelHandler;
+
     private void OnEnable()
     {
-        if (PlayerXPManager.Instance != null)
+        var xp = PlayerXPManager.Instance;
+        if (xp != null)
         {
-            PlayerXPManager.Instance.OnXPChanged += _ => Refresh();
-            PlayerXPManager.Instance.OnLevelChanged += _ => Refresh();
+            _xpHandler = _ => Refresh();
+            _levelHandler = _ => Refresh();
+            xp.OnXPChanged += _xpHandler;
+            xp.OnLevelChanged += _levelHandler;
         }
 
         if (window != null)
             window.OnRowsBuilt += Refresh;
 
-        // Delay one frame so layout is ready
         StartCoroutine(RefreshNextFrame());
     }
 
     private void OnDisable()
     {
-        if (PlayerXPManager.Instance != null)
+        var xp = PlayerXPManager.Instance;
+        if (xp != null)
         {
-            PlayerXPManager.Instance.OnXPChanged -= _ => Refresh();
-            PlayerXPManager.Instance.OnLevelChanged -= _ => Refresh();
+            if (_xpHandler != null) xp.OnXPChanged -= _xpHandler;
+            if (_levelHandler != null) xp.OnLevelChanged -= _levelHandler;
         }
 
         if (window != null)
             window.OnRowsBuilt -= Refresh;
     }
+
 
     private System.Collections.IEnumerator RefreshNextFrame()
     {

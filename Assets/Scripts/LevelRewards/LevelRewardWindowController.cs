@@ -113,34 +113,33 @@ public class LevelRewardWindowController : MonoBehaviour
 
         int playerLevel = Mathf.Clamp(progressController.PlayerLevel, 1, rewardsDatabase.maxLevel);
 
-        // Center progress UI
+        float xp01 = 0f;
+        if (PlayerXPManager.Instance != null)
+        {
+            int next = PlayerXPManager.Instance.GetXPForNextLevel();
+            xp01 = (next <= 0) ? 0f : Mathf.Clamp01((float)PlayerXPManager.Instance.currentXP / next);
+        }
+
         if (levelNumberText != null)
             levelNumberText.text = playerLevel.ToString();
 
-        if (progressFill != null)
-        {
-            float t = (rewardsDatabase.maxLevel <= 1)
-                ? 1f
-                : (playerLevel - 1f) / (rewardsDatabase.maxLevel - 1f);
-
-            progressFill.fillAmount = Mathf.Clamp01(t);
-        }
-
-        // Rows
         for (int i = 0; i < _rows.Count; i++)
         {
             int level = i + 1;
             bool highlight = (level == playerLevel);
 
             _rows[i].Bind(
-                rowIndex: i,
                 level: level,
+                rowIndex: i,
                 db: rewardsDatabase,
                 progress: progressController,
-                isCurrentLevelHighlight: highlight
+                isCurrentLevelHighlight: highlight,
+                playerLevel: playerLevel,
+                currentLevelXp01: xp01
             );
         }
     }
+
 
     private void HandleClaimed(int level, RewardLane lane)
     {
