@@ -143,6 +143,13 @@ public class LevelRewardRowView : MonoBehaviour
                     icon.rectTransform.sizeDelta = new Vector2(icon.rectTransform.sizeDelta.x * 0.25f, icon.rectTransform.sizeDelta.y * 0.25f);
                     break;
                 }
+            case RewardType.DiscoverNewUnit:
+                {
+                    icon.sprite = SpriteManager.instance.newUnitSprite;
+                    icon.SetNativeSize();
+                    icon.rectTransform.sizeDelta = new Vector2(icon.rectTransform.sizeDelta.x * 0.25f, icon.rectTransform.sizeDelta.y * 0.25f);
+                    break;
+                }
         }
 
         bool claimed = _progress.IsClaimed(_level, lane);

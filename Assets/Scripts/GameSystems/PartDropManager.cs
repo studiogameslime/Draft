@@ -78,69 +78,26 @@ public class PartDropManager : MonoBehaviour
     /// </summary>
     public PartDefinition GetRandomPartForDeckUnits(PartRarity rarity)
     {
-        if (rarityWeights == null)
-        {
-            Debug.LogError("PartDropManager: missing rarityWeights");
-            return null;
-        }
+        var save = GameData.Instance.Save;
 
-        if (_allPartsCache == null || _allPartsCache.Count == 0)
-        {
-            Debug.LogWarning("PartDropManager: no parts in cache");
-            return null;
-        }
+        var discoveredUnitIds = save.ownedUnits
+            .Where(u => u.unlockState == UnitUnlockState.Discovered ||
+                        u.unlockState == UnitUnlockState.Unlocked)
+            .Select(u => u.unitId)
+            .ToHashSet();
 
-        var deckUnits = UnitsDeckManager.Instance._deckUnits;
-        if (deckUnits == null || deckUnits.Count == 0)
-        {
-            Debug.LogWarning("PartDropManager: no deck units");
-            return null;
-        }
-
-        // Filter by: belongs to a deck unit + matches requested part rarity
         var candidates = _allPartsCache
             .Where(p => p.unit != null &&
-                        deckUnits.Contains(p.unit) &&
+                        discoveredUnitIds.Contains(p.unit.id) &&
                         p.rarity == rarity)
             .ToList();
 
         if (candidates.Count == 0)
-        {
-            Debug.LogWarning($"PartDropManager: no candidate parts for deck units with rarity {rarity}");
             return null;
-        }
 
-        float totalWeight = 0f;
-        float[] weights = new float[candidates.Count];
-
-        for (int i = 0; i < candidates.Count; i++)
-        {
-            var part = candidates[i];
-            float w = rarityWeights.GetWeight(part.unit.rarity);
-            if (w < 0f) w = 0f;
-
-            weights[i] = w;
-            totalWeight += w;
-        }
-
-        if (totalWeight <= 0f)
-        {
-            Debug.LogWarning("PartDropManager: total weight <= 0");
-            return null;
-        }
-
-        float roll = Random.value * totalWeight;
-        float accum = 0f;
-
-        for (int i = 0; i < candidates.Count; i++)
-        {
-            accum += weights[i];
-            if (roll <= accum)
-                return candidates[i];
-        }
-
-        return candidates[candidates.Count - 1];
+        return candidates[Random.Range(0, candidates.Count)];
     }
+
 
     /// <summary>
     /// Picks and adds a part to the inventory based on requested rarity.

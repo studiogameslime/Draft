@@ -244,7 +244,7 @@ public class UnitsDeckManager : MonoBehaviour
                 card.Setup(
                     def,
                     this,
-                    isLocked: false,
+                    UnitUnlockState.Unlocked,
                     isInDeck: true,
                     isDeckSlot: true
                 );

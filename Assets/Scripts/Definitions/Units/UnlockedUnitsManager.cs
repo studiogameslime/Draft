@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public interface IUnlockedUnitsProvider
+public class UnlockedUnitsManager : MonoBehaviour
 {
-    IReadOnlyList<UnitDefinition> GetUnlockedUnits();
-    bool IsUnlocked(UnitDefinition unit);
-}
+    public static UnlockedUnitsManager Instance;
 
-public class UnlockedUnitsManager : MonoBehaviour, IUnlockedUnitsProvider
-{
     [SerializeField] private UnitsUnlockConfig config;
 
     private readonly List<UnitDefinition> _unlockedUnits = new();
@@ -19,10 +15,13 @@ public class UnlockedUnitsManager : MonoBehaviour, IUnlockedUnitsProvider
     public IReadOnlyList<UnitDefinition> GetUnlockedUnits() => _unlockedUnits;
 
     public bool IsUnlocked(UnitDefinition unit)
-        => unit != null && !string.IsNullOrEmpty(unit.id) && _unlockedIds.Contains(unit.id);
+        => unit != null &&
+           !string.IsNullOrEmpty(unit.id) &&
+           _unlockedIds.Contains(unit.id);
 
     private void Awake()
     {
+        Instance = this;
         StartCoroutine(InitRoutine());
     }
 
@@ -36,104 +35,165 @@ public class UnlockedUnitsManager : MonoBehaviour, IUnlockedUnitsProvider
         if (_unlockedIds.Count == 0 && config != null && config.startingUnits != null)
         {
             foreach (var u in config.startingUnits)
-                UnlockUnit(u, save: false);
+                UnlockUnitCompletely(u, save: false);
 
-            SaveToGameData();
-        }
-        else
-        {
-            // אם זה לא משחק חדש אבל תרצה לוודא שלכולם יש unlockNode פתוח (בטוח ולא הורס),
-            // אפשר להשאיר את זה דולק:
-            EnsureUnlockSkillForAllUnlockedUnits(save: true);
+            GameData.Instance.SaveNow();
         }
     }
 
-    public void UnlockUnit(UnitDefinition unit, bool save = true)
+    // -----------------------
+    // DISCOVERY
+    // -----------------------
+
+    public bool IsDiscovered(UnitDefinition unit)
+    {
+        if (unit == null) return false;
+
+        var progress = GetProgress(unit.id);
+        return progress != null;
+    }
+
+    public void DiscoverUnit(UnitDefinition unit, bool save = true)
     {
         if (unit == null || string.IsNullOrEmpty(unit.id))
             return;
 
-        if (_unlockedIds.Contains(unit.id))
+        var saveData = GameData.Instance.Save;
+        if (saveData.ownedUnits.Any(u => u.unitId == unit.id))
             return;
 
-        _unlockedIds.Add(unit.id);
+        saveData.ownedUnits.Add(new UnitProgressData
+        {
+            unitId = unit.id,
+            level = 1,
+            partsOwned = 0,
+            isNew = true,
+            skillPoints = 0,
+            unlockState = UnitUnlockState.Discovered,
+            unlockedUpgradeNodeIds = new List<string>()
+        });
+
+        if (save)
+            GameData.Instance.SaveNow();
+    }
+
+    public UnitDefinition DiscoverRandomUnitByRarity(UnitRarity rarity)
+    {
+        if (config == null || config.allUnits == null || config.allUnits.Length == 0)
+            return null;
+
+        if (GameData.Instance == null || GameData.Instance.Save == null)
+            return null;
+
+        var save = GameData.Instance.Save;
+
+        if (save.ownedUnits == null)
+            save.ownedUnits = new List<UnitProgressData>();
+
+        // Collect undiscovered units of the requested rarity
+        List<UnitDefinition> candidates = new List<UnitDefinition>();
+
+        foreach (var unit in config.allUnits)
+        {
+            if (unit == null)
+                continue;
+
+            if (unit.rarity != rarity)
+                continue;
+
+            bool alreadyDiscovered = save.ownedUnits.Any(u => u != null && u.unitId == unit.id);
+            if (alreadyDiscovered)
+                continue;
+
+            candidates.Add(unit);
+        }
+
+        if (candidates.Count == 0)
+            return null;
+
+        // Pick random undiscovered unit
+        UnitDefinition picked = candidates[Random.Range(0, candidates.Count)];
+
+        // Mark as discovered (but NOT unlocked)
+        save.ownedUnits.Add(new UnitProgressData
+        {
+            unitId = picked.id,
+            level = 1,
+            partsOwned = 0,
+            isNew = true,
+            skillPoints = 0,
+            unlockedUpgradeNodeIds = new List<string>() // unlock skill NOT added here
+        });
+
+        GameData.Instance.SaveNow();
+
+        // Refresh runtime cache
+        RebuildFromSave();
+        FindAnyObjectByType<UnitsCollectionManager>()?.RebuildCollection();
+
+        return picked;
+    }
+
+
+    // -----------------------
+    // FULL UNLOCK
+    // -----------------------
+
+    public void UnlockUnitCompletely(UnitDefinition unit, bool save = true)
+    {
+        if (unit == null || string.IsNullOrEmpty(unit.id))
+            return;
+
+        var progress = GetOrCreateProgress(unit.id);
+        progress.unlockState = UnitUnlockState.Unlocked;
+
+        EnsureDefaultUnlockSkill(unit, progress);
+
+        if (!_unlockedIds.Contains(unit.id))
+            _unlockedIds.Add(unit.id);
 
         if (!_unlockedUnits.Contains(unit))
             _unlockedUnits.Add(unit);
 
-        EnsureOwnedEntry(unit.id);
-
-        // חדש: פותח לכל יחידה את ה-unlock node הראשון אוטומטית
-        EnsureDefaultUnlockSkill(unit);
-
         if (save)
-            SaveToGameData();
+            GameData.Instance.SaveNow();
     }
 
-    private void EnsureOwnedEntry(string unitId)
+    // -----------------------
+    // INTERNAL
+    // -----------------------
+
+    private UnitProgressData GetProgress(string unitId)
     {
-        var save = GameData.Instance.Save;
+        return GameData.Instance.Save.ownedUnits
+            .FirstOrDefault(u => u.unitId == unitId);
+    }
 
-        if (save.ownedUnits == null)
-            save.ownedUnits = new List<UnitProgressData>();
+    private UnitProgressData GetOrCreateProgress(string unitId)
+    {
+        var progress = GetProgress(unitId);
+        if (progress != null)
+            return progress;
 
-        bool exists = save.ownedUnits.Any(u => u != null && u.unitId == unitId);
-        if (exists) return;
-
-        save.ownedUnits.Add(new UnitProgressData
+        progress = new UnitProgressData
         {
             unitId = unitId,
             level = 1,
-            partsOwned = 0,
-            isNew = true
-        });
+            unlockState = UnitUnlockState.Discovered,
+            unlockedUpgradeNodeIds = new List<string>()
+        };
+
+        GameData.Instance.Save.ownedUnits.Add(progress);
+        return progress;
     }
 
-    private void EnsureDefaultUnlockSkill(UnitDefinition unit)
+    private void EnsureDefaultUnlockSkill(UnitDefinition unit, UnitProgressData progress)
     {
-        if (unit == null || string.IsNullOrEmpty(unit.id))
+        if (unit.unlockNode == null)
             return;
 
-        // מאיפה להביא את ה-node של ה-unlock?
-        // 1) הכי נכון: unit.unlockNode
-        // 2) fallback: nodeId == "unlock"
-        // 3) fallback: tier == 0 (אם tier הוא int)
-        UnitUpgradeNodeDefinition unlockNode = unit.unlockNode;
-
-        if (unlockNode == null && unit.nodes != null)
-            unlockNode = unit.nodes.FirstOrDefault(n => n != null && n.nodeId == "unlock");
-
-        if (unlockNode == null && unit.nodes != null)
-            unlockNode = unit.nodes.FirstOrDefault(n => n != null && (int)n.tier == 0);
-
-        if (unlockNode == null || string.IsNullOrEmpty(unlockNode.nodeId))
-            return;
-
-        var save = GameData.Instance.Save;
-        if (save.ownedUnits == null)
-            save.ownedUnits = new List<UnitProgressData>();
-
-        var progress = save.ownedUnits.FirstOrDefault(u => u != null && u.unitId == unit.id);
-        if (progress == null)
-            return;
-
-        if (progress.unlockedUpgradeNodeIds == null)
-            progress.unlockedUpgradeNodeIds = new List<string>();
-
-        if (!progress.unlockedUpgradeNodeIds.Contains(unlockNode.nodeId))
-            progress.unlockedUpgradeNodeIds.Add(unlockNode.nodeId);
-    }
-
-    private void EnsureUnlockSkillForAllUnlockedUnits(bool save)
-    {
-        if (config == null || config.allUnits == null)
-            return;
-
-        foreach (var def in _unlockedUnits)
-            EnsureDefaultUnlockSkill(def);
-
-        if (save)
-            SaveToGameData();
+        if (!progress.unlockedUpgradeNodeIds.Contains(unit.unlockNode.nodeId))
+            progress.unlockedUpgradeNodeIds.Add(unit.unlockNode.nodeId);
     }
 
     private void RebuildFromSave()
@@ -144,33 +204,17 @@ public class UnlockedUnitsManager : MonoBehaviour, IUnlockedUnitsProvider
         if (config == null || config.allUnits == null)
             return;
 
-        var save = GameData.Instance.Save;
-
-        if (save.ownedUnits == null)
-            save.ownedUnits = new List<UnitProgressData>();
-
-        foreach (var p in save.ownedUnits)
+        foreach (var p in GameData.Instance.Save.ownedUnits)
         {
-            if (p == null || string.IsNullOrEmpty(p.unitId))
+            if (p.unlockState != UnitUnlockState.Unlocked)
                 continue;
 
-            _unlockedIds.Add(p.unitId);
+            var def = config.allUnits.FirstOrDefault(u => u.id == p.unitId);
+            if (def == null)
+                continue;
 
-            var def = config.allUnits.FirstOrDefault(u => u != null && u.id == p.unitId);
-            if (def != null)
-                _unlockedUnits.Add(def);
+            _unlockedIds.Add(def.id);
+            _unlockedUnits.Add(def);
         }
-    }
-
-    private void SaveToGameData()
-    {
-        GameData.Instance.SaveNow();
-    }
-
-    public void ReloadFromSave()
-    {
-        if (GameData.Instance == null || GameData.Instance.Save == null) return;
-        RebuildFromSave();
-        EnsureUnlockSkillForAllUnlockedUnits(save: true);
     }
 }

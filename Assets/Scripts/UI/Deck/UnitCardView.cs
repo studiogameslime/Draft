@@ -25,7 +25,6 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
 
     [Header("Lock State")]
     [SerializeField] private Color lockedColor = Color.gray;
-    [SerializeField] private GameObject lockOverlay;
 
     private UnitDefinition _definition;
     private UnitsDeckManager _deckManager;
@@ -40,6 +39,9 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
     private Image cardImage;
 
     public UnitDefinition Definition => _definition;
+
+    private UnitUnlockState _unlockState;
+
 
     private void Awake()
     {
@@ -63,14 +65,15 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
     public void Setup(
         UnitDefinition def,
         UnitsDeckManager deckManager,
-        bool isLocked,
+        UnitUnlockState unlockState,
         bool isInDeck,
         bool isDeckSlot)
     {
         _definition = def;
         _deckManager = deckManager;
         _isDeckSlot = isDeckSlot;
-        _isLocked = isLocked;
+        _unlockState = unlockState;
+
 
         if (emptySlotVisual != null)
             emptySlotVisual.SetActive(false);
@@ -85,35 +88,30 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
             FillIconImageOrAnimator();
         }
 
-        if (_isLocked)
+        switch (_unlockState)
         {
-            if (cardImage != null)
-            {
+            case UnitUnlockState.Undiscovered:
                 iconImage.color = Color.black;
                 cardImage.color = lockedColor;
-            }
-
-            if (equipButton != null)
                 equipButton.gameObject.SetActive(false);
-            if (upgradeButton != null)
                 upgradeButton.gameObject.SetActive(false);
+                break;
 
-            if (lockOverlay != null)
-                lockOverlay.SetActive(true);
+            case UnitUnlockState.Discovered:
+                iconImage.color = Color.white;
+                cardImage.color = lockedColor;
+                equipButton.gameObject.SetActive(false);
+                upgradeButton.gameObject.SetActive(true);
+                break;
+
+            case UnitUnlockState.Unlocked:
+                iconImage.color = Color.white;
+                SetRarityStyle(def);
+                equipButton.gameObject.SetActive(!_deckManager.IsInDeck(def));
+                upgradeButton.gameObject.SetActive(true);
+                break;
         }
-        else
-        {
-            SetRarityStyle(def);
 
-            if (lockOverlay != null)
-                lockOverlay.SetActive(false);
-
-            if (!_isDeckSlot && equipButton != null && _deckManager != null)
-            {
-                bool alreadyInDeck = _deckManager.IsInDeck(def);
-                equipButton.gameObject.SetActive(!alreadyInDeck);
-            }
-        }
 
         if (quickActionsPanel != null)
             quickActionsPanel.SetActive(false);
@@ -139,9 +137,6 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
 
         if (quickActionsPanel != null)
             quickActionsPanel.SetActive(false);
-
-        if (lockOverlay != null)
-            lockOverlay.SetActive(false);
 
         if (cardImage != null)
             cardImage.color = lockedColor;

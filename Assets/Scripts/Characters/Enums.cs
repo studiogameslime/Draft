@@ -89,6 +89,7 @@ public enum RewardType
     Gems,
     Chest,
     Part,
+    DiscoverNewUnit
 }
 
 public enum RewardLane

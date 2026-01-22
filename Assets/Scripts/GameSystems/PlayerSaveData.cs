@@ -143,6 +143,13 @@ public class PlayerSaveData
 // =====================================
 
 // Unit + its personal progress (level etc.)
+public enum UnitUnlockState
+{
+    Discovered,
+    Unlocked,
+    Undiscovered
+}
+
 [Serializable]
 public class UnitProgressData
 {
@@ -157,6 +164,9 @@ public class UnitProgressData
 
     public int skillPoints;
     public List<string> unlockedUpgradeNodeIds = new(); // e.g. ["unlock","A1","B1"]
+
+    public UnitUnlockState unlockState;
+
 }
 
 // amount of a generic part (if parts are not per-unit but global)

@@ -154,6 +154,18 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
                 }
                 OpenChestImmediate(reward.chest);
                 break;
+            case RewardType.DiscoverNewUnit:
+                var unit = UnlockedUnitsManager.Instance.DiscoverRandomUnitByRarity(reward.rarity);
+
+                if (unit != null)
+                {
+                    Debug.Log($"Discovered new unit: {unit.displayName}");
+                }
+                else
+                {
+                    Debug.Log("No undiscovered unit of this rarity");
+                }
+                break;
 
             default:
                 Debug.LogError($"[LevelRewardsProgressController] Unsupported RewardType: {reward.type}");

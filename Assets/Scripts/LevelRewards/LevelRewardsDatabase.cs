@@ -16,6 +16,9 @@ public class LevelRewardEntry
 
     [Header("ChestDefinotion")]
     public ChestDefinition chest;
+
+    [Header("UnitRarity")]
+    public UnitRarity rarity;
 }
 
 /// <summary>

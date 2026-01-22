@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UnitsCollectionManager : MonoBehaviour
@@ -41,17 +42,32 @@ public class UnitsCollectionManager : MonoBehaviour
 
             bool isInDeck = deckManager.IsInDeck(def);
 
-            bool isLocked = false;
-            if (unlockedUnitsManager != null)
-            {
-                isLocked = !unlockedUnitsManager.IsUnlocked(def);
-            }
+            UnitUnlockState unlockState = UnitUnlockState.Undiscovered;
+
+            var progress = GameData.Instance.Save.ownedUnits
+                .FirstOrDefault(u => u.unitId == def.id);
+
+            if (progress != null)
+                unlockState = progress.unlockState;
 
             var card = Instantiate(cardPrefab, collectionParent);
-            
-            card.Setup(def, deckManager, isLocked, isInDeck, isDeckSlot: false);
+
+            card.Setup(
+                def,
+                deckManager,
+                unlockState,
+                isInDeck,
+                isDeckSlot: false
+            );
 
             _cardsById[def.id] = card;
         }
     }
+
+
+    public void RebuildCollection()
+    {
+        BuildCollection();
+    }
+
 }
