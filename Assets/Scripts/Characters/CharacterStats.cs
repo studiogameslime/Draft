@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class CharacterStats : MonoBehaviour, ICombatTarget
 {
@@ -46,6 +47,9 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     public Transform TargetTransform => transform;
     public bool IsAlive => currentHealth > 0;
     public bool IsUntargetable => isUntargetable;
+
+
+    public GameObject floatingDamagePrefab;
 
     // ====================================================
     // INIT
@@ -132,6 +136,10 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         currentHealth -= amount;
         UpdateHPBar();
 
+
+        showFloatingDamage();
+        Debug.Log("hey");
+
         if (currentHealth <= 0)
         {
             if (attacker.definition.unitTeam == Team.MyTeam)
@@ -142,6 +150,12 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
             }
             Die();
         }
+    }
+    //Floating damage text
+    void showFloatingDamage()
+    {
+        var go = Instantiate(floatingDamagePrefab, transform.position, Quaternion.identity, transform);
+        go.GetComponent<TextMeshPro>().text = currentHealth.ToString();
     }
 
 
