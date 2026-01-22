@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3794100073784410356}
   - component: {fileID: 8634097410194006520}
   - component: {fileID: 1931183539404600891}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FloatingDamage
   m_TagString: Untagged
   m_Icon: {fileID: 0}

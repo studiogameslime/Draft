@@ -157,6 +157,7 @@ public class UnitSpawner : MonoBehaviour
         stats.SetInitialPosition();
 
         // Apply cell bonus
+        Debug.Log($"stats.maxHealth = {stats.maxHealth}, hpMul = {hpMul}");
         stats.maxHealth = Mathf.RoundToInt(stats.maxHealth * hpMul);
         stats.currentHealth = stats.maxHealth;
         stats.damage = Mathf.RoundToInt(stats.damage * dmgMul);

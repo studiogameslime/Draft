@@ -17,8 +17,10 @@ public class BattleCellSelectionController : MonoBehaviour
     // Deck UI is loaded from another scene, so it may be null at Start.
     private DeckUIController deckUI;
 
-    private DropAreaCell selectedCell;
+    // NEW: controller that renders deck/upgrades into the same container
+    private BattleBottomPanelController bottomPanel;
 
+    private DropAreaCell selectedCell;
     private Camera mainCam;
 
     private void Awake()
@@ -87,7 +89,8 @@ public class BattleCellSelectionController : MonoBehaviour
             return;
         }
 
-        bool hasSpawner = FindSpawnerOnCell(cell) != null;
+        UnitSpawner spawnerOnCell = FindSpawnerOnCell(cell);
+        bool hasSpawner = spawnerOnCell != null;
 
         if (!hasSpawner)
         {
@@ -95,8 +98,8 @@ public class BattleCellSelectionController : MonoBehaviour
         }
         else
         {
-            // No upgrades yet per spec.
-            HideBottomPanel();
+            // NEW: show upgrades for that spawner (same container), instead of hiding
+            ShowUpgradesForSpawner(spawnerOnCell);
         }
     }
 
@@ -154,13 +157,12 @@ public class BattleCellSelectionController : MonoBehaviour
         if (selectedCell.IsSpecial)
         {
             if (selectedCell.bonusType == CellBonusType.HpPercent)
-                hpMul = 1f + selectedCell.percentValue;
+                hpMul = 1 + (selectedCell.percentValue / 100);
             else if (selectedCell.bonusType == CellBonusType.AttackPercent)
-                dmgMul = 1f + selectedCell.percentValue;
+                dmgMul = 1 + (selectedCell.percentValue / 100);
         }
 
         spawner.SetCellBonusMultipliers(hpMul, dmgMul);
-
         battleManager?.RefreshStartBattleButton();
 
         // Per your flow: after placing, close the bottom deck and clear focus.
@@ -170,7 +172,6 @@ public class BattleCellSelectionController : MonoBehaviour
     // -------------------------
     // Internal selection helpers
     // -------------------------
-
     private void SetSelectedInternal(DropAreaCell cell)
     {
         if (selectedCell != null)
@@ -197,8 +198,19 @@ public class BattleCellSelectionController : MonoBehaviour
         if (deckUI == null)
             return;
 
+        // Show the deck panel itself
         deckUI.ShowDeck();
         deckUI.SetCardsInteractable(true);
+
+        // Render deck content into the same container (Option A)
+        if (bottomPanel != null)
+        {
+            var ui = FindFirstObjectByType<UnitSelectionUI>();
+            if (ui != null && PlayerDeckProvider.Instance != null)
+            {
+                bottomPanel.ShowDeck(PlayerDeckProvider.Instance.CurrentDeck, ui);
+            }
+        }
     }
 
     private void HideBottomPanel()
@@ -206,6 +218,43 @@ public class BattleCellSelectionController : MonoBehaviour
         TryResolveDeckUI();
         if (deckUI != null)
             deckUI.HideDeck();
+    }
+
+    private void ShowUpgradesForSpawner(UnitSpawner spawner)
+    {
+        TryResolveDeckUI();
+
+        if (spawner == null)
+        {
+            HideBottomPanel();
+            return;
+        }
+
+        if (bottomPanel == null)
+        {
+            // fallback
+            HideBottomPanel();
+            return;
+        }
+
+        // IMPORTANT: we need UnitDefinition from the spawner
+        // Make sure UnitSpawner exposes it (see note below)
+        UnitDefinition unit = spawner.unitDef;
+        if (unit == null)
+        {
+            Debug.LogWarning("[BattleCellSelectionController] spawner.Unit is null. Expose UnitDefinition from UnitSpawner.Configure.");
+            HideBottomPanel();
+            return;
+        }
+
+        // ensure state exists
+        var state = spawner.GetComponent<UnitSpawnerBattleUpgradeState>();
+        if (state == null) state = spawner.gameObject.AddComponent<UnitSpawnerBattleUpgradeState>();
+
+        deckUI.ShowDeck();
+        deckUI.SetCardsInteractable(true);
+
+        bottomPanel.ShowUpgrades(spawner, unit, state.currentTier);
     }
 
     /// <summary>
@@ -235,6 +284,14 @@ public class BattleCellSelectionController : MonoBehaviour
             var ui = FindFirstObjectByType<UnitSelectionUI>();
             if (ui != null && ui.buttonsParent != null)
                 deckUI.cardsParent = ui.buttonsParent;
+        }
+
+        // NEW: resolve bottom panel controller from the same hierarchy as cardsParent
+        if (bottomPanel == null && deckUI != null && deckUI.cardsParent != null)
+        {
+            bottomPanel = deckUI.cardsParent.GetComponentInParent<BattleBottomPanelController>();
+            if (bottomPanel == null)
+                bottomPanel = deckUI.cardsParent.GetComponent<BattleBottomPanelController>();
         }
     }
 
