@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_warrior_tier1_left
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_warrior_tier1_left
+  tier: 1
+  lane: 1
+  title: Last Stand
+  description: At critical health, desperation fuels fury. Attack speed is doubled
+    while below 50% HP.
+  icon: {fileID: 21300000, guid: dcd9afe4c6ddea847896c453615c98ff, type: 3}
+  skillPointCost: 1
+  prerequisites:
+  - {fileID: 11400000, guid: 176ff0db089f7714bb2032c640997040, type: 2}
