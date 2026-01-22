@@ -40,6 +40,12 @@ public class UnlockedUnitsManager : MonoBehaviour, IUnlockedUnitsProvider
 
             SaveToGameData();
         }
+        else
+        {
+            // אם זה לא משחק חדש אבל תרצה לוודא שלכולם יש unlockNode פתוח (בטוח ולא הורס),
+            // אפשר להשאיר את זה דולק:
+            EnsureUnlockSkillForAllUnlockedUnits(save: true);
+        }
     }
 
     public void UnlockUnit(UnitDefinition unit, bool save = true)
@@ -47,7 +53,6 @@ public class UnlockedUnitsManager : MonoBehaviour, IUnlockedUnitsProvider
         if (unit == null || string.IsNullOrEmpty(unit.id))
             return;
 
-        // כבר פתוח
         if (_unlockedIds.Contains(unit.id))
             return;
 
@@ -58,6 +63,9 @@ public class UnlockedUnitsManager : MonoBehaviour, IUnlockedUnitsProvider
 
         EnsureOwnedEntry(unit.id);
 
+        // חדש: פותח לכל יחידה את ה-unlock node הראשון אוטומטית
+        EnsureDefaultUnlockSkill(unit);
+
         if (save)
             SaveToGameData();
     }
@@ -65,6 +73,7 @@ public class UnlockedUnitsManager : MonoBehaviour, IUnlockedUnitsProvider
     private void EnsureOwnedEntry(string unitId)
     {
         var save = GameData.Instance.Save;
+
         if (save.ownedUnits == null)
             save.ownedUnits = new List<UnitProgressData>();
 
@@ -80,6 +89,53 @@ public class UnlockedUnitsManager : MonoBehaviour, IUnlockedUnitsProvider
         });
     }
 
+    private void EnsureDefaultUnlockSkill(UnitDefinition unit)
+    {
+        if (unit == null || string.IsNullOrEmpty(unit.id))
+            return;
+
+        // מאיפה להביא את ה-node של ה-unlock?
+        // 1) הכי נכון: unit.unlockNode
+        // 2) fallback: nodeId == "unlock"
+        // 3) fallback: tier == 0 (אם tier הוא int)
+        UnitUpgradeNodeDefinition unlockNode = unit.unlockNode;
+
+        if (unlockNode == null && unit.nodes != null)
+            unlockNode = unit.nodes.FirstOrDefault(n => n != null && n.nodeId == "unlock");
+
+        if (unlockNode == null && unit.nodes != null)
+            unlockNode = unit.nodes.FirstOrDefault(n => n != null && (int)n.tier == 0);
+
+        if (unlockNode == null || string.IsNullOrEmpty(unlockNode.nodeId))
+            return;
+
+        var save = GameData.Instance.Save;
+        if (save.ownedUnits == null)
+            save.ownedUnits = new List<UnitProgressData>();
+
+        var progress = save.ownedUnits.FirstOrDefault(u => u != null && u.unitId == unit.id);
+        if (progress == null)
+            return;
+
+        if (progress.unlockedUpgradeNodeIds == null)
+            progress.unlockedUpgradeNodeIds = new List<string>();
+
+        if (!progress.unlockedUpgradeNodeIds.Contains(unlockNode.nodeId))
+            progress.unlockedUpgradeNodeIds.Add(unlockNode.nodeId);
+    }
+
+    private void EnsureUnlockSkillForAllUnlockedUnits(bool save)
+    {
+        if (config == null || config.allUnits == null)
+            return;
+
+        foreach (var def in _unlockedUnits)
+            EnsureDefaultUnlockSkill(def);
+
+        if (save)
+            SaveToGameData();
+    }
+
     private void RebuildFromSave()
     {
         _unlockedUnits.Clear();
@@ -89,6 +145,7 @@ public class UnlockedUnitsManager : MonoBehaviour, IUnlockedUnitsProvider
             return;
 
         var save = GameData.Instance.Save;
+
         if (save.ownedUnits == null)
             save.ownedUnits = new List<UnitProgressData>();
 
@@ -114,5 +171,6 @@ public class UnlockedUnitsManager : MonoBehaviour, IUnlockedUnitsProvider
     {
         if (GameData.Instance == null || GameData.Instance.Save == null) return;
         RebuildFromSave();
+        EnsureUnlockSkillForAllUnlockedUnits(save: true);
     }
 }

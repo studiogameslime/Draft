@@ -55,6 +55,8 @@ public class UnitPartsTabController : MonoBehaviour
                                             out green, out blue, out epic);
             slotUI.SetCounts(green, blue, epic);
         }
+        UpdateConvertButtonState();
+
     }
 
     // ===== Button click =====
