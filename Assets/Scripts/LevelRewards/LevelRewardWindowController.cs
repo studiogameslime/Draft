@@ -24,7 +24,6 @@ public class LevelRewardWindowController : MonoBehaviour
     [SerializeField] private LevelRewardRowView rowPrefab;
     [SerializeField] private RectTransform rowContainer; // Content/RowContainer
 
-
     [Header("Center Progress UI")]
     [SerializeField] private TMP_Text levelNumberText;
     [SerializeField] private Image progressFill;
@@ -153,15 +152,6 @@ public class LevelRewardWindowController : MonoBehaviour
     // AUTO SCROLL
     // =========================
 
-    private IEnumerator AutoScrollToCurrentLevelNextFrame()
-    {
-        // Wait a frame so UI & layout groups can settle
-        yield return null;
-        ForceRebuildLayout();
-
-        ScrollToLevel(progressController != null ? progressController.PlayerLevel : 1, smoothAutoScroll);
-    }
-
     public void ScrollToLevel(int level, bool smooth)
     {
         if (scrollRect == null || content == null)
@@ -237,12 +227,6 @@ public class LevelRewardWindowController : MonoBehaviour
         Canvas.ForceUpdateCanvases();
     }
 
-    private float EaseOutCubic(float x)
-    {
-        float p = 1f - x;
-        return 1f - (p * p * p);
-    }
-
     public void ScrollToCurrentLevel(bool smooth)
     {
         int playerLevel = Mathf.Clamp(
@@ -252,35 +236,6 @@ public class LevelRewardWindowController : MonoBehaviour
         );
 
         ScrollToLevel(playerLevel, smooth);
-    }
-    private void ScrollToRow(RectTransform row, bool smooth)
-    {
-        Canvas.ForceUpdateCanvases();
-
-        float contentHeight = content.rect.height;
-        float viewportHeight = scrollRect.viewport.rect.height;
-
-        // Position of the row inside content (top = 0)
-        float rowTop = Mathf.Abs(row.anchoredPosition.y);
-
-        float targetNormalized =
-            1f - Mathf.Clamp01(rowTop / (contentHeight - viewportHeight));
-
-        if (smooth)
-        {
-            StartSmoothScroll(targetNormalized);
-        }
-        else
-        {
-            scrollRect.verticalNormalizedPosition = targetNormalized;
-        }
-    }
-    private void StartSmoothScroll(float target)
-    {
-        if (_scrollRoutine != null)
-            StopCoroutine(_scrollRoutine);
-
-        _scrollRoutine = StartCoroutine(SmoothScrollRoutine(target));
     }
 
     private IEnumerator SmoothScrollRoutine(float target)
@@ -308,22 +263,6 @@ public class LevelRewardWindowController : MonoBehaviour
         // Wait one frame so layout calculations are done
         yield return null;
         ScrollToCurrentLevel(true);
-    }
-
-    public RectTransform GetRowRect(int level)
-    {
-        int index = level - 1;
-        if (index < 0 || index >= _rows.Count) return null;
-        return _rows[index].GetComponent<RectTransform>();
-    }
-
-    public RectTransform GetLevelAnchor(int level)
-    {
-        int index = level - 1;
-        if (index < 0 || index >= _rows.Count)
-            return null;
-
-        return _rows[index].LevelAnchor;
     }
 
     public void OpenFromButton(RectTransform buttonRect)

@@ -14,9 +14,6 @@ public class LevelRewardEntry
     public RewardType type = RewardType.Gold;
     public int amount;
 
-    [Header("UI")]
-    public Sprite icon;
-
     [Header("ChestDefinotion")]
     public ChestDefinition chest;
 }

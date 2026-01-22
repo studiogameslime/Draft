@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +10,7 @@ public class LevelRewardRowView : MonoBehaviour
     [SerializeField] private GameObject rowHighlight;
 
     [Header("Progress (between this level and next)")]
-    [SerializeField] private Image progressFill; 
+    [SerializeField] private Image progressFill;
 
     [Header("Left (Special)")]
     [SerializeField] private GameObject leftRoot;
@@ -116,8 +117,33 @@ public class LevelRewardRowView : MonoBehaviour
         }
 
         root.SetActive(true);
-        if (icon != null)
-            icon.sprite = reward.icon;
+
+
+
+        switch (reward.type)
+        {
+            case RewardType.Gold:
+                {
+                    icon.sprite = SpriteManager.instance.goldSprite;
+                    icon.SetNativeSize();
+                    icon.rectTransform.sizeDelta = new Vector2(icon.rectTransform.sizeDelta.x * 0.2f, icon.rectTransform.sizeDelta.y * 0.2f);
+                    break;
+                }
+            case RewardType.Gems:
+                {
+                    icon.sprite = SpriteManager.instance.gemSprite;
+                    icon.SetNativeSize();
+                    icon.rectTransform.sizeDelta = new Vector2(icon.rectTransform.sizeDelta.x * 0.2f, icon.rectTransform.sizeDelta.y * 0.2f);
+                    break;
+                }
+            case RewardType.Chest:
+                {
+                    icon.sprite = reward.chest.buttonIcon;
+                    icon.SetNativeSize();
+                    icon.rectTransform.sizeDelta = new Vector2(icon.rectTransform.sizeDelta.x * 0.25f, icon.rectTransform.sizeDelta.y * 0.25f);
+                    break;
+                }
+        }
 
         bool claimed = _progress.IsClaimed(_level, lane);
         bool unlocked = _progress.PlayerLevel >= _level;
