@@ -71,7 +71,7 @@ public class UpgradeTreeUIController : MonoBehaviour
         _views.Clear();
         _lines.Clear();
 
-        if(availableSkillPointsText != null)
+        if (availableSkillPointsText != null)
         {
             int availableSkillPoints = (_progress != null) ? _progress.skillPoints : 0;
             availableSkillPointsText.text = $"{unit.displayName} skill points: {availableSkillPoints}";
@@ -109,11 +109,13 @@ public class UpgradeTreeUIController : MonoBehaviour
             var view = kvp.Value;
 
             bool unlocked = UnitUpgradeProgressService.IsUnlocked(_progress, node.nodeId);
-            bool canUnlock = UnitUpgradeProgressService.CanUnlock(unit, _progress, node);
+            bool isAvailable = UnitUpgradeProgressService.IsAvailableToUnlock(unit, _progress, node);
+            bool canAfford = UnitUpgradeProgressService.CanAfford(_progress, node);
 
-            view.Bind(node, unlocked, canUnlock, HandleNodeClicked);
+            view.Bind(node, unlocked, isAvailable, canAfford, HandleNodeClicked);
         }
     }
+
 
     private void HandleNodeClicked(UnitUpgradeNodeDefinition node)
     {

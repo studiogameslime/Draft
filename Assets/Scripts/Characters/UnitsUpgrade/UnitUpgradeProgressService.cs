@@ -1,4 +1,3 @@
-// UnitUpgradeProgressService.cs
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,27 +26,40 @@ public static class UnitUpgradeProgressService
         return up.unlockedUpgradeNodeIds.Contains(nodeId);
     }
 
-    // CHANGED: UnitDefinition instead of UnitUpgradeTreeDefinition
-    public static bool CanUnlock(UnitDefinition unit, UnitProgressData up, UnitUpgradeNodeDefinition node)
+    public static bool ArePrerequisitesMet(UnitProgressData up, UnitUpgradeNodeDefinition node)
     {
-        if (unit == null || up == null || node == null || !node.IsValid()) return false;
-        if (IsUnlocked(up, node.nodeId)) return false;
-        if (up.skillPoints < node.skillPointCost) return false;
+        if (up == null || node == null) return false;
+        if (node.prerequisites == null) return true;
 
-        // all prereqs must be unlocked
-        if (node.prerequisites != null)
+        for (int i = 0; i < node.prerequisites.Count; i++)
         {
-            for (int i = 0; i < node.prerequisites.Count; i++)
-            {
-                var prereq = node.prerequisites[i];
-                if (prereq == null) continue;
-                if (!IsUnlocked(up, prereq.nodeId)) return false;
-            }
+            var prereq = node.prerequisites[i];
+            if (prereq == null) continue;
+            if (!IsUnlocked(up, prereq.nodeId)) return false;
         }
         return true;
     }
 
-    // CHANGED: UnitDefinition instead of UnitUpgradeTreeDefinition
+    public static bool IsAvailableToUnlock(UnitDefinition unit, UnitProgressData up, UnitUpgradeNodeDefinition node)
+    {
+        if (unit == null || up == null || node == null || !node.IsValid()) return false;
+        if (IsUnlocked(up, node.nodeId)) return false;
+        return ArePrerequisitesMet(up, node);
+    }
+
+    public static bool CanAfford(UnitProgressData up, UnitUpgradeNodeDefinition node)
+    {
+        if (up == null || node == null) return false;
+        return up.skillPoints >= node.skillPointCost;
+    }
+
+    public static bool CanUnlock(UnitDefinition unit, UnitProgressData up, UnitUpgradeNodeDefinition node)
+    {
+        if (!IsAvailableToUnlock(unit, up, node)) return false;
+        if (!CanAfford(up, node)) return false;
+        return true;
+    }
+
     public static bool TryUnlock(UnitDefinition unit, UnitProgressData up, UnitUpgradeNodeDefinition node)
     {
         if (!CanUnlock(unit, up, node)) return false;
