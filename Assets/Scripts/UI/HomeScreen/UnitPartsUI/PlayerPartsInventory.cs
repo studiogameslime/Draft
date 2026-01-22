@@ -175,4 +175,56 @@ public class PlayerPartsInventory : ScriptableObject
             }
         }
     }
+
+    public bool HasCompleteSet(UnitDefinition unit)
+    {
+        if (unit == null || unit.partSlots == null || unit.partSlots.Length == 0)
+            return false;
+
+        for (int i = 0; i < unit.partSlots.Length; i++)
+        {
+            PartSlot slot = unit.partSlots[i].slot;
+            var best = GetBestOwnedPart(unit, slot);
+            if (best == null)
+                return false;
+        }
+
+        return true;
+    }
+
+    // ממיר כמה שיותר סטים מלאים -> מחזיר כמה SkillPoints להוסיף
+    public int ConvertAllCompleteSetsToSkillPoints(UnitDefinition unit)
+    {
+        if (unit == null || unit.partSlots == null || unit.partSlots.Length == 0)
+            return 0;
+
+        int converted = 0;
+
+        if (HasCompleteSet(unit))
+        {
+            // צורכים 1 מכל slot (מעדיף לצרוך את ה"חלש" כדי לשמור את הטוב)
+            for (int i = 0; i < unit.partSlots.Length; i++)
+            {
+                PartSlot slot = unit.partSlots[i].slot;
+
+                // בחר את החלק עם rarity הכי נמוך שיש לך באותו slot
+                var owned = ownedParts
+                    .Where(p => p.part != null &&
+                                p.part.unit == unit &&
+                                p.part.slot == slot &&
+                                p.count > 0)
+                    .OrderBy(p => p.part.rarity)
+                    .FirstOrDefault();
+
+                if (owned == null)
+                    return converted; // הגנה (לא אמור לקרות כי HasCompleteSet)
+
+                RemovePart(owned.part, 1); // כבר שומר ל-GameData
+            }
+
+            converted += 1;
+        }
+
+        return converted;
+    }
 }

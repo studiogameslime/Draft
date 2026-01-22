@@ -11,7 +11,7 @@ using Google;
 
 public class SettingsManager : MonoBehaviour
 {
-    [Header("Google Sign-In (Android)")]
+    /*[Header("Google Sign-In (Android)")]
     [Tooltip("OAuth 2.0 Client ID of type 'Web application' (from Google Cloud Console)")]
     [SerializeField] private string webClientId = "";
 
@@ -120,5 +120,5 @@ public class SettingsManager : MonoBehaviour
         // Example:
         // if (FirebaseSaveSync.Instance != null) FirebaseSaveSync.Instance.BeginDownload();
     }
-#endif
+#endif*/
 }
