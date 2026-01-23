@@ -142,8 +142,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Gold Packs
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c593b357af25d684d814fe1fc6855624, type: 2}
-  m_sharedMaterial: {fileID: -1786939803995299692, guid: c593b357af25d684d814fe1fc6855624, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -380,8 +380,8 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 270, y: 400}
-  m_Spacing: {x: 30, y: 30}
+  m_CellSize: {x: 280, y: 400}
+  m_Spacing: {x: 40, y: 30}
   m_Constraint: 0
   m_ConstraintCount: 2
 --- !u!1 &7441824541597406318
@@ -437,5 +437,5 @@ MonoBehaviour:
   sectionTitle: {fileID: 3499246742874655748}
   grid: {fileID: 6203990339391791820}
   itemsPerRow: 3
-  cellSpacing: 16
+  cellSpacing: 40
   itemPrefab: {fileID: 6497648086121517724, guid: 26690de0101e2024bae38658ab8768ef, type: 3}

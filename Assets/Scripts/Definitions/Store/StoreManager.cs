@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 public class StoreManager : MonoBehaviour
@@ -7,6 +8,7 @@ public class StoreManager : MonoBehaviour
     public static StoreManager Instance;
 
     [SerializeField] private ChestOpeningUI chestOpeningUI;
+    [SerializeField] private PlayerPartsInventory partsInventory;
 
     private void Awake()
     {
@@ -91,6 +93,9 @@ public class StoreManager : MonoBehaviour
                 chestOpeningUI.Show(item.chestReward);
                 break;
             case StoreCategory.BuyPartWithGold:
+                wallet.SpendGold(item.priceInGold);
+                GrantPartRewards(item);
+                GameData.Instance.SaveNow();
                 break;
             case StoreCategory.Specials:
                 break;
@@ -98,5 +103,18 @@ public class StoreManager : MonoBehaviour
                 break;
         }
 
+    }
+    private void GrantPartRewards(StoreItemDefinition item)
+    {
+        if (item == null || item.partRewards == null || partsInventory == null)
+            return;
+
+        foreach (var entry in item.partRewards)
+        {
+            if (entry == null || entry.part == null || entry.amount <= 0)
+                continue;
+
+            partsInventory.AddPart(entry.part, entry.amount);
+        }
     }
 }

@@ -21,6 +21,7 @@ public class StorePageController : MonoBehaviour
 
         CreateSection("Gold", StoreCategory.BuyGoldWithGems, 3);
         CreateSection("Chests", StoreCategory.BuyChestsWithGold, 2);
+        CreateSection("Parts", StoreCategory.BuyPartWithGold, 3);
         CreateSection("Special Offers", StoreCategory.Specials, 1);
     }
 

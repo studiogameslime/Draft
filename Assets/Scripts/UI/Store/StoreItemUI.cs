@@ -53,7 +53,7 @@ public class StoreItemUI : MonoBehaviour
         definition = def;
 
         titleText.text = def.title;
-        amountText.text = def.goldAmount.ToString();
+        amountText.text = $"x{def.goldAmount.ToString()}";
         iconImage.sprite = def.icon;
 
         if (def.isDailyFree)
@@ -65,11 +65,17 @@ public class StoreItemUI : MonoBehaviour
 
             if (canClaim)
             {
+                RectTransform rect = priceText.rectTransform;
+                rect.anchoredPosition = new Vector2(0f, rect.anchoredPosition.y);
+                priceText.alignment = TextAlignmentOptions.Center;
                 priceText.text = "FREE";
                 buyButton.interactable = true;
             }
             else
             {
+                RectTransform rect = priceText.rectTransform;
+                rect.anchoredPosition = new Vector2(0f, rect.anchoredPosition.y);
+                priceText.alignment = TextAlignmentOptions.Center;
                 var t = StoreManager.Instance.GetTimeUntilDailyFree(def);
                 priceText.text = $"{t.Hours:D2}:{t.Minutes:D2}:{t.Seconds:D2}";
                 buyButton.interactable = false;

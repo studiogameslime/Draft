@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Store/Store Item")]
@@ -15,6 +16,15 @@ public class StoreItemDefinition : ScriptableObject
     [Header("Reward")]
     public int goldAmount;
     public ChestDefinition chestReward;
+    public List<PartRewardEntry> partRewards;
+
+    [System.Serializable]
+    public class PartRewardEntry
+    {
+        public PartDefinition part;
+        public int amount;
+    }
+
 
     [Header("Price")]
     public CostType costType;
