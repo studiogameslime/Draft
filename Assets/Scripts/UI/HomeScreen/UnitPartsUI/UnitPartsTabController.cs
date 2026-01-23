@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,12 +10,28 @@ public class UnitPartsTabController : MonoBehaviour
     [Header("Convert To Skill Point")]
     [SerializeField] private Button convertButton;
 
+    [Header("Parts Resources Path")]
+    [SerializeField] private string partsResourcesPath = "Parts";
+
     private UnitDefinition _currentUnit;
+    private PartDefinition[] _allPartsCache;
 
     private void Awake()
     {
         if (convertButton != null)
             convertButton.onClick.AddListener(ConvertAllPartsToSkillPoint);
+
+        LoadAllPartsOnce();
+    }
+
+    private void LoadAllPartsOnce()
+    {
+        if (_allPartsCache != null && _allPartsCache.Length > 0)
+            return;
+
+        _allPartsCache = string.IsNullOrEmpty(partsResourcesPath)
+            ? Resources.LoadAll<PartDefinition>("")
+            : Resources.LoadAll<PartDefinition>(partsResourcesPath);
     }
 
     public void Show(UnitDefinition unit)
@@ -28,38 +45,49 @@ public class UnitPartsTabController : MonoBehaviour
         if (_currentUnit == null) return;
         if (slots == null || slots.Length == 0) return;
 
+        LoadAllPartsOnce();
+
         foreach (var slotUI in slots)
         {
             if (slotUI == null) continue;
 
             bool unitHasThisSlot = UnitHasSlot(_currentUnit, slotUI.slotType);
-            if (!unitHasThisSlot)
-            {
-                slotUI.gameObject.SetActive(false);
-                continue;
-            }
-            else
-            {
-                slotUI.gameObject.SetActive(true);
-            }
+            slotUI.gameObject.SetActive(unitHasThisSlot);
+            if (!unitHasThisSlot) continue;
 
-            var owned = partsInventory.GetBestOwnedPart(_currentUnit, slotUI.slotType);
+            // Pick "the part itself" for this unit+slot (base/lowest rarity)
+            PartDefinition basePart = GetBasePartDefinition(_currentUnit, slotUI.slotType);
 
-            if (owned == null)
-                slotUI.SetLocked();
+            // Do we own any part in this slot?
+            var ownedBest = partsInventory != null
+                ? partsInventory.GetBestOwnedPart(_currentUnit, slotUI.slotType)
+                : null;
+
+            if (ownedBest != null)
+                slotUI.SetOwned(ownedBest);          // show owned (opaque)
             else
-                slotUI.SetOwned(owned);
+                slotUI.SetMissing(basePart);         // show same part (transparent)
 
             int green, blue, epic;
-            partsInventory.GetCountsForSlot(_currentUnit, slotUI.slotType,
-                                            out green, out blue, out epic);
+            partsInventory.GetCountsForSlot(_currentUnit, slotUI.slotType, out green, out blue, out epic);
             slotUI.SetCounts(green, blue, epic);
         }
-        UpdateConvertButtonState();
 
+        UpdateConvertButtonState();
     }
 
-    // ===== Button click =====
+    private PartDefinition GetBasePartDefinition(UnitDefinition unit, PartSlot slot)
+    {
+        if (unit == null || _allPartsCache == null) return null;
+
+        // Choose the lowest rarity part for this unit+slot (as "default visual")
+        // If you have multiple, this picks the first in that order.
+        return _allPartsCache
+            .Where(p => p != null && p.unit == unit && p.slot == slot && p.prefab != null)
+            .OrderBy(p => p.rarity)
+            .FirstOrDefault();
+    }
+
     private void ConvertAllPartsToSkillPoint()
     {
         if (_currentUnit == null || partsInventory == null) return;
@@ -72,7 +100,6 @@ public class UnitPartsTabController : MonoBehaviour
             return;
         }
 
-        // מוסיפים skill points ליחידה ב-ownedUnits
         UnitProgressData up = UnitUpgradeProgressService.GetOrCreateUnitProgress(_currentUnit.id);
         if (up != null)
         {
@@ -80,11 +107,7 @@ public class UnitPartsTabController : MonoBehaviour
             GameData.Instance.SaveNow();
         }
 
-        // רענון UI
         Refresh();
-
-        // אם יש לך טאב שדרוגים פתוח כרגע ואתה רוצה שיעדכן טקסט:
-        // UnitDetailsPopupController.Instance?.ForceRefreshUpgradesTab(); (אם תעשה פונקציה כזאת)
     }
 
     private void UpdateConvertButtonState()
@@ -101,13 +124,9 @@ public class UnitPartsTabController : MonoBehaviour
     private bool UnitHasSlot(UnitDefinition unit, PartSlot slotType)
     {
         if (unit.partSlots == null) return false;
-
         foreach (var cfg in unit.partSlots)
             if (cfg.slot == slotType)
                 return true;
-
         return false;
     }
-
-
 }
