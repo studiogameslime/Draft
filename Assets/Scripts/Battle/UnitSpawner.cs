@@ -154,6 +154,7 @@ public class UnitSpawner : MonoBehaviour
 
         // Init stats
         stats.Init(team, unitDef, unitLevel);
+        ApplyUpgradesToSpawnedUnit(go, stats);
         stats.SetInitialPosition();
 
         // Apply cell bonus
@@ -315,4 +316,34 @@ public class UnitSpawner : MonoBehaviour
 
         progressRoutine = null;
     }
+
+    private void ApplyUpgradesToSpawnedUnit(GameObject go, CharacterStats stats)
+    {
+        if (go == null || stats == null) return;
+
+        var state = GetComponent<UnitSpawnerBattleUpgradeState>();
+        if (state == null || state.pickedNodes == null || state.pickedNodes.Count == 0)
+            return;
+
+        // 1) Apply gameplay effects (placeholder - implement per nodeId)
+        for (int i = 0; i < state.pickedNodes.Count; i++)
+        {
+            var node = state.pickedNodes[i];
+            if (node == null) continue;
+
+            // Example hooks:
+            // if (node.nodeId == "atkspd_lowhp") { ... }
+            // if (node.nodeId == "lifesteal_5") { ... }
+        }
+
+        // 2) Sync UI icons on the spawned unit (recommended)
+        var upgradesUI = go.GetComponentInChildren<BattleUpgradesManager>(true);
+        if (upgradesUI != null)
+        {
+            upgradesUI.Clear();
+            for (int i = 0; i < state.pickedNodes.Count; i++)
+                upgradesUI.AddUpgradeIcon(state.pickedNodes[i]);
+        }
+    }
+
 }

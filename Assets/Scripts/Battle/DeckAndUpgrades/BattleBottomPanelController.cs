@@ -84,9 +84,12 @@ public class BattleBottomPanelController : MonoBehaviour
                 var state = spawner.GetComponent<UnitSpawnerBattleUpgradeState>();
                 if (state == null) state = spawner.gameObject.AddComponent<UnitSpawnerBattleUpgradeState>();
 
-                state.Pick(node.nodeId);
+                state.Pick(node);
 
-                // אחרי בחירה תציג את ה-tier הבא ישר (אופציונלי אבל מרגיש טוב)
+                var upgradesUI = spawner.GetComponentInChildren<BattleUpgradesManager>(true);
+                if (upgradesUI != null)
+                    upgradesUI.AddUpgradeIcon(node);
+
                 ShowUpgrades(spawner, unit, state.currentTier);
             }
         );

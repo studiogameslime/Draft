@@ -4,14 +4,21 @@ using UnityEngine;
 public class UnitSpawnerBattleUpgradeState : MonoBehaviour
 {
     public int currentTier = 1;
+
+    // Fast lookup
     public HashSet<string> pickedNodeIds = new HashSet<string>();
 
-    public void Pick(string nodeId)
-    {
-        if (string.IsNullOrEmpty(nodeId)) return;
-        if (pickedNodeIds.Contains(nodeId)) return;
+    // Keeps order for UI + applying
+    public List<UnitUpgradeNodeDefinition> pickedNodes = new List<UnitUpgradeNodeDefinition>();
 
-        pickedNodeIds.Add(nodeId);
+    public void Pick(UnitUpgradeNodeDefinition node)
+    {
+        if (node == null) return;
+        if (string.IsNullOrEmpty(node.nodeId)) return;
+        if (pickedNodeIds.Contains(node.nodeId)) return;
+
+        pickedNodeIds.Add(node.nodeId);
+        pickedNodes.Add(node);
         currentTier += 1;
     }
 }

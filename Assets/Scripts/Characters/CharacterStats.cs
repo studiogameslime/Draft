@@ -36,7 +36,6 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     public Vector3 _initialPosition;
     private SpriteRenderer spriteRenderer;
     public GameObject fallenWeaponPrefab;
-    [SerializeField] private Image _hpBar;
 
     private float deathFadeDelay = 3f;
     private float deathFadeDuration = 2f;
@@ -84,14 +83,8 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
             var sr = GetComponentInChildren<SpriteRenderer>();
             if (sr != null)
                 sr.flipX = true;
-            _hpBar.color = Color.red;
-        }
-        else
-        {
-            _hpBar.color = Color.green;
         }
 
-        UpdateHPBar();
     }
 
     // Save the unit initial position
@@ -134,18 +127,15 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
         GetComponent<HitFlash>()?.StartCoroutine("FlashWhite");
         currentHealth -= amount;
-        UpdateHPBar();
 
 
         showFloatingDamage();
-        Debug.Log("hey");
 
         if (currentHealth <= 0)
         {
             if (attacker.definition.unitTeam == Team.MyTeam)
             {
                 MissionsManager.Instance.ReportAction(MissionAction.KillEnemyUnits, 1);
-                Debug.Log($"unit die {definition}");
                 MissionsManager.Instance.ReportAction(MissionAction.KillSpecificEnemyUnit, 1, definition);
             }
             Die();
@@ -154,16 +144,13 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     //Floating damage text
     void showFloatingDamage()
     {
-        var go = Instantiate(floatingDamagePrefab, transform.position, Quaternion.identity, transform);
-        go.GetComponent<TextMeshPro>().text = currentHealth.ToString();
+        if (floatingDamagePrefab)
+        {
+            var go = Instantiate(floatingDamagePrefab, transform.position, Quaternion.identity, transform);
+            go.GetComponent<TextMeshPro>().text = currentHealth.ToString();
+        }
     }
 
-
-    private void UpdateHPBar()
-    {
-        if (_hpBar != null && maxHealth > 0)
-            _hpBar.fillAmount = (float)currentHealth / maxHealth;
-    }
 
     // ====================================================
     // DEATH
@@ -182,7 +169,6 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         }
 
         GetComponent<CircleCollider2D>().enabled = false;
-        _hpBar.transform.parent.gameObject.SetActive(false);
 
         // Stop movement
         var rb = GetComponent<Rigidbody2D>();
@@ -241,7 +227,6 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
         // Keep current health within the new max HP
         currentHealth = Mathf.Min(currentHealth, maxHealth);
-        UpdateHPBar();
     }
 
 
@@ -281,9 +266,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     {
         if (deathFadeRoutine != null)
             StopCoroutine(deathFadeRoutine);
-        Debug.Log("FadeOutAfterDeath");
         yield return new WaitForSeconds(deathFadeDelay);
-        Debug.Log("FadeOutAfterDeath after wait");
 
         if (spriteRenderer == null)
             spriteRenderer = GetComponent<SpriteRenderer>();
@@ -292,7 +275,6 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
         float startA = spriteRenderer.color.a;
         float t = 0f;
-        Debug.Log("FadeOutAfterDeath start fading");
 
         while (t < deathFadeDuration)
         {
@@ -303,8 +285,6 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
             spriteRenderer.color = c;
             yield return null;
         }
-        Debug.Log("FadeOutAfterDeath stop fading");
-
         Destroy(gameObject);
     }
 }

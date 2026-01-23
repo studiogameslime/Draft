@@ -19,6 +19,7 @@ public class UnitUpgradeNodeDefinition : ScriptableObject
 
     [Header("Cost")]
     [Min(0)] public int skillPointCost = 1;
+    public int soulsCost;
 
     [Header("Prerequisites")]
     public List<UnitUpgradeNodeDefinition> prerequisites = new(); // e.g. A2 prereq = A1
