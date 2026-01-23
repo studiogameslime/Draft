@@ -16,8 +16,8 @@ public class MissionsCompletionBar : MonoBehaviour
     [SerializeField] private Button claimButton;
 
     [Header("Claim Button Visuals")]
-    [SerializeField] private Color disabledColor = Color.gray;
-    [SerializeField] private Color enabledColor = Color.green;
+    [SerializeField] private Sprite activeButtonSprite;
+    [SerializeField] private Sprite inactiveButtonSprite;
     [SerializeField] private TMP_Text claimButtonText;
 
     private bool showingDaily = true;
@@ -77,6 +77,7 @@ public class MissionsCompletionBar : MonoBehaviour
         bool canClaim;
         bool alreadyClaimed;
 
+
         if (showingDaily)
         {
             claimed = MissionsManager.Instance.GetClaimedDailyCount();
@@ -93,7 +94,6 @@ public class MissionsCompletionBar : MonoBehaviour
             canClaim = MissionsManager.Instance.CanClaimWeeklySetReward();
             alreadyClaimed = MissionsManager.Instance.IsWeeklySetRewardClaimed();
         }
-
         progressText.text = $"{claimed} / {total}";
         progressFill.fillAmount = total > 0 ? (float)claimed / total : 0f;
         completeMissionRewardIcon.sprite = rewardIcon;
@@ -104,21 +104,24 @@ public class MissionsCompletionBar : MonoBehaviour
             if (alreadyClaimed)
             {
                 claimButton.interactable = false;
-                claimButton.image.color = disabledColor;
+                claimButton.image.sprite = inactiveButtonSprite;
+                claimButton.image.color = Color.white;
                 if (claimButtonText != null)
                     claimButtonText.text = "Claimed";
             }
             else if (canClaim)
             {
                 claimButton.interactable = true;
-                claimButton.image.color = enabledColor;
+                claimButton.image.sprite = activeButtonSprite;
+                claimButton.image.color = UnityEngine.ColorUtility.TryParseHtmlString("#40FF00", out var c) ? c : Color.white;
                 if (claimButtonText != null)
                     claimButtonText.text = "Claim";
             }
             else
             {
                 claimButton.interactable = false;
-                claimButton.image.color = disabledColor;
+                claimButton.image.sprite = inactiveButtonSprite;
+                claimButton.image.color = Color.white;
                 if (claimButtonText != null)
                     claimButtonText.text = "Claim";
             }

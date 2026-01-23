@@ -90,6 +90,7 @@ public class MissionContainer : MonoBehaviour
             SetButtonInactive();
             if (claimButtonText != null)
                 claimButtonText.text = "Claimed";
+            claimButton.image.color = Color.white;
 
         }
         else if (mission.completed)
@@ -97,8 +98,8 @@ public class MissionContainer : MonoBehaviour
             claimButton.interactable = true;
             SetButtonactive();
             if (claimButtonText != null)
-                claimButton.image.color = UnityEngine.ColorUtility.TryParseHtmlString("#40FF00", out var c) ? c : Color.white;
-            claimButtonText.text = "Claim";
+                claimButtonText.text = "Claim";
+            claimButton.image.color = UnityEngine.ColorUtility.TryParseHtmlString("#40FF00", out var c) ? c : Color.white;
         }
         else
         {
@@ -106,6 +107,7 @@ public class MissionContainer : MonoBehaviour
             SetButtonInactive();
             if (claimButtonText != null)
                 claimButtonText.text = "Claim";
+            claimButton.image.color = Color.white;
         }
     }
 
