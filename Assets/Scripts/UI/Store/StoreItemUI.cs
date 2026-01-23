@@ -117,7 +117,8 @@ public class StoreItemUI : MonoBehaviour
 
     private void OnBuyClicked()
     {
-        StoreManager.Instance.TryBuy(definition);
+        StoreItemPanelUI.Instance.Show(definition);
+
     }
 
     private void UpdateDaily()
