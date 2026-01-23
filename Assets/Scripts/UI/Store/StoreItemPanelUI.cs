@@ -14,9 +14,13 @@ public class StoreItemPanelUI : MonoBehaviour
     [SerializeField] private TMP_Text priceText;
     [SerializeField] private Button confirmButton;
     [SerializeField] private Button cancelButton;
+    [SerializeField] private GameObject panelRoot;
+
+    [Header("Popup Animation")]
+    [SerializeField] private PopupAnimator popupAnimator;
+    [SerializeField] private GameObject root;
 
     private StoreItemDefinition _currentItem;
-    [SerializeField] private GameObject panelRoot;
 
     private void Awake()
     {
@@ -57,7 +61,13 @@ public class StoreItemPanelUI : MonoBehaviour
 
         confirmButton.interactable = CanAfford(item);
 
+        //if (popupAnimator == null)
+        //{
+        //    Debug.LogWarning("MissionsScreen: PopupAnimator is not assigned.");
+        //    return;
+        //}
         panelRoot.SetActive(true);
+        //popupAnimator.OpenFromRect();
     }
 
     private bool CanAfford(StoreItemDefinition item)
@@ -80,7 +90,10 @@ public class StoreItemPanelUI : MonoBehaviour
 
     private void Close()
     {
+        //if (popupAnimator == null)
+        //    return;
         panelRoot.SetActive(false);
         _currentItem = null;
+        //popupAnimator.Close();
     }
 }

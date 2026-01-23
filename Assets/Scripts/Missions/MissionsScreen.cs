@@ -26,11 +26,12 @@ public class MissionsScreen : MonoBehaviour
     [SerializeField] private TMP_Text dailyResetText;
     [SerializeField] private TMP_Text weeklyResetText;
 
+    [SerializeField] private MissionsCompletionBar completionBar;
+
     [Header("Popup Animation")]
     [SerializeField] private PopupAnimator popupAnimator;
     [SerializeField] private GameObject root;
 
-    [SerializeField] private MissionsCompletionBar completionBar;
 
 
     private void Awake()
