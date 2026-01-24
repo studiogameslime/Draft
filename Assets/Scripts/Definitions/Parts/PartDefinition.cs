@@ -15,7 +15,7 @@ public class PartDefinition : ScriptableObject
 
 public enum PartRarity
 {
-    Green,
-    Blue,
+    Common,
+    Rare,
     Epic
 }

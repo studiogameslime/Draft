@@ -57,7 +57,7 @@ public class PartDropManager : MonoBehaviour
             return;
         }
 
-        var part = GetRandomPartForDeckUnits(PartRarity.Green);
+        var part = GetRandomPartForDeckUnits(PartRarity.Common);
         if (part == null)
         {
             Debug.LogWarning("No valid part to drop (no candidates).");

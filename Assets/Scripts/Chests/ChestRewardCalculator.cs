@@ -8,8 +8,8 @@ public static class ChestRewardCalculator
 {
     private static readonly RarityWeight[] globalFallbackRarityWeights = new[]
     {
-        new RarityWeight { rarity = PartRarity.Green, weight = 95f },
-        new RarityWeight { rarity = PartRarity.Blue,  weight = 4f  },
+        new RarityWeight { rarity = PartRarity.Common, weight = 95f },
+        new RarityWeight { rarity = PartRarity.Rare,  weight = 4f  },
         new RarityWeight { rarity = PartRarity.Epic,  weight = 1f  },
     };
 
@@ -37,7 +37,7 @@ public static class ChestRewardCalculator
 
         // Default part values.
         reward.hasPart = false;
-        reward.partRarity = PartRarity.Green;
+        reward.partRarity = PartRarity.Common;
         reward.part = null;
 
         // 4) Roll if a part drops at all.
@@ -64,14 +64,14 @@ public static class ChestRewardCalculator
     private static PartRarity RollPartRarity(RarityWeight[] weights)
     {
         if (weights == null || weights.Length == 0)
-            return PartRarity.Green;
+            return PartRarity.Common;
 
         float total = 0f;
         for (int i = 0; i < weights.Length; i++)
             total += Mathf.Max(0f, weights[i].weight);
 
         if (total <= 0f)
-            return PartRarity.Green;
+            return PartRarity.Common;
 
         float roll = Random.value * total;
         float cumulative = 0f;

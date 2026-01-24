@@ -163,10 +163,10 @@ public class PlayerPartsInventory : ScriptableObject
 
             switch (owned.part.rarity)
             {
-                case PartRarity.Green:
+                case PartRarity.Common:
                     green += owned.count;
                     break;
-                case PartRarity.Blue:
+                case PartRarity.Rare:
                     blue += owned.count;
                     break;
                 case PartRarity.Epic:

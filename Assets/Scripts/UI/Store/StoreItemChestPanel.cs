@@ -1,4 +1,5 @@
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,15 +12,19 @@ public class StoreItemChestPanel : MonoBehaviour
     [SerializeField] private Image iconImage;
     [SerializeField] private TMP_Text goldRange;
     [SerializeField] private TMP_Text gemsRange;
-    [SerializeField] private TMP_Text partDropChanceText;
     [SerializeField] private TMP_Text wofDropChanceText;
     [SerializeField] private Image costIconImage;
     [SerializeField] private TMP_Text priceText;
     [SerializeField] private Button confirmButton;
     [SerializeField] private Button cancelButton;
     [SerializeField] private GameObject panelRoot;
-
+    
     [SerializeField] private float maxIconSize = 100f;
+
+    [Header("Part Drop Chances")]
+    [SerializeField] private Transform partDropChancesContainer;
+    [SerializeField] private ChestPartDropChance partDropChanceRowPrefab;
+
 
 
     [Header("Popup Animation")]
@@ -46,8 +51,10 @@ public class StoreItemChestPanel : MonoBehaviour
         NormalizeIconSize(iconImage);
         goldRange.text = $"{item.chestReward.goldRange.min.ToString()} - {item.chestReward.goldRange.max.ToString()}";
         gemsRange.text = $"{item.chestReward.diamondsRange.min.ToString()} - {item.chestReward.diamondsRange.max.ToString()}";
-        partDropChanceText.text = $"{item.chestReward.partDropChance * 100}%";
         wofDropChanceText.text = $"{item.chestReward.wheelOfFortuneChance * 100}%";
+        BuildPartDropChances(item);
+
+
         int price = item.costType == CostType.Gems
             ? item.priceInGems
             : item.priceInGold;
@@ -139,4 +146,29 @@ public class StoreItemChestPanel : MonoBehaviour
 
         rt.sizeDelta = spriteSize * scale;
     }
+
+    private void ClearPartDropChances()
+    {
+        for (int i = partDropChancesContainer.childCount - 1; i >= 0; i--)
+            Destroy(partDropChancesContainer.GetChild(i).gameObject);
+    }
+
+    private void BuildPartDropChances(StoreItemDefinition item)
+    {
+        if (item.chestReward == null ||
+            item.chestReward.partRarityWeights == null ||
+            partDropChanceRowPrefab == null)
+            return;
+
+        ClearPartDropChances();
+
+        foreach (var entry in item.chestReward.partRarityWeights)
+        {
+            var row = Instantiate(partDropChanceRowPrefab, partDropChancesContainer);
+            row.Bind(entry.rarity, entry.weight);
+        }
+    }
+
+
+
 }

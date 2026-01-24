@@ -127,7 +127,7 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
         }
 
         // Green part only for now (as your enum says "GreenPart")
-        PartDefinition part = PartDropManager.Instance.GetRandomPartForDeckUnits(PartRarity.Green);
+        PartDefinition part = PartDropManager.Instance.GetRandomPartForDeckUnits(PartRarity.Common);
         if (part == null)
         {
             Debug.LogWarning("WheelOfFortuneTokensManager: PartDropManager returned null part.");
