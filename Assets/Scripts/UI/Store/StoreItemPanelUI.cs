@@ -57,20 +57,18 @@ public class StoreItemPanelUI : MonoBehaviour
         if (item.isDailyFree)
         {
             priceText.text = "Free";
+            priceText.alignment = TextAlignmentOptions.Center;
             RectTransform rt = priceText.rectTransform;
-            Vector2 offsetMax = rt.offsetMax;
-            offsetMax.x = 0f;
-            rt.offsetMax = offsetMax;
+            rt.sizeDelta = new Vector2(150f, rt.sizeDelta.y);
             costIconImage.gameObject.SetActive(false);
 
         }
         else
         {
             priceText.text = price.ToString();
+            priceText.alignment = TextAlignmentOptions.Left;
             RectTransform rt = priceText.rectTransform;
-            Vector2 offsetMax = rt.offsetMax;
-            offsetMax.x = 100f;
-            rt.offsetMax = offsetMax;
+            rt.sizeDelta = new Vector2(100f, rt.sizeDelta.y);
             costIconImage.gameObject.SetActive(true);
 
         }
