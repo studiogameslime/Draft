@@ -1450,7 +1450,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PopupAnimator
   root: {fileID: 7424164967680614696}
-  windowRect: {fileID: 0}
+  windowRect: {fileID: 6759287281912658220}
   overlayCanvasGroup: {fileID: 865493441}
   rootCanvas: {fileID: 534661388}
   openDuration: 0.25

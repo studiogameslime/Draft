@@ -118,7 +118,8 @@ public class StoreItemUI : MonoBehaviour
 
     private void OnBuyClicked()
     {
-        StoreItemPanelUI.Instance.Show(definition);
+        var rectTransform = GetComponent<RectTransform>();
+        StoreItemPanelUI.Instance.Show(definition,rectTransform);
 
     }
 

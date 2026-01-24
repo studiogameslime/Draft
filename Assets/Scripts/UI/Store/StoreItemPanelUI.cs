@@ -34,7 +34,7 @@ public class StoreItemPanelUI : MonoBehaviour
         cancelButton.onClick.AddListener(Close);
     }
 
-    public void Show(StoreItemDefinition item)
+    public void Show(StoreItemDefinition item, RectTransform rect)
     {
         _currentItem = item;
 
@@ -95,13 +95,13 @@ public class StoreItemPanelUI : MonoBehaviour
 
         confirmButton.interactable = CanAfford(item);
 
-        //if (popupAnimator == null)
-        //{
-        //    Debug.LogWarning("MissionsScreen: PopupAnimator is not assigned.");
-        //    return;
-        //}
+        if (popupAnimator == null)
+        {
+            Debug.LogWarning("MissionsScreen: PopupAnimator is not assigned.");
+            return;
+        }
         panelRoot.SetActive(true);
-        //popupAnimator.OpenFromRect();
+        popupAnimator.OpenFromRect(rect);
     }
 
     private bool CanAfford(StoreItemDefinition item)
@@ -127,11 +127,11 @@ public class StoreItemPanelUI : MonoBehaviour
 
     private void Close()
     {
-        //if (popupAnimator == null)
-        //    return;
+        if (popupAnimator == null)
+            return;
         panelRoot.SetActive(false);
         _currentItem = null;
-        //popupAnimator.Close();
+        popupAnimator.Close();
     }
 
     private void NormalizeIconSize(Image image)

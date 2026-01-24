@@ -40,7 +40,6 @@ public class StoreSection : MonoBehaviour
         float totalSpacing = cellSpacing * (itemsPerRow - 1);
         float cellWidth = (width - totalSpacing) / itemsPerRow;
 
-        grid.cellSize = new Vector2(cellWidth, grid.cellSize.y);
         grid.spacing = new Vector2(cellSpacing, grid.spacing.y);
     }
 
