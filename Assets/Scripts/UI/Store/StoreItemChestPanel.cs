@@ -11,6 +11,8 @@ public class StoreItemChestPanel : MonoBehaviour
     [SerializeField] private Image iconImage;
     [SerializeField] private TMP_Text goldRange;
     [SerializeField] private TMP_Text gemsRange;
+    [SerializeField] private TMP_Text partDropChanceText;
+    [SerializeField] private TMP_Text wofDropChanceText;
     [SerializeField] private Image costIconImage;
     [SerializeField] private TMP_Text priceText;
     [SerializeField] private Button confirmButton;
@@ -44,7 +46,8 @@ public class StoreItemChestPanel : MonoBehaviour
         NormalizeIconSize(iconImage);
         goldRange.text = $"{item.chestReward.goldRange.min.ToString()} - {item.chestReward.goldRange.max.ToString()}";
         gemsRange.text = $"{item.chestReward.diamondsRange.min.ToString()} - {item.chestReward.diamondsRange.max.ToString()}";
-
+        partDropChanceText.text = $"{item.chestReward.partDropChance * 100}%";
+        wofDropChanceText.text = $"{item.chestReward.wheelOfFortuneChance * 100}%";
         int price = item.costType == CostType.Gems
             ? item.priceInGems
             : item.priceInGold;
