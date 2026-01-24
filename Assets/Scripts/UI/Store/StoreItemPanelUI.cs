@@ -16,6 +16,9 @@ public class StoreItemPanelUI : MonoBehaviour
     [SerializeField] private Button cancelButton;
     [SerializeField] private GameObject panelRoot;
 
+    [SerializeField] private float maxIconSize = 100f;
+
+
     [Header("Popup Animation")]
     [SerializeField] private PopupAnimator popupAnimator;
     [SerializeField] private GameObject root;
@@ -37,6 +40,7 @@ public class StoreItemPanelUI : MonoBehaviour
 
         titleText.text = item.title;
         iconImage.sprite = item.icon;
+        NormalizeIconSize(iconImage);
         amount.text = $"x{item.goldAmount.ToString()}";
 
         int price = item.costType == CostType.Gems
@@ -82,7 +86,7 @@ public class StoreItemPanelUI : MonoBehaviour
         else
         {
             amount.gameObject.SetActive(true);
-            iconImage.GetComponent<RectTransform>().anchoredPosition = new Vector2(GetComponent<RectTransform>().anchoredPosition.x, 40f);
+            iconImage.GetComponent<RectTransform>().anchoredPosition = new Vector2(GetComponent<RectTransform>().anchoredPosition.x, 20f);
 
         }
 
@@ -128,5 +132,24 @@ public class StoreItemPanelUI : MonoBehaviour
         panelRoot.SetActive(false);
         _currentItem = null;
         //popupAnimator.Close();
+    }
+
+    private void NormalizeIconSize(Image image)
+    {
+        if (image == null || image.sprite == null)
+            return;
+
+        RectTransform rt = image.rectTransform;
+
+        Vector2 spriteSize = image.sprite.rect.size;
+        float maxSide = Mathf.Max(spriteSize.x, spriteSize.y);
+
+        if (maxSide <= 0f)
+            return;
+
+        float scale = maxIconSize / maxSide;
+        scale = Mathf.Min(scale, 1f); // never upscale, only downscale
+
+        rt.sizeDelta = spriteSize * scale;
     }
 }

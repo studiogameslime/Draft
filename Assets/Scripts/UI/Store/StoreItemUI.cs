@@ -15,6 +15,9 @@ public class StoreItemUI : MonoBehaviour
     [SerializeField] private Sprite gemSprite;
     [SerializeField] private Button buyButton;
 
+    [SerializeField] private float maxIconSize = 100f;
+
+
     [Header("Sale UI")]
     [SerializeField] private GameObject saleBadgeRoot;
     [SerializeField] private TMP_Text salePercentText;
@@ -55,6 +58,8 @@ public class StoreItemUI : MonoBehaviour
         titleText.text = def.title;
         amountText.text = $"x{def.goldAmount.ToString()}";
         iconImage.sprite = def.icon;
+        NormalizeIconSize(iconImage);
+
 
         if (def.isDailyFree)
         {
@@ -123,4 +128,24 @@ public class StoreItemUI : MonoBehaviour
         TimeSpan left = nextUtc - DateTime.UtcNow;
         timerText.text = $"{left.Hours:D2}:{left.Minutes:D2}:{left.Seconds:D2}";
     }
+
+    private void NormalizeIconSize(Image image)
+    {
+        if (image == null || image.sprite == null)
+            return;
+
+        RectTransform rt = image.rectTransform;
+
+        Vector2 spriteSize = image.sprite.rect.size;
+        float maxSide = Mathf.Max(spriteSize.x, spriteSize.y);
+
+        if (maxSide <= 0f)
+            return;
+
+        float scale = maxIconSize / maxSide;
+        scale = Mathf.Min(scale, 1f); // never upscale, only downscale
+
+        rt.sizeDelta = spriteSize * scale;
+    }
+
 }
