@@ -119,7 +119,15 @@ public class StoreItemUI : MonoBehaviour
     private void OnBuyClicked()
     {
         var rectTransform = GetComponent<RectTransform>();
-        StoreItemPanelUI.Instance.Show(definition,rectTransform);
+
+        if (definition.category == StoreCategory.BuyChestsWithGold)
+        {
+            StoreItemChestPanel.Instance.Show(definition, rectTransform);
+        }
+        else
+        {
+            StoreItemPanelUI.Instance.Show(definition, rectTransform);
+        }
 
     }
 

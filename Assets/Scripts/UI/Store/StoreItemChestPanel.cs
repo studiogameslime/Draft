@@ -2,14 +2,15 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StoreItemPanelUI : MonoBehaviour
+public class StoreItemChestPanel : MonoBehaviour
 {
-    public static StoreItemPanelUI Instance;
+    public static StoreItemChestPanel Instance;
 
     [Header("UI")]
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private Image iconImage;
-    [SerializeField] private TMP_Text amount;
+    [SerializeField] private TMP_Text goldRange;
+    [SerializeField] private TMP_Text gemsRange;
     [SerializeField] private Image costIconImage;
     [SerializeField] private TMP_Text priceText;
     [SerializeField] private Button confirmButton;
@@ -23,7 +24,7 @@ public class StoreItemPanelUI : MonoBehaviour
     [SerializeField] private PopupAnimator popupAnimator;
     [SerializeField] private GameObject root;
 
-    private StoreItemDefinition _currentItem;
+    private StoreItemDefinition definition;
 
     private void Awake()
     {
@@ -36,12 +37,13 @@ public class StoreItemPanelUI : MonoBehaviour
 
     public void Show(StoreItemDefinition item, RectTransform rect)
     {
-        _currentItem = item;
+        definition = item;
 
         titleText.text = item.title;
         iconImage.sprite = item.icon;
         NormalizeIconSize(iconImage);
-        amount.text = $"x{item.goldAmount.ToString()}";
+        goldRange.text = $"{item.chestReward.goldRange.min.ToString()} - {item.chestReward.goldRange.max.ToString()}";
+        gemsRange.text = $"{item.chestReward.diamondsRange.min.ToString()} - {item.chestReward.diamondsRange.max.ToString()}";
 
         int price = item.costType == CostType.Gems
             ? item.priceInGems
@@ -51,9 +53,7 @@ public class StoreItemPanelUI : MonoBehaviour
         {
             price = Mathf.RoundToInt(price * (1f - item.discountPercent / 100f));
         }
-        var goldSprite = StyleManager.instance.goldSprite;
-        var gemSprite = StyleManager.instance.gemSprite;
-
+        
         if (item.isDailyFree)
         {
             priceText.text = "Free";
@@ -75,25 +75,11 @@ public class StoreItemPanelUI : MonoBehaviour
 
         }
 
+        var goldSprite = StyleManager.instance.goldSprite;
+        var gemSprite = StyleManager.instance.gemSprite;
         costIconImage.sprite = item.costType == CostType.Gems ? gemSprite : goldSprite;
 
-        if (item.category == StoreCategory.BuyChestsWithGold || item.category == StoreCategory.BuyPartWithGold)
-        {
-            amount.gameObject.SetActive(false);
-            iconImage.GetComponent<RectTransform>().anchoredPosition = new Vector2(GetComponent<RectTransform>().anchoredPosition.x, 0f);
-
-        }
-        else
-        {
-            amount.gameObject.SetActive(true);
-            iconImage.GetComponent<RectTransform>().anchoredPosition = new Vector2(GetComponent<RectTransform>().anchoredPosition.x, 20f);
-
-        }
-
-
-
-
-        confirmButton.interactable = CanAfford(item);
+       confirmButton.interactable = CanAfford(item);
 
         if (popupAnimator == null)
         {
@@ -119,9 +105,9 @@ public class StoreItemPanelUI : MonoBehaviour
 
     private void OnConfirm()
     {
-        if (_currentItem == null) return;
+        if (definition == null) return;
 
-        StoreManager.Instance.TryBuy(_currentItem);
+        StoreManager.Instance.TryBuy(definition);
         Close();
     }
 
@@ -130,7 +116,7 @@ public class StoreItemPanelUI : MonoBehaviour
         if (popupAnimator == null)
             return;
         panelRoot.SetActive(false);
-        _currentItem = null;
+        definition = null;
         popupAnimator.Close();
     }
 
