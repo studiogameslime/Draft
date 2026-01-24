@@ -29191,6 +29191,7 @@ GameObject:
   - component: {fileID: 2673021085511526349}
   - component: {fileID: 25785601711309652}
   - component: {fileID: 8275326425153438624}
+  - component: {fileID: 8275326425153438625}
   m_Layer: 5
   m_Name: StoreItemPanelIcon
   m_TagString: Untagged
@@ -39516,6 +39517,27 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8275326425153438625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2169736475168109129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c850e99ce58341a4ea207fea65efa983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIRandomStarSparkles
+  sparklePrefab: {fileID: 6128094016788932736, guid: 6ee860f9082dd2242b2b9c38a213251e, type: 3}
+  starsCount: 5
+  spawnRadius: 70
+  minInterval: 0.6
+  maxInterval: 5
+  sparkleDuration: 2
+  minScale: 0.3
+  maxScale: 6
+  maxAlpha: 1
 --- !u!222 &8279054738679866330
 CanvasRenderer:
   m_ObjectHideFlags: 0

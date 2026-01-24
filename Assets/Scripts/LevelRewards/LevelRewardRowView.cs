@@ -124,14 +124,14 @@ public class LevelRewardRowView : MonoBehaviour
         {
             case RewardType.Gold:
                 {
-                    icon.sprite = SpriteManager.instance.goldSprite;
+                    icon.sprite = StyleManager.instance.goldSprite;
                     icon.SetNativeSize();
                     icon.rectTransform.sizeDelta = new Vector2(icon.rectTransform.sizeDelta.x * 0.2f, icon.rectTransform.sizeDelta.y * 0.2f);
                     break;
                 }
             case RewardType.Gems:
                 {
-                    icon.sprite = SpriteManager.instance.gemSprite;
+                    icon.sprite = StyleManager.instance.gemSprite;
                     icon.SetNativeSize();
                     icon.rectTransform.sizeDelta = new Vector2(icon.rectTransform.sizeDelta.x * 0.2f, icon.rectTransform.sizeDelta.y * 0.2f);
                     break;
@@ -145,7 +145,7 @@ public class LevelRewardRowView : MonoBehaviour
                 }
             case RewardType.DiscoverNewUnit:
                 {
-                    icon.sprite = SpriteManager.instance.newUnitSprite;
+                    icon.sprite = StyleManager.instance.newUnitSprite;
                     icon.SetNativeSize();
                     icon.rectTransform.sizeDelta = new Vector2(icon.rectTransform.sizeDelta.x * 0.6f, icon.rectTransform.sizeDelta.y * 0.6f);
                     break;

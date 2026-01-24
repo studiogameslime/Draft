@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class SpriteManager : MonoBehaviour
+public class StyleManager : MonoBehaviour
 {
-public static SpriteManager instance;
+public static StyleManager instance;
 
 
     public Sprite goldSprite;
@@ -13,4 +13,5 @@ public static SpriteManager instance;
     {
         instance = this;    
     }
+
 }

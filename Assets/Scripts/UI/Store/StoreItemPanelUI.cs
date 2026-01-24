@@ -51,8 +51,8 @@ public class StoreItemPanelUI : MonoBehaviour
         {
             price = Mathf.RoundToInt(price * (1f - item.discountPercent / 100f));
         }
-        var goldSprite = SpriteManager.instance.goldSprite;
-        var gemSprite = SpriteManager.instance.gemSprite;
+        var goldSprite = StyleManager.instance.goldSprite;
+        var gemSprite = StyleManager.instance.gemSprite;
 
         if (item.isDailyFree)
         {
