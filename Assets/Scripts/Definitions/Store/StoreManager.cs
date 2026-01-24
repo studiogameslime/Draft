@@ -65,16 +65,20 @@ public class StoreManager : MonoBehaviour
         }
 
 
-        if (item.costType == CostType.Gems && wallet.Gems < item.priceInGems)
+        int finalPrice = item.GetFinalPrice();
+
+        if (item.costType == CostType.Gems && wallet.Gems < finalPrice)
         {
             Debug.Log("Not enough gems");
             return;
         }
-        if (item.costType == CostType.Gold && wallet.Gold < item.priceInGold)
+
+        if (item.costType == CostType.Gold && wallet.Gold < finalPrice)
         {
-            Debug.Log("Not enough gems");
+            Debug.Log("Not enough gold");
             return;
         }
+
 
         if (item.chestReward != null && chestOpeningUI != null)
         {
@@ -84,16 +88,16 @@ public class StoreManager : MonoBehaviour
         switch (item.category)
         {
             case StoreCategory.BuyGoldWithGems:
-                wallet.SpendGems(item.priceInGems);
+                wallet.SpendGems(finalPrice);
                 wallet.AddGold(item.goldAmount);
                 break;
             case StoreCategory.BuyChestsWithGold:
-                wallet.SpendGold(item.priceInGold);
+                wallet.SpendGold(finalPrice);
                 chestOpeningUI.gameObject.SetActive(true);
                 chestOpeningUI.Show(item.chestReward);
                 break;
             case StoreCategory.BuyPartWithGold:
-                wallet.SpendGold(item.priceInGold);
+                wallet.SpendGold(finalPrice);
                 GrantPartRewards(item);
                 GameData.Instance.SaveNow();
                 break;

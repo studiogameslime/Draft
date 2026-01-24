@@ -105,9 +105,12 @@ public class StoreItemPanelUI : MonoBehaviour
         var wallet = PlayerCurrencyWallet.Instance;
         if (wallet == null) return false;
 
+        int price = item.GetFinalPrice();
+
         return item.costType == CostType.Gems
-            ? wallet.Gems >= item.priceInGems
-            : wallet.Gold >= item.priceInGold;
+            ? wallet.Gems >= price
+            : wallet.Gold >= price;
+
     }
 
     private void OnConfirm()

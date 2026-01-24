@@ -44,7 +44,7 @@ public class StoreItemUI : MonoBehaviour
             rt.offsetMin = offsetMin;
 
             timerText.fontSizeMax = 40;
-            
+
         }
     }
 
@@ -86,14 +86,10 @@ public class StoreItemUI : MonoBehaviour
             return;
         }
 
-        int finalPrice = def.costType == CostType.Gems ? def.priceInGems: def.priceInGold;
-        costIconImage.sprite = def.costType == CostType.Gems ? gemSprite: goldSprite;
+        int finalPrice = def.GetFinalPrice();
+        costIconImage.sprite = def.costType == CostType.Gems ? gemSprite : goldSprite;
         if (def.discountPercent > 0)
         {
-            finalPrice = Mathf.RoundToInt(
-                finalPrice * (1f - def.discountPercent / 100f)
-            );
-
             saleBadgeRoot.SetActive(true);
             salePercentText.text = $"{def.discountPercent}%";
         }
@@ -101,7 +97,7 @@ public class StoreItemUI : MonoBehaviour
         {
             saleBadgeRoot.SetActive(false);
         }
-        if (def.category == StoreCategory.BuyChestsWithGold || def.category == StoreCategory.BuyPartWithGold) 
+        if (def.category == StoreCategory.BuyChestsWithGold || def.category == StoreCategory.BuyPartWithGold)
         {
             amountText.gameObject.SetActive(false);
             iconImage.GetComponent<RectTransform>().anchoredPosition = new Vector2(GetComponent<RectTransform>().anchoredPosition.x, 0f);

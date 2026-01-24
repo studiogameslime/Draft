@@ -46,6 +46,23 @@ public class StoreItemDefinition : ScriptableObject
     [Tooltip("Resets every day at this hour (local device time). Example: 20 = 20:00")]
     [Range(0, 23)]
     public int dailyResetHour = 08;
+
+    public int GetFinalPrice()
+    {
+        int basePrice = costType == CostType.Gems
+            ? priceInGems
+            : priceInGold;
+
+        if (discountPercent > 0)
+        {
+            basePrice = Mathf.RoundToInt(
+                basePrice * (1f - discountPercent / 100f)
+            );
+        }
+
+        return basePrice;
+    }
+
 }
 
 
@@ -54,3 +71,5 @@ public enum CostType
     Gold,
     Gems
 }
+
+

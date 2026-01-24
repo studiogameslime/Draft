@@ -23,10 +23,20 @@ MonoBehaviour:
     amount: 1
   - part: {fileID: 11400000, guid: 6f03cbb98dbb06d4cab68052c4d3c3c5, type: 2}
     amount: 1
+  - part: {fileID: 11400000, guid: 7769a27358a50034696266dfdf6a4b91, type: 2}
+    amount: 1
+  - part: {fileID: 11400000, guid: 0d2e13c07b9e433478a63d5b3e588a4f, type: 2}
+    amount: 1
+  - part: {fileID: 11400000, guid: d57f4257a99ff274f84afbe04b1cbcfd, type: 2}
+    amount: 1
+  - part: {fileID: 11400000, guid: 95511ce325c43ac4b99161054cb6c93f, type: 2}
+    amount: 1
+  - part: {fileID: 11400000, guid: 3aa3f0e7bb1841844bf8910a818f8a32, type: 2}
+    amount: 1
   costType: 0
   priceInGems: 0
   priceInGold: 100
-  discountPercent: 0
+  discountPercent: 50
   isEnabled: 1
   isDailyFree: 0
   dailyResetHour: 8
