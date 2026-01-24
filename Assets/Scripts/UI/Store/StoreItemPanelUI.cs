@@ -26,7 +26,7 @@ public class StoreItemPanelUI : MonoBehaviour
     {
         Instance = this;
         panelRoot.SetActive(false);
-    
+
         confirmButton.onClick.AddListener(OnConfirm);
         cancelButton.onClick.AddListener(Close);
     }
@@ -49,15 +49,45 @@ public class StoreItemPanelUI : MonoBehaviour
         }
         var goldSprite = SpriteManager.instance.goldSprite;
         var gemSprite = SpriteManager.instance.gemSprite;
-        priceText.text = price.ToString();
+
+        if (item.isDailyFree)
+        {
+            priceText.text = "Free";
+            RectTransform rt = priceText.rectTransform;
+            Vector2 offsetMax = rt.offsetMax;
+            offsetMax.x = 0f;
+            rt.offsetMax = offsetMax;
+            costIconImage.gameObject.SetActive(false);
+
+        }
+        else
+        {
+            priceText.text = price.ToString();
+            RectTransform rt = priceText.rectTransform;
+            Vector2 offsetMax = rt.offsetMax;
+            offsetMax.x = 100f;
+            rt.offsetMax = offsetMax;
+            costIconImage.gameObject.SetActive(true);
+
+        }
+
         costIconImage.sprite = item.costType == CostType.Gems ? gemSprite : goldSprite;
 
-        if (item.category == StoreCategory.BuyChestsWithGold)
+        if (item.category == StoreCategory.BuyChestsWithGold || item.category == StoreCategory.BuyPartWithGold)
         {
             amount.gameObject.SetActive(false);
             iconImage.GetComponent<RectTransform>().anchoredPosition = new Vector2(GetComponent<RectTransform>().anchoredPosition.x, 0f);
 
         }
+        else
+        {
+            amount.gameObject.SetActive(true);
+            iconImage.GetComponent<RectTransform>().anchoredPosition = new Vector2(GetComponent<RectTransform>().anchoredPosition.x, 40f);
+
+        }
+
+
+
 
         confirmButton.interactable = CanAfford(item);
 

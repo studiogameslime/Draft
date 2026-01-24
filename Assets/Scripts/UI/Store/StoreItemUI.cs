@@ -101,7 +101,7 @@ public class StoreItemUI : MonoBehaviour
         {
             saleBadgeRoot.SetActive(false);
         }
-        if (def.category == StoreCategory.BuyChestsWithGold) 
+        if (def.category == StoreCategory.BuyChestsWithGold || def.category == StoreCategory.BuyPartWithGold) 
         {
             amountText.gameObject.SetActive(false);
             iconImage.GetComponent<RectTransform>().anchoredPosition = new Vector2(GetComponent<RectTransform>().anchoredPosition.x, 0f);
