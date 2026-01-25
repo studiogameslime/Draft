@@ -32,6 +32,8 @@ public class PlayerSaveData
 
     public long nextDailyFreeGoldUtcTicks;
     public long lastDailyLoginUtcTicks;
+    public long nextHourlyChestUtcTicks;
+
 
     // ==============================
     // COLLECTION / UNITS / PARTS

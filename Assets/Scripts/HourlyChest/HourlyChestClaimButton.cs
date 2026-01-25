@@ -1,0 +1,105 @@
+using System;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+public class HourlyChestClaimButton : MonoBehaviour
+{
+    [Header("Config")]
+    [SerializeField] private int cooldownHours = 3;
+
+    [Header("UI")]
+    [SerializeField] private Button claimButton;
+    [SerializeField] private TMP_Text buttonText;
+
+    [Header("Reward")]
+    [SerializeField] private ChestDefinition chestReward;
+    [SerializeField] private ChestOpeningUI chestOpeningUI; 
+
+    private float _nextUiTick;
+
+    private void Awake()
+    {
+        if (claimButton != null)
+            claimButton.onClick.AddListener(OnClickClaim);
+    }
+
+    private void OnEnable()
+    {
+        RefreshUI(true);
+    }
+
+    private void Update()
+    {
+        // Update once per second (cheap) so the timer counts down smoothly
+        if (Time.unscaledTime >= _nextUiTick)
+        {
+            _nextUiTick = Time.unscaledTime + 1f;
+            RefreshUI(false);
+        }
+    }
+
+    private void RefreshUI(bool force)
+    {
+        var save = GameData.Instance?.Save;
+        if (save == null || claimButton == null || buttonText == null)
+            return;
+
+        bool ready = IsReady(save.nextHourlyChestUtcTicks);
+
+        claimButton.interactable = ready;
+
+        if (ready)
+        {
+            buttonText.text = "CLAIM";
+            return;
+        }
+
+        TimeSpan left = GetTimeLeft(save.nextHourlyChestUtcTicks);
+        buttonText.text = $"{left.Hours:D2}:{left.Minutes:D2}:{left.Seconds:D2}";
+    }
+
+    private void OnClickClaim()
+    {
+        var save = GameData.Instance?.Save;
+        if (save == null)
+            return;
+
+        if (!IsReady(save.nextHourlyChestUtcTicks))
+            return;
+
+        // Give reward (choose what your project uses)
+        if (chestReward != null && chestOpeningUI != null)
+        {
+            chestOpeningUI.gameObject.SetActive(true);
+            chestOpeningUI.Show(chestReward);
+        }
+        else
+        {
+            // fallback example if you want direct grant instead of chest UI
+            Debug.LogWarning("HourlyChest: chestReward/chestOpeningUI missing");
+        }
+
+        // Set next available time: now + 3 hours
+        DateTime nextUtc = DateTime.UtcNow.AddHours(cooldownHours);
+        save.nextHourlyChestUtcTicks = nextUtc.Ticks;
+        GameData.Instance.SaveNow();
+
+        RefreshUI(true);
+    }
+
+    private bool IsReady(long nextUtcTicks)
+    {
+        if (nextUtcTicks <= 0) return true; // never claimed yet
+        DateTime nextUtc = new DateTime(nextUtcTicks, DateTimeKind.Utc);
+        return DateTime.UtcNow >= nextUtc;
+    }
+
+    private TimeSpan GetTimeLeft(long nextUtcTicks)
+    {
+        if (nextUtcTicks <= 0) return TimeSpan.Zero;
+        DateTime nextUtc = new DateTime(nextUtcTicks, DateTimeKind.Utc);
+        TimeSpan t = nextUtc - DateTime.UtcNow;
+        return (t.TotalSeconds < 0) ? TimeSpan.Zero : t;
+    }
+}
