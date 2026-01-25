@@ -10,6 +10,8 @@ public class StoreManager : MonoBehaviour
     [SerializeField] private ChestOpeningUI chestOpeningUI;
     [SerializeField] private PlayerPartsInventory partsInventory;
 
+    public event Action OnFreePackStateChanged;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -57,10 +59,11 @@ public class StoreManager : MonoBehaviour
 
             wallet.AddGold(item.goldAmount);
 
-            save.nextDailyFreeGoldUtcTicks =
-                DailyResetUtil.GetNextDailyResetUtc(DateTime.UtcNow).Ticks;
+            save.nextDailyFreeGoldUtcTicks = DailyResetUtil.GetNextDailyResetUtc(DateTime.UtcNow).Ticks;
 
             GameData.Instance.SaveNow();
+
+            NotifyFreePackStateChanged();
             return;
         }
 
@@ -120,5 +123,22 @@ public class StoreManager : MonoBehaviour
 
             partsInventory.AddPart(entry.part, entry.amount);
         }
+    }
+    public bool HasUnclaimedDailyFreePack(StoreItemDefinition[] items)
+    {
+        if (items == null) return false;
+
+        foreach (var item in items)
+        {
+            if (item == null) continue;
+            if (!item.isDailyFree) continue;
+            if (CanClaimDailyFree(item))
+                return true;
+        }
+        return false;
+    }
+    private void NotifyFreePackStateChanged()
+    {
+        OnFreePackStateChanged?.Invoke();
     }
 }
