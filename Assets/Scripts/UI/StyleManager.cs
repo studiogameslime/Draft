@@ -8,6 +8,9 @@ public static StyleManager instance;
     public Sprite goldSprite;
     public Sprite gemSprite;
     public Sprite newUnitSprite;
+    public Sprite commonChestSprite;
+    public Sprite rareChestSprite;
+    public Sprite PartWeaponSprite;
 
     private void Awake()
     {

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,8 @@ public class StoreSection : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private TMP_Text sectionTitle;
+    [SerializeField] private Image leftIcon;
+    [SerializeField] private Image rightIcon;
     [SerializeField] private GridLayoutGroup grid;
 
     [Header("Layout")]
@@ -16,9 +19,24 @@ public class StoreSection : MonoBehaviour
     [Header("Prefabs")]
     [SerializeField] private StoreItemUI itemPrefab;
 
-    public void Setup(string title, List<StoreItemDefinition> items)
+    public void Setup(string title, List<StoreItemDefinition> items, StoreCategory category)
     {
         sectionTitle.text = title;
+        switch (category)
+        {
+            case StoreCategory.BuyGoldWithGems:
+                leftIcon.sprite = StyleManager.instance.goldSprite;
+                rightIcon.sprite = StyleManager.instance.goldSprite;
+                break;
+            case StoreCategory.BuyChestsWithGold:
+                leftIcon.sprite = StyleManager.instance.rareChestSprite;
+                rightIcon.sprite = StyleManager.instance.rareChestSprite;
+                break;
+            case StoreCategory.BuyPartWithGold:
+                leftIcon.sprite = StyleManager.instance.PartWeaponSprite;
+                rightIcon.sprite = StyleManager.instance.PartWeaponSprite;
+                break;
+        }
         Clear();
 
         UpdateGridLayout();

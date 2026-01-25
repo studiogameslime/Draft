@@ -19,9 +19,9 @@ public class StorePageController : MonoBehaviour
         foreach (Transform child in content)
             Destroy(child.gameObject);
 
-        CreateSection("Gold", StoreCategory.BuyGoldWithGems, 3);
-        CreateSection("Chests", StoreCategory.BuyChestsWithGold, 2);
-        CreateSection("Parts", StoreCategory.BuyPartWithGold, 3);
+        CreateSection("Gold Packs", StoreCategory.BuyGoldWithGems, 3);
+        CreateSection("Chests Packs", StoreCategory.BuyChestsWithGold, 2);
+        CreateSection("Parts Packs", StoreCategory.BuyPartWithGold, 3);
         CreateSection("Special Offers", StoreCategory.Specials, 1);
     }
 
@@ -39,6 +39,6 @@ public class StorePageController : MonoBehaviour
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
             ?.SetValue(section, itemsPerRow);
 
-        section.Setup(title, items);
+        section.Setup(title, items, category);
     }
 }

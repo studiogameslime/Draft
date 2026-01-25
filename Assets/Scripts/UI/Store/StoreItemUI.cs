@@ -33,6 +33,8 @@ public class StoreItemUI : MonoBehaviour
         var save = GameData.Instance.Save;
         if (DailyResetUtil.IsReady(save.nextDailyFreeGoldUtcTicks))
         {
+            RectTransform rt = timerText.GetComponent<RectTransform>();
+            rt.sizeDelta = new Vector2(100f, 100f);
             timerText.text = "FREE";
             buyButton.interactable = true;
         }
