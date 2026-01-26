@@ -18,8 +18,6 @@ public static class GateRegistry
         gates.Remove(gate);
     }
 
-    // CHANGED
-    // Picks the gate whose closest entry point is nearest to fromPosition.
     public static GateController GetClosestGate(Vector3 fromPosition)
     {
         GateController best = null;
@@ -27,10 +25,10 @@ public static class GateRegistry
 
         for (int i = 0; i < gates.Count; i++)
         {
-            GateController g = gates[i];
+            var g = gates[i];
             if (g == null) continue;
 
-            float d = g.GetDistanceToClosestEntry(fromPosition);
+            float d = g.DistanceToClosestEntry(fromPosition);
             if (d < bestDist)
             {
                 bestDist = d;

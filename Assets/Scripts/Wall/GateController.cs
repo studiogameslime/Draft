@@ -8,21 +8,22 @@ public class GateController : MonoBehaviour
     [SerializeField] private Transform[] exitPoints;
 
     [Header("Entry Pick")]
-    [SerializeField] private int pickFromClosestCount = 2; // CHANGED: random among closest K entries
+    [SerializeField] private int pickFromClosestCount = 2;
 
-    [Header("Visual optional")]
+    [Header("Visual")]
     [SerializeField] private Animator gateAnimator;
-    [SerializeField] private string openBoolName = "Open";
-
-    private int passers = 0;
+    [SerializeField] private string isOpenBoolName = "IsOpen";
 
     private class GatePath
     {
         public Transform entry;
         public Transform exit;
+        public bool entered;
+        public bool exited;
     }
 
     private readonly Dictionary<int, GatePath> activePaths = new Dictionary<int, GatePath>();
+    private int passersInside = 0;
 
     private void Awake()
     {
@@ -35,20 +36,13 @@ public class GateController : MonoBehaviour
         GateRegistry.Unregister(this);
     }
 
-    public float GetDistanceToClosestEntry(Vector3 fromPosition)
-    {
-        Transform e = GetEntryForUnit(fromPosition); // CHANGED
-        if (e == null) return float.PositiveInfinity;
-        return Vector3.Distance(fromPosition, e.position);
-    }
-
-    public void BeginPassing(Transform unit, out Transform entry, out Transform exit)
+    // CHANGED: Returns a stable entry and exit per unit (cached in activePaths)
+    public void GetOrCreatePathForUnit(Transform unit, out Transform entry, out Transform exit)
     {
         entry = null;
         exit = null;
 
-        if (unit == null)
-            return;
+        if (unit == null) return;
 
         int id = unit.GetInstanceID();
 
@@ -61,54 +55,106 @@ public class GateController : MonoBehaviour
         }
 
         path = new GatePath();
-
-        // CHANGED: use smarter entry pick (random among closest K)
-        path.entry = GetEntryForUnit(unit.position);
-        path.exit = GetBestExitForEntry(path.entry);
+        path.entry = PickEntryFor(unit.position);
+        path.exit = PickExitFor(path.entry);
 
         activePaths[id] = path;
-
-        passers++;
-        if (passers < 0) passers = 0;
-        SetOpenVisual(true);
 
         entry = path.entry;
         exit = path.exit;
     }
 
-    public void EndPassing(Transform unit)
+    // CHANGED: Open only when unit actually reaches entry
+    public void NotifyUnitReachedEntry(Transform unit)
     {
-        if (unit == null)
-            return;
+        if (unit == null) return;
 
         int id = unit.GetInstanceID();
 
-        if (activePaths.ContainsKey(id))
-            activePaths.Remove(id);
+        GatePath path;
+        if (!activePaths.TryGetValue(id, out path))
+            return;
 
-        passers--;
-        if (passers < 0) passers = 0;
+        if (path.entered)
+            return;
 
-        if (passers == 0)
+        path.entered = true;
+
+        passersInside++;
+        if (passersInside < 0) passersInside = 0;
+
+        SetOpenVisual(true);
+    }
+
+    // CHANGED: Close only after unit actually reaches exit, and only when last passer is done
+    public void NotifyUnitReachedExit(Transform unit)
+    {
+        if (unit == null) return;
+
+        int id = unit.GetInstanceID();
+
+        GatePath path;
+        if (!activePaths.TryGetValue(id, out path))
+            return;
+
+        if (path.exited)
+            return;
+
+        path.exited = true;
+
+        if (path.entered)
+            passersInside--;
+
+        if (passersInside < 0) passersInside = 0;
+
+        activePaths.Remove(id);
+
+        if (passersInside == 0)
             SetOpenVisual(false);
     }
 
-    // CHANGED
-    // Returns a random entry among the closest K entries to the unit.
-    private Transform GetEntryForUnit(Vector3 fromPosition)
+    // CHANGED: If unit disappears mid-pass, cleanup counts and maybe close
+    public void CancelUnit(Transform unit)
     {
-        if (entryPoints == null || entryPoints.Length == 0)
-            return null;
+        if (unit == null) return;
 
+        int id = unit.GetInstanceID();
+
+        GatePath path;
+        if (!activePaths.TryGetValue(id, out path))
+            return;
+
+        if (path.entered && !path.exited)
+            passersInside--;
+
+        if (passersInside < 0) passersInside = 0;
+
+        activePaths.Remove(id);
+
+        if (passersInside == 0)
+            SetOpenVisual(false);
+    }
+
+    public float DistanceToClosestEntry(Vector3 fromPosition)
+    {
+        Transform e = PickClosestEntry(fromPosition);
+        if (e == null) return float.PositiveInfinity;
+        return Vector3.Distance(fromPosition, e.position);
+    }
+
+    private Transform PickEntryFor(Vector3 fromPosition)
+    {
         List<Transform> valid = new List<Transform>();
-        for (int i = 0; i < entryPoints.Length; i++)
+
+        if (entryPoints != null)
         {
-            if (entryPoints[i] != null)
-                valid.Add(entryPoints[i]);
+            for (int i = 0; i < entryPoints.Length; i++)
+                if (entryPoints[i] != null)
+                    valid.Add(entryPoints[i]);
         }
 
         if (valid.Count == 0)
-            return null;
+            return transform;
 
         valid.Sort((a, b) =>
         {
@@ -122,31 +168,19 @@ public class GateController : MonoBehaviour
         return valid[idx];
     }
 
-    private Transform GetBestExitForEntry(Transform chosenEntry)
+    private Transform PickClosestEntry(Vector3 fromPosition)
     {
-        if (exitPoints == null || exitPoints.Length == 0)
-            return null;
-
-        if (chosenEntry != null && entryPoints != null && entryPoints.Length == exitPoints.Length)
-        {
-            for (int i = 0; i < entryPoints.Length; i++)
-            {
-                if (entryPoints[i] == chosenEntry)
-                    return exitPoints[i];
-            }
-        }
-
         Transform best = null;
         float bestDist = float.PositiveInfinity;
 
-        Vector3 refPos = (chosenEntry != null) ? chosenEntry.position : transform.position;
+        if (entryPoints == null) return null;
 
-        for (int i = 0; i < exitPoints.Length; i++)
+        for (int i = 0; i < entryPoints.Length; i++)
         {
-            Transform t = exitPoints[i];
+            Transform t = entryPoints[i];
             if (t == null) continue;
 
-            float d = Vector3.Distance(refPos, t.position);
+            float d = Vector3.Distance(fromPosition, t.position);
             if (d < bestDist)
             {
                 bestDist = d;
@@ -157,9 +191,38 @@ public class GateController : MonoBehaviour
         return best;
     }
 
+    // CHANGED: Fixed random selection bug (no double Random.Range)
+    private Transform PickExitFor(Transform chosenEntry)
+    {
+        if (exitPoints == null || exitPoints.Length == 0)
+            return transform;
+
+        // Optional pairing by index if lengths match
+        if (chosenEntry != null && entryPoints != null && entryPoints.Length == exitPoints.Length)
+        {
+            for (int i = 0; i < entryPoints.Length; i++)
+            {
+                if (entryPoints[i] == chosenEntry && exitPoints[i] != null)
+                    return exitPoints[i];
+            }
+        }
+
+        int idx = Random.Range(0, exitPoints.Length);
+        Transform t = exitPoints[idx];
+        if (t != null) return t;
+
+        // Fallback: find any non-null
+        for (int i = 0; i < exitPoints.Length; i++)
+            if (exitPoints[i] != null)
+                return exitPoints[i];
+
+        return transform;
+    }
+
     private void SetOpenVisual(bool open)
     {
-        if (gateAnimator != null && !string.IsNullOrEmpty(openBoolName))
-            gateAnimator.SetBool(openBoolName, open);
+        if (gateAnimator == null) return;
+        if (string.IsNullOrEmpty(isOpenBoolName)) return;
+        gateAnimator.SetBool(isOpenBoolName, open);
     }
 }

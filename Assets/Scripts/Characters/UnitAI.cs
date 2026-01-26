@@ -6,7 +6,6 @@ public class UnitAI : MonoBehaviour
 {
     private Animator animator;
     private CharacterStats myStats;
-
     private CharacterStats targetStats;
 
     public ICombatTarget target;
@@ -40,10 +39,11 @@ public class UnitAI : MonoBehaviour
 
     private GateMoveState gateState = GateMoveState.None;
 
-    // CHANGED
+    // CHANGED: keep a stable route for this unit
     private GateController currentGate = null;
     private Transform currentGateEntry = null;
     private Transform currentGateExit = null;
+    private bool gateEntryNotified = false;
 
     private void Awake()
     {
@@ -63,6 +63,12 @@ public class UnitAI : MonoBehaviour
         animator?.SetBool("isMoving", false);
         ClearTargetState();
         lastAttackTime = 0f;
+    }
+
+    // CHANGED: important so we do not keep gate open if unit is disabled or destroyed
+    private void OnDisable()
+    {
+        CleanupGateRouting();
     }
 
     public void LockInitialTargetAtBattleStart()
@@ -88,11 +94,12 @@ public class UnitAI : MonoBehaviour
             return;
         }
 
-        // Enemy logic (keep as-is)
+        // Enemy logic (unchanged)
         if (myStats.team == Team.EnemyTeam && wall != null && wallTarget != null && wallLocked)
         {
             targetStats = null;
             target = wallTarget;
+
             UpdateFacingToTransform(wall.transform);
 
             float distToWall = DistanceToWallCollider();
@@ -147,7 +154,7 @@ public class UnitAI : MonoBehaviour
 
             target = targetStats;
 
-            // CHANGED
+            // CHANGED: when target changes, stop any previous gate routing
             CleanupGateRouting();
         }
 
@@ -158,7 +165,7 @@ public class UnitAI : MonoBehaviour
     {
         if (targetStats == null) return;
 
-        // CHANGED
+        // CHANGED: gate routing for player units only
         if (myStats.team != Team.EnemyTeam)
         {
             if (TryHandleGateRoutingToTarget(targetStats.transform))
@@ -177,7 +184,7 @@ public class UnitAI : MonoBehaviour
         }
     }
 
-    // CHANGED
+    // CHANGED: Gate routing that opens on entry and closes on exit
     private bool TryHandleGateRoutingToTarget(Transform finalTarget)
     {
         if (wall == null || finalTarget == null)
@@ -195,20 +202,32 @@ public class UnitAI : MonoBehaviour
             return false;
         }
 
+        // Acquire gate once
         if (currentGate == null)
         {
             currentGate = GateRegistry.GetClosestGate(transform.position);
             gateState = GateMoveState.ToEntry;
-
-            if (currentGate != null)
-                currentGate.BeginPassing(transform, out currentGateEntry, out currentGateExit);
+            currentGateEntry = null;
+            currentGateExit = null;
+            gateEntryNotified = false;
         }
 
-        if (currentGate == null || currentGateEntry == null || currentGateExit == null)
-        {
-            CleanupGateRouting();
+        if (currentGate == null)
             return false;
+
+        // Acquire stable entry and exit once
+        if (currentGateEntry == null || currentGateExit == null)
+        {
+            Transform entry;
+            Transform exit;
+            currentGate.GetOrCreatePathForUnit(transform, out entry, out exit);
+
+            currentGateEntry = entry;
+            currentGateExit = exit;
         }
+
+        if (currentGateEntry == null || currentGateExit == null)
+            return false;
 
         if (gateState == GateMoveState.ToEntry)
         {
@@ -216,8 +235,14 @@ public class UnitAI : MonoBehaviour
             MoveTowardPosition(currentGateEntry.position);
 
             if (Vector3.Distance(transform.position, currentGateEntry.position) <= gateArriveDistance)
+            {
+                if (!gateEntryNotified)
+                {
+                    currentGate.NotifyUnitReachedEntry(transform);
+                    gateEntryNotified = true;
+                }
                 gateState = GateMoveState.ToExit;
-
+            }
             return true;
         }
 
@@ -227,29 +252,30 @@ public class UnitAI : MonoBehaviour
             MoveTowardPosition(currentGateExit.position);
 
             if (Vector3.Distance(transform.position, currentGateExit.position) <= gateArriveDistance)
+            {
+                currentGate.NotifyUnitReachedExit(transform);
                 CleanupGateRouting();
-
+            }
             return true;
         }
 
         return false;
     }
 
-    // CHANGED
+    // CHANGED: one cleanup function that also cancels if needed
     private void CleanupGateRouting()
     {
         if (currentGate != null)
-            currentGate.EndPassing(transform);
+        {
+            // If we already entered but did not exit, this will decrement passersInside
+            currentGate.CancelUnit(transform);
+        }
 
         gateState = GateMoveState.None;
         currentGate = null;
         currentGateEntry = null;
         currentGateExit = null;
-    }
-
-    private void HandleUnitTargetMovementAndAttackExisting()
-    {
-        // Not used. Keeping file structure stable.
+        gateEntryNotified = false;
     }
 
     private void SetUnitTarget(CharacterStats candidate)
@@ -308,14 +334,15 @@ public class UnitAI : MonoBehaviour
 
         Vector3 direction = (targetStats.transform.position - transform.position).normalized;
         transform.position += direction * myStats.moveSpeed * Time.deltaTime;
+
         animator?.SetBool("isMoving", true);
     }
 
-    // CHANGED
     private void MoveTowardPosition(Vector3 pos)
     {
         Vector3 direction = (pos - transform.position).normalized;
         transform.position += direction * myStats.moveSpeed * Time.deltaTime;
+
         animator?.SetBool("isMoving", true);
     }
 
@@ -332,6 +359,7 @@ public class UnitAI : MonoBehaviour
 
         Vector3 dir = (wall.transform.position - transform.position).normalized;
         transform.position += dir * myStats.moveSpeed * Time.deltaTime;
+
         animator?.SetBool("isMoving", true);
     }
 
