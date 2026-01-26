@@ -1,6 +1,4 @@
 using System;
-using System.Reflection;
-using UnityEditor.VersionControl;
 using UnityEngine;
 
 public class StoreManager : MonoBehaviour

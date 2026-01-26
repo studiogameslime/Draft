@@ -7,10 +7,8 @@ public class UnitAI : MonoBehaviour
     private Animator animator;
     private CharacterStats myStats;
 
-    // Unit target (kept for compatibility)
     private CharacterStats targetStats;
 
-    // Unified target (unit or wall)
     public ICombatTarget target;
     public ICombatTarget CurrentCombatTarget => target;
 
@@ -24,19 +22,33 @@ public class UnitAI : MonoBehaviour
     [SerializeField] private Transform shootPoint;
     private Vector3 shootPointDefaultLocalPos;
 
-    // Wall references
     public WallHealth wall;
     public WallCombatTarget wallTarget;
 
-    // If true, this unit commits to the wall and stops searching for unit targets
     private bool wallLocked = false;
+
+    [Header("Gate Routing")]
+    [SerializeField] private float wallLineYOffset = 0f;
+    [SerializeField] private float gateArriveDistance = 0.12f;
+
+    private enum GateMoveState
+    {
+        None,
+        ToEntry,
+        ToExit
+    }
+
+    private GateMoveState gateState = GateMoveState.None;
+
+    // CHANGED
+    private GateController currentGate = null;
+    private Transform currentGateEntry = null;
+    private Transform currentGateExit = null;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
         myStats = GetComponent<CharacterStats>();
-
-        // Must match: IAttackStrategy.Attack(ICombatTarget target)
         attackStrategy = GetComponent<IAttackStrategy>();
 
         if (shootPoint != null)
@@ -53,7 +65,6 @@ public class UnitAI : MonoBehaviour
         lastAttackTime = 0f;
     }
 
-    // Call this when a unit is released into battle so it starts fresh
     public void LockInitialTargetAtBattleStart()
     {
         ClearTargetState();
@@ -64,6 +75,9 @@ public class UnitAI : MonoBehaviour
         targetStats = null;
         target = null;
         wallLocked = false;
+
+        // CHANGED
+        CleanupGateRouting();
     }
 
     private void Update()
@@ -74,41 +88,32 @@ public class UnitAI : MonoBehaviour
             return;
         }
 
-        // If enemy already committed to wall, do not search for units anymore
+        // Enemy logic (keep as-is)
         if (myStats.team == Team.EnemyTeam && wall != null && wallTarget != null && wallLocked)
         {
             targetStats = null;
             target = wallTarget;
-
             UpdateFacingToTransform(wall.transform);
 
             float distToWall = DistanceToWallCollider();
             if (distToWall > myStats.attackRange - stoppingBuffer)
-            {
-
                 MoveTowardWall();
-            }
             else
             {
-
                 StopMoving();
-                AttackWallIfInRange(); // This keeps attacking, already locked
+                AttackWallIfInRange();
             }
             return;
         }
 
-        // Enemy logic: keep searching units until the first real wall attack happens
         if (myStats.team == Team.EnemyTeam && wall != null && wallTarget != null)
         {
-
             CharacterStats candidate = FindClosestTargetableEnemy();
             float distToWall = DistanceToWallCollider();
 
             if (candidate != null)
             {
                 float distToUnit = Vector3.Distance(transform.position, candidate.transform.position);
-
-                // If a unit is closer than the wall, chase the unit
                 if (distToUnit < distToWall)
                 {
                     SetUnitTarget(candidate);
@@ -117,35 +122,33 @@ public class UnitAI : MonoBehaviour
                 }
             }
 
-            // Otherwise move toward the wall, but do NOT lock yet
             SetWallTargetSoft();
-
             UpdateFacingToTransform(wall.transform);
 
             if (distToWall > myStats.attackRange - stoppingBuffer)
-            {
                 MoveTowardWall();
-            }
             else
             {
                 StopMoving();
-                AttackWallIfInRange(); // This will lock only when an actual attack triggers
+                AttackWallIfInRange();
             }
             return;
         }
 
-        // Non-enemy (or no wall): normal unit targeting
+        // Non-enemy normal targeting
         if (targetStats == null || targetStats.currentHealth <= 0 || targetStats.isUntargetable)
         {
-
             targetStats = FindClosestTargetableEnemy();
             if (targetStats == null)
             {
-
                 StopMoving();
                 return;
             }
+
             target = targetStats;
+
+            // CHANGED
+            CleanupGateRouting();
         }
 
         HandleUnitTargetMovementAndAttack();
@@ -155,18 +158,98 @@ public class UnitAI : MonoBehaviour
     {
         if (targetStats == null) return;
 
+        // CHANGED
+        if (myStats.team != Team.EnemyTeam)
+        {
+            if (TryHandleGateRoutingToTarget(targetStats.transform))
+                return;
+        }
+
         UpdateFacingToTransform(targetStats.transform);
 
         float distance = Vector3.Distance(transform.position, targetStats.transform.position);
         if (distance > myStats.attackRange - stoppingBuffer)
-        {
             MoveTowardTarget();
-        }
         else
         {
             StopMoving();
             AttackCurrentTarget();
         }
+    }
+
+    // CHANGED
+    private bool TryHandleGateRoutingToTarget(Transform finalTarget)
+    {
+        if (wall == null || finalTarget == null)
+            return false;
+
+        float wallY = wall.transform.position.y + wallLineYOffset;
+        float myY = transform.position.y;
+        float targetY = finalTarget.position.y;
+
+        bool needCross = (myY < wallY && targetY > wallY);
+        if (!needCross)
+        {
+            if (gateState != GateMoveState.None)
+                CleanupGateRouting();
+            return false;
+        }
+
+        if (currentGate == null)
+        {
+            currentGate = GateRegistry.GetClosestGate(transform.position);
+            gateState = GateMoveState.ToEntry;
+
+            if (currentGate != null)
+                currentGate.BeginPassing(transform, out currentGateEntry, out currentGateExit);
+        }
+
+        if (currentGate == null || currentGateEntry == null || currentGateExit == null)
+        {
+            CleanupGateRouting();
+            return false;
+        }
+
+        if (gateState == GateMoveState.ToEntry)
+        {
+            UpdateFacingToTransform(currentGateEntry);
+            MoveTowardPosition(currentGateEntry.position);
+
+            if (Vector3.Distance(transform.position, currentGateEntry.position) <= gateArriveDistance)
+                gateState = GateMoveState.ToExit;
+
+            return true;
+        }
+
+        if (gateState == GateMoveState.ToExit)
+        {
+            UpdateFacingToTransform(currentGateExit);
+            MoveTowardPosition(currentGateExit.position);
+
+            if (Vector3.Distance(transform.position, currentGateExit.position) <= gateArriveDistance)
+                CleanupGateRouting();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    // CHANGED
+    private void CleanupGateRouting()
+    {
+        if (currentGate != null)
+            currentGate.EndPassing(transform);
+
+        gateState = GateMoveState.None;
+        currentGate = null;
+        currentGateEntry = null;
+        currentGateExit = null;
+    }
+
+    private void HandleUnitTargetMovementAndAttackExisting()
+    {
+        // Not used. Keeping file structure stable.
     }
 
     private void SetUnitTarget(CharacterStats candidate)
@@ -176,12 +259,10 @@ public class UnitAI : MonoBehaviour
         target = candidate;
     }
 
-    // Sets wall as current target without committing
     private void SetWallTargetSoft()
     {
         targetStats = null;
         target = wallTarget;
-        // Do NOT set wallLocked here
     }
 
     private CharacterStats FindClosestTargetableEnemy()
@@ -230,6 +311,14 @@ public class UnitAI : MonoBehaviour
         animator?.SetBool("isMoving", true);
     }
 
+    // CHANGED
+    private void MoveTowardPosition(Vector3 pos)
+    {
+        Vector3 direction = (pos - transform.position).normalized;
+        transform.position += direction * myStats.moveSpeed * Time.deltaTime;
+        animator?.SetBool("isMoving", true);
+    }
+
     private void MoveTowardWall()
     {
         if (wall == null) return;
@@ -242,10 +331,7 @@ public class UnitAI : MonoBehaviour
         }
 
         Vector3 dir = (wall.transform.position - transform.position).normalized;
-        Vector3 step = dir * myStats.moveSpeed * Time.deltaTime;
-        //Debug.Log($"dir=({dir.x:F6},{dir.y:F6}) step=({step.x:F6},{step.y:F6}) dt={Time.deltaTime:F6} speed={myStats.moveSpeed:F3}");
         transform.position += dir * myStats.moveSpeed * Time.deltaTime;
-        //Debug.Log($"transform.position {transform.position}");
         animator?.SetBool("isMoving", true);
     }
 
@@ -261,7 +347,6 @@ public class UnitAI : MonoBehaviour
         if (Time.time - lastAttackTime >= myStats.attackCooldown)
         {
             lastAttackTime = Time.time;
-            // Strategy triggers animation and hit logic
             attackStrategy?.Attack(target);
         }
     }
@@ -292,11 +377,7 @@ public class UnitAI : MonoBehaviour
         if (Time.time - lastAttackTime >= myStats.attackCooldown)
         {
             lastAttackTime = Time.time;
-
-            // Commit to wall only when an actual wall attack happens
             wallLocked = true;
-
-            // Always use strategy so ranged units shoot projectiles
             attackStrategy?.Attack(wallTarget);
         }
     }
