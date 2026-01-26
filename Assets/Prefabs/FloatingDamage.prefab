@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3794100073784410356}
   - component: {fileID: 8634097410194006520}
   - component: {fileID: 1931183539404600891}
+  - component: {fileID: -8702403724528751423}
   m_Layer: 8
   m_Name: FloatingDamage
   m_TagString: Untagged
@@ -194,8 +195,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9db09b0514710f42b89afb5acd4533f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloatingDamage
-  floatingDamageDestroytime: 2
-  offset: {x: 0, y: 3, z: 0}
+  floatingDamageDestroytime: 1
+  offset: {x: 0, y: 5, z: 0}
 --- !u!222 &8634097410194006520
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -226,3 +227,15 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!210 &-8702403724528751423
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5435662357922782254}
+  m_Enabled: 1
+  m_SortingLayerID: -1797000917
+  m_SortingLayer: 4
+  m_SortingOrder: 100
+  m_SortAtRoot: 0

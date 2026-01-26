@@ -53,5 +53,8 @@ TagManager:
   - name: Effects
     uniqueID: 948775637
     locked: 0
+  - name: FloatingDamageText
+    uniqueID: 2497966379
+    locked: 0
   m_RenderingLayers:
   - Default

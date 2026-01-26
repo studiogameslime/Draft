@@ -126,7 +126,7 @@ MonoBehaviour:
   isUntargetable: 0
   _initialPosition: {x: 0, y: 0, z: 0}
   fallenWeaponPrefab: {fileID: 0}
-  floatingDamagePrefab: {fileID: 0}
+  floatingDamagePrefab: {fileID: 5435662357922782254, guid: edf8d4cdb46f4b542ad4f69652ff8174, type: 3}
 --- !u!114 &4947438431943674892
 MonoBehaviour:
   m_ObjectHideFlags: 0

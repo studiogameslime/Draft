@@ -216,7 +216,7 @@ MonoBehaviour:
   isUntargetable: 0
   _initialPosition: {x: 0, y: 0, z: 0}
   fallenWeaponPrefab: {fileID: 0}
-  _hpBar: {fileID: 7303361443832933886}
+  floatingDamagePrefab: {fileID: 5435662357922782254, guid: edf8d4cdb46f4b542ad4f69652ff8174, type: 3}
 --- !u!114 &6486089044372729274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -441,17 +441,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7ae0826dedb4064b8ec22e4b63c0342, type: 3}
---- !u!114 &7303361443832933886 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2443735001464487100, guid: c7ae0826dedb4064b8ec22e4b63c0342, type: 3}
-  m_PrefabInstance: {fileID: 4950340549774709058}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!224 &8357615771073489463 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3985425927352957813, guid: c7ae0826dedb4064b8ec22e4b63c0342, type: 3}
