@@ -36,20 +36,35 @@ public class EnemyWaveSpawner : MonoBehaviour
         if (phases == null || phases.Count == 0)
             yield break;
 
-        foreach (var phase in phases)
+        for (int i = 0; i < phases.Count; i++)
         {
-            yield return StartCoroutine(SpawnPhase(phase, level));
+            var phase = phases[i];
+
+            // CHANGED: Spawn the whole phase instantly (all enemies in one burst).
+            SpawnPhaseInstant(phase, level);
+
+            // CHANGED: Wait between phases using phase.spawnInterval (skip after last phase).
+            bool isLastPhase = (i == phases.Count - 1);
+            if (!isLastPhase)
+            {
+                float delay = Mathf.Max(0f, phase.spawnInterval);
+                if (delay > 0f)
+                    yield return new WaitForSeconds(delay);
+            }
         }
     }
 
-    private IEnumerator SpawnPhase(EnemySpawnPhase phase, int level)
+    // CHANGED: Replaced coroutine phase spawning with instant spawning.
+    private void SpawnPhaseInstant(EnemySpawnPhase phase, int level)
     {
-        for (int i = 0; i < phase.count; i++)
+        if (phase == null || phase.unit == null)
+            return;
+
+        int c = Mathf.Max(0, phase.count);
+        for (int i = 0; i < c; i++)
         {
             SpawnOne(phase.unit, level);
             RemainingToSpawn--;
-
-            yield return new WaitForSeconds(phase.spawnInterval);
         }
     }
 

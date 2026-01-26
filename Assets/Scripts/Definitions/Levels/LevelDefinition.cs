@@ -71,6 +71,8 @@ public class EnemySpawnPhase
 {
     public UnitDefinition unit;
     public int count;
+
+    // CHANGED: spawnInterval is now used as the delay AFTER this phase, before the next phase starts.
     public float spawnInterval;
 }
 
