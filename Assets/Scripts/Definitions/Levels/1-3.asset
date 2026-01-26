@@ -26,14 +26,26 @@ MonoBehaviour:
     enemyLevel: 1
     xpOnRoundWin: 20
   - playerPicks: 0
-    souls: 10
+    souls: 3
     goldOnRoundWin: 10
     enemyPhases:
     - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
-      count: 4
-      spawnInterval: 3
+      count: 6
+      spawnInterval: 2
     - unit: {fileID: 11400000, guid: 46b2a7674bab87a418ff396c40ee8e35, type: 2}
-      count: 2
+      count: 3
+      spawnInterval: 3
+    enemyLevel: 1
+    xpOnRoundWin: 20
+  - playerPicks: 0
+    souls: 5
+    goldOnRoundWin: 10
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
+      count: 8
+      spawnInterval: 2
+    - unit: {fileID: 11400000, guid: 46b2a7674bab87a418ff396c40ee8e35, type: 2}
+      count: 4
       spawnInterval: 3
     enemyLevel: 1
     xpOnRoundWin: 20
