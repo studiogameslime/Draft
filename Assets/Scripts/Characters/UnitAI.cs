@@ -190,44 +190,37 @@ public class UnitAI : MonoBehaviour
         if (wall == null || finalTarget == null)
             return false;
 
-        float wallY = wall.transform.position.y + wallLineYOffset;
-        float myY = transform.position.y;
-        float targetY = finalTarget.position.y;
-
-        bool needCross = (myY < wallY && targetY > wallY);
-        if (!needCross)
+        if (gateState == GateMoveState.None)
         {
-            if (gateState != GateMoveState.None)
-                CleanupGateRouting();
-            return false;
-        }
+            float wallY = wall.transform.position.y + wallLineYOffset;
+            bool needCross = (transform.position.y < wallY && finalTarget.position.y > wallY);
+            if (!needCross)
+                return false;
 
-        // Acquire gate once
-        if (currentGate == null)
-        {
             currentGate = GateRegistry.GetClosestGate(transform.position);
+            if (currentGate == null)
+                return false;
+
+            Transform entry, exit;
+            currentGate.GetOrCreatePathForUnit(transform, out entry, out exit);
+            currentGateEntry = entry;
+            currentGateExit = exit;
+
+            if (currentGateEntry == null || currentGateExit == null)
+            {
+                CleanupGateRouting();
+                return false;
+            }
+
             gateState = GateMoveState.ToEntry;
-            currentGateEntry = null;
-            currentGateExit = null;
             gateEntryNotified = false;
         }
 
-        if (currentGate == null)
-            return false;
-
-        // Acquire stable entry and exit once
-        if (currentGateEntry == null || currentGateExit == null)
+        if (currentGate == null || currentGateEntry == null || currentGateExit == null)
         {
-            Transform entry;
-            Transform exit;
-            currentGate.GetOrCreatePathForUnit(transform, out entry, out exit);
-
-            currentGateEntry = entry;
-            currentGateExit = exit;
-        }
-
-        if (currentGateEntry == null || currentGateExit == null)
+            CleanupGateRouting();
             return false;
+        }
 
         if (gateState == GateMoveState.ToEntry)
         {
@@ -261,6 +254,7 @@ public class UnitAI : MonoBehaviour
 
         return false;
     }
+
 
     // CHANGED: one cleanup function that also cancels if needed
     private void CleanupGateRouting()
