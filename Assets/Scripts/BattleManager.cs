@@ -56,8 +56,7 @@ public class BattleManager : MonoBehaviour
         StartCoroutine(InitAfterUIReady());
         Initialize();
 
-        if (CameraAnimation.instance != null)
-            CameraAnimation.instance.EnterGridMode();
+        
     }
 
     public void Initialize()
@@ -100,6 +99,15 @@ public class BattleManager : MonoBehaviour
 
         SoulsManager.instance.AddRoundSouls();
         RoundUIManager.instance.ChangeRoundText(currentRoundIndex + 1, levelDefinition.RoundsCount);
+
+        if (CameraAnimation.instance != null)
+            CameraAnimation.instance.EnterGridMode();
+
+        if (BattleFooterAnimation.instance != null)
+        {
+            Debug.Log("BattleFooter");
+            BattleFooterAnimation.instance.EnterGridMode();
+        }
     }
 
     // =======================
@@ -160,6 +168,7 @@ public class BattleManager : MonoBehaviour
         battleStarted = true;
 
         CameraAnimation.instance.EnterBattleMode();
+        BattleFooterAnimation.instance.EnterBattleMode();
 
         if (deckUI != null)
             deckUI.SetCardsInteractable(false);
@@ -269,6 +278,9 @@ public class BattleManager : MonoBehaviour
 
         if (CameraAnimation.instance != null)
             CameraAnimation.instance.EnterGridMode();
+
+        if (BattleFooterAnimation.instance != null)
+            BattleFooterAnimation.instance.EnterGridMode();
     }
 
     // =======================
