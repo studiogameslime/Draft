@@ -131,8 +131,8 @@ public class GateController : MonoBehaviour
 
         activePaths.Remove(id);
 
-        //if (passersInside == 0)
-        //    SetOpenVisual(false);
+        if (passersInside == 0)
+            SetOpenVisual(false);
     }
 
     public float DistanceToClosestEntry(Vector3 fromPosition)
