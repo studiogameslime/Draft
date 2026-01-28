@@ -137,7 +137,6 @@ public class BattleManager : MonoBehaviour
         if (selectionUI != null)
         {
             selectionUI.gameObject.SetActive(true);
-            selectionUI.battleManager = this;
             selectionUI.RollNewUnits();
         }
 
