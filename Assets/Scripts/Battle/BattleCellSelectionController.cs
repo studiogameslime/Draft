@@ -209,6 +209,7 @@ public class BattleCellSelectionController : MonoBehaviour
             if (ui != null && PlayerDeckProvider.Instance != null)
             {
                 bottomPanel.ShowDeck(PlayerDeckProvider.Instance.CurrentDeck, ui);
+                BattleBottomPanelController.Instance.HidePlaceholderText();
             }
         }
     }
@@ -217,7 +218,11 @@ public class BattleCellSelectionController : MonoBehaviour
     {
         TryResolveDeckUI();
         if (deckUI != null)
+        {
             deckUI.HideDeck();
+            BattleBottomPanelController.Instance.ShowPlaceholderText();
+        }
+
     }
 
     private void ShowUpgradesForSpawner(UnitSpawner spawner)

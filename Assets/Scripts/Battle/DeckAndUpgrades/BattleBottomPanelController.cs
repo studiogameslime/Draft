@@ -19,6 +19,9 @@ public class BattleBottomPanelController : MonoBehaviour
     [Header("SellUnit")]
     [SerializeField] private GameObject sellUnitButton;
 
+    [Header("FooterText")]
+    [SerializeField] private GameObject placeholderText;
+
 
 
     private void Awake()
@@ -81,6 +84,8 @@ public class BattleBottomPanelController : MonoBehaviour
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent);
         ShowSellButton(spawner);
+        HidePlaceholderText();
+
 
     }
 
@@ -125,5 +130,12 @@ public class BattleBottomPanelController : MonoBehaviour
         if (sellUnitButton != null)
             sellUnitButton.SetActive(false);
     }
-
+    public void ShowPlaceholderText()
+    {
+        placeholderText.SetActive(true);
+    }
+    public void HidePlaceholderText()
+    {
+        placeholderText.SetActive(false);
+    }
 }

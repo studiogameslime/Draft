@@ -360,6 +360,7 @@ public class UnitSpawner : MonoBehaviour
 
         BattleCellSelectionController.Instance.ClearSelection();
         BattleBottomPanelController.Instance.HideSellButton();
+        BattleBottomPanelController.Instance.ShowPlaceholderText();
 
         Destroy(gameObject);
         battle.StartCoroutine(RefreshNextFrame());
