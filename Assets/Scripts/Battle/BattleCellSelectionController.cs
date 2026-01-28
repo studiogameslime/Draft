@@ -11,7 +11,6 @@ public class BattleCellSelectionController : MonoBehaviour
     public static BattleCellSelectionController Instance;
 
     [Header("References")]
-    [SerializeField] private BattleManager battleManager;
     [SerializeField] private UnitSpawner spawnerPrefab;
 
     // Deck UI is loaded from another scene, so it may be null at Start.
@@ -32,9 +31,6 @@ public class BattleCellSelectionController : MonoBehaviour
 
     private void Start()
     {
-        if (battleManager == null)
-            battleManager = FindFirstObjectByType<BattleManager>();
-
         // Do not assume deckUI exists yet (CommonUI might not be loaded).
         TryResolveDeckUI();
 
@@ -47,7 +43,7 @@ public class BattleCellSelectionController : MonoBehaviour
         TryResolveDeckUI();
 
         if (!Application.isPlaying) return;
-        if (battleManager != null && battleManager.IsBattleRunning) return;
+        if (BattleManager.instance != null && BattleManager.instance.IsBattleRunning) return;
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -83,7 +79,7 @@ public class BattleCellSelectionController : MonoBehaviour
 
         SetSelectedInternal(cell);
 
-        if (battleManager != null && battleManager.IsBattleRunning)
+        if (BattleManager.instance != null && BattleManager.instance.IsBattleRunning)
         {
             HideBottomPanel();
             return;
@@ -111,7 +107,7 @@ public class BattleCellSelectionController : MonoBehaviour
         if (def == null)
             return;
 
-        if (battleManager != null && battleManager.IsBattleRunning)
+        if (BattleManager.instance != null && BattleManager.instance.IsBattleRunning)
             return;
 
         if (selectedCell == null)
@@ -145,8 +141,8 @@ public class BattleCellSelectionController : MonoBehaviour
         UnitSpawner spawner = Instantiate(spawnerPrefab, selectedCell.transform.position, Quaternion.identity);
 
         int level = 1;
-        if (battleManager != null)
-            level = Mathf.Max(1, battleManager.playerUnitsLevel);
+        if (BattleManager.instance != null)
+            level = Mathf.Max(1, BattleManager.instance.playerUnitsLevel);
 
         spawner.Configure(def, Team.MyTeam, level);
         spawner.AttachCellProgressImage(selectedCell);
@@ -164,7 +160,7 @@ public class BattleCellSelectionController : MonoBehaviour
         }
 
         spawner.SetCellBonusMultipliers(hpMul, dmgMul);
-        battleManager?.RefreshStartBattleButton();
+        BattleManager.instance?.RefreshStartBattleButton();
 
         // Per your flow: after placing, close the bottom deck and clear focus.
         ClearSelection();
@@ -269,20 +265,18 @@ public class BattleCellSelectionController : MonoBehaviour
     /// </summary>
     private void TryResolveDeckUI()
     {
-        if (battleManager == null)
-            battleManager = FindFirstObjectByType<BattleManager>();
 
         // If battleManager already has deckUI assigned, use it.
-        if (deckUI == null && battleManager != null && battleManager.deckUI != null)
-            deckUI = battleManager.deckUI;
+        if (deckUI == null && BattleManager.instance != null && BattleManager.instance.deckUI != null)
+            deckUI = BattleManager.instance.deckUI;
 
         // Otherwise, try to find DeckUIController in loaded scenes.
         if (deckUI == null)
             deckUI = FindFirstObjectByType<DeckUIController>();
 
         // If we found it, keep it on battleManager as well.
-        if (battleManager != null && battleManager.deckUI == null && deckUI != null)
-            battleManager.deckUI = deckUI;
+        if (BattleManager.instance != null && BattleManager.instance.deckUI == null && deckUI != null)
+            BattleManager.instance.deckUI = deckUI;
 
         // If deckUI exists but cardsParent is not assigned yet, try to assign from selectionUI.
         if (deckUI != null && deckUI.cardsParent == null)

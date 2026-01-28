@@ -16,8 +16,6 @@ public class SkeletonSummoner : MonoBehaviour
     [Header("Level (SkeletonLevel = SummonerLevel)")]
     [SerializeField] private int fallbackLevel = 1;
 
-    private BattleManager _battleManager;
-
     private float summonTimer;
     private readonly List<GameObject> aliveSkeletons = new();
 
@@ -28,12 +26,11 @@ public class SkeletonSummoner : MonoBehaviour
         if (summonPoint == null) summonPoint = transform;
         summonerStats = GetComponent<CharacterStats>();
         summonTimer = summonCooldown;
-        _battleManager = FindAnyObjectByType<BattleManager>();
     }
 
     private void Update()
     {
-        if (!_battleManager.IsBattleRunning) return;
+        if (!BattleManager.instance.IsBattleRunning) return;
         CleanupList();
 
         summonTimer -= Time.deltaTime;

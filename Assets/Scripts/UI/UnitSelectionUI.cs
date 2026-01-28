@@ -10,14 +10,13 @@ public class UnitSelectionUI : MonoBehaviour
     public UnitSpawnButton buttonPrefab;
 
     [HideInInspector]
-    public BattleManager battleManager;
 
     public void RollNewUnits()
     {
         // Ensure DeckUIController points to the correct parent that holds the buttons.
         // This is important when DeckUIController is in another scene.
-        if (battleManager != null && battleManager.deckUI != null)
-            battleManager.deckUI.cardsParent = buttonsParent;
+        if (BattleManager.instance != null && BattleManager.instance.deckUI != null)
+            BattleManager.instance.deckUI.cardsParent = buttonsParent;
 
         // Clear old buttons.
         foreach (Transform child in buttonsParent)
@@ -45,7 +44,7 @@ public class UnitSelectionUI : MonoBehaviour
 
         // Make sure the deck panel is visible/hidden by DeckUIController logic,
         // not by leaving some placeholders enabled.
-        if (battleManager != null && battleManager.deckUI != null)
-            battleManager.deckUI.HideDeck();
+        if (BattleManager.instance != null && BattleManager.instance.deckUI != null)
+            BattleManager.instance.deckUI.HideDeck();
     }
 }

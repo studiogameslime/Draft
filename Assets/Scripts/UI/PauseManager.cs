@@ -53,9 +53,7 @@ public class PauseManager : MonoBehaviour
     public void GoHome()
     {
         Debug.Log("Go Home");
-        var battle = FindFirstObjectByType<BattleManager>();
-        if (battle != null)
-            battle.ExitBattle();
+            BattleManager.instance.ExitBattle();
         Time.timeScale = 1f;
         SceneManager.LoadScene("HomeScreen");
     }

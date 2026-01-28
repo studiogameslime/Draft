@@ -29,7 +29,6 @@ public class UnitSpawner : MonoBehaviour
     [SerializeField] private float progressLerpSpeed = 12f; // Smooth UI follow speed
 
     [Header("Runtime")]
-    private BattleManager battle = BattleManager.instance;
     private bool battleRunning = false;
     private int attackersActive = 0;
     private CharacterStats reserveStats = null;
@@ -81,7 +80,7 @@ public class UnitSpawner : MonoBehaviour
         if (unitDef == null || unitDef.prefab == null)
             yield break;
 
-        while (battleRunning && battle != null && battle.IsBattleRunning && !battle.IsGameOver)
+        while (battleRunning && BattleManager.instance != null && BattleManager.instance.IsBattleRunning && !BattleManager.instance.IsGameOver)
         {
             int cap = Mathf.Max(1, unitDef.baseCapacity);
 
@@ -121,7 +120,7 @@ public class UnitSpawner : MonoBehaviour
         float duration = Mathf.Max(0.01f, unitDef.spawnTime);
         float t = 0f;
 
-        while (t < duration && battleRunning && battle != null && battle.IsBattleRunning && !battle.IsGameOver)
+        while (t < duration && battleRunning && BattleManager.instance != null && BattleManager.instance.IsBattleRunning && !BattleManager.instance.IsGameOver)
         {
             t += Time.deltaTime;
             float a = Mathf.Clamp01(t / duration);
@@ -130,7 +129,7 @@ public class UnitSpawner : MonoBehaviour
         }
 
         // Battle ended mid-spawn
-        if (!battleRunning || battle == null || !battle.IsBattleRunning || battle.IsGameOver)
+        if (!battleRunning || BattleManager.instance == null || !BattleManager.instance.IsBattleRunning || BattleManager.instance.IsGameOver)
         {
             isSpawningReserve = false;
             yield break;
@@ -363,13 +362,13 @@ public class UnitSpawner : MonoBehaviour
         BattleBottomPanelController.Instance.ShowPlaceholderText();
 
         Destroy(gameObject);
-        battle.StartCoroutine(RefreshNextFrame());
+        BattleManager.instance.StartCoroutine(RefreshNextFrame());
 
     }
     private IEnumerator RefreshNextFrame()
     {
         yield return null;
-        battle.RefreshStartBattleButton();
+        BattleManager.instance.RefreshStartBattleButton();
     }
 
 

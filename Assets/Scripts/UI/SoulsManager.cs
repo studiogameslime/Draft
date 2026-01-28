@@ -5,7 +5,6 @@ public class SoulsManager : MonoBehaviour
 {
     public static SoulsManager instance;
 
-    public BattleManager _battleManager;
     public TMP_Text _currentSoulsText;
 
     [Tooltip("Current souls the player owns")]
@@ -19,11 +18,6 @@ public class SoulsManager : MonoBehaviour
             return;
         }
         instance = this;
-
-        if (_battleManager == null)
-        {
-            _battleManager = FindFirstObjectByType<BattleManager>();
-        }
     }
 
     public void UseSouls(int soulsUsed)
@@ -35,7 +29,7 @@ public class SoulsManager : MonoBehaviour
 
     public void AddRoundSouls()
     {
-        soulsLeft += _battleManager.levelDefinition.rounds[_battleManager.currentRoundIndex].souls;
+        soulsLeft += BattleManager.instance.levelDefinition.rounds[BattleManager.instance.currentRoundIndex].souls;
         UpdateSoulsCountText();
     }
 
