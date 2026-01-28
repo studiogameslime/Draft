@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class BattleManager : MonoBehaviour
 {
+    public static BattleManager instance;
     [Header("Grids")]
     public MonsterGrid myGrid;
 
@@ -51,6 +52,12 @@ public class BattleManager : MonoBehaviour
     // =======================
     // START
     // =======================
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     private void Start()
     {
         StartCoroutine(InitAfterUIReady());
@@ -177,7 +184,7 @@ public class BattleManager : MonoBehaviour
         foreach (var spawner in spawners)
         {
             if (spawner != null && spawner.isActiveAndEnabled)
-                spawner.StartSpawning(this);
+                spawner.StartSpawning();
         }
 
         RoundDefinition round = levelDefinition.rounds[currentRoundIndex];
@@ -289,8 +296,15 @@ public class BattleManager : MonoBehaviour
     public bool HasAnySpawnerPlaced()
     {
         var spawners = FindObjectsByType<UnitSpawner>(FindObjectsSortMode.None);
-        return spawners != null && spawners.Length > 0;
+
+        for (int i = 0; i < spawners.Length; i++)
+        {
+            if (spawners[i] != null)
+                return true;
+        }
+        return false;
     }
+
 
     public void RefreshStartBattleButton()
     {

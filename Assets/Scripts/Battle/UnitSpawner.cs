@@ -29,7 +29,7 @@ public class UnitSpawner : MonoBehaviour
     [SerializeField] private float progressLerpSpeed = 12f; // Smooth UI follow speed
 
     [Header("Runtime")]
-    private BattleManager battle;
+    private BattleManager battle = BattleManager.instance;
     private bool battleRunning = false;
     private int attackersActive = 0;
     private CharacterStats reserveStats = null;
@@ -62,11 +62,10 @@ public class UnitSpawner : MonoBehaviour
         dmgMul = Mathf.Max(0.01f, dmgMultiplier);
     }
 
-    public void StartSpawning(BattleManager bm)
+    public void StartSpawning()
     {
         if (battleRunning) return;
 
-        battle = bm;
         battleRunning = true;
         SetSpawnerAlpha(0.5f);
 
@@ -353,7 +352,6 @@ public class UnitSpawner : MonoBehaviour
         if (unitDef == null)
             return;
 
-        battle.RefreshStartBattleButton();
         int cost = Mathf.Max(0, unitDef.soulCost);
         int refund = Mathf.FloorToInt(cost * 0.5f);
 
@@ -364,6 +362,14 @@ public class UnitSpawner : MonoBehaviour
         BattleBottomPanelController.Instance.HideSellButton();
 
         Destroy(gameObject);
+        battle.StartCoroutine(RefreshNextFrame());
+
     }
+    private IEnumerator RefreshNextFrame()
+    {
+        yield return null;
+        battle.RefreshStartBattleButton();
+    }
+
 
 }
