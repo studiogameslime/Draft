@@ -131,6 +131,7 @@ public class BattleCellSelectionController : MonoBehaviour
         // Spend souls BEFORE spawning.
         if (!SoulsManager.instance.TrySpend(cost))
         {
+            ToastManager.Instance.Show("Not enough souls!");
             Debug.Log("[BattleCellSelectionController] Not enough souls. cost=" + cost);
             return;
         }
