@@ -183,7 +183,7 @@ public class BattleCellSelectionController : MonoBehaviour
             selectedCell.SetSelected(true);
     }
 
-    private void ClearSelection()
+    public void ClearSelection()
     {
         if (selectedCell != null)
             selectedCell.SetSelected(false);

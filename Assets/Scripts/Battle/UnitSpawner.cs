@@ -345,5 +345,25 @@ public class UnitSpawner : MonoBehaviour
                 upgradesUI.AddUpgradeIcon(state.pickedNodes[i]);
         }
     }
+    public void SellSpawner()
+    {
+        if (battleRunning)
+            return;
+
+        if (unitDef == null)
+            return;
+
+        battle.RefreshStartBattleButton();
+        int cost = Mathf.Max(0, unitDef.soulCost);
+        int refund = Mathf.FloorToInt(cost * 0.5f);
+
+        if (refund > 0 && SoulsManager.instance != null)
+            SoulsManager.instance.AddSouls(refund);
+
+        BattleCellSelectionController.Instance.ClearSelection();
+        BattleBottomPanelController.Instance.HideSellButton();
+
+        Destroy(gameObject);
+    }
 
 }

@@ -4,6 +4,9 @@ using UnityEngine.UI;
 
 public class BattleBottomPanelController : MonoBehaviour
 {
+
+    public static BattleBottomPanelController Instance;
+
     [Header("Single Container (already has HorizontalLayoutGroup)")]
     [SerializeField] private RectTransform contentParent;
 
@@ -13,8 +16,23 @@ public class BattleBottomPanelController : MonoBehaviour
     [Header("Upgrades")]
     [SerializeField] private BattleUpgradeOptionView upgradeOptionPrefab;
 
+    [Header("SellUnit")]
+    [SerializeField] private GameObject sellUnitButton;
+
+
+
+    private void Awake()
+    {
+        Instance = this;
+        if (sellUnitButton != null)
+            sellUnitButton.SetActive(false);
+    }
+
     public void Clear()
     {
+        if (sellUnitButton != null)
+            sellUnitButton.SetActive(false);
+
         if (contentParent == null) return;
 
         for (int i = contentParent.childCount - 1; i >= 0; i--)
@@ -62,6 +80,8 @@ public class BattleBottomPanelController : MonoBehaviour
         CreateUpgradeCard(spawner, unit, progress, rightNode);
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent);
+        ShowSellButton(spawner);
+
     }
 
     private void CreateUpgradeCard(UnitSpawner spawner, UnitDefinition unit, UnitProgressData progress, UnitUpgradeNodeDefinition node)
@@ -94,4 +114,16 @@ public class BattleBottomPanelController : MonoBehaviour
             }
         );
     }
+
+    public void ShowSellButton(UnitSpawner spawner)
+    {
+        sellUnitButton.SetActive(spawner != null);
+        sellUnitButton.GetComponent<UnitSellButton>().Init(spawner);
+    }
+    public void HideSellButton()
+    {
+        if (sellUnitButton != null)
+            sellUnitButton.SetActive(false);
+    }
+
 }

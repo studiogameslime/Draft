@@ -154,13 +154,13 @@ public class BattleManager : MonoBehaviour
     // =======================
     public void StartRound()
     {
-        Debug.Log("StartRound");
 
         if (!HasAnySpawnerPlaced())
         {
             RefreshStartBattleButton();
             return;
         }
+        Debug.Log("StartRound");
 
         if (EnemyPreviewBubblesController.Instance != null)
             EnemyPreviewBubblesController.Instance.ClearBubbles();
