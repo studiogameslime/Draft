@@ -11,6 +11,9 @@ public static StyleManager instance;
     public Sprite commonChestSprite;
     public Sprite rareChestSprite;
     public Sprite PartWeaponSprite;
+    public Sprite commonUnitBackground;
+    public Sprite rareUnitBackground;
+    public Sprite epicUnitBackground;
 
     private void Awake()
     {

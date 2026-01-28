@@ -50,3 +50,6 @@ MonoBehaviour:
   commonChestSprite: {fileID: 21300000, guid: c967415b7afa3ea4e8b629dc9762ad9f, type: 3}
   rareChestSprite: {fileID: 21300000, guid: 8dac2d66a1dd3524eae6c146e562094c, type: 3}
   PartWeaponSprite: {fileID: -6199720543617963891, guid: 0296eea5dc7f08d458aa458cff75b476, type: 3}
+  commonUnitBackground: {fileID: 3310002292416464744, guid: 67e4f162931afb44892a789573969200, type: 3}
+  rareUnitBackground: {fileID: -6619111317931664985, guid: b205c1b9564ea0340924eda99ad9d56e, type: 3}
+  epicUnitBackground: {fileID: -4355272409397247203, guid: 08fca5ad6d7cecf4aa792388ca256e39, type: 3}
