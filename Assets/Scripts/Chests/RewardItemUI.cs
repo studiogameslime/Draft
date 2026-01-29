@@ -96,9 +96,9 @@ public class RewardItemUI : MonoBehaviour
             {
                 bg.color = rarity switch
                 {
-                    PartRarity.Common => greenColor,
-                    PartRarity.Rare => blueColor,
-                    PartRarity.Epic => purpleColor,
+                    PartRarity.Common => StyleManager.instance.commonColor,
+                    PartRarity.Rare => StyleManager.instance.rareColor,
+                    PartRarity.Epic => StyleManager.instance.epicColor,
                     _ => Color.white
                 };
             }

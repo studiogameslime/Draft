@@ -53,3 +53,6 @@ MonoBehaviour:
   commonUnitBackground: {fileID: 3310002292416464744, guid: 67e4f162931afb44892a789573969200, type: 3}
   rareUnitBackground: {fileID: -6619111317931664985, guid: b205c1b9564ea0340924eda99ad9d56e, type: 3}
   epicUnitBackground: {fileID: -4355272409397247203, guid: 08fca5ad6d7cecf4aa792388ca256e39, type: 3}
+  commonColor: {r: 0.29803923, g: 1, b: 0.29803923, a: 0}
+  rareColor: {r: 0.4, g: 0.69803923, b: 1, a: 1}
+  epicColor: {r: 0.69803923, g: 0.4, b: 1, a: 1}

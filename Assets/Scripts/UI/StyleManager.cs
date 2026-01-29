@@ -4,7 +4,7 @@ public class StyleManager : MonoBehaviour
 {
 public static StyleManager instance;
 
-
+    [Header("Images")]
     public Sprite goldSprite;
     public Sprite gemSprite;
     public Sprite newUnitSprite;
@@ -14,6 +14,11 @@ public static StyleManager instance;
     public Sprite commonUnitBackground;
     public Sprite rareUnitBackground;
     public Sprite epicUnitBackground;
+
+    [Header("Colors")]
+    public Color commonColor;
+    public Color rareColor;
+    public Color epicColor;
 
     private void Awake()
     {

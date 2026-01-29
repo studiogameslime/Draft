@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.Android.Gradle.Manifest;
 
 public class UnitPartSlotUI : MonoBehaviour
 {
@@ -55,7 +56,18 @@ public class UnitPartSlotUI : MonoBehaviour
             SetInstanceAlpha(_currentInstance, a);
         }
 
-        if (background) background.color = owned ? ownedColor : missingColor;
+        if (background)
+        {
+            background.color = part.rarity switch
+            {
+                PartRarity.Common => StyleManager.instance.commonColor,
+                PartRarity.Rare => StyleManager.instance.rareColor,
+                PartRarity.Epic => StyleManager.instance.epicColor,
+                _ => Color.white
+            };
+        }
+            //background.color = owned ? ownedColor : missingColor;
+        
         if (lockedOverlay) lockedOverlay.SetActive(false); // no lock anymore
     }
 
