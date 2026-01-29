@@ -20,6 +20,7 @@ MonoBehaviour:
   icon: {fileID: -5455630811309129204, guid: ea70bf2e746c9fd4ba1f5b7704074b7c, type: 3}
   prefab: {fileID: 7490814552398352428, guid: 180fbf18808afee4cbfa6f5112186611, type: 3}
   iconScale: 0.4
+  unitTeam: 0
   unitClass: 1
   targetPriorityClass: 3
   soulCost: 5
@@ -29,6 +30,18 @@ MonoBehaviour:
   moveSpeed: 3.5
   attackRange: 1
   attackCooldown: 0.6
+  spawnTime: 5
   animatorController: {fileID: 9100000, guid: 0503d62f462d8b34ba33d498b842c56f, type: 2}
   maxTier: 3
-  partSlots: []
+  partSlots:
+  - slot: 0
+  - slot: 1
+  - slot: 2
+  - slot: 3
+  - slot: 4
+  - slot: 5
+  - slot: 6
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 0}
+  unlockNode: {fileID: 0}
+  nodes: []

@@ -26,12 +26,6 @@ public class UnitPartSlotUI : MonoBehaviour
 
     private GameObject _currentInstance;
 
-    // Legacy method name - now means "show missing (transparent)"
-    public void SetLocked()
-    {
-        SetMissingVisual();
-    }
-
     public void SetOwned(PartDefinition part)
     {
         SetPartInternal(part, owned: true);
@@ -55,9 +49,9 @@ public class UnitPartSlotUI : MonoBehaviour
             float a = owned ? 1f : missingAlpha;
             SetInstanceAlpha(_currentInstance, a);
         }
-
         if (background)
         {
+
             background.color = part.rarity switch
             {
                 PartRarity.Common => StyleManager.instance.commonColor,
