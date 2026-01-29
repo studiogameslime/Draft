@@ -17,6 +17,7 @@ MonoBehaviour:
   lane: 0
   title: Unlock
   description: Allows deploying the warrior in battle.
-  icon: {fileID: 21300000, guid: b88a70cfea0d54d4caf85dec0a77d3f8, type: 3}
+  icon: {fileID: 3667681588813468039, guid: e0742868194a3b440902e290c0dd4829, type: 3}
   skillPointCost: 1
+  soulsCost: 0
   prerequisites: []

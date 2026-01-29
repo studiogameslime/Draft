@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
-  m_Name: upgrade_node_archer_unlock
+  m_Name: upgrade_node_lightning_mage_unlock
   m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
-  nodeId: upgrade_node_archer_unlock
+  nodeId: upgrade_node_lightning_mage_unlock
   tier: 0
   lane: 0
-  title: Archer Training
-  description: Unlocks the Archer unit, allowing it to be deployed and upgraded during
-    battle.
-  icon: {fileID: 3667681588813468039, guid: f623305d7be99a140922b288af5e5e56, type: 3}
+  title: Lightning Mage Training
+  description: Unlocks the lightning mage unit, allowing it to be deployed and upgraded
+    during battle.
+  icon: {fileID: 3667681588813468039, guid: 09ea848120780a941ac6565f9c6911a0, type: 3}
   skillPointCost: 1
   soulsCost: 0
   prerequisites: []
