@@ -70,10 +70,12 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         this.level = Mathf.Max(1, level);
 
         // Apply base stats scaled by level
-        maxHealth = CalcScaledStat(def.maxHealth, 0.05f, this.level);
+
+        maxHealth = CalcFinalIntStat(def.maxHealth, MasteryStat.GlobalHpPercent);
         currentHealth = maxHealth;
-        damage = CalcScaledStat(def.damage, 0.05f, this.level);
-        moveSpeed = def.moveSpeed;
+
+        damage = CalcFinalIntStat(def.damage, MasteryStat.GlobalDamagePercent);
+        moveSpeed = CalcFinalFloatStat(def.moveSpeed, MasteryStat.MoveSpeedPercent);
         attackRange = def.attackRange;
         attackCooldown = def.attackCooldown;
 
@@ -96,18 +98,35 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     // ====================================================
     // STAT CALC
     // ====================================================
-    /// <summary>
-    /// Returns baseValue * (1.05 ^ (level-1))
-    /// Level 1 = 100%
-    /// Level 2 = 105%
-    /// Level 3 = 110.25%
-    /// </summary>
-    private int CalcScaledStat(int baseValue, float perLevelPercent, int level)
+
+    private int CalcFinalIntStat(int baseValue, MasteryStat percentStat, MasteryStat? flatStat = null)
     {
-        if (level <= 1) return baseValue;
-        float factor = Mathf.Pow(1f + perLevelPercent, level - 1);
-        return Mathf.RoundToInt(baseValue * factor);
+        float v = baseValue;
+
+        // 1) Flat first
+        if (flatStat.HasValue && MasteryBonusManager.Instance != null)
+            v += MasteryBonusManager.Instance.GetFlat(flatStat.Value);
+
+        // 2) Percent after (stored as fraction: 0.08 = 8%)
+        float p = 0f;
+        if (MasteryBonusManager.Instance != null)
+            p = MasteryBonusManager.Instance.GetPercent(percentStat);
+
+        v *= (1f + p);
+
+        return Mathf.RoundToInt(v);
     }
+
+    private float CalcFinalFloatStat(float baseValue, MasteryStat percentStat)
+    {
+        float p = MasteryBonusManager.Instance != null
+            ? MasteryBonusManager.Instance.GetPercent(percentStat)
+            : 0f;
+
+        return baseValue * (1f + p);
+    }
+
+
 
     // ====================================================
     // HP / DAMAGE
@@ -216,20 +235,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         if (tank != null) tank.enabled = false;
     }
 
-    // ====================================================
-    // LEVEL UP (OPTIONAL)
-    // ====================================================
-    public void SetLevel(int newLevel)
-    {
-        level = Mathf.Max(1, newLevel);
-        maxHealth = CalcScaledStat(definition.maxHealth, 0.05f, level);
-        damage = CalcScaledStat(definition.damage, 0.05f, level);
-
-        // Keep current health within the new max HP
-        currentHealth = Mathf.Min(currentHealth, maxHealth);
-    }
-
-
+   
     public void Winning()
     {
         animator.SetTrigger("winning");

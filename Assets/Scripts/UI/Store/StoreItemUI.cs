@@ -58,7 +58,7 @@ public class StoreItemUI : MonoBehaviour
         definition = def;
 
         titleText.text = def.title;
-        amountText.text = $"x{def.goldAmount.ToString()}";
+        amountText.text = $"x{def.goldAmount}";
         iconImage.sprite = def.icon;
         NormalizeIconSize(iconImage);
 
@@ -94,6 +94,7 @@ public class StoreItemUI : MonoBehaviour
         }
 
         int finalPrice = def.GetFinalPrice();
+
         costIconImage.sprite = def.costType == CostType.Gems ? gemSprite : goldSprite;
         if (def.discountPercent > 0)
         {

@@ -91,6 +91,7 @@ public class GameData : MonoBehaviour
     {
         // Always save local.
         JsonSaveSystem.Save(Save);
+        MasteryBonusManager.Instance?.RebuildCache();
 
 #if UNITY_ANDROID && !UNITY_EDITOR
         // Block cloud upload until initial cloud/local decision is done.

@@ -3,7 +3,6 @@ using UnityEngine;
 public enum MasteryRarity { Common, Rare, Epic }
 public enum MasteryValueKind { Percent, Flat }
 
-// תתחיל קטן; תמיד אפשר להוסיף עוד סטאטים
 public enum MasteryStat
 {
     GlobalDamagePercent,
