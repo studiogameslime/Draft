@@ -35,7 +35,6 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
 
 
-
     // --- Other info ---
     [HideInInspector] public Team team;
     [HideInInspector] public MonsterType monsterType;
@@ -200,7 +199,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
         // Set the text
         var tmp = go.GetComponent<TextMeshPro>();
-        tmp.text = isCrit ? "!" + amount : amount.ToString();
+        tmp.text = isCrit ? "! " + amount : amount.ToString();
 
         // Crit color
         if (isCrit)
