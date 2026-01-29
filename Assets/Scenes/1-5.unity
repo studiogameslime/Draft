@@ -1404,7 +1404,7 @@ Transform:
   m_GameObject: {fileID: 55703410}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -23773,7 +23773,7 @@ Transform:
   m_GameObject: {fileID: 478504026}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -72190,7 +72190,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 367488de7a585494495ce6c3b8ff9887, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleManager
-  myGrid: {fileID: 0}
   selectionUI: {fileID: 0}
   levelDefinition: {fileID: 11400000, guid: 13fd2c5a4e4690c408e175d4af8c8866, type: 2}
   playerUnitsLevel: 1

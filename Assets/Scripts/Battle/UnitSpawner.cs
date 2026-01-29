@@ -145,8 +145,7 @@ public class UnitSpawner : MonoBehaviour
         SetProgressTarget(1f);
 
         // Now create the reserve unit at its normal scale
-        GameObject go = Instantiate(unitDef.prefab, transform.position, Quaternion.identity, unitsContainer);
-
+        GameObject go = Instantiate(unitDef.prefab, transform.position, Quaternion.identity);
         var stats = go.GetComponent<CharacterStats>();
         if (stats == null)
         {
@@ -160,6 +159,7 @@ public class UnitSpawner : MonoBehaviour
         stats.Init(team, unitDef, unitLevel);
         ApplyUpgradesToSpawnedUnit(go, stats);
         stats.SetInitialPosition();
+        go.transform.SetParent(unitsContainer, true);
 
         // Apply cell bonus
         Debug.Log($"stats.maxHealth = {stats.maxHealth}, hpMul = {hpMul}");
@@ -172,6 +172,8 @@ public class UnitSpawner : MonoBehaviour
 
         var ai = go.GetComponent<UnitAI>();
         if (ai != null) ai.enabled = false;
+
+        SetReserveCollision(go, false);
 
         // Keep reserve from drifting while waiting
         var rb = go.GetComponent<Rigidbody2D>();
@@ -189,7 +191,7 @@ public class UnitSpawner : MonoBehaviour
 
         // Make the reserve targetable now
         reserveStats.isUntargetable = false;
-
+        SetReserveCollision(reserveStats.gameObject, true);
         // Ensure this released unit will notify us when it dies (capacity tracking)
         var link = reserveStats.GetComponent<SpawnedUnitOwnerLink>();
         if (link == null)
@@ -377,5 +379,19 @@ public class UnitSpawner : MonoBehaviour
         BattleManager.instance.RefreshStartBattleButton();
     }
 
+    private void SetReserveCollision(GameObject go, bool enabled)
+    {
+        if (go == null) return;
+
+        // disable/enable ALL colliders on the unit (including children)
+        var cols = go.GetComponentsInChildren<Collider2D>(true);
+        for (int i = 0; i < cols.Length; i++)
+            cols[i].enabled = enabled;
+
+        // optional but recommended: also stop physics while waiting
+        var rb = go.GetComponent<Rigidbody2D>();
+        if (rb != null)
+            rb.simulated = enabled;
+    }
 
 }

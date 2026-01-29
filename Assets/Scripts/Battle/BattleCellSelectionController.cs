@@ -138,7 +138,7 @@ public class BattleCellSelectionController : MonoBehaviour
             return;
         }
 
-        UnitSpawner spawner = Instantiate(spawnerPrefab, selectedCell.transform.position, Quaternion.identity);
+        UnitSpawner spawner = Instantiate(spawnerPrefab, selectedCell.transform.position, Quaternion.identity, selectedCell.transform);
 
         int level = 1;
         if (BattleManager.instance != null)
