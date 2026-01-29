@@ -43,5 +43,6 @@ MonoBehaviour:
   - slot: 6
   baseCapacity: 1
   headPrefabForBattlePreview: {fileID: 0}
-  unlockNode: {fileID: 0}
-  nodes: []
+  unlockNode: {fileID: 11400000, guid: 7e3f956c8b609d844a79bd7c350d06d7, type: 2}
+  nodes:
+  - {fileID: 11400000, guid: 7e3f956c8b609d844a79bd7c350d06d7, type: 2}

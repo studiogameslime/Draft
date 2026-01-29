@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
   m_Name: upgrade_node_fire_mage_unlock
   m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
-  nodeId: upgrade_node_ninja_unlock
+  nodeId: upgrade_node_fire_mage_unlock
   tier: 0
   lane: 0
-  title: Ninja Training
-  description: Unlocks the ninja unit, allowing it to be deployed and upgraded during
-    battle.
-  icon: {fileID: 3667681588813468039, guid: 52385a407d4947d41b7c6910ce75220c, type: 3}
+  title: Fire Mage Training
+  description: Unlocks the fire mage unit, allowing it to be deployed and upgraded
+    during battle.
+  icon: {fileID: 3667681588813468039, guid: adf3a03aa0f4f56428a2d12977188ee5, type: 3}
   skillPointCost: 1
   soulsCost: 0
   prerequisites: []

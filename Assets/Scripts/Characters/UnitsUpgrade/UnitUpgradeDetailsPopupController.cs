@@ -128,7 +128,7 @@ public class UnitUpgradeDetailsPopupController : MonoBehaviour
         if (upgradeButtonText != null)
         {
             if (unlocked) upgradeButtonText.text = "Unlocked";
-            else upgradeButtonText.text = "Upgrade";
+            else upgradeButtonText.text = "Unlock";
         }
     }
 
