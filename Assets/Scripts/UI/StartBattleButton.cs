@@ -24,6 +24,7 @@ public class StartBattleButton : MonoBehaviour
         if (BattleManager.instance == null)
             return;
         // Start the battle from placed units
+        BattleCellSelectionController.Instance.ClearSelection();
         BattleManager.instance.StartRound();
 
         // Optionally disable the button so it can't be pressed twice

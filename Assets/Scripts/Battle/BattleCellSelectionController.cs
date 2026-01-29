@@ -67,6 +67,8 @@ public class BattleCellSelectionController : MonoBehaviour
     /// </summary>
     public void SelectCell(DropAreaCell cell)
     {
+        if (BattleManager.instance.IsBattleRunning) return;
+
         if (cell == null)
             return;
 
