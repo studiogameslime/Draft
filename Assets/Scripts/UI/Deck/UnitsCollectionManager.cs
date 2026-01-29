@@ -30,6 +30,8 @@ public class UnitsCollectionManager : MonoBehaviour
 
     private void BuildCollection()
     {
+        //If there is a card that is expanded (the grid is disabled) collapse it before rerender the collection
+        UnitsGridController.Instance.CollapseCurrent();
         _cardsById.Clear();
 
         foreach (Transform child in collectionParent)

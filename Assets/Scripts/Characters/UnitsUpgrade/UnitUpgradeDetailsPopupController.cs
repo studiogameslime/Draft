@@ -140,18 +140,18 @@ public class UnitUpgradeDetailsPopupController : MonoBehaviour
         bool ok = UnitUpgradeProgressService.TryUnlock(_unit, _progress, _node);
         if (!ok)
         {
-            // עדיין נרענן כדי לוודא שהכפתור/טקסט תואמים למצב
             RefreshUI();
             return;
         }
 
-        // refresh tree UI + this popup
         if (_treeUI != null)
-            _treeUI.Rebuild(); // או _treeUI.RefreshStatesOnly() אם יש לך
+        {
+            _treeUI.Rebuild();
+            FindAnyObjectByType<UnitsCollectionManager>()?.RebuildCollection();
+        }
 
         RefreshUI();
 
-        // אופציונלי: לסגור אחרי שדרוג
-        // Close();
+        
     }
 }

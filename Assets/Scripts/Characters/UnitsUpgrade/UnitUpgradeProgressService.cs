@@ -72,7 +72,14 @@ public static class UnitUpgradeProgressService
         if (!up.unlockedUpgradeNodeIds.Contains(node.nodeId))
             up.unlockedUpgradeNodeIds.Add(node.nodeId);
 
+        if(unit.unlockNode.nodeId == node.nodeId)
+        {
+            up.unlockState = UnitUnlockState.Unlocked;
+        }
+
         GameData.Instance.SaveNow();
+
+
         return true;
     }
 }
