@@ -13,7 +13,7 @@ public class RoundUIManager : MonoBehaviour
 
     public void ChangeRoundText(int currentRound, int maxRound)
     {
-        roundText.text = $"Round: {currentRound}/{maxRound}";
+        roundText.text = $"{currentRound}/{maxRound}";
     }
 
     

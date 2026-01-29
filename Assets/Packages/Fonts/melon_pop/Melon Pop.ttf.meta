@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 776029626b2e03949899feac93183871
+guid: 22053558ce989204bb39a111d9f10214
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Fontzilla Comic
+  - Melon Pop
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
