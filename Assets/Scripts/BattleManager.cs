@@ -7,8 +7,6 @@ using UnityEngine.SceneManagement;
 public class BattleManager : MonoBehaviour
 {
     public static BattleManager instance;
-    [Header("Grids")]
-    public MonsterGrid myGrid;
 
     [Header("Selection UI")]
     public UnitSelectionUI selectionUI;

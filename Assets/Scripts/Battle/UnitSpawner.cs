@@ -40,6 +40,12 @@ public class UnitSpawner : MonoBehaviour
     // UI smoothing runtime
     private float progressTarget = 0f;
     private Coroutine progressRoutine;
+    private Transform unitsContainer;
+
+    private void Awake()
+    {
+        unitsContainer = GameObject.FindGameObjectWithTag("UnitsContainer").transform;
+    }
 
     public void Configure(UnitDefinition def, Team t, int level)
     {
@@ -139,7 +145,7 @@ public class UnitSpawner : MonoBehaviour
         SetProgressTarget(1f);
 
         // Now create the reserve unit at its normal scale
-        GameObject go = Instantiate(unitDef.prefab, transform.position, Quaternion.identity);
+        GameObject go = Instantiate(unitDef.prefab, transform.position, Quaternion.identity, unitsContainer);
 
         var stats = go.GetComponent<CharacterStats>();
         if (stats == null)

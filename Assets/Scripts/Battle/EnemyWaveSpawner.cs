@@ -5,6 +5,7 @@ using UnityEngine;
 public class EnemyWaveSpawner : MonoBehaviour
 {
     private List<EnemySpawner> spawners = new();
+    public Transform enemiesContainer;
 
     public int RemainingToSpawn { get; private set; }
     public bool FinishedSpawning => RemainingToSpawn <= 0;
@@ -94,6 +95,6 @@ public class EnemyWaveSpawner : MonoBehaviour
         }
 
         var spawner = spawners[Random.Range(0, spawners.Count)];
-        spawner.Spawn(def, level);
+        spawner.Spawn(def, level, enemiesContainer);
     }
 }

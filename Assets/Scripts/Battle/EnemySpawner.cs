@@ -55,10 +55,10 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    public GameObject Spawn(UnitDefinition def, int level)
+    public GameObject Spawn(UnitDefinition def, int level, Transform enemiesContainer)
     {
         Vector3 pos = GetSpawnPosition();
-        GameObject go = Instantiate(def.prefab, pos, Quaternion.identity);
+        GameObject go = Instantiate(def.prefab, pos, Quaternion.identity, enemiesContainer);
 
         // CHANGED: Spawn transparent, then fade in.
         SetAlpha(go, 0f);

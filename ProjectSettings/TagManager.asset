@@ -7,6 +7,7 @@ TagManager:
   - FallenWeapon
   - Projectile
   - EnemySpawner
+  - UnitsContainer
   layers:
   - Default
   - TransparentFX
