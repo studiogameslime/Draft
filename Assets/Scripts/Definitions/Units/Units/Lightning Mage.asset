@@ -15,10 +15,11 @@ MonoBehaviour:
   id: unit_lightning_mage
   displayName: Lightning Mage
   description: A calm mage whose lightning strikes faster than anyone can react.
-  rarity: 3
+  rarity: 2
   icon: {fileID: -5455630811309129204, guid: ee9c8600264c12f4c92cd4c1185c54a5, type: 3}
   prefab: {fileID: 501027721989515594, guid: 8cec8200b45e28b48bcd611ea8a31893, type: 3}
   iconScale: 0.4
+  unitTeam: 0
   unitClass: 4
   targetPriorityClass: 1
   soulCost: 4
@@ -28,6 +29,18 @@ MonoBehaviour:
   moveSpeed: 1
   attackRange: 7
   attackCooldown: 1.6
+  spawnTime: 5
   animatorController: {fileID: 9100000, guid: 6e387bc49275cb84798c2467ae219008, type: 2}
   maxTier: 3
-  partSlots: []
+  partSlots:
+  - slot: 0
+  - slot: 1
+  - slot: 2
+  - slot: 3
+  - slot: 4
+  - slot: 5
+  - slot: 6
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 0}
+  unlockNode: {fileID: 0}
+  nodes: []
