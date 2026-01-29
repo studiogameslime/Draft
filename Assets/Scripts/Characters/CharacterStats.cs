@@ -20,6 +20,22 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     public float attackRange;
     public float attackCooldown;
 
+    [Header("Critical Hit")]
+    [Range(0f, 1f)]
+    public float critChance = 0.2f;   // 20%
+    public float critMultiplier = 2f; // x2 damage
+    public Color critColor = new Color(1f, 0.4f, 0.4f);
+
+    [Header("Floating Damage Layout")]
+    public float floatingXRandom = 0.15f;
+    private int floatingDamageOrder = 100;
+
+
+
+
+
+
+
     // --- Other info ---
     [HideInInspector] public Team team;
     [HideInInspector] public MonsterType monsterType;
@@ -133,22 +149,26 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     // ====================================================
     public void TakeDamage(int amount, CharacterStats attacker)
     {
-        if (isDead) return;
-        if (isUntargetable) return;
+        if (isDead || isUntargetable) return;
+
+        bool isCrit = Random.value <= attacker.critChance;
+
+        if (isCrit)
+            amount = Mathf.RoundToInt(amount * attacker.critMultiplier);
 
         if (attacker.definition.unitTeam == Team.MyTeam)
         {
             MissionsManager.Instance.ReportAction(MissionAction.DmgToEnemyUnits);
             MissionsManager.Instance.ReportAction(MissionAction.DmgToEnemyUnits, amount);
         }
+
         lastAttacker = attacker;
 
-
         GetComponent<HitFlash>()?.StartCoroutine("FlashWhite");
+
         currentHealth -= amount;
 
-
-        showFloatingDamage();
+        showFloatingDamage(amount, isCrit);
 
         if (currentHealth <= 0)
         {
@@ -160,15 +180,52 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
             Die();
         }
     }
+
     //Floating damage text
-    void showFloatingDamage()
+    void showFloatingDamage(int amount, bool isCrit)
     {
-        if (floatingDamagePrefab)
+        if (!floatingDamagePrefab) return;
+
+        // Random horizontal offset to avoid overlap
+        Vector3 offset = Vector3.zero;
+        offset.x = Random.Range(-floatingXRandom, floatingXRandom);
+
+        // Instantiate the prefab at the enemy position + offset
+        var go = Instantiate(
+            floatingDamagePrefab,
+            transform.position + offset,
+            Quaternion.identity,
+            transform
+        );
+
+        // Set the text
+        var tmp = go.GetComponent<TextMeshPro>();
+        tmp.text = isCrit ? "!" + amount : amount.ToString();
+
+        // Crit color
+        if (isCrit)
+            tmp.color = critColor;
+
+        // Make sure the whole prefab renders on top by using Sorting Group
+        var sg = go.GetComponent<UnityEngine.Rendering.SortingGroup>();
+        if (sg != null)
         {
-            var go = Instantiate(floatingDamagePrefab, transform.position, Quaternion.identity, transform);
-            go.GetComponent<TextMeshPro>().text = currentHealth.ToString();
+            sg.sortingOrder = floatingDamageOrder++;
+
+            // Optional safety reset to avoid huge numbers
+            if (floatingDamageOrder > 1000)
+                floatingDamageOrder = 100;
         }
+
+        // Destroy after some time
+        Destroy(go, 1.2f);
     }
+
+
+
+
+
+
 
 
     // ====================================================
