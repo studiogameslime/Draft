@@ -408,6 +408,36 @@ public class UnitSpawner : MonoBehaviour
         if (rb != null)
             rb.simulated = enabled;
     }
-    
+    public bool TryBuyUpgrade(UnitUpgradeNodeDefinition node)
+    {
+        if (node == null) return false;
+
+        if (battleRunning)
+            return false;
+
+        int cost = Mathf.Max(0, node.soulsCost);
+
+        if (cost > 0)
+        {
+            if (SoulsManager.instance == null)
+                return false;
+
+            if (!SoulsManager.instance.TrySpend(cost))
+            {
+                ToastManager.Instance.Show("Not enough souls!");
+                Debug.Log("Not enough souls");
+                return false;
+            }
+        }
+
+        var state = GetComponent<UnitSpawnerBattleUpgradeState>();
+        if (state == null)
+            state = gameObject.AddComponent<UnitSpawnerBattleUpgradeState>();
+
+        state.Pick(node);
+
+        return true;
+    }
+
 
 }

@@ -20,9 +20,8 @@ MonoBehaviour:
     survive longer in combat."
   icon: {fileID: 21300000, guid: 54f8a6953b722ec4a9660c4b204069ad, type: 3}
   skillPointCost: 1
-  soulsCost: 0
+  soulsCost: 3
   prerequisites:
   - {fileID: 11400000, guid: 48de0110926b81d449b463f400dde0c6, type: 2}
   skillEffect: {fileID: 5758634658266461858, guid: f57c397567d47cd46b75fd27eb076f34, type: 3}
-  value01: 0.1
-  valueInt: 0
+  skillPercentValue: 0.1

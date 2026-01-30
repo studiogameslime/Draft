@@ -106,10 +106,11 @@ public class BattleBottomPanelController : MonoBehaviour
             {
                 if (!metaUnlocked || node == null || spawner == null) return;
 
-                var state = spawner.GetComponent<UnitSpawnerBattleUpgradeState>();
-                if (state == null) state = spawner.gameObject.AddComponent<UnitSpawnerBattleUpgradeState>();
+                bool ok = spawner.TryBuyUpgrade(node);
+                if (!ok) return;
 
-                state.Pick(node);
+                var state = spawner.GetComponent<UnitSpawnerBattleUpgradeState>();
+
 
                 var upgradesUI = spawner.GetComponentInChildren<BattleUpgradesManager>(true);
                 if (upgradesUI != null)
