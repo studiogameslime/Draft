@@ -30,9 +30,10 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     public float floatingXRandom = 0.15f;
     private int floatingDamageOrder = 100;
 
-
-
-
+    // --- Skill events ---
+    public System.Action<CharacterStats, int> OnDealDamage;
+    public System.Action<CharacterStats, int> OnTakeDamage;
+    public System.Action<CharacterStats> OnKillEnemy;
 
 
     // --- Other info ---
@@ -167,6 +168,9 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
         currentHealth -= amount;
 
+        OnTakeDamage?.Invoke(attacker, amount);
+        attacker?.OnDealDamage?.Invoke(this, amount);
+
         showFloatingDamage(amount, isCrit);
 
         if (currentHealth <= 0)
@@ -176,6 +180,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
                 MissionsManager.Instance.ReportAction(MissionAction.KillEnemyUnits, 1);
                 MissionsManager.Instance.ReportAction(MissionAction.KillSpecificEnemyUnit, 1, definition);
             }
+            attacker?.OnKillEnemy?.Invoke(this);
             Die();
         }
     }

@@ -19,5 +19,7 @@ MonoBehaviour:
   description: Every strike feeds the warrior, healing 5% of health on hit
   icon: {fileID: 21300000, guid: 1716c6dd7bb39754bba2a8376f921f1a, type: 3}
   skillPointCost: 1
+  soulsCost: 0
   prerequisites:
   - {fileID: 11400000, guid: 176ff0db089f7714bb2032c640997040, type: 2}
+  skillEffectId: lifesteal

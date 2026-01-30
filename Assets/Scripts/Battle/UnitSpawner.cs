@@ -350,6 +350,12 @@ public class UnitSpawner : MonoBehaviour
             for (int i = 0; i < state.pickedNodes.Count; i++)
                 upgradesUI.AddUpgradeIcon(state.pickedNodes[i]);
         }
+
+        foreach (var skillId in state.activeSkillEffectIds)
+        {
+            AddSkillComponentById(go, stats, skillId);
+        }
+
     }
     public void SellSpawner()
     {
@@ -392,6 +398,26 @@ public class UnitSpawner : MonoBehaviour
         var rb = go.GetComponent<Rigidbody2D>();
         if (rb != null)
             rb.simulated = enabled;
+    }
+    private void AddSkillComponentById(GameObject go, CharacterStats stats, string skillId)
+    {
+        if (string.IsNullOrEmpty(skillId)) return;
+
+        UnitSkillBehaviour skill = null;
+
+        switch (skillId)
+        {
+            case "lifesteal":
+                skill = go.AddComponent<Skill_LifeSteal>();
+                break;
+
+                // future skills:
+                // case "burn":
+                // case "shield_on_kill":
+        }
+
+        if (skill != null)
+            skill.Init(stats);
     }
 
 }

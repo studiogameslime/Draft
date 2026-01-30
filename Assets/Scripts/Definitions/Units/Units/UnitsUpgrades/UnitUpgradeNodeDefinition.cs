@@ -24,5 +24,7 @@ public class UnitUpgradeNodeDefinition : ScriptableObject
     [Header("Prerequisites")]
     public List<UnitUpgradeNodeDefinition> prerequisites = new(); // e.g. A2 prereq = A1
 
+    public string skillEffectId;
+
     public bool IsValid() => !string.IsNullOrEmpty(nodeId);
 }
