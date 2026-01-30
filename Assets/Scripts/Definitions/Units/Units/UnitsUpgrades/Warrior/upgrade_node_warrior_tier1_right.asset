@@ -22,4 +22,6 @@ MonoBehaviour:
   soulsCost: 0
   prerequisites:
   - {fileID: 11400000, guid: 176ff0db089f7714bb2032c640997040, type: 2}
-  skillEffectId: lifesteal
+  skillEffect: {fileID: 1858537340302211894, guid: 25f301ddeeb60bd4eb521daadc6411aa, type: 3}
+  skillPercentValue: 0.05
+  valueInt: 0

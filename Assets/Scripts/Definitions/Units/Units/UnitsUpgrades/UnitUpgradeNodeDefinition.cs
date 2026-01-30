@@ -24,7 +24,12 @@ public class UnitUpgradeNodeDefinition : ScriptableObject
     [Header("Prerequisites")]
     public List<UnitUpgradeNodeDefinition> prerequisites = new(); // e.g. A2 prereq = A1
 
-    public string skillEffectId;
+    // UnitUpgradeNodeDefinition
+    [Header("Skill Effect")]
+    public UnitSkillBehaviour skillEffect;  
+    [Range(0f, 1f)] public float skillPercentValue;    
+    //public int valueInt;                    
+
 
     public bool IsValid() => !string.IsNullOrEmpty(nodeId);
 }
