@@ -408,7 +408,7 @@ public class UnitSpawner : MonoBehaviour
         switch (skillId)
         {
             case "lifesteal":
-                skill = go.AddComponent<Skill_LifeSteal>();
+                skill = go.AddComponent<SkillLifeSteal>();
                 break;
 
                 // future skills:

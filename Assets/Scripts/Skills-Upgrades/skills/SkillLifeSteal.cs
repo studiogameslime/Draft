@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Skill_LifeSteal : UnitSkillBehaviour
+public class SkillLifeSteal : UnitSkillBehaviour
 {
     [Range(0f, 1f)]
     public float lifeStealPercent = 0.2f; // 20%
