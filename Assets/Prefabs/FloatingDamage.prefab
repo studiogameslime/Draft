@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 720836629474869786}
   - component: {fileID: 2544679959001261543}
   - component: {fileID: 3794100073784410356}
-  - component: {fileID: 8634097410194006520}
   - component: {fileID: 1931183539404600891}
   - component: {fileID: -8702403724528751423}
   m_Layer: 8
@@ -197,14 +196,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FloatingDamage
   floatingDamageDestroytime: 1
   offset: {x: 0, y: 5, z: 0}
---- !u!222 &8634097410194006520
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5435662357922782254}
-  m_CullTransparentMesh: 1
 --- !u!95 &1931183539404600891
 Animator:
   serializedVersion: 7
