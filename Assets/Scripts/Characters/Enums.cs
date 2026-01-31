@@ -102,6 +102,10 @@ public interface IOnHitEffect
     void OnHit(CharacterStats attacker, CharacterStats target);
 }
 
+public interface IOnProjectileSpawned
+{
+    void OnProjectileSpawned(Projectile projectile);
+}
 
 
 

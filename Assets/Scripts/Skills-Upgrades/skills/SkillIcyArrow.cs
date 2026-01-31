@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SkillIcyArrow : UnitSkillBehaviour, IOnHitEffect
+public class SkillIcyArrow : UnitSkillBehaviour, IOnHitEffect, IOnProjectileSpawned
 {
     private float slowPercent;
     private float slowDuration;
@@ -11,15 +11,22 @@ public class SkillIcyArrow : UnitSkillBehaviour, IOnHitEffect
         slowDuration = node.skillDuration;                   // 1.5
     }
 
+    public void OnProjectileSpawned(Projectile projectile)
+    {
+        if (projectile == null) return;
+
+        var fx = projectile.GetComponentInChildren<ArrowEffect>(true);
+        if (fx != null)
+            fx.Apply(ArrowElement.Ice);
+    }
+
     public void OnHit(CharacterStats attacker, CharacterStats target)
     {
         if (target == null) return;
 
         var slow = target.GetComponent<StatusEffectSlow>();
         if (slow == null)
-        {
             slow = target.gameObject.AddComponent<StatusEffectSlow>();
-        }
 
         slow.Apply(target, slowPercent, slowDuration);
     }

@@ -48,8 +48,8 @@ public class RangerAttack : MonoBehaviour, IAttackStrategy
         {
             p.Init(stats,currentTarget);
         }
-
-        // optional: clear target after shot
-        // currentTarget = null;
+        var spawnHooks = GetComponents<IOnProjectileSpawned>();
+        for (int i = 0; i < spawnHooks.Length; i++)
+            spawnHooks[i].OnProjectileSpawned(p);
     }
 }
