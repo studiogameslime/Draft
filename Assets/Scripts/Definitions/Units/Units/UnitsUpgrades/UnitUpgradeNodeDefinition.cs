@@ -27,7 +27,9 @@ public class UnitUpgradeNodeDefinition : ScriptableObject
     // UnitUpgradeNodeDefinition
     [Header("Skill Effect")]
     public UnitSkillBehaviour skillEffect;  
-    [Range(0f, 1f)] public float skillPercentValue;    
+    [Range(0f, 1f)] public float skillPercentValue;
+    public float skillDuration; 
+
 
 
     public bool IsValid() => !string.IsNullOrEmpty(nodeId);

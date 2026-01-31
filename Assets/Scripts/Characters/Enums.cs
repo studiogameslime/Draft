@@ -97,6 +97,11 @@ public enum RewardLane
     Right = 0, // Main reward (as in your UI right side)
     Left = 1   // Special reward (as in your UI left side)
 }
+public interface IOnHitEffect
+{
+    void OnHit(CharacterStats attacker, CharacterStats target);
+}
+
 
 
 

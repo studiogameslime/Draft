@@ -105,7 +105,6 @@ public class Projectile : MonoBehaviour
 
     private void HitTarget()
     {
-        // Unity destroyed-object check again
         if (_target is UnityEngine.Object obj && obj == null)
         {
             Destroy(gameObject);
@@ -115,8 +114,16 @@ public class Projectile : MonoBehaviour
         if (_target != null && _attackerStats != null && _target.IsAlive)
         {
             _target.TakeDamage(_attackerStats.damage, _attackerStats);
+
+            // NEW: apply on-hit skills
+            var effects = _attackerStats.GetComponents<IOnHitEffect>();
+            foreach (var e in effects)
+            {
+                e.OnHit(_attackerStats, _target as CharacterStats);
+            }
         }
 
         Destroy(gameObject);
     }
+
 }
