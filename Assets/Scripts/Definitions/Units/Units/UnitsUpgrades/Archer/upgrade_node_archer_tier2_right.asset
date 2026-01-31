@@ -20,5 +20,9 @@ MonoBehaviour:
     enemies lose 15% of the Archer\u2019s damage over 2 seconds."
   icon: {fileID: 21300000, guid: 2f6555565a8b6e14fae21729d20f9464, type: 3}
   skillPointCost: 1
+  soulsCost: 0
   prerequisites:
   - {fileID: 11400000, guid: 3e1e938ad2c7e3d4c8ed6d15e17a80c0, type: 2}
+  skillEffect: {fileID: 8390396442966547067, guid: 640699ea5d2c3eb4087267edb5e81ff6, type: 3}
+  skillPercentValue: 0.15
+  skillDuration: 3

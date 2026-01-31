@@ -357,4 +357,28 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         }
         Destroy(gameObject);
     }
+
+    public void ApplyStatusDamage(int amount, CharacterStats attacker)
+    {
+        Debug.Log("ApplyStatusDamage");
+        if (amount <= 0) return;
+        if (isUntargetable || currentHealth <= 0) return;
+
+        currentHealth -= amount;
+
+        OnTakeDamage?.Invoke(attacker, amount);
+        attacker?.OnDealDamage?.Invoke(this, amount);
+
+        if (currentHealth <= 0)
+        {
+            attacker?.OnKillEnemy?.Invoke(this);
+            DieFromStatus(attacker);
+        }
+    }
+
+    private void DieFromStatus(CharacterStats attacker)
+    {
+        Die();
+    }
+
 }
