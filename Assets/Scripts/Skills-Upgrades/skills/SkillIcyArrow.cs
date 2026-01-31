@@ -15,7 +15,12 @@ public class SkillIcyArrow : UnitSkillBehaviour, IOnHitEffect
     {
         if (target == null) return;
 
-        var slow = target.gameObject.AddComponent<StatusEffectSlow>();
+        var slow = target.GetComponent<StatusEffectSlow>();
+        if (slow == null)
+        {
+            slow = target.gameObject.AddComponent<StatusEffectSlow>();
+        }
+
         slow.Apply(target, slowPercent, slowDuration);
     }
 }

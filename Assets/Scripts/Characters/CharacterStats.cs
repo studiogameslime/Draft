@@ -19,6 +19,8 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     public float moveSpeed;
     public float attackRange;
     public float attackCooldown;
+    [HideInInspector] public float baseMoveSpeed;
+
 
     [Header("Critical Hit")]
     [Range(0f, 1f)]
@@ -92,6 +94,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
         damage = CalcFinalIntStat(def.damage, MasteryStat.GlobalDamagePercent);
         moveSpeed = CalcFinalFloatStat(def.moveSpeed, MasteryStat.MoveSpeedPercent);
+        baseMoveSpeed = moveSpeed;
         attackRange = def.attackRange;
         attackCooldown = def.attackCooldown;
 
