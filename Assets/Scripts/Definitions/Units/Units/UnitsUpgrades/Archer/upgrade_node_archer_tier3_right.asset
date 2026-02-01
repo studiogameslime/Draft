@@ -20,5 +20,11 @@ MonoBehaviour:
     foe.
   icon: {fileID: 21300000, guid: db343a90bcd34bf41a91b65d7978f080, type: 3}
   skillPointCost: 1
+  soulsCost: 0
   prerequisites:
   - {fileID: 11400000, guid: fcf10e71eb15c0d4ba207dfc7cbfdd27, type: 2}
+  skillEffect: {fileID: 8189046509825835520, guid: b4d1eb1ada90dd646a179a6770c6dede, type: 3}
+  skillPercentValue: 0.5
+  skillRadiusValue: 2
+  skillIntValue: 3
+  skillDuration: 0

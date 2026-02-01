@@ -19,11 +19,13 @@ public class Projectile : MonoBehaviour
     private float _travelDuration;
     private float _spinAngle;
 
+    // NEW: damage multiplier (for falloff on ricochet, etc.)
+    private float _damageMul = 1f;
+
     public void Init(CharacterStats attackerStats, ICombatTarget target)
     {
         _attackerStats = attackerStats;
         _target = target;
-
         _targetTransform = (_target != null) ? _target.TargetTransform : null;
 
         Vector3 startPos = transform.position;
@@ -31,6 +33,35 @@ public class Projectile : MonoBehaviour
         _time = 0f;
         _spinAngle = 0f;
 
+        // NEW: reset multiplier per projectile spawn
+        _damageMul = 1f;
+
+        RecalculateTravelDuration(startPos);
+    }
+
+    // NEW: called by ricochet to reduce damage for next hit(s)
+    public void SetDamageMultiplier(float mul)
+    {
+        _damageMul = Mathf.Max(0f, mul);
+    }
+
+    // NEW: called by ricochet to retarget the same projectile
+    public void SetTarget(ICombatTarget newTarget)
+    {
+        _target = newTarget;
+        _targetTransform = (_target != null) ? _target.TargetTransform : null;
+
+        // reset flight from current position
+        Vector3 startPos = transform.position;
+        _flatPos = startPos;
+        _time = 0f;
+        _spinAngle = 0f;
+
+        RecalculateTravelDuration(startPos);
+    }
+
+    private void RecalculateTravelDuration(Vector3 startPos)
+    {
         if (_targetTransform != null)
         {
             float distance = Vector3.Distance(startPos, _targetTransform.position);
@@ -70,7 +101,6 @@ public class Projectile : MonoBehaviour
         float t = Mathf.Clamp01(_time / _travelDuration);
 
         Vector3 targetPos = _targetTransform.position;
-
         Vector3 dir = (targetPos - _flatPos).normalized;
         _flatPos += dir * speed * Time.deltaTime;
 
@@ -78,8 +108,8 @@ public class Projectile : MonoBehaviour
         Vector3 nextPos = _flatPos + Vector3.up * height;
 
         Vector3 moveDir = nextPos - transform.position;
-
         Quaternion baseRotation = transform.rotation;
+
         if (moveDir.sqrMagnitude > 0.0001f)
         {
             float angle = Mathf.Atan2(moveDir.y, moveDir.x) * Mathf.Rad2Deg;
@@ -111,19 +141,28 @@ public class Projectile : MonoBehaviour
             return;
         }
 
+        var hitStats = _target as CharacterStats;
+
         if (_target != null && _attackerStats != null && _target.IsAlive)
         {
-            _target.TakeDamage(_attackerStats.damage, _attackerStats);
+            // NEW: apply damage multiplier (ricochet falloff)
+            int dmg = Mathf.RoundToInt(_attackerStats.damage * _damageMul);
+            _target.TakeDamage(dmg, _attackerStats);
 
-            // NEW: apply on-hit skills
+            // apply on-hit skills (your existing system)
             var effects = _attackerStats.GetComponents<IOnHitEffect>();
             foreach (var e in effects)
+                e.OnHit(_attackerStats, hitStats);
+
+            // NEW: let projectile handlers (ricochet etc.) decide to continue
+            var handlers = GetComponents<IProjectileOnHit>();
+            foreach (var h in handlers)
             {
-                e.OnHit(_attackerStats, _target as CharacterStats);
+                if (h != null && h.TryHandleAfterHit(this, _attackerStats, hitStats))
+                    return; // continue flying, DON'T destroy
             }
         }
 
         Destroy(gameObject);
     }
-
 }

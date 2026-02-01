@@ -107,7 +107,10 @@ public interface IOnProjectileSpawned
     void OnProjectileSpawned(Projectile projectile);
 }
 
-
+public interface IProjectileOnHit
+{
+    bool TryHandleAfterHit(Projectile p, CharacterStats attacker, CharacterStats hitTarget);
+}
 
 
 
