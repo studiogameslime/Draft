@@ -220,6 +220,7 @@ public class BattleCellSelectionController : MonoBehaviour
         {
             deckUI.HideDeck();
             bottomPanel.ShowPlaceholderText(bottomPanel.defaultPlaceholder);
+            bottomPanel.HideSellButton();
         }
 
     }

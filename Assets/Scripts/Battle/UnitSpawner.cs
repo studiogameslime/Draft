@@ -374,8 +374,8 @@ public class UnitSpawner : MonoBehaviour
         if (unitDef == null)
             return;
 
-        int cost = Mathf.Max(0, unitDef.soulCost);
-        int refund = Mathf.FloorToInt(cost * 0.5f);
+        int totalCost = GetTotalSoulCost();
+        int refund = Mathf.FloorToInt(totalCost * 0.5f);
 
         if (refund > 0 && SoulsManager.instance != null)
             SoulsManager.instance.AddSouls(refund);
@@ -437,6 +437,26 @@ public class UnitSpawner : MonoBehaviour
         state.Pick(node);
 
         return true;
+    }
+    private int GetTotalSoulCost()
+    {
+        int total = 0;
+
+        if (unitDef != null)
+            total += Mathf.Max(0, unitDef.soulCost);
+
+        var state = GetComponent<UnitSpawnerBattleUpgradeState>();
+        if (state != null && state.pickedNodes != null)
+        {
+            for (int i = 0; i < state.pickedNodes.Count; i++)
+            {
+                var node = state.pickedNodes[i];
+                if (node == null) continue;
+                total += Mathf.Max(0, node.soulsCost);
+            }
+        }
+
+        return total;
     }
 
 

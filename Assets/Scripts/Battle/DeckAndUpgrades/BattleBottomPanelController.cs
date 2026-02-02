@@ -93,6 +93,7 @@ public class BattleBottomPanelController : MonoBehaviour
         }
         else
         {
+            ShowSellButton(spawner);
             ShowPlaceholderText(fullUpgradePlaceholder);
             Debug.Log("unit fully upgraded OR need to define upgrades to this unit!");
         }
