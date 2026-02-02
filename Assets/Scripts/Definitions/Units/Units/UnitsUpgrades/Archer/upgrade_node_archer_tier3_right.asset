@@ -26,5 +26,5 @@ MonoBehaviour:
   skillEffect: {fileID: 8189046509825835520, guid: b4d1eb1ada90dd646a179a6770c6dede, type: 3}
   skillPercentValue: 0.5
   skillRadiusValue: 2
-  skillIntValue: 3
+  skillIntValue: 1
   skillDuration: 0
