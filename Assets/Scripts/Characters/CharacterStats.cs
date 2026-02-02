@@ -82,6 +82,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     /// </summary>
     public void Init(Team currentTeam, UnitDefinition def, int level)
     {
+        Debug.Log(def.name);
         definition = def;
         team = currentTeam;
         unitClass = def.unitClass;
@@ -229,6 +230,18 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     }
 
 
+    public void Heal(int amount, CharacterStats healer = null)
+    {
+        if (amount <= 0) return;
+        if (isDead) return;
+        if (currentHealth <= 0) return;
+
+        int before = currentHealth;
+        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+
+        // in the future if event needed:
+        // OnReceiveHeal?.Invoke(healer, currentHealth - before);
+    }
 
 
 

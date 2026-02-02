@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Fairy
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_fairy
+  displayName: Fairy
+  description: FairyFairyFairy
+  rarity: 1
+  icon: {fileID: -5455630811309129204, guid: a095310ac1d203143bba40640717e1de, type: 3}
+  prefab: {fileID: 501027721989515594, guid: 295d93ebc543e8d4da81861aac3150fc, type: 3}
+  iconScale: 0.4
+  unitTeam: 0
+  unitClass: 3
+  targetPriorityClass: 0
+  soulCost: 3
+  soulDropChance: 0.25
+  maxHealth: 100
+  damage: 10
+  moveSpeed: 0.7
+  attackRange: 5
+  attackCooldown: 1
+  spawnTime: 2
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 0}
+  unlockNode: {fileID: 0}
+  nodes: []
