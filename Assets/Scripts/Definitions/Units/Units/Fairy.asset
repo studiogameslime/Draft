@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_fairy
   displayName: Fairy
-  description: FairyFairyFairy
+  description: What fairy poop smell? like confettus!
   rarity: 1
   icon: {fileID: -5455630811309129204, guid: a095310ac1d203143bba40640717e1de, type: 3}
   prefab: {fileID: 501027721989515594, guid: 295d93ebc543e8d4da81861aac3150fc, type: 3}
@@ -29,7 +29,7 @@ MonoBehaviour:
   moveSpeed: 0.7
   attackRange: 5
   attackCooldown: 1
-  spawnTime: 2
+  spawnTime: 6
   animatorController: {fileID: 0}
   maxTier: 3
   partSlots: []
