@@ -20,5 +20,11 @@ MonoBehaviour:
     while below 50% HP.
   icon: {fileID: 21300000, guid: dcd9afe4c6ddea847896c453615c98ff, type: 3}
   skillPointCost: 1
+  soulsCost: 0
   prerequisites:
   - {fileID: 11400000, guid: 176ff0db089f7714bb2032c640997040, type: 2}
+  skillEffect: {fileID: 603291380290585171, guid: f247a0401eaaafd4882a4a4e8fe8258b, type: 3}
+  skillPercentValue: 0
+  skillRadiusValue: 0
+  skillIntValue: 0
+  skillDuration: 0
