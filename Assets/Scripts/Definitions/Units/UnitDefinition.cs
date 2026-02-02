@@ -33,6 +33,13 @@ public class UnitDefinition : ScriptableObject
     public float attackCooldown = 1.0f;
     public float spawnTime = 5f;
 
+    [Header("Crit Stats")]
+    [Range(0f, 1f)]
+    public float critChance = 0.2f;
+    public float critMultiplier = 2f;
+    public Color critColor = new Color(1f, 0.4f, 0.4f);
+
+
     [Header("Animator")]
     public RuntimeAnimatorController animatorController;
 

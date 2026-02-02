@@ -22,11 +22,11 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     [HideInInspector] public float baseMoveSpeed;
 
 
-    [Header("Critical Hit")]
-    [Range(0f, 1f)]
-    public float critChance = 0.2f;   // 20%
-    public float critMultiplier = 2f; // x2 damage
-    public Color critColor = new Color(1f, 0.4f, 0.4f);
+    [Header("Critical Hit Stats")]
+    public float critChance;
+    public float critMultiplier;
+    public Color critColor;
+
 
     [Header("Floating Damage Layout")]
     public float floatingXRandom = 0.15f;
@@ -98,6 +98,11 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         baseMoveSpeed = moveSpeed;
         attackRange = def.attackRange;
         attackCooldown = def.attackCooldown;
+        // Crit stats from definition
+        critChance = def.critChance;
+        critMultiplier = def.critMultiplier;
+        critColor = def.critColor;
+
 
         // Enemy visuals
         if (currentTeam == Team.EnemyTeam)
