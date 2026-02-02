@@ -244,6 +244,7 @@ MonoBehaviour:
   stoppingBuffer: 0.1
   switchOnPercent: 0.7
   switchOffPercent: 0.9
+  idleFollowDistance: 3
 --- !u!114 &-5750451969287559453
 MonoBehaviour:
   m_ObjectHideFlags: 0

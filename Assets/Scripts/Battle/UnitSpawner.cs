@@ -170,8 +170,8 @@ public class UnitSpawner : MonoBehaviour
         // Reserve behavior: cannot be targeted, AI off
         stats.isUntargetable = true;
 
-        var ai = go.GetComponent<UnitAI>();
-        if (ai != null) ai.enabled = false;
+        SetReserveBrain(go, false);
+
 
         SetReserveCollision(go, false);
 
@@ -198,12 +198,7 @@ public class UnitSpawner : MonoBehaviour
             link = reserveStats.gameObject.AddComponent<SpawnedUnitOwnerLink>();
         link.owner = this;
 
-        var ai = reserveStats.GetComponent<UnitAI>();
-        if (ai != null)
-        {
-            ai.enabled = true;
-            ai.LockInitialTargetAtBattleStart();
-        }
+        SetReserveBrain(reserveStats.gameObject, true);
 
         var ninja = reserveStats.GetComponent<NinjaStealthRun>();
         if (ninja != null)
@@ -215,6 +210,25 @@ public class UnitSpawner : MonoBehaviour
 
         // After releasing, we will start a new reserve spawn, so reset progress
         SetProgressTarget(0f);
+    }
+
+    private void SetReserveBrain(GameObject go, bool enabled)
+    {
+        if (go == null) return;
+
+        // Enemy/normal AI
+        var unitAI = go.GetComponent<UnitAI>();
+        if (unitAI != null)
+        {
+            unitAI.enabled = enabled;
+            if (enabled)
+                unitAI.LockInitialTargetAtBattleStart();
+        }
+
+        // Fairy AI
+        var fairyAI = go.GetComponent<FairyAI>();
+        if (fairyAI != null)
+            fairyAI.enabled = enabled;
     }
 
     public void NotifyUnitDied()

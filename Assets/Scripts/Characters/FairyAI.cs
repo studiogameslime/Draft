@@ -18,6 +18,10 @@ public class FairyAI : MonoBehaviour
     [Range(0f, 1f)] public float switchOnPercent = 0.7f;   // switch if unit below this
     [Range(0f, 1f)] public float switchOffPercent = 0.9f;  // leave if unit over this
 
+    [Header("Idle Follow")]
+    public float idleFollowDistance = 0.3f; // how far get close to unit when everyone Full HP
+
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -47,9 +51,22 @@ public class FairyAI : MonoBehaviour
 
         if (targetAlly == null)
         {
-            StopMoving();
+            var closest = FindClosestAlly();
+            if (closest == null)
+            {
+                StopMoving();
+                return;
+            }
+
+            float d = Vector3.Distance(transform.position, closest.transform.position);
+            if (d > idleFollowDistance)
+                MoveToward(closest.transform.position);
+            else
+                StopMoving();
+
             return;
         }
+
 
         float dist = Vector3.Distance(transform.position, targetAlly.transform.position);
         if (dist > myStats.attackRange - stoppingBuffer)
@@ -133,4 +150,22 @@ public class FairyAI : MonoBehaviour
 
     private bool IsFullHp(CharacterStats s)
         => s != null && s.currentHealth >= s.maxHealth;
+    private CharacterStats FindClosestAlly()
+    {
+        var allies = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None)
+            .Where(s => s != null
+                        && s.IsAlive
+                        && !s.IsUntargetable
+                        && myStats != null
+                        && s.team == myStats.team
+                        && s != myStats)
+            .ToList();
+
+        if (allies.Count == 0) return null;
+
+        return allies
+            .OrderBy(s => Vector3.Distance(transform.position, s.transform.position))
+            .FirstOrDefault();
+    }
+
 }
