@@ -7,8 +7,8 @@ public class FloatingDamage : MonoBehaviour
     public float startYOffset = 0.5f;
 
     [Header("Movement")]
-    public float moveUpFromStart = 0.8f;
-    public float moveDuration = 0.8f;
+    public float risingUp = 0.8f;
+    public float riseDuration = 0.8f;
 
     [Header("Fade")]
     [Range(0f, 1f)]
@@ -31,7 +31,7 @@ public class FloatingDamage : MonoBehaviour
 
         Vector3 basePos = transform.position;
         startPos = basePos + Vector3.up * startYOffset;
-        targetPos = startPos + Vector3.up * moveUpFromStart;
+        targetPos = startPos + Vector3.up * risingUp;
 
         transform.position = startPos;
     }
@@ -41,7 +41,7 @@ public class FloatingDamage : MonoBehaviour
         timer += Time.deltaTime;
 
         // Movement
-        float moveT = Mathf.Clamp01(timer / moveDuration);
+        float moveT = Mathf.Clamp01(timer / riseDuration);
         transform.position = Vector3.Lerp(startPos, targetPos, moveT);
 
         // Fade

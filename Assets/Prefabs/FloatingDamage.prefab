@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 720836629474869786}
   - component: {fileID: 2544679959001261543}
   - component: {fileID: 3794100073784410356}
-  - component: {fileID: 1931183539404600891}
   - component: {fileID: -8702403724528751423}
   m_Layer: 8
   m_Name: FloatingDamage
@@ -195,32 +194,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloatingDamage
   startYOffset: 0.5
-  moveUpFromStart: 0.8
-  moveDuration: 0.8
+  risingUp: 0.8
+  riseDuration: 0.8
   fadeStartPercent: 0.7
   destroyTime: 1.2
---- !u!95 &1931183539404600891
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5435662357922782254}
-  m_Enabled: 0
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: af63e71449dd6704380da9ce1ac396a4, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!210 &-8702403724528751423
 SortingGroup:
   m_ObjectHideFlags: 0
