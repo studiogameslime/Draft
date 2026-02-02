@@ -219,7 +219,7 @@ public class BattleCellSelectionController : MonoBehaviour
         if (deckUI != null)
         {
             deckUI.HideDeck();
-            BattleBottomPanelController.Instance.ShowPlaceholderText();
+            bottomPanel.ShowPlaceholderText(bottomPanel.defaultPlaceholder);
         }
 
     }
@@ -259,6 +259,7 @@ public class BattleCellSelectionController : MonoBehaviour
         deckUI.SetCardsInteractable(true);
 
         bottomPanel.ShowUpgrades(spawner, unit, state.currentTier);
+
     }
 
     /// <summary>

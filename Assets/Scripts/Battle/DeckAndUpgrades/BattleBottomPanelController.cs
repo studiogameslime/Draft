@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,8 +20,10 @@ public class BattleBottomPanelController : MonoBehaviour
     [Header("SellUnit")]
     [SerializeField] private GameObject sellUnitButton;
 
-    [Header("FooterText")]
-    [SerializeField] private GameObject placeholderText;
+    [Header("PlaceholderText")]
+    [SerializeField] private TMP_Text placeholderText;
+    [SerializeField] public string defaultPlaceholder;
+    [SerializeField] public string fullUpgradePlaceholder;
 
 
 
@@ -79,18 +82,27 @@ public class BattleBottomPanelController : MonoBehaviour
         var leftNode = BattleUpgradeLogic.FindNode(unit, tierToShow, UpgradeLane.Left);
         var rightNode = BattleUpgradeLogic.FindNode(unit, tierToShow, UpgradeLane.Right);
 
-        CreateUpgradeCard(spawner, unit, progress, leftNode);
-        CreateUpgradeCard(spawner, unit, progress, rightNode);
+        if (leftNode != null && rightNode != null)
+        {
+            CreateUpgradeCard(spawner, unit, progress, leftNode);
+            CreateUpgradeCard(spawner, unit, progress, rightNode);
 
-        LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent);
-        ShowSellButton(spawner);
-        HidePlaceholderText();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent);
+            ShowSellButton(spawner);
+            HidePlaceholderText();
+        }
+        else
+        {
+            ShowPlaceholderText(fullUpgradePlaceholder);
+            Debug.Log("unit fully upgraded OR need to define upgrades to this unit!");
+        }
 
 
     }
 
     private void CreateUpgradeCard(UnitSpawner spawner, UnitDefinition unit, UnitProgressData progress, UnitUpgradeNodeDefinition node)
     {
+
         var view = Instantiate(upgradeOptionPrefab, contentParent);
 
         bool exists = node != null;
@@ -131,12 +143,15 @@ public class BattleBottomPanelController : MonoBehaviour
         if (sellUnitButton != null)
             sellUnitButton.SetActive(false);
     }
-    public void ShowPlaceholderText()
+    public void ShowPlaceholderText(string placeholder)
     {
-        placeholderText.SetActive(true);
+        placeholderText.text = placeholder;
+        placeholderText.gameObject.SetActive(true);
     }
     public void HidePlaceholderText()
     {
-        placeholderText.SetActive(false);
+        placeholderText.gameObject.SetActive(false);
     }
+
+
 }

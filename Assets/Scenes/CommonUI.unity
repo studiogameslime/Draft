@@ -2460,7 +2460,9 @@ MonoBehaviour:
   deckButtonPrefab: {fileID: 8759413195871512815, guid: 3180728291a88d743877b20ea52f3561, type: 3}
   upgradeOptionPrefab: {fileID: 4136116677944624982, guid: 6e0edce86207ea14886aa71b99fb2a85, type: 3}
   sellUnitButton: {fileID: 3268444}
-  placeholderText: {fileID: 759606429}
+  placeholderText: {fileID: 759606431}
+  defaultPlaceholder: Choose a tile to deploy or upgrade
+  fullUpgradePlaceholder: Unit is fully upgraded
 --- !u!1 &632541134
 GameObject:
   m_ObjectHideFlags: 0
@@ -3056,7 +3058,7 @@ GameObject:
   - component: {fileID: 759606432}
   - component: {fileID: 759606431}
   m_Layer: 5
-  m_Name: FooterText
+  m_Name: PlaceholderText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
