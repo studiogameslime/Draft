@@ -195,7 +195,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     }
 
     //Floating damage text
-    void showFloatingDamage(int amount, FloatingNumberType floatingNumberType)
+    public void showFloatingDamage(int amount, FloatingNumberType floatingNumberType)
     {
         if (!floatingDamagePrefab) return;
 

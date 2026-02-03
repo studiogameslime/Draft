@@ -22,6 +22,7 @@ public class SkillLifeSteal : UnitSkillBehaviour
             stats.currentHealth + heal,
             stats.maxHealth
         );
+        stats.showFloatingDamage(heal, FloatingNumberType.Heal);
         Debug.Log($"Health gain = {heal}");
     }
 
