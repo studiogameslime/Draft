@@ -30,6 +30,9 @@ MonoBehaviour:
   attackRange: 7
   attackCooldown: 1.8
   spawnTime: 5
+  critChance: 0.2
+  critMultiplier: 1.5
+  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
   animatorController: {fileID: 9100000, guid: a291fea9f6cd97c4e93747da11c0ed46, type: 2}
   maxTier: 3
   partSlots:

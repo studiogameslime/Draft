@@ -30,8 +30,13 @@ MonoBehaviour:
   attackRange: 5
   attackCooldown: 1
   spawnTime: 5
+  critChance: 0.2
+  critMultiplier: 1.5
+  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
   animatorController: {fileID: 0}
   maxTier: 3
   partSlots: []
   baseCapacity: 1
   headPrefabForBattlePreview: {fileID: 667374381617566049, guid: 01bc67b0612c7d14ba6244e991b0c3d0, type: 3}
+  unlockNode: {fileID: 0}
+  nodes: []

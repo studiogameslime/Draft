@@ -98,3 +98,15 @@ MonoBehaviour:
     amount: 0
     chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
     rarity: 2
+  - level: 9
+    lane: 0
+    type: 4
+    amount: 0
+    chest: {fileID: 0}
+    rarity: 1
+  - level: 9
+    lane: 1
+    type: 4
+    amount: 0
+    chest: {fileID: 0}
+    rarity: 2
