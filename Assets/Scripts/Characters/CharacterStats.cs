@@ -82,7 +82,6 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     /// </summary>
     public void Init(Team currentTeam, UnitDefinition def, int level)
     {
-        Debug.Log(def.name);
         definition = def;
         team = currentTeam;
         unitClass = def.unitClass;
@@ -91,9 +90,14 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         // Apply base stats scaled by level
 
         maxHealth = CalcFinalIntStat(def.maxHealth, MasteryStat.GlobalHpPercent);
+        damage = CalcFinalIntStat(def.damage, MasteryStat.GlobalDamagePercent);
+
+        // NEW: unit level scaling (HP+DMG)
+        float mul = UnitLevelingService.GetHpDamageMultiplier(this.level);
+        maxHealth = Mathf.RoundToInt(maxHealth * mul);
         currentHealth = maxHealth;
 
-        damage = CalcFinalIntStat(def.damage, MasteryStat.GlobalDamagePercent);
+        damage = Mathf.RoundToInt(damage * mul);
         moveSpeed = CalcFinalFloatStat(def.moveSpeed, MasteryStat.MoveSpeedPercent);
         baseMoveSpeed = moveSpeed;
         attackRange = def.attackRange;

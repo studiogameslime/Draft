@@ -17,7 +17,6 @@ public class UnitSpawnButton : MonoBehaviour
     [SerializeField] private Image background;
     [SerializeField] private TMP_Text costText;
 
-    private UnitSelectionUI ownerUI;
     [SerializeField] private float maxIconSize = 100f;
 
     private void Awake()
@@ -39,13 +38,9 @@ public class UnitSpawnButton : MonoBehaviour
     /// <summary>
     /// Called right after instantiation by UnitSelectionUI.
     /// </summary>
-    public void Init(UnitDefinition def, UnitSelectionUI owner)
+    public void Init(UnitDefinition def)
     {
         unitDefinition = def;
-        ownerUI = owner;
-
-        if (def == null)
-            return;
 
         switch (def.rarity)
         {
@@ -59,7 +54,6 @@ public class UnitSpawnButton : MonoBehaviour
                 background.sprite = StyleManager.instance.epicUnitBackground;
                 break;
         }
-    
 
         if (icon != null)
         {
@@ -67,10 +61,10 @@ public class UnitSpawnButton : MonoBehaviour
             NormalizeIconSize(icon);
         }
 
-
         if (costText != null)
             costText.text = def.soulCost.ToString();
     }
+
 
     private void OnClicked()
     {

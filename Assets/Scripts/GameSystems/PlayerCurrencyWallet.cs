@@ -7,9 +7,13 @@ public class PlayerCurrencyWallet : MonoBehaviour
 
     public int Gold { get; private set; }
     public int Gems { get; private set; }
+    public int Scrolls { get; private set; }
+
 
     public Action<int> OnGoldChanged;
     public Action<int> OnGemsChanged;
+    public Action<int> OnScrollsChanged;
+
 
     [Header("Lifetime")]
     [Tooltip("If true, wallet persists between scenes. If you want Home-only, set this to false and remove it from other scenes.")]
@@ -39,10 +43,14 @@ public class PlayerCurrencyWallet : MonoBehaviour
 
         Gold = GameData.Instance.Save.gold;
         Gems = GameData.Instance.Save.gems;
+        Scrolls = GameData.Instance.Save.scrolls;
+
 
         // Push initial values to UI listeners.
         OnGoldChanged?.Invoke(Gold);
         OnGemsChanged?.Invoke(Gems);
+        OnScrollsChanged?.Invoke(Scrolls);
+
 
         Debug.Log($"Wallet loaded | Gold={Gold}, Gems={Gems}");
     }
@@ -152,6 +160,35 @@ public class PlayerCurrencyWallet : MonoBehaviour
         MissionsManager.Instance.ReportAction(MissionAction.SpendGems, amount);
     }
 
+    // ----------------------
+    // SCROLLS (NEW)
+    // ----------------------
+    public bool TrySpendScrolls(int amount)
+    {
+        if (amount <= 0) return true;
+        if (Scrolls < amount) return false;
+
+        Scrolls -= amount;
+        if (Scrolls < 0) Scrolls = 0;
+        OnScrollsChanged?.Invoke(Scrolls);
+        SaveScrolls();
+        return true;
+    }
+
+    public void AddScrolls(int amount)
+    {
+        if (amount <= 0) return;
+        Scrolls += amount;
+        OnScrollsChanged?.Invoke(Scrolls);
+        SaveScrolls();
+    }
+
+    private void SaveScrolls()
+    {
+        if (GameData.Instance == null || GameData.Instance.Save == null) return;
+        GameData.Instance.Save.scrolls = Scrolls;
+        GameData.Instance.SaveNow();
+    }
     // ----------------------
     // SAVE HELPERS
     // ----------------------

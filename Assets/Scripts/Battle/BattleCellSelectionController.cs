@@ -142,11 +142,9 @@ public class BattleCellSelectionController : MonoBehaviour
 
         UnitSpawner spawner = Instantiate(spawnerPrefab, selectedCell.transform.position, Quaternion.identity, selectedCell.transform);
 
-        int level = 1;
-        if (BattleManager.instance != null)
-            level = Mathf.Max(1, BattleManager.instance.playerUnitsLevel);
+        int lvl = UnitLevelingService.GetUnitLevel(def.id);
+        spawner.Configure(def, Team.MyTeam, lvl);
 
-        spawner.Configure(def, Team.MyTeam, level);
         spawner.AttachCellProgressImage(selectedCell);
 
         // Apply special cell bonus multipliers.
@@ -194,74 +192,66 @@ public class BattleCellSelectionController : MonoBehaviour
     private void ShowDeck()
     {
         TryResolveDeckUI();
-        if (deckUI == null)
-            return;
-
-        // Show the deck panel itself
-        deckUI.ShowDeck();
-        deckUI.SetCardsInteractable(true);
-
-        // Render deck content into the same container (Option A)
-        if (bottomPanel != null)
+        if (deckUI != null)
         {
-            var ui = FindFirstObjectByType<UnitSelectionUI>();
-            if (ui != null && PlayerDeckProvider.Instance != null)
-            {
-                bottomPanel.ShowDeck(PlayerDeckProvider.Instance.CurrentDeck, ui);
-                BattleBottomPanelController.Instance.HidePlaceholderText();
-            }
+            deckUI.ShowDeck();
+            deckUI.SetCardsInteractable(true);
+        }
+
+        if (bottomPanel != null && PlayerDeckProvider.Instance != null)
+        {
+            bottomPanel.ShowDeck(PlayerDeckProvider.Instance.CurrentDeck);
+            bottomPanel.HidePlaceholderText();
+            bottomPanel.HideSellButton();
         }
     }
+
 
     private void HideBottomPanel()
     {
         TryResolveDeckUI();
+
         if (deckUI != null)
-        {
             deckUI.HideDeck();
+
+        if (bottomPanel != null)
+        {
             bottomPanel.ShowPlaceholderText(bottomPanel.defaultPlaceholder);
             bottomPanel.HideSellButton();
         }
-
     }
+
 
     private void ShowUpgradesForSpawner(UnitSpawner spawner)
     {
         TryResolveDeckUI();
-
-        if (spawner == null)
+        if (spawner == null || bottomPanel == null)
         {
             HideBottomPanel();
             return;
         }
 
-        if (bottomPanel == null)
-        {
-            // fallback
-            HideBottomPanel();
-            return;
-        }
-
-        // IMPORTANT: we need UnitDefinition from the spawner
-        // Make sure UnitSpawner exposes it (see note below)
         UnitDefinition unit = spawner.unitDef;
         if (unit == null)
         {
-            Debug.LogWarning("[BattleCellSelectionController] spawner.Unit is null. Expose UnitDefinition from UnitSpawner.Configure.");
+            Debug.LogWarning("[BattleCellSelectionController] spawner.unitDef is null");
             HideBottomPanel();
             return;
         }
 
-        // ensure state exists
         var state = spawner.GetComponent<UnitSpawnerBattleUpgradeState>();
-        if (state == null) state = spawner.gameObject.AddComponent<UnitSpawnerBattleUpgradeState>();
+        if (state == null)
+            state = spawner.gameObject.AddComponent<UnitSpawnerBattleUpgradeState>();
 
-        deckUI.ShowDeck();
-        deckUI.SetCardsInteractable(true);
+        if (deckUI != null)
+        {
+            deckUI.ShowDeck();
+            deckUI.SetCardsInteractable(true);
+        }
 
         bottomPanel.ShowUpgrades(spawner, unit, state.currentTier);
-
     }
+
 
     /// <summary>
     /// Because DeckUIController lives in another scene, we resolve it dynamically.
@@ -269,35 +259,19 @@ public class BattleCellSelectionController : MonoBehaviour
     /// </summary>
     private void TryResolveDeckUI()
     {
-
-        // If battleManager already has deckUI assigned, use it.
         if (deckUI == null && BattleManager.instance != null && BattleManager.instance.deckUI != null)
             deckUI = BattleManager.instance.deckUI;
 
-        // Otherwise, try to find DeckUIController in loaded scenes.
         if (deckUI == null)
             deckUI = FindFirstObjectByType<DeckUIController>();
 
-        // If we found it, keep it on battleManager as well.
         if (BattleManager.instance != null && BattleManager.instance.deckUI == null && deckUI != null)
             BattleManager.instance.deckUI = deckUI;
 
-        // If deckUI exists but cardsParent is not assigned yet, try to assign from selectionUI.
-        if (deckUI != null && deckUI.cardsParent == null)
-        {
-            var ui = FindFirstObjectByType<UnitSelectionUI>();
-            if (ui != null && ui.buttonsParent != null)
-                deckUI.cardsParent = ui.buttonsParent;
-        }
-
-        // NEW: resolve bottom panel controller from the same hierarchy as cardsParent
-        if (bottomPanel == null && deckUI != null && deckUI.cardsParent != null)
-        {
-            bottomPanel = deckUI.cardsParent.GetComponentInParent<BattleBottomPanelController>();
-            if (bottomPanel == null)
-                bottomPanel = deckUI.cardsParent.GetComponent<BattleBottomPanelController>();
-        }
+        if (bottomPanel == null)
+            bottomPanel = FindFirstObjectByType<BattleBottomPanelController>();
     }
+
 
     private UnitSpawner FindSpawnerOnCell(DropAreaCell cell)
     {

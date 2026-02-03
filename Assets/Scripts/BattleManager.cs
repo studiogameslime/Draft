@@ -8,8 +8,6 @@ public class BattleManager : MonoBehaviour
 {
     public static BattleManager instance;
 
-    [Header("Selection UI")]
-    public UnitSelectionUI selectionUI;
 
     [Header("Level Data")]
     public LevelDefinition levelDefinition;
@@ -92,16 +90,8 @@ public class BattleManager : MonoBehaviour
         while (!SceneManager.GetSceneByName("CommonUI").isLoaded)
             yield return null;
 
-        selectionUI = FindFirstObjectByType<UnitSelectionUI>();
         deckUI = FindFirstObjectByType<DeckUIController>();
-
-        while (selectionUI == null || deckUI == null)
-        {
-            selectionUI = FindFirstObjectByType<UnitSelectionUI>();
-            deckUI = FindFirstObjectByType<DeckUIController>();
-            yield return null;
-        }
-
+            
         SoulsManager.instance.AddRoundSouls();
         RoundUIManager.instance.ChangeRoundText(currentRoundIndex + 1, levelDefinition.RoundsCount);
 
@@ -125,18 +115,11 @@ public class BattleManager : MonoBehaviour
         unitClassUsedThisBattle.Clear();
         unitsUsedThisBattle.Clear();
 
-        if (deckUI != null)
-            deckUI.ShowDeck();
-
+        BattleBottomPanelController.Instance.ShowDeck(PlayerDeckProvider.Instance.CurrentDeck);
         ShowDropAreasGrid();
 
         SetAllAIEnabled(false);
 
-        if (selectionUI != null)
-        {
-            selectionUI.gameObject.SetActive(true);
-            selectionUI.RollNewUnits();
-        }
 
         if (deckUI != null)
             deckUI.SetCardsInteractable(true);

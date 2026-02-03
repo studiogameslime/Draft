@@ -2323,7 +2323,6 @@ GameObject:
   - component: {fileID: 620210259}
   - component: {fileID: 620210264}
   - component: {fileID: 620210263}
-  - component: {fileID: 620210261}
   - component: {fileID: 620210260}
   - component: {fileID: 620210265}
   - component: {fileID: 620210266}
@@ -2366,20 +2365,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DeckUIController
   cardsParent: {fileID: 620210259}
---- !u!114 &620210261
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 620210258}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bd8587417c714343bac116c094559dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitSelectionUI
-  buttonsParent: {fileID: 620210259}
-  buttonPrefab: {fileID: 8759413195871512815, guid: 3180728291a88d743877b20ea52f3561, type: 3}
 --- !u!114 &620210263
 MonoBehaviour:
   m_ObjectHideFlags: 0

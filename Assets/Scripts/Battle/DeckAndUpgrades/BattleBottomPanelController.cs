@@ -48,9 +48,10 @@ public class BattleBottomPanelController : MonoBehaviour
     // =========================
     // DECK
     // =========================
-    public void ShowDeck(List<UnitDefinition> deck, UnitSelectionUI owner)
+    public void ShowDeck(List<UnitDefinition> deck)
     {
-        if (contentParent == null || deckButtonPrefab == null) return;
+        if (contentParent == null || deckButtonPrefab == null)
+            return;
 
         Clear();
 
@@ -60,12 +61,13 @@ public class BattleBottomPanelController : MonoBehaviour
             {
                 if (unit == null) continue;
                 var btn = Instantiate(deckButtonPrefab, contentParent);
-                btn.Init(unit, owner);
+                btn.Init(unit); 
             }
         }
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(contentParent);
     }
+
 
     // =========================
     // UPGRADES (2 options)
