@@ -180,7 +180,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         OnTakeDamage?.Invoke(attacker, amount);
         attacker?.OnDealDamage?.Invoke(this, amount);
 
-        showFloatingDamage(amount, isCrit);
+        showFloatingDamage(amount, isCrit?FloatingNumberType.Crit:FloatingNumberType.Normal);
 
         if (currentHealth <= 0)
         {
@@ -195,7 +195,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     }
 
     //Floating damage text
-    void showFloatingDamage(int amount, bool isCrit)
+    void showFloatingDamage(int amount, FloatingNumberType floatingNumberType)
     {
         if (!floatingDamagePrefab) return;
 
@@ -213,11 +213,29 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
         // Set the text
         var tmp = go.GetComponent<TextMeshPro>();
-        tmp.text = isCrit ? "! " + amount : amount.ToString();
+        tmp.text = amount.ToString();
 
         // Crit color
-        if (isCrit)
-            tmp.color = critColor;
+
+        switch (floatingNumberType)
+        {
+            case FloatingNumberType.Normal:
+                {
+                    tmp.color = Color.white;
+                    break;
+                }
+            case FloatingNumberType.Crit:
+                {
+                    tmp.color = critColor;
+                    break;
+                }
+            case FloatingNumberType.Heal:
+                {
+                    tmp.color = Color.green;
+                    break;
+                }
+        }
+
 
         // Make sure the whole prefab renders on top by using Sorting Group
         var sg = go.GetComponent<UnityEngine.Rendering.SortingGroup>();
@@ -244,6 +262,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         int before = currentHealth;
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
 
+        showFloatingDamage(amount, FloatingNumberType.Heal);
         // in the future if event needed:
         // OnReceiveHeal?.Invoke(healer, currentHealth - before);
     }

@@ -109,7 +109,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Damage
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 244986c63bec71946bae540fadb02ec3, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -178,7 +178,7 @@ MonoBehaviour:
   _SortingLayer: 0
   _SortingLayerID: 0
   _SortingOrder: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_renderer: {fileID: 720836629474869786}
   m_maskType: 0
 --- !u!114 &3794100073784410356
@@ -196,8 +196,8 @@ MonoBehaviour:
   startYOffset: 0.5
   risingUp: 0.8
   riseDuration: 0.8
-  fadeStartPercent: 0.7
-  destroyTime: 1.2
+  fadeStartPercent: 0.4
+  destroyTime: 0.8
 --- !u!210 &-8702403724528751423
 SortingGroup:
   m_ObjectHideFlags: 0

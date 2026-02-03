@@ -12,7 +12,7 @@ public class FloatingDamage : MonoBehaviour
 
     [Header("Fade")]
     [Range(0f, 1f)]
-    public float fadeStartPercent = 0.6f;   // ????? ??? ?????? ?????? fade
+    public float fadeStartPercent = 0.6f;  
 
     [Header("Lifetime")]
     public float destroyTime = 1.2f;

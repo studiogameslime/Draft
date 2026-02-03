@@ -112,5 +112,12 @@ public interface IProjectileOnHit
     bool TryHandleAfterHit(Projectile p, CharacterStats attacker, CharacterStats hitTarget);
 }
 
+public enum FloatingNumberType
+{
+    Normal,
+    Crit,
+    Heal
+}
+
 
 
