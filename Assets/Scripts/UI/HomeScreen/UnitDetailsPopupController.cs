@@ -30,7 +30,6 @@ public class UnitDetailsPopupController : MonoBehaviour
     [SerializeField] private TMP_Text speedText;
     [SerializeField] private TMP_Text targetPriorityText;
     [SerializeField] private TMP_Text SoulsCostText;
-    [SerializeField] private TMP_Text TokensLeftText;
     [SerializeField] private Image rarityTagImage;
     [SerializeField] private Image unitClassImage;
 
@@ -164,9 +163,6 @@ public class UnitDetailsPopupController : MonoBehaviour
 
         if (targetPriorityText != null) targetPriorityText.text = _unit.targetPriorityClass.ToString();
         if (SoulsCostText != null) SoulsCostText.text = _unit.soulCost.ToString();
-
-        // TODO: Replace with real data when you have it
-        if (TokensLeftText != null) TokensLeftText.text = "8";
 
         if (rarityTagImage != null) rarityTagImage.sprite = GetRaritySpriteByType(_unit.rarity);
         if (unitClassImage != null) unitClassImage.sprite = GetUnitClassSpriteByType(_unit.unitClass);

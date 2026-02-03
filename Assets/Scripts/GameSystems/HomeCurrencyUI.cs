@@ -8,6 +8,7 @@ public class HomeCurrencyUI : MonoBehaviour
     [Header("Texts")]
     [SerializeField] private TMP_Text goldText;
     [SerializeField] private TMP_Text gemsText;
+    [SerializeField] private TMP_Text scrollsText;
     [SerializeField] private TMP_Text playerLevelText;
 
     [Header("XP Ring")]
@@ -47,6 +48,7 @@ public class HomeCurrencyUI : MonoBehaviour
         {
             PlayerCurrencyWallet.Instance.OnGoldChanged -= UpdateGold;
             PlayerCurrencyWallet.Instance.OnGemsChanged -= UpdateGems;
+            PlayerCurrencyWallet.Instance.OnScrollsChanged -= UpdateScrolls;
         }
 
         if (PlayerXPManager.Instance != null)
@@ -69,8 +71,12 @@ public class HomeCurrencyUI : MonoBehaviour
         wallet.OnGemsChanged -= UpdateGems;
         wallet.OnGemsChanged += UpdateGems;
 
+        wallet.OnScrollsChanged -= UpdateScrolls;
+        wallet.OnScrollsChanged += UpdateScrolls;
+
         UpdateGold(wallet.Gold);
         UpdateGems(wallet.Gems);
+        UpdateScrolls(wallet.Scrolls);
 
         // XP
         var xpManager = PlayerXPManager.Instance;
@@ -97,6 +103,12 @@ public class HomeCurrencyUI : MonoBehaviour
     {
         if (gemsText != null)
             gemsText.text = value.ToString();
+    }
+
+    private void UpdateScrolls(int value)
+    {
+        if (scrollsText != null)
+            scrollsText.text = value.ToString();
     }
 
     private void UpdatePlayerLevel(int level)
@@ -144,8 +156,6 @@ public class HomeCurrencyUI : MonoBehaviour
     {
         float start = playerXPFill.fillAmount;
 
-        // אם היעד קטן מהמצב הנוכחי — כנראה Level Up (wrap)
-        // כדי שזה ייראה טוב: נעלה ל-1 ואז נקפוץ ל-0 ונמשיך ליעד.
         if (target < start - 0.001f)
         {
             yield return AnimateFillSegment(start, 1f, fillSmoothTime * 0.6f);
@@ -167,7 +177,7 @@ public class HomeCurrencyUI : MonoBehaviour
 
         while (t < duration)
         {
-            t += Time.unscaledDeltaTime; // UI לרוב עדיף unscaled
+            t += Time.unscaledDeltaTime;
             float a = Mathf.Clamp01(t / duration);
             playerXPFill.fillAmount = Mathf.Lerp(from, to, a);
             yield return null;
