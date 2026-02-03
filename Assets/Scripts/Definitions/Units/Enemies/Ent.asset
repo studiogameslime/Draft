@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Ent
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_ent
+  displayName: Ent
+  description: EntEnt
+  rarity: 0
+  icon: {fileID: -1619662025158104270, guid: adaa08312fe4adf4188b9d2fa086d723, type: 3}
+  prefab: {fileID: 501027721989515594, guid: da010a7283696af48b36645cf2a2a23d, type: 3}
+  iconScale: 0.4
+  unitTeam: 1
+  unitClass: 1
+  targetPriorityClass: 0
+  soulCost: 0
+  soulDropChance: 0.25
+  maxHealth: 1000
+  damage: 15
+  moveSpeed: 0.4
+  attackRange: 1
+  attackCooldown: 1
+  spawnTime: 5
+  critChance: 0.1
+  critMultiplier: 1.5
+  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: 61a61d854adedcd438e6916aecbda2c2, type: 3}
+  unlockNode: {fileID: 0}
+  nodes: []
