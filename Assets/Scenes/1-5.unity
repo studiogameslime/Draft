@@ -23740,7 +23740,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 478504028}
-  - component: {fileID: 478504027}
   m_Layer: 0
   m_Name: EnemyTeam
   m_TagString: Untagged
@@ -23748,22 +23747,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &478504027
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 478504026}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0d28e7be7f5e064f9cb33c2b8115845, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MonsterGrid
-  cellHeight: 0.7
-  rowHeight: 0.8
-  tankColumnY: 0
-  rangerColumnY: -1
 --- !u!4 &478504028
 Transform:
   m_ObjectHideFlags: 0
