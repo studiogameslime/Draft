@@ -66,8 +66,9 @@ public static class UnitLevelingService
     public static float GetHpDamageMultiplier(int level)
     {
         level = Mathf.Clamp(level, 1, MaxLevel);
-        return 1f + (level - 1) * HpDmgPerLevel;
+        return Mathf.Pow(1f + HpDmgPerLevel, level - 1);
     }
+
 
     public static float GetSpawnTimeMultiplier(int level)
     {

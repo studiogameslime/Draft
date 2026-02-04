@@ -34,6 +34,9 @@ public class UnitDetailsPopupController : MonoBehaviour
     [SerializeField] private TMP_Text SoulsCostText;
     [SerializeField] private Image rarityTagImage;
     [SerializeField] private Image unitClassImage;
+    [SerializeField] private TMP_Text addHpText;
+    [SerializeField] private TMP_Text addDmgText;
+    [SerializeField] private TMP_Text decreaseSpawnTimeText;
 
     [Header("Leveling UI")]
     [SerializeField] private TMP_Text levelText;
@@ -184,9 +187,25 @@ public class UnitDetailsPopupController : MonoBehaviour
         int dmg = Mathf.RoundToInt(_unit.damage * hpDmgMul);
         float spawnTime = _unit.spawnTime * spawnMul;
 
+        int hpAddedNextLevel = Mathf.RoundToInt(hp * 0.1f);
+        int dmgAddedNextLevel = Mathf.RoundToInt(dmg * 0.1f);
+        float nextSpawnTime = spawnMul;
+        if (lvl < maxLvl)
+            nextSpawnTime = _unit.spawnTime * UnitLevelingService.GetSpawnTimeMultiplier(lvl + 1);
+
+        float spawnDecrease = (lvl < maxLvl) ? (spawnMul - nextSpawnTime) : 0f;
+        Debug.Log($"hpDmgMul={hpDmgMul}");
+
         // ---------- STATS TEXT ----------
         if (hpText != null) hpText.text = hp.ToString();
         if (dmgText != null) dmgText.text = dmg.ToString();
+
+        if (addHpText != null) addHpText.text = $"+{hpAddedNextLevel.ToString()}";
+        if (addDmgText != null) addDmgText.text = $"+{dmgAddedNextLevel.ToString()}";
+        if (decreaseSpawnTimeText != null)
+            decreaseSpawnTimeText.text = (lvl < maxLvl)
+                ? $"-{spawnDecrease.ToString("0.#")}"
+                : "-";
 
         if (atkSpeedText != null) atkSpeedText.text = _unit.attackCooldown.ToString();
         if (rangeText != null) rangeText.text = _unit.attackRange.ToString();
@@ -195,7 +214,7 @@ public class UnitDetailsPopupController : MonoBehaviour
         if (targetPriorityText != null) targetPriorityText.text = _unit.targetPriorityClass.ToString();
         if (SoulsCostText != null) SoulsCostText.text = _unit.soulCost.ToString();
 
-        if (spawnTimeText != null) spawnTimeText.text = spawnTime.ToString();
+        if (spawnTimeText != null) spawnTimeText.text = spawnTime.ToString("0.#");
         if (capcityText != null) capcityText.text = _unit.baseCapacity.ToString();
 
 
@@ -213,7 +232,7 @@ public class UnitDetailsPopupController : MonoBehaviour
         if (upgradeCostText != null)
             upgradeCostText.text = atMax ? "MAX" : cost.ToString();
 
-        if (upgradeCostIcon != null) upgradeCostIcon.sprite = StyleManager.instance.ScrollSprite;
+        if (upgradeCostIcon != null) upgradeCostIcon.sprite = StyleManager.instance.scrollSprite;
 
         int ownedScrolls = 0;
         if (PlayerCurrencyWallet.Instance != null)

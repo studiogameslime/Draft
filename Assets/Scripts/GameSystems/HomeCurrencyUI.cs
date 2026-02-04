@@ -11,6 +11,11 @@ public class HomeCurrencyUI : MonoBehaviour
     [SerializeField] private TMP_Text scrollsText;
     [SerializeField] private TMP_Text playerLevelText;
 
+    [Header("Texts")]
+    [SerializeField] private Sprite goldIcon;
+    [SerializeField] private Sprite gemsIcon;
+    [SerializeField] private Sprite scrollsIcon;
+
     [Header("XP Ring")]
     [SerializeField] private Image playerXPFill;
 
@@ -77,6 +82,10 @@ public class HomeCurrencyUI : MonoBehaviour
         UpdateGold(wallet.Gold);
         UpdateGems(wallet.Gems);
         UpdateScrolls(wallet.Scrolls);
+
+        goldIcon = StyleManager.instance.goldSprite;
+        gemsIcon = StyleManager.instance.gemSprite;
+        scrollsIcon = StyleManager.instance.scrollSprite;
 
         // XP
         var xpManager = PlayerXPManager.Instance;

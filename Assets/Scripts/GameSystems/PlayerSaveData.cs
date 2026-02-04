@@ -18,8 +18,8 @@ public class PlayerSaveData
 
     public int gold;
     public int gems;
-    public int wheelOfFortuneTokens;
     public int scrolls;
+    public int wheelOfFortuneTokens;
 
 
     // future currencies – you can add more later
