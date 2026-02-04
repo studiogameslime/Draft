@@ -29,9 +29,18 @@ public class UnitDetailsPopupController : MonoBehaviour
     [SerializeField] private TMP_Text rangeText;
     [SerializeField] private TMP_Text speedText;
     [SerializeField] private TMP_Text targetPriorityText;
+    [SerializeField] private TMP_Text spawnTimeText;
+    [SerializeField] private TMP_Text capcityText;
     [SerializeField] private TMP_Text SoulsCostText;
     [SerializeField] private Image rarityTagImage;
     [SerializeField] private Image unitClassImage;
+
+    [Header("Leveling UI")]
+    [SerializeField] private TMP_Text levelText;
+    [SerializeField] private Button upgradeButton;
+    [SerializeField] private TMP_Text upgradeCostText;
+    [HideInInspector] private Image upgradeCostIcon;
+
 
     [Header("Rarity Sprites")]
     [SerializeField] private Sprite commonRaritySprite;
@@ -53,6 +62,9 @@ public class UnitDetailsPopupController : MonoBehaviour
     [SerializeField] private Button partsTabButton;
     [SerializeField] private Button upgradesTabButton;
 
+    [SerializeField] private Sprite selectedTab;
+    [SerializeField] private Sprite unselectedTab;
+
     [Header("Parts Tab Controller")]
     [SerializeField] private UnitPartsTabController partsTabController;
 
@@ -72,6 +84,12 @@ public class UnitDetailsPopupController : MonoBehaviour
 
         if (backgroundCloseButton != null)
             backgroundCloseButton.onClick.AddListener(Close);
+
+        if (upgradeButton != null)
+        {
+            upgradeButton.onClick.RemoveListener(OnUpgradeClicked);
+            upgradeButton.onClick.AddListener(OnUpgradeClicked);
+        }
 
         // Keep root disabled initially (PopupAnimator also disables it in Awake, but this is safe)
         if (root != null)
@@ -155,8 +173,21 @@ public class UnitDetailsPopupController : MonoBehaviour
         if (nameText != null) nameText.text = _unit.displayName;
         if (descriptionText != null) descriptionText.text = _unit.description;
 
-        if (hpText != null) hpText.text = _unit.maxHealth.ToString();
-        if (dmgText != null) dmgText.text = _unit.damage.ToString();
+        // ---------- LEVEL DATA ----------
+        int lvl = UnitLevelingService.GetUnitLevel(_unit.id);
+        int maxLvl = UnitLevelingService.MaxLevel;
+
+        float hpDmgMul = UnitLevelingService.GetHpDamageMultiplier(lvl);
+        float spawnMul = UnitLevelingService.GetSpawnTimeMultiplier(lvl);
+
+        int hp = Mathf.RoundToInt(_unit.maxHealth * hpDmgMul);
+        int dmg = Mathf.RoundToInt(_unit.damage * hpDmgMul);
+        float spawnTime = _unit.spawnTime * spawnMul;
+
+        // ---------- STATS TEXT ----------
+        if (hpText != null) hpText.text = hp.ToString();
+        if (dmgText != null) dmgText.text = dmg.ToString();
+
         if (atkSpeedText != null) atkSpeedText.text = _unit.attackCooldown.ToString();
         if (rangeText != null) rangeText.text = _unit.attackRange.ToString();
         if (speedText != null) speedText.text = _unit.moveSpeed.ToString();
@@ -164,9 +195,37 @@ public class UnitDetailsPopupController : MonoBehaviour
         if (targetPriorityText != null) targetPriorityText.text = _unit.targetPriorityClass.ToString();
         if (SoulsCostText != null) SoulsCostText.text = _unit.soulCost.ToString();
 
+        if (spawnTimeText != null) spawnTimeText.text = spawnTime.ToString();
+        if (capcityText != null) capcityText.text = _unit.baseCapacity.ToString();
+
+
         if (rarityTagImage != null) rarityTagImage.sprite = GetRaritySpriteByType(_unit.rarity);
         if (unitClassImage != null) unitClassImage.sprite = GetUnitClassSpriteByType(_unit.unitClass);
+
+        // ---------- LEVEL UI ----------
+        if (levelText != null)
+            levelText.text = $"Level {lvl}/{maxLvl}";
+
+        // ---------- COST + BUTTON STATE ----------
+        bool atMax = lvl >= maxLvl;
+        int cost = atMax ? 0 : UnitLevelingService.GetUpgradeCost(lvl);
+
+        if (upgradeCostText != null)
+            upgradeCostText.text = atMax ? "MAX" : cost.ToString();
+
+        if (upgradeCostIcon != null) upgradeCostIcon.sprite = StyleManager.instance.ScrollSprite;
+
+        int ownedScrolls = 0;
+        if (PlayerCurrencyWallet.Instance != null)
+            ownedScrolls = PlayerCurrencyWallet.Instance.Scrolls;
+
+        bool inBattle = (BattleManager.instance != null && BattleManager.instance.IsBattleRunning);
+        bool canAfford = ownedScrolls >= cost;
+
+        if (upgradeButton != null)
+            upgradeButton.interactable = (!inBattle) && (!atMax) && canAfford;
     }
+
 
     private void FillIconImageOrAnimator()
     {
@@ -189,7 +248,20 @@ public class UnitDetailsPopupController : MonoBehaviour
             }
         }
 
-        icon.SetNativeSize();
+        //icon.SetNativeSize();
+    }
+
+    private void OnUpgradeClicked()
+    {
+        if (_unit == null) return;
+
+        bool ok = UnitLevelingService.TryUpgradeUnit(_unit.id);
+        if (!ok) return;
+
+        FillData();
+
+        if (upgradesTab != null && upgradesTab.activeSelf && upgradesTabController != null)
+            upgradesTabController.SetUnit(_unit);
     }
 
     private Sprite GetRaritySpriteByType(UnitRarity type)
@@ -226,9 +298,21 @@ public class UnitDetailsPopupController : MonoBehaviour
         if (upgradesTab != null) upgradesTab.SetActive(false);
         if (partsTab != null) partsTab.SetActive(false);
 
-        if (statsTabButton != null) statsTabButton.interactable = false;
-        if (upgradesTabButton != null) upgradesTabButton.interactable = true;
-        if (partsTabButton != null) partsTabButton.interactable = true;
+        if (statsTabButton != null)
+        {
+            statsTabButton.image.sprite = selectedTab;
+            //statsTabButton.interactable = false;
+        }
+        if (upgradesTabButton != null)
+        {
+            upgradesTabButton.image.sprite = unselectedTab;
+            //upgradesTabButton.interactable = true;
+        }
+        if (partsTabButton != null)
+        {
+            partsTabButton.image.sprite = unselectedTab;
+            //partsTabButton.interactable = true;
+        }
     }
 
     public void OpenPartsTab()
@@ -237,9 +321,21 @@ public class UnitDetailsPopupController : MonoBehaviour
         if (statsTab != null) statsTab.SetActive(false);
         if (upgradesTab != null) upgradesTab.SetActive(false);
 
-        if (partsTabButton != null) partsTabButton.interactable = false;
-        if (statsTabButton != null) statsTabButton.interactable = true;
-        if (upgradesTabButton != null) upgradesTabButton.interactable = true;
+        if (partsTabButton != null)
+        {
+            partsTabButton.image.sprite = selectedTab;
+            //partsTabButton.interactable = false;
+        }
+        if (statsTabButton != null)
+        {
+            statsTabButton.image.sprite = unselectedTab;
+            //statsTabButton.interactable = true;
+        }
+        if (upgradesTabButton != null)
+        {
+            upgradesTabButton.image.sprite = unselectedTab;
+            //upgradesTabButton.interactable = true;
+        }
 
         if (partsTabController != null && _unit != null)
             partsTabController.Refresh();
@@ -251,10 +347,41 @@ public class UnitDetailsPopupController : MonoBehaviour
         if (partsTab != null) partsTab.SetActive(false);
         if (upgradesTab != null) upgradesTab.SetActive(true);
 
-        if (upgradesTabButton != null) upgradesTabButton.interactable = false;
-        if (partsTabButton != null) partsTabButton.interactable = true;
-        if (statsTabButton != null) statsTabButton.interactable = true;
+        if (upgradesTabButton != null)
+        {
+            upgradesTabButton.image.sprite = selectedTab;
+            //upgradesTabButton.interactable = false;
+        }
+        if (partsTabButton != null)
+        {
+            partsTabButton.image.sprite = unselectedTab;
+            //partsTabButton.interactable = true;
+        }
+        if (statsTabButton != null)
+        {
+            statsTabButton.image.sprite = unselectedTab;
+            //statsTabButton.interactable = true;
+        }
 
         upgradesTabController.SetUnit(_unit);
     }
+
+    private void OnEnable()
+    {
+        if (PlayerCurrencyWallet.Instance != null)
+            PlayerCurrencyWallet.Instance.OnScrollsChanged += OnScrollsChanged;
+    }
+
+    private void OnDisable()
+    {
+        if (PlayerCurrencyWallet.Instance != null)
+            PlayerCurrencyWallet.Instance.OnScrollsChanged -= OnScrollsChanged;
+    }
+
+    private void OnScrollsChanged(int _)
+    {
+        if (root != null && root.activeSelf)
+            FillData();
+    }
+
 }

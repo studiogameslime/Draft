@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpriteManager
   goldSprite: {fileID: 5325537983010943776, guid: 44eaaba6535f6c24489a9ee11fdf9bd8, type: 3}
   gemSprite: {fileID: -1056818688221956500, guid: 29c55222517a6fc44acb4267a908b40b, type: 3}
+  ScrollSprite: {fileID: 2467491259192402747, guid: f61d3b9678982f74c8a9e8fba7612440, type: 3}
   newUnitSprite: {fileID: -5342361358915805274, guid: 62280c1e5b5c0aa4e9bf8a47e98ddc1c, type: 3}
   commonChestSprite: {fileID: 21300000, guid: c967415b7afa3ea4e8b629dc9762ad9f, type: 3}
   rareChestSprite: {fileID: 21300000, guid: 8dac2d66a1dd3524eae6c146e562094c, type: 3}

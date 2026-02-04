@@ -7,6 +7,7 @@ public static StyleManager instance;
     [Header("Images")]
     public Sprite goldSprite;
     public Sprite gemSprite;
+    public Sprite ScrollSprite;
     public Sprite newUnitSprite;
     public Sprite commonChestSprite;
     public Sprite rareChestSprite;
