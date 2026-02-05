@@ -123,8 +123,9 @@ public class UnitSpawner : MonoBehaviour
         SetProgressImmediate(0f);
 
         // Wait spawnTime while updating only the progress UI (no unit instantiation, no scale animation)
-        float levelMul = UnitLevelingService.GetSpawnTimeMultiplier(unitLevel);
-        float duration = Mathf.Max(0.01f, unitDef.spawnTime * levelMul);
+        //float levelMul = UnitLevelingService.GetSpawnTimeMultiplier(unitLevel);
+        //float duration = Mathf.Max(0.01f, unitDef.spawnTime * levelMul);
+        float duration = unitDef.spawnTime;
         float t = 0f;
 
         while (t < duration && battleRunning && BattleManager.instance != null && BattleManager.instance.IsBattleRunning && !BattleManager.instance.IsGameOver)

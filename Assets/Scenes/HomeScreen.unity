@@ -22443,6 +22443,9 @@ MonoBehaviour:
   gemsText: {fileID: 702267925}
   scrollsText: {fileID: 1033434951}
   playerLevelText: {fileID: 340318525}
+  goldIcon: {fileID: 0}
+  gemsIcon: {fileID: 0}
+  scrollsIcon: {fileID: 0}
   playerXPFill: {fileID: 220313694}
   fillSmoothTime: 0.5
   animateOnFirstUpdate: 1
@@ -26864,7 +26867,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1056818688221956500, guid: 29c55222517a6fc44acb4267a908b40b, type: 3}
+  m_Sprite: {fileID: 2467491259192402747, guid: f61d3b9678982f74c8a9e8fba7612440, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -31465,7 +31468,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1976945802
 RectTransform:
   m_ObjectHideFlags: 0

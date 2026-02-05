@@ -181,20 +181,20 @@ public class UnitDetailsPopupController : MonoBehaviour
         int maxLvl = UnitLevelingService.MaxLevel;
 
         float hpDmgMul = UnitLevelingService.GetHpDamageMultiplier(lvl);
-        float spawnMul = UnitLevelingService.GetSpawnTimeMultiplier(lvl);
 
         int hp = Mathf.RoundToInt(_unit.maxHealth * hpDmgMul);
         int dmg = Mathf.RoundToInt(_unit.damage * hpDmgMul);
-        float spawnTime = _unit.spawnTime * spawnMul;
+        //float currentSpawnTime = _unit.spawnTime * UnitLevelingService.GetSpawnTimeMultiplier(lvl);
 
         int hpAddedNextLevel = Mathf.RoundToInt(hp * 0.1f);
         int dmgAddedNextLevel = Mathf.RoundToInt(dmg * 0.1f);
-        float nextSpawnTime = spawnMul;
-        if (lvl < maxLvl)
-            nextSpawnTime = _unit.spawnTime * UnitLevelingService.GetSpawnTimeMultiplier(lvl + 1);
-
-        float spawnDecrease = (lvl < maxLvl) ? (spawnMul - nextSpawnTime) : 0f;
-        Debug.Log($"hpDmgMul={hpDmgMul}");
+        //float nextSpawnTime = currentSpawnTime;
+        //if (lvl < maxLvl)
+        //{
+        //    nextSpawnTime = _unit.spawnTime *
+        //                    UnitLevelingService.GetSpawnTimeMultiplier(lvl + 1);
+        //}
+        //float spawnDecrease = (lvl < maxLvl) ? currentSpawnTime - nextSpawnTime : 0f;
 
         // ---------- STATS TEXT ----------
         if (hpText != null) hpText.text = hp.ToString();
@@ -202,10 +202,21 @@ public class UnitDetailsPopupController : MonoBehaviour
 
         if (addHpText != null) addHpText.text = $"+{hpAddedNextLevel.ToString()}";
         if (addDmgText != null) addDmgText.text = $"+{dmgAddedNextLevel.ToString()}";
-        if (decreaseSpawnTimeText != null)
-            decreaseSpawnTimeText.text = (lvl < maxLvl)
-                ? $"-{spawnDecrease.ToString("0.#")}"
-                : "-";
+
+        if (spawnTimeText != null) spawnTimeText.text = _unit.spawnTime.ToString();
+
+        //if (decreaseSpawnTimeText != null)
+        //{
+        //    decreaseSpawnTimeText.text = (lvl < maxLvl)
+        //        ? $"-{spawnDecrease.ToString("0.#")}"
+        //        : "-";
+        //}
+
+            //if (spawnTimeText != null)
+            //{
+            //    spawnTimeText.text = currentSpawnTime.ToString("0.#");
+            //}
+
 
         if (atkSpeedText != null) atkSpeedText.text = _unit.attackCooldown.ToString();
         if (rangeText != null) rangeText.text = _unit.attackRange.ToString();
@@ -214,7 +225,6 @@ public class UnitDetailsPopupController : MonoBehaviour
         if (targetPriorityText != null) targetPriorityText.text = _unit.targetPriorityClass.ToString();
         if (SoulsCostText != null) SoulsCostText.text = _unit.soulCost.ToString();
 
-        if (spawnTimeText != null) spawnTimeText.text = spawnTime.ToString("0.#");
         if (capcityText != null) capcityText.text = _unit.baseCapacity.ToString();
 
 
@@ -267,6 +277,12 @@ public class UnitDetailsPopupController : MonoBehaviour
             }
         }
 
+        // FORCE RECT RESET
+        RectTransform rt = icon.rectTransform;
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
         //icon.SetNativeSize();
     }
 
