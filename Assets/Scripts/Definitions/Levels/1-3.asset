@@ -17,8 +17,8 @@ MonoBehaviour:
     souls: 10
     goldOnRoundWin: 15
     enemyPhases:
-    - unit: {fileID: 11400000, guid: 5546c6601084d8d4bb5ad2da3216a6ad, type: 2}
-      count: 1
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
+      count: 5
       spawnInterval: 2
     enemyLevel: 1
     xpOnRoundWin: 20

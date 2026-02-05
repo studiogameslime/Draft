@@ -26,7 +26,7 @@ MonoBehaviour:
   soulDropChance: 0.25
   maxHealth: 25
   damage: 30
-  moveSpeed: 1
+  moveSpeed: 0.6
   attackRange: 15
   attackCooldown: 3
   spawnTime: 9

@@ -219,8 +219,13 @@ public class UnitDetailsPopupController : MonoBehaviour
 
 
         if (atkSpeedText != null) atkSpeedText.text = _unit.attackCooldown.ToString();
-        if (rangeText != null) rangeText.text = _unit.attackRange.ToString();
-        if (speedText != null) speedText.text = _unit.moveSpeed.ToString();
+
+        var label = UILabels.GetRangeLabel(_unit.attackRange);
+        rangeText.text = UILabels.RangeToDisplay(label);
+
+        var speedCategory = UILabels.GetSpeedLabel(_unit.moveSpeed);
+        speedText.text = UILabels.SpeedToDisplay(speedCategory);
+
 
         if (targetPriorityText != null) targetPriorityText.text = _unit.targetPriorityClass.ToString();
         if (SoulsCostText != null) SoulsCostText.text = _unit.soulCost.ToString();

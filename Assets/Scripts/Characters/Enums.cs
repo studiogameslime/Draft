@@ -119,5 +119,19 @@ public enum FloatingNumberType
     Heal
 }
 
+public enum RangeLabel
+{
+    Melee,
+    Short,
+    Long
+}
+public enum UnitSpeedCategory
+{
+    Slow,
+    Normal,
+    Fast,
+}
+
+
 
 
