@@ -186,8 +186,7 @@ public class UnitDetailsPopupController : MonoBehaviour
         int dmg = Mathf.RoundToInt(_unit.damage * hpDmgMul);
         //float currentSpawnTime = _unit.spawnTime * UnitLevelingService.GetSpawnTimeMultiplier(lvl);
 
-        int hpAddedNextLevel = Mathf.RoundToInt(hp * 0.1f);
-        int dmgAddedNextLevel = Mathf.RoundToInt(dmg * 0.1f);
+        
         //float nextSpawnTime = currentSpawnTime;
         //if (lvl < maxLvl)
         //{
@@ -199,9 +198,6 @@ public class UnitDetailsPopupController : MonoBehaviour
         // ---------- STATS TEXT ----------
         if (hpText != null) hpText.text = hp.ToString();
         if (dmgText != null) dmgText.text = dmg.ToString();
-
-        if (addHpText != null) addHpText.text = $"+{hpAddedNextLevel.ToString()}";
-        if (addDmgText != null) addDmgText.text = $"+{dmgAddedNextLevel.ToString()}";
 
         if (spawnTimeText != null) spawnTimeText.text = _unit.spawnTime.ToString();
 
@@ -242,6 +238,37 @@ public class UnitDetailsPopupController : MonoBehaviour
 
         // ---------- COST + BUTTON STATE ----------
         bool atMax = lvl >= maxLvl;
+
+        if (!atMax)
+        {
+            int hpAddedNextLevel = Mathf.RoundToInt(hp * 0.1f);
+            int dmgAddedNextLevel = Mathf.RoundToInt(dmg * 0.1f);
+
+            if (addHpText != null)
+            {
+                addHpText.gameObject.SetActive(true);
+                addHpText.text = $"+{hpAddedNextLevel.ToString()}";
+            }
+
+            if (addDmgText != null)
+            {
+                addDmgText.gameObject.SetActive(true);
+                addDmgText.text = $"+{dmgAddedNextLevel.ToString()}";
+            }
+        }
+        else
+        {
+            if (addHpText != null)
+            {
+                addHpText.gameObject.SetActive(false);
+            }
+
+            if (addDmgText != null)
+            {
+                addDmgText.gameObject.SetActive(false);
+            }
+        }
+
         int cost = atMax ? 0 : UnitLevelingService.GetUpgradeCost(lvl);
 
         if (upgradeCostText != null)

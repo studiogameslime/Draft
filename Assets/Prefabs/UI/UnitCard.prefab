@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 30}
+  m_SizeDelta: {x: 170, y: 35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6099644462579525436
 CanvasRenderer:
@@ -155,7 +155,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -50}
+  m_AnchoredPosition: {x: 0, y: -45}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &1906346000513481169
@@ -170,7 +170,7 @@ GameObject:
   - component: {fileID: 8315716209996741977}
   - component: {fileID: 599116179753634472}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: DetailsButtonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -223,10 +223,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Upgrade
+  m_text: 'Details
+
+'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c593b357af25d684d814fe1fc6855624, type: 2}
-  m_sharedMaterial: {fileID: -1786939803995299692, guid: c593b357af25d684d814fe1fc6855624, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 4ac20c3ce38cd8d439682cfabb6bc2fc, type: 2}
+  m_sharedMaterial: {fileID: 2281642442144843139, guid: 4ac20c3ce38cd8d439682cfabb6bc2fc, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -461,8 +463,8 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 4ac20c3ce38cd8d439682cfabb6bc2fc, type: 2}
+  m_sharedMaterial: {fileID: 2281642442144843139, guid: 4ac20c3ce38cd8d439682cfabb6bc2fc, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -543,7 +545,7 @@ GameObject:
   - component: {fileID: 3838618314737185706}
   - component: {fileID: 2420683305116519767}
   m_Layer: 5
-  m_Name: UpgradeButton
+  m_Name: DetailsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -567,7 +569,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 30}
+  m_SizeDelta: {x: 170, y: 35}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7194082779684321891
 CanvasRenderer:
@@ -753,6 +755,7 @@ MonoBehaviour:
   RareRarityColor: {r: 0.5641509, g: 0.69642353, b: 1, a: 1}
   EpicRarityColor: {r: 0.9659267, g: 0.42075467, b: 1, a: 1}
   LegendaryRarityColor: {r: 1, g: 0.9843358, b: 0.36037737, a: 1}
+  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &5630506623893022387
 GameObject:
   m_ObjectHideFlags: 0
@@ -840,7 +843,7 @@ GameObject:
   - component: {fileID: 6183120730712598304}
   - component: {fileID: 1562337115547543094}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: EquipButtonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -895,8 +898,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Equip
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: c593b357af25d684d814fe1fc6855624, type: 2}
-  m_sharedMaterial: {fileID: -1786939803995299692, guid: c593b357af25d684d814fe1fc6855624, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 4ac20c3ce38cd8d439682cfabb6bc2fc, type: 2}
+  m_sharedMaterial: {fileID: 2281642442144843139, guid: 4ac20c3ce38cd8d439682cfabb6bc2fc, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

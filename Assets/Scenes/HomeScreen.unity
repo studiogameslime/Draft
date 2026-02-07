@@ -2314,6 +2314,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: SpawnTimeText
       objectReference: {fileID: 0}
+    - target: {fileID: 2550821966309956689, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_text
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 2550821966309956689, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_fontSize
+      value: 34.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 4094342178670817401, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 4387626382055988879, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -11677,6 +11689,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: SpeedText
       objectReference: {fileID: 0}
+    - target: {fileID: 2550821966309956689, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_text
+      value: normal
+      objectReference: {fileID: 0}
+    - target: {fileID: 2550821966309956689, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_fontSize
+      value: 29.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4094342178670817401, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 4387626382055988879, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -12464,6 +12488,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: CapacityText
       objectReference: {fileID: 0}
+    - target: {fileID: 2550821966309956689, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_text
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 2550821966309956689, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_fontSize
+      value: 34.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 4094342178670817401, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 4387626382055988879, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -12716,6 +12752,18 @@ PrefabInstance:
     - target: {fileID: 2347719581131947778, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
       propertyPath: m_Name
       value: HitSpeedText
+      objectReference: {fileID: 0}
+    - target: {fileID: 2550821966309956689, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_text
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 2550821966309956689, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_fontSize
+      value: 34.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 4094342178670817401, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4387626382055988879, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
       propertyPath: m_Sprite
@@ -22560,6 +22608,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: RangeText
       objectReference: {fileID: 0}
+    - target: {fileID: 2550821966309956689, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_text
+      value: short
+      objectReference: {fileID: 0}
+    - target: {fileID: 2550821966309956689, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_fontSize
+      value: 34.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 4094342178670817401, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 4387626382055988879, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -24245,6 +24305,18 @@ PrefabInstance:
     - target: {fileID: 2347719581131947778, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
       propertyPath: m_Name
       value: TargetText
+      objectReference: {fileID: 0}
+    - target: {fileID: 2550821966309956689, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_text
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 2550821966309956689, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_fontSize
+      value: 34.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 4094342178670817401, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4387626382055988879, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
       propertyPath: m_Sprite
@@ -30659,7 +30731,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 170, y: -15}
-  m_SizeDelta: {x: 80, y: 40}
+  m_SizeDelta: {x: 100, y: 40}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1921171509
 MonoBehaviour:
@@ -40782,6 +40854,18 @@ PrefabInstance:
     - target: {fileID: 2347719581131947778, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
       propertyPath: m_Name
       value: HPText
+      objectReference: {fileID: 0}
+    - target: {fileID: 2550821966309956689, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_text
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 2550821966309956689, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_fontSize
+      value: 34.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 4094342178670817401, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7005680301875937256, guid: bc85fed8d3efd00438c07989fffb4aa2, type: 3}
       propertyPath: m_Name
