@@ -37,6 +37,7 @@ public class UnitDetailsPopupController : MonoBehaviour
     [SerializeField] private TMP_Text addHpText;
     [SerializeField] private TMP_Text addDmgText;
     [SerializeField] private TMP_Text decreaseSpawnTimeText;
+    [SerializeField] private TMP_Text damageHealTitle;
 
     [Header("Leveling UI")]
     [SerializeField] private TMP_Text levelText;
@@ -186,7 +187,7 @@ public class UnitDetailsPopupController : MonoBehaviour
         int dmg = Mathf.RoundToInt(_unit.damage * hpDmgMul);
         //float currentSpawnTime = _unit.spawnTime * UnitLevelingService.GetSpawnTimeMultiplier(lvl);
 
-        
+
         //float nextSpawnTime = currentSpawnTime;
         //if (lvl < maxLvl)
         //{
@@ -196,6 +197,11 @@ public class UnitDetailsPopupController : MonoBehaviour
         //float spawnDecrease = (lvl < maxLvl) ? currentSpawnTime - nextSpawnTime : 0f;
 
         // ---------- STATS TEXT ----------
+        if (damageHealTitle != null) 
+        {
+            damageHealTitle.text = _unit.displayName == "Fairy" ? "Heal" : "Damage";
+        }
+
         if (hpText != null) hpText.text = hp.ToString();
         if (dmgText != null) dmgText.text = dmg.ToString();
 
@@ -326,6 +332,9 @@ public class UnitDetailsPopupController : MonoBehaviour
         if (!ok) return;
 
         FillData();
+
+        int unitLvl = UnitLevelingService.GetUnitLevel(_unit.id);
+        PlayerXPManager.Instance.AddXP(unitLvl * 10);
 
         if (upgradesTab != null && upgradesTab.activeSelf && upgradesTabController != null)
             upgradesTabController.SetUnit(_unit);
