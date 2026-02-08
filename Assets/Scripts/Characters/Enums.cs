@@ -116,7 +116,7 @@ public enum FloatingNumberType
 {
     Normal,
     Crit,
-    Heal
+    Heal,
 }
 
 public enum RangeLabel

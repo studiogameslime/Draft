@@ -37,8 +37,6 @@ public class UnitDefinition : ScriptableObject
     [Range(0f, 1f)]
     public float critChance = 0.2f;
     public float critMultiplier = 2f;
-    public Color critColor = new Color(1f, 0.4f, 0.4f);
-
 
     [Header("Animator")]
     public RuntimeAnimatorController animatorController;

@@ -110,7 +110,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         // Crit stats from definition
         critChance = def.critChance;
         critMultiplier = def.critMultiplier;
-        critColor = def.critColor;
+        critColor = Color.orange;
 
 
         // Enemy visuals
@@ -189,7 +189,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         OnTakeDamage?.Invoke(attacker, amount);
         attacker?.OnDealDamage?.Invoke(this, amount);
 
-        showFloatingDamage(amount, isCrit?FloatingNumberType.Crit:FloatingNumberType.Normal);
+        showFloatingDamage(amount, isCrit ? FloatingNumberType.Crit : FloatingNumberType.Normal);
 
         if (currentHealth <= 0)
         {
@@ -224,26 +224,25 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         var tmp = go.GetComponent<TextMeshPro>();
         tmp.text = amount.ToString();
 
-        // Crit color
 
         switch (floatingNumberType)
-        {
-            case FloatingNumberType.Normal:
-                {
-                    tmp.color = Color.white;
-                    break;
-                }
-            case FloatingNumberType.Crit:
-                {
-                    tmp.color = critColor;
-                    break;
-                }
-            case FloatingNumberType.Heal:
-                {
-                    tmp.color = Color.green;
-                    break;
-                }
-        }
+    {
+        case FloatingNumberType.Heal:
+            tmp.color = Color.green;
+            break;
+
+        case FloatingNumberType.Crit:
+            tmp.color = critColor;
+            break;
+
+        case FloatingNumberType.Normal:
+        default:
+            tmp.color = (team == Team.MyTeam)
+                ? Color.white
+                : Color.red;
+            break;
+    }
+
 
 
         // Make sure the whole prefab renders on top by using Sorting Group
@@ -345,7 +344,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         if (tank != null) tank.enabled = false;
     }
 
-   
+
     public void Winning()
     {
         animator.SetTrigger("winning");
