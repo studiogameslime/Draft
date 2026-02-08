@@ -100,7 +100,6 @@ public class BattleManager : MonoBehaviour
 
         if (BattleFooterAnimation.instance != null)
         {
-            Debug.Log("BattleFooter");
             BattleFooterAnimation.instance.EnterGridMode();
         }
     }

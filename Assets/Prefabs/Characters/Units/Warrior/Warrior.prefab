@@ -118,6 +118,11 @@ MonoBehaviour:
   moveSpeed: 2
   attackRange: 1
   attackCooldown: 1
+  baseMoveSpeed: 0
+  critChance: 0
+  critMultiplier: 0
+  critColor: {r: 0, g: 0, b: 0, a: 0}
+  floatingXRandom: 0.15
   team: 0
   monsterType: 0
   lockedIn: 0
@@ -125,7 +130,6 @@ MonoBehaviour:
   isUntargetable: 0
   _initialPosition: {x: 0, y: 0, z: 0}
   fallenWeaponPrefab: {fileID: 0}
-  _hpBar: {fileID: 8969822015970705545}
   floatingDamagePrefab: {fileID: 5435662357922782254, guid: edf8d4cdb46f4b542ad4f69652ff8174, type: 3}
 --- !u!114 &4947438431943674892
 MonoBehaviour:
@@ -143,6 +147,8 @@ MonoBehaviour:
   shootPoint: {fileID: 0}
   wall: {fileID: 0}
   wallTarget: {fileID: 0}
+  wallLineYOffset: 0
+  gateArriveDistance: 0.12
 --- !u!50 &5159539399863573130
 Rigidbody2D:
   serializedVersion: 5
@@ -216,8 +222,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.15, y: -0.19}
-  m_Radius: 0.9
+  m_Offset: {x: -0.27, y: -0.19}
+  m_Radius: 0.8
 --- !u!95 &1727636966011587750
 Animator:
   serializedVersion: 7
@@ -354,14 +360,3 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3985425927352957813, guid: c7ae0826dedb4064b8ec22e4b63c0342, type: 3}
   m_PrefabInstance: {fileID: 6742682009590774837}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8969822015970705545 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2443735001464487100, guid: c7ae0826dedb4064b8ec22e4b63c0342, type: 3}
-  m_PrefabInstance: {fileID: 6742682009590774837}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image

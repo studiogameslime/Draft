@@ -28516,6 +28516,8 @@ MonoBehaviour:
     prefab: {fileID: 1993813492223290379, guid: ae8d9c5c4a30d3e49a0e3ee3b11abbc2, type: 3}
   - name: PartDropManager
     prefab: {fileID: 187120831971118095, guid: f2d6cc771be394941999ffed89c6fb5a, type: 3}
+  - name: GameAssetsProvider
+    prefab: {fileID: 7092075268256231606, guid: 34eb7d62554e20e40812ac80c4f2aafa, type: 3}
   - name: AdsManager
     prefab: {fileID: 1629668126614028765, guid: feee6726721fcb54588eda5b414fe797, type: 3}
   - name: StyleManager
