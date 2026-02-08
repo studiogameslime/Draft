@@ -216,6 +216,10 @@ public class BattleManager : MonoBehaviour
 
     private void HandleRoundWin()
     {
+        int levelGold = levelDefinition.goldOnLevelComplete;
+        int roundsGold = levelDefinition.GetGoldFromRounds();
+        int totalBattleGold = levelGold + roundsGold;
+
         if (IsExitingBattle)
             return;
 
@@ -239,10 +243,14 @@ public class BattleManager : MonoBehaviour
             PlayerCurrencyWallet.Instance.AddGold(levelDefinition.GetGoldFromRounds());
 
             EndGameUI.Instance.ShowWinScreen(
-                levelDefinition.goldOnLevelComplete,
-                levelDefinition.GetGoldFromRounds(),
-                PlayerCurrencyWallet.Instance.Gold
+                levelGold,
+                roundsGold,
+                totalBattleGold
+
+
             );
+            
+
 
             gameOver = true;
             return;
