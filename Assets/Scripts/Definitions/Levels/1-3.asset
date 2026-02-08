@@ -20,6 +20,9 @@ MonoBehaviour:
     - unit: {fileID: 11400000, guid: 5546c6601084d8d4bb5ad2da3216a6ad, type: 2}
       count: 1
       spawnInterval: 2
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
+      count: 7
+      spawnInterval: 3
     enemyLevel: 1
     xpOnRoundWin: 20
   - playerPicks: 0

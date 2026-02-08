@@ -1,6 +1,11 @@
 using UnityEngine;
 
-public class MeleeAttack : MonoBehaviour, IAttackStrategy
+public interface ICancelableAttack
+{
+    void CancelAttack();
+}
+
+public class MeleeAttack : MonoBehaviour, IAttackStrategy, ICancelableAttack
 {
     private ICombatTarget currentTarget;
     private CharacterStats stats;
@@ -37,4 +42,14 @@ public class MeleeAttack : MonoBehaviour, IAttackStrategy
         // optional: clear reference
         // currentTarget = null;
     }
+
+    public void CancelAttack()
+    {
+        currentTarget = null;
+        if (animator != null)
+        {
+            animator.ResetTrigger("attack");
+        }
+    }
+
 }

@@ -14,6 +14,8 @@ public class UnitAI : MonoBehaviour
 
     private bool isKnockbacked = false;
     private Coroutine knockbackRoutine;
+    private bool isInterrupted;
+    private float interruptUntil;
 
 
     public ICombatTarget target;
@@ -97,17 +99,23 @@ public class UnitAI : MonoBehaviour
     private void Update()
     {
 
-        if (isKnockbacked)
-        {
-            animator?.SetBool("isMoving", false);
-            return;
-        }
 
         if (myStats == null || myStats.currentHealth <= 0)
         {
             StopMoving();
             return;
         }
+
+        // HARD STOP: knockback / interrupt
+        if (isKnockbacked || isInterrupted)
+        {
+            if (isInterrupted && Time.time >= interruptUntil)
+                isInterrupted = false;
+
+            animator?.SetBool("isMoving", false);
+            return;
+        }
+
 
         // Enemy logic (unchanged)
         if (myStats.team == Team.EnemyTeam && wall != null && wallTarget != null && wallLocked)
@@ -381,6 +389,7 @@ public class UnitAI : MonoBehaviour
     private void AttackCurrentTarget()
     {
         if (target == null) return;
+        if (isInterrupted || isKnockbacked) return;
 
         if (Time.time - lastAttackTime >= myStats.attackCooldown)
         {
@@ -388,6 +397,7 @@ public class UnitAI : MonoBehaviour
             attackStrategy?.Attack(target);
         }
     }
+
 
     private float DistanceToWallCollider()
     {
@@ -424,11 +434,17 @@ public class UnitAI : MonoBehaviour
         if (!gameObject.activeInHierarchy)
             return;
 
+        // HARD interrupt
+        Interrupt(duration);
+
         if (knockbackRoutine != null)
             StopCoroutine(knockbackRoutine);
 
-        knockbackRoutine = StartCoroutine(KnockbackRoutine(direction, distance, duration));
+        knockbackRoutine = StartCoroutine(
+            KnockbackRoutine(direction, distance, duration)
+        );
     }
+
 
     private IEnumerator KnockbackRoutine(Vector2 direction, float distance, float duration)
     {
@@ -450,6 +466,19 @@ public class UnitAI : MonoBehaviour
         transform.position = endPos;
         isKnockbacked = false;
     }
+    public bool IsInterrupted => isInterrupted;
+
+    public void Interrupt(float seconds)
+    {
+        isInterrupted = true;
+        interruptUntil = Mathf.Max(interruptUntil, Time.time + Mathf.Max(0f, seconds));
+        animator?.SetBool("isMoving", false);
+        lastAttackTime = Time.time;
+
+        var cancelable = GetComponent<ICancelableAttack>();
+        cancelable?.CancelAttack();
+    }
+
 
 
 }
