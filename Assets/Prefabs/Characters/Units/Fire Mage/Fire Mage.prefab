@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 2683054115076242972}
   - component: {fileID: 6854601202460801054}
   - component: {fileID: 3504355993341416739}
-  - component: {fileID: 2011817383968589255}
   - component: {fileID: -5741480685636111759}
+  - component: {fileID: 3918813009115691788}
   m_Layer: 3
   m_Name: Fire Mage
   m_TagString: Untagged
@@ -119,6 +119,11 @@ MonoBehaviour:
   moveSpeed: 2
   attackRange: 1
   attackCooldown: 1
+  baseMoveSpeed: 0
+  critChance: 0
+  critMultiplier: 0
+  critColor: {r: 0, g: 0, b: 0, a: 0}
+  floatingXRandom: 0.15
   team: 0
   monsterType: 0
   lockedIn: 0
@@ -126,7 +131,7 @@ MonoBehaviour:
   isUntargetable: 0
   _initialPosition: {x: 0, y: 0, z: 0}
   fallenWeaponPrefab: {fileID: 0}
-  _hpBar: {fileID: 7198521293432987025}
+  floatingDamagePrefab: {fileID: 0}
 --- !u!114 &376351866847099633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,8 +144,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a608d263df2d464e916d8bf6b08a732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  knockbackCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  retargetToClosestContinuously: 1
+  retargetInterval: 0.25
+  retargetMinGain: 0.25
   stoppingBuffer: 0.1
   shootPoint: {fileID: 430569425540568769}
+  wall: {fileID: 0}
+  wallTarget: {fileID: 0}
+  wallLineYOffset: 0
+  gateArriveDistance: 0.12
 --- !u!50 &2683054115076242972
 Rigidbody2D:
   serializedVersion: 5
@@ -226,21 +262,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2011817383968589255
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 153394670701094284}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3679895e78f02094ba4409b476919724, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FireMageAttack
-  meteorPrefab: {fileID: 6302113137028731400, guid: a05be2d06ba7ffe42abf7a9a168fddef, type: 3}
-  spawnHeight: 5
-  horizontalRandomOffset: 0.5
 --- !u!114 &-5741480685636111759
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,6 +274,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 306d5c67533acfe49a9c25c929a5005d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HitFlash
+--- !u!114 &3918813009115691788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 153394670701094284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed5829206138ab24ea3ef62f606fa30f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RangerAttack
+  projectilePrefab: {fileID: 6302113137028731400, guid: 1b9a073228e6e0a48829d2abb1fd29fa, type: 3}
+  shootPoint: {fileID: 430569425540568769}
 --- !u!1 &487820345301296132
 GameObject:
   m_ObjectHideFlags: 0
@@ -440,17 +475,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7ae0826dedb4064b8ec22e4b63c0342, type: 3}
---- !u!114 &7198521293432987025 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2443735001464487100, guid: c7ae0826dedb4064b8ec22e4b63c0342, type: 3}
-  m_PrefabInstance: {fileID: 4760213492245602605}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!224 &8448963116826565208 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3985425927352957813, guid: c7ae0826dedb4064b8ec22e4b63c0342, type: 3}
