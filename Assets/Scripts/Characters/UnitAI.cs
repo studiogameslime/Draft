@@ -17,6 +17,13 @@ public class UnitAI : MonoBehaviour
     private bool isInterrupted;
     private float interruptUntil;
 
+    [Header("Retargeting")]
+    [SerializeField] private bool retargetToClosestContinuously = true;
+    [SerializeField] private float retargetInterval = 0.25f;     // How often (in seconds) to re-evaluate the target
+    [SerializeField] private float retargetMinGain = 0.25f;        // Minimum distance advantage (in units) required to switch targets
+    private float nextRetargetTime = 0f; // Next time a retarget check is allowed
+
+
 
     public ICombatTarget target;
     public ICombatTarget CurrentCombatTarget => target;
@@ -181,6 +188,8 @@ public class UnitAI : MonoBehaviour
             // CHANGED: when target changes, stop any previous gate routing
             CleanupGateRouting();
         }
+
+        MaybeRetargetToClosest();
 
         HandleUnitTargetMovementAndAttack();
     }
@@ -479,6 +488,43 @@ public class UnitAI : MonoBehaviour
         cancelable?.CancelAttack();
     }
 
+    private void MaybeRetargetToClosest()
+    {
+        if (!(attackStrategy is MeleeAttack)) return;
+
+        if (!retargetToClosestContinuously) return;
+        if (Time.time < nextRetargetTime) return;
+        nextRetargetTime = Time.time + retargetInterval;
+
+        if (myStats == null) return;
+        if (isInterrupted || isKnockbacked) return;
+
+        CharacterStats closest = FindClosestTargetableEnemy();
+        if (closest == null) return;
+
+        if (targetStats == null)
+        {
+            SetUnitTarget(closest);
+            CleanupGateRouting();
+            return;
+        }
+
+        if (targetStats.currentHealth <= 0 || targetStats.isUntargetable)
+        {
+            SetUnitTarget(closest);
+            CleanupGateRouting();
+            return;
+        }
+
+        float currentDist = Vector3.Distance(transform.position, targetStats.transform.position);
+        float newDist = Vector3.Distance(transform.position, closest.transform.position);
+
+        if (closest != targetStats && newDist < currentDist - retargetMinGain)
+        {
+            SetUnitTarget(closest);
+            CleanupGateRouting();
+        }
+    }
 
 
 }
