@@ -25,9 +25,9 @@ MonoBehaviour:
   soulCost: 0
   soulDropChance: 0.25
   maxHealth: 1000
-  damage: 15
+  damage: 20
   moveSpeed: 0.4
-  attackRange: 1.3
+  attackRange: 1.7
   attackCooldown: 1.5
   spawnTime: 5
   critChance: 0.1

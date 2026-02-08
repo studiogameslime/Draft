@@ -1,12 +1,20 @@
-using UnityEngine;
-using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 public class UnitAI : MonoBehaviour
 {
     private Animator animator;
     private CharacterStats myStats;
     private CharacterStats targetStats;
+
+    [Header("Knockback")]
+    [SerializeField] private AnimationCurve knockbackCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+    private bool isKnockbacked = false;
+    private Coroutine knockbackRoutine;
+
 
     public ICombatTarget target;
     public ICombatTarget CurrentCombatTarget => target;
@@ -88,6 +96,13 @@ public class UnitAI : MonoBehaviour
 
     private void Update()
     {
+
+        if (isKnockbacked)
+        {
+            animator?.SetBool("isMoving", false);
+            return;
+        }
+
         if (myStats == null || myStats.currentHealth <= 0)
         {
             StopMoving();
@@ -111,6 +126,7 @@ public class UnitAI : MonoBehaviour
                 AttackWallIfInRange();
             }
             return;
+
         }
 
         if (myStats.team == Team.EnemyTeam && wall != null && wallTarget != null)
@@ -403,4 +419,37 @@ public class UnitAI : MonoBehaviour
             attackStrategy?.Attack(wallTarget);
         }
     }
+    public void ApplyKnockback(Vector2 direction, float distance, float duration)
+    {
+        if (!gameObject.activeInHierarchy)
+            return;
+
+        if (knockbackRoutine != null)
+            StopCoroutine(knockbackRoutine);
+
+        knockbackRoutine = StartCoroutine(KnockbackRoutine(direction, distance, duration));
+    }
+
+    private IEnumerator KnockbackRoutine(Vector2 direction, float distance, float duration)
+    {
+        isKnockbacked = true;
+
+        Vector3 startPos = transform.position;
+        Vector3 endPos = startPos + (Vector3)(direction.normalized * distance);
+
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float p = Mathf.Clamp01(t / duration);
+            float eased = knockbackCurve.Evaluate(p);
+            transform.position = Vector3.Lerp(startPos, endPos, eased);
+            yield return null;
+        }
+
+        transform.position = endPos;
+        isKnockbacked = false;
+    }
+
+
 }

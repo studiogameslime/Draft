@@ -13,10 +13,10 @@ GameObject:
   - component: {fileID: 7239138018939454439}
   - component: {fileID: 4947438431943674892}
   - component: {fileID: 5159539399863573130}
-  - component: {fileID: -7123918890047948568}
   - component: {fileID: 8384952033324481740}
   - component: {fileID: -9008094870215242580}
   - component: {fileID: 5126126333170338959}
+  - component: {fileID: 5707135206874065868}
   m_Layer: 3
   m_Name: Ent
   m_TagString: Untagged
@@ -143,6 +143,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a608d263df2d464e916d8bf6b08a732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  knockbackCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   stoppingBuffer: 0.1
   shootPoint: {fileID: 0}
   wall: {fileID: 0}
@@ -176,18 +200,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &-7123918890047948568
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 501027721989515594}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fc731778ae85ad4b968e044a53d1c44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TankAttack
 --- !u!58 &8384952033324481740
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -258,6 +270,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5707135206874065868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 501027721989515594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1baa6ed6633c1cd4db836dfd4a638b84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossMeleeAttack
+  knockbackDistance: 2
+  knockbackDuration: 0.3
 --- !u!1001 &6742682009590774837
 PrefabInstance:
   m_ObjectHideFlags: 0
