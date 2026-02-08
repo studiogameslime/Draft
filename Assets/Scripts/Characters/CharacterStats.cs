@@ -75,6 +75,11 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     {
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (floatingDamagePrefab == null && GameAssetsProvider.Instance != null && GameAssetsProvider.Instance.Assets != null)
+        {
+            floatingDamagePrefab = GameAssetsProvider.Instance.Assets.floatingDamagePrefab;
+        }
     }
 
     /// <summary>

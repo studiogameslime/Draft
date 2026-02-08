@@ -27,8 +27,8 @@ MonoBehaviour:
   maxHealth: 1000
   damage: 15
   moveSpeed: 0.4
-  attackRange: 1
-  attackCooldown: 1
+  attackRange: 1.3
+  attackCooldown: 1.5
   spawnTime: 5
   critChance: 0.1
   critMultiplier: 1.5
