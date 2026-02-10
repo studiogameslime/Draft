@@ -14,7 +14,7 @@ public enum UnitClass
     Ranged = 3,
     Mage = 4,
     Support = 5,
-    King = 6
+    Wall = 6,
 }
 
 

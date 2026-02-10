@@ -24828,7 +24828,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52332e2103a189a46ad0e912ada1f850, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayButton
-  sceneName: 1-5
+  sceneName: 1-1
 --- !u!1 &1443936308
 GameObject:
   m_ObjectHideFlags: 0

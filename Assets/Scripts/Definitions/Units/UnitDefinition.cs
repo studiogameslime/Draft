@@ -4,61 +4,39 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Units/Unit Definition")]
 public class UnitDefinition : ScriptableObject
 {
-    [Header("Basic info")]
+    [Header("Basic info for both unit and enemy")]
     public string id;
     public string displayName;
     public string description;
     public UnitRarity rarity;
-
-    [Header("Visuals")]
-    public Sprite icon;
-    public GameObject prefab;
-    public float iconScale = 1f;
-
-    [Header("Classification")]
     public Team unitTeam;
     public UnitClass unitClass;
     public UnitClass targetPriorityClass = UnitClass.None;
-
-    [Header("Souls")]
-    public int soulCost;
-    [Range(0f, 1f)]
-    public float soulDropChance = 0.25f;
-
-    [Header("Stats")]
     public int maxHealth = 100;
     public int damage;
     public float moveSpeed = 2f;
     public float attackRange = 1.2f;
     public float attackCooldown = 1.0f;
-    public float spawnTime = 5f;
-
-    [Header("Crit Stats")]
-    [Range(0f, 1f)]
-    public float critChance = 0.2f;
+    [Range(0f, 1f)] public float critChance = 0.2f;
     public float critMultiplier = 2f;
 
-    [Header("Animator")]
+    [Header("Fill this for our units only")]
+    public Sprite icon;
+    public GameObject prefab;
+    public float iconScale = 1f;
+    public int soulCost;
+    public float spawnTime = 5f;
     public RuntimeAnimatorController animatorController;
-
-    [Header("Tier / Parts Config")]
     public int maxTier = 3;
-
-    [System.Serializable]
-    public class PartSlotConfig
-    {
-        public PartSlot slot;
-    }
-
     public PartSlotConfig[] partSlots;
     public int baseCapacity = 1;
+    public UnitUpgradeNodeDefinition unlockNode;
+    public List<UnitUpgradeNodeDefinition> nodes = new();
 
-    [Header("This head used for showing enemy count before the round")]
+    [Header("Fill this for enemies only")]
+    [Range(0f, 1f)] public float soulDropChance = 0.25f;
     public GameObject headPrefabForBattlePreview;
 
-    [Header("Upgrade Tree")]
-    public UnitUpgradeNodeDefinition unlockNode;               
-    public List<UnitUpgradeNodeDefinition> nodes = new();
 
     public UnitUpgradeNodeDefinition GetNode(string nodeId)
     {
@@ -68,6 +46,12 @@ public class UnitDefinition : ScriptableObject
                 return nodes[i];
         }
         return null;
+    }
+
+    [System.Serializable]
+    public class PartSlotConfig
+    {
+        public PartSlot slot;
     }
 }
 
