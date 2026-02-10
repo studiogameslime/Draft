@@ -15,28 +15,29 @@ MonoBehaviour:
   id: unit_fairy
   displayName: Fairy
   description: What fairy poop smell? like confettus!
-  rarity: 1
-  icon: {fileID: -5455630811309129204, guid: a095310ac1d203143bba40640717e1de, type: 3}
   prefab: {fileID: 501027721989515594, guid: 295d93ebc543e8d4da81861aac3150fc, type: 3}
-  iconScale: 0.4
+  rarity: 1
   unitTeam: 0
   unitClass: 3
   targetPriorityClass: 0
-  soulCost: 3
-  soulDropChance: 0.25
   maxHealth: 100
   damage: 10
   moveSpeed: 1
   attackRange: 5
   attackCooldown: 1
-  spawnTime: 6
   critChance: 0.2
   critMultiplier: 1.5
-  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
-  animatorController: {fileID: 0}
+  icon: {fileID: -5455630811309129204, guid: a095310ac1d203143bba40640717e1de, type: 3}
+  iconScale: 0.4
+  soulCost: 3
+  spawnTime: 6
+  animatorController: {fileID: 9100000, guid: e39ed235862f38c41bcff07fdbad3b42, type: 2}
   maxTier: 3
   partSlots: []
   baseCapacity: 1
-  headPrefabForBattlePreview: {fileID: 0}
   unlockNode: {fileID: 0}
   nodes: []
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 0}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}
