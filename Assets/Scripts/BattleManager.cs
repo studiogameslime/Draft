@@ -90,19 +90,39 @@ public class BattleManager : MonoBehaviour
         while (!SceneManager.GetSceneByName("CommonUI").isLoaded)
             yield return null;
 
+        // Ensure LevelsDatabase exists
+        while (LevelsDatabase.Instance == null)
+            yield return null;
+
+        // Ensure GameData ready
+        while (GameData.Instance == null || !GameData.Instance.IsReady)
+            yield return null;
+
+        // 1) Decide stageId: by scene name OR save currentStageId
+        // If you're inside a stage scene named like "1-1" -> prefer scene name.
+        string sceneStageId = SceneManager.GetActiveScene().name;
+        string stageId = sceneStageId;
+
+        // fallback: save stage
+        if (string.IsNullOrEmpty(stageId) && GameData.Instance.Save != null)
+            stageId = GameData.Instance.Save.currentStageId;
+
+        // 2) Load LevelDefinition by stageId
+        levelDefinition = LevelsDatabase.Instance.GetOrNull(stageId);
+        if (levelDefinition == null)
+            Debug.LogError($"[BattleManager] No LevelDefinition found for stageId '{stageId}'. Make sure there is an asset named '{stageId}' in Resources/Levels.");
+
         deckUI = FindFirstObjectByType<DeckUIController>();
-            
+
         SoulsManager.instance.AddRoundSouls();
         RoundUIManager.instance.ChangeRoundText(currentRoundIndex + 1, levelDefinition.RoundsCount);
 
         if (CameraAnimation.instance != null)
             CameraAnimation.instance.EnterGridMode();
-
         if (BattleFooterAnimation.instance != null)
-        {
             BattleFooterAnimation.instance.EnterGridMode();
-        }
     }
+
 
     // =======================
     // ROUND
@@ -245,11 +265,23 @@ public class BattleManager : MonoBehaviour
                 levelGold,
                 roundsGold,
                 totalBattleGold
-
-
             );
-            
 
+            // --- SAVE PROGRESS (stage complete) ---
+            if (GameData.Instance != null && GameData.Instance.Save != null && LevelsDatabase.Instance != null)
+            {
+                string stageId = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+                if (!GameData.Instance.Save.completedStageIds.Contains(stageId))
+                    GameData.Instance.Save.completedStageIds.Add(stageId);
+
+                // advance to next stage
+                string next = LevelsDatabase.Instance.GetNextStageId(stageId);
+                if (!string.IsNullOrEmpty(next))
+                    GameData.Instance.Save.currentStageId = next;
+
+                GameData.Instance.SaveNow();
+            }
 
             gameOver = true;
             return;

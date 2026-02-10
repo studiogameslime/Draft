@@ -11753,8 +11753,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 100}
-  m_SizeDelta: {x: 800, y: 800}
+  m_AnchoredPosition: {x: 0, y: 200}
+  m_SizeDelta: {x: 700, y: 700}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &603733010
 MonoBehaviour:
@@ -24360,7 +24360,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 700, y: 700}
+  m_SizeDelta: {x: 600, y: 600}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1420235115
 MonoBehaviour:
@@ -24382,7 +24382,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2182662330551469079, guid: cf688f434f93af3419ca413a0f21bb5a, type: 3}
+  m_Sprite: {fileID: 5363433446413585694, guid: 67a063472afcb6c4bb2c6ce5875fed95, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -24924,7 +24924,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52332e2103a189a46ad0e912ada1f850, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayButton
-  sceneName: 1-1
+  fallbackStageId: 1-1
 --- !u!1 &1443936308
 GameObject:
   m_ObjectHideFlags: 0
@@ -28620,6 +28620,8 @@ MonoBehaviour:
     prefab: {fileID: 7092075268256231606, guid: b540798df9a1a084ab5e3686d4081a18, type: 3}
   - name: MasteryBonusManager
     prefab: {fileID: 4338951564802150363, guid: 066bb4c659f2d8d428d9a3b9d87f60a8, type: 3}
+  - name: LevelsDatabase
+    prefab: {fileID: 5911742965033226029, guid: 8f416b94f17d2fd4794ccc86444872fa, type: 3}
 --- !u!4 &1797955608
 Transform:
   m_ObjectHideFlags: 0

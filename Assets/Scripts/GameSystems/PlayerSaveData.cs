@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 [Serializable]
@@ -53,10 +54,13 @@ public class PlayerSaveData
     // ==============================
 
     // current stage (could be "stage_5" or an index id)
-    public string currentStageId;
+    public string currentStageId = "1-1";
 
     // regions that are unlocked (just store ids)
     public List<string> unlockedRegionIds = new List<string>();
+
+    // completed stages(for progress UI)
+    public List<string> completedStageIds = new List<string>();
 
     // ==============================
     // SHOP PURCHASES
@@ -138,6 +142,8 @@ public class PlayerSaveData
     public int masteryDrawCount;                
     public string masteryLastPickedId;          // anti-streak 
     public List<MasteryLevelData> masteryLevels = new List<MasteryLevelData>();
+
+
 }
 
 // =====================================
