@@ -6,9 +6,6 @@ public class GameData : MonoBehaviour
     public static GameData Instance { get; private set; }
     public PlayerSaveData Save;
 
-    [Header("Optional Defaults")]
-    [SerializeField] private string defaultStartingStageId = "stage_1";
-
     // Init gating
     public bool IsReady { get; private set; }
     private bool pendingCloudUpload;
@@ -36,7 +33,6 @@ public class GameData : MonoBehaviour
         if (Save == null)
         {
             Save = new PlayerSaveData();
-            Save.currentStageId = defaultStartingStageId;
             JsonSaveSystem.Save(Save);
         }
     }
