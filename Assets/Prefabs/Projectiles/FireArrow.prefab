@@ -129,7 +129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   speed: 5
-  arcHeight: 1
+  arcHeight: 0
   rotate: 0
   rotationSpeed: 360
 --- !u!50 &5825271056116313089

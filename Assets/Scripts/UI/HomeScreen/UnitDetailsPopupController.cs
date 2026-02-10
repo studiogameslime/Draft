@@ -181,13 +181,11 @@ public class UnitDetailsPopupController : MonoBehaviour
         int lvl = UnitLevelingService.GetUnitLevel(_unit.id);
         int maxLvl = UnitLevelingService.MaxLevel;
 
-        float hpDmgMul = UnitLevelingService.GetHpDamageMultiplier(lvl);
+        float mulNow = UnitLevelingService.GetHpDamageMultiplier(lvl);
+        int hpNow = Mathf.FloorToInt(_unit.maxHealth * mulNow);
+        int dmgNow = Mathf.FloorToInt(_unit.damage * mulNow);
 
-        int hp = Mathf.RoundToInt(_unit.maxHealth * hpDmgMul);
-        int dmg = Mathf.RoundToInt(_unit.damage * hpDmgMul);
         //float currentSpawnTime = _unit.spawnTime * UnitLevelingService.GetSpawnTimeMultiplier(lvl);
-
-
         //float nextSpawnTime = currentSpawnTime;
         //if (lvl < maxLvl)
         //{
@@ -196,14 +194,16 @@ public class UnitDetailsPopupController : MonoBehaviour
         //}
         //float spawnDecrease = (lvl < maxLvl) ? currentSpawnTime - nextSpawnTime : 0f;
 
+
         // ---------- STATS TEXT ----------
         if (damageHealTitle != null) 
         {
             damageHealTitle.text = _unit.displayName == "Fairy" ? "Heal" : "Damage";
         }
 
-        if (hpText != null) hpText.text = hp.ToString();
-        if (dmgText != null) dmgText.text = dmg.ToString();
+        if (hpText != null) hpText.text = hpNow.ToString();
+        if (dmgText != null) dmgText.text = dmgNow.ToString();
+
 
         if (spawnTimeText != null) spawnTimeText.text = _unit.spawnTime.ToString();
 
@@ -247,32 +247,28 @@ public class UnitDetailsPopupController : MonoBehaviour
 
         if (!atMax)
         {
-            int hpAddedNextLevel = Mathf.RoundToInt(hp * 0.1f);
-            int dmgAddedNextLevel = Mathf.RoundToInt(dmg * 0.1f);
+            float mulNext = UnitLevelingService.GetHpDamageMultiplier(lvl + 1);
+            int hpNext = Mathf.FloorToInt(_unit.maxHealth * mulNext);
+            int dmgNext = Mathf.FloorToInt(_unit.damage * mulNext);
+
+            int hpAdd = hpNext - hpNow;
+            int dmgAdd = dmgNext - dmgNow;
 
             if (addHpText != null)
             {
                 addHpText.gameObject.SetActive(true);
-                addHpText.text = $"+{hpAddedNextLevel.ToString()}";
+                addHpText.text = $"+{hpAdd}";
             }
-
             if (addDmgText != null)
             {
                 addDmgText.gameObject.SetActive(true);
-                addDmgText.text = $"+{dmgAddedNextLevel.ToString()}";
+                addDmgText.text = $"+{dmgAdd}";
             }
         }
         else
         {
-            if (addHpText != null)
-            {
-                addHpText.gameObject.SetActive(false);
-            }
-
-            if (addDmgText != null)
-            {
-                addDmgText.gameObject.SetActive(false);
-            }
+            if (addHpText != null) addHpText.gameObject.SetActive(false);
+            if (addDmgText != null) addDmgText.gameObject.SetActive(false);
         }
 
         int cost = atMax ? 0 : UnitLevelingService.GetUpgradeCost(lvl);

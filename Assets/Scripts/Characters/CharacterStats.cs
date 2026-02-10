@@ -103,13 +103,13 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
         // NEW: unit level scaling (HP+DMG)
         float mul = UnitLevelingService.GetHpDamageMultiplier(this.level);
-        maxHealth = Mathf.RoundToInt(maxHealth * mul);
+        maxHealth = Mathf.FloorToInt(maxHealth * mul);
         currentHealth = maxHealth;
 
         OnHealthChanged?.Invoke(this);
 
 
-        damage = Mathf.RoundToInt(damage * mul);
+        damage = Mathf.FloorToInt(damage * mul);
         moveSpeed = CalcFinalFloatStat(def.moveSpeed, MasteryStat.MoveSpeedPercent);
         baseMoveSpeed = moveSpeed;
         attackRange = def.attackRange;
