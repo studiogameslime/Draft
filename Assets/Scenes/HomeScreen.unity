@@ -177,14 +177,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5301412, g: 0.5264151, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21919742503531091, guid: b10c27e92e6397d4aade0700ae2ff318, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5feb658fa0f443c459127f8a4266bfb6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -20928,11 +20928,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIRepeatingIconBackground
   iconSprite: {fileID: 21300000, guid: dcfad041e376e3c45aa419ce70e06428, type: 3}
-  iconAlpha: 0.08
-  tilesPerAxis: 7
+  iconAlpha: 0.25
+  tilesPerAxis: 4
   padding: 0
   textureSize: 1024
-  speed: {x: 0.01, y: 0.015}
+  speed: {x: 0.02, y: 0.03}
   uvSize: {x: 1, y: 1}
 --- !u!114 &1065436668
 MonoBehaviour:
