@@ -98,18 +98,19 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
         // Apply base stats scaled by level
 
-        maxHealth = CalcFinalIntStat(def.maxHealth, MasteryStat.GlobalHpPercent);
-        damage = CalcFinalIntStat(def.damage, MasteryStat.GlobalDamagePercent);
+        float mul = UnitLevelingService.GetHpDamageMultiplier(this.level);
+        maxHealth = Mathf.FloorToInt(def.maxHealth * mul);
+        damage = Mathf.FloorToInt(def.damage * mul);
+
+        maxHealth = CalcFinalIntStat(maxHealth, MasteryStat.GlobalHpPercent);
+        damage = CalcFinalIntStat(damage, MasteryStat.GlobalDamagePercent);
 
         // NEW: unit level scaling (HP+DMG)
-        float mul = UnitLevelingService.GetHpDamageMultiplier(this.level);
-        maxHealth = Mathf.FloorToInt(maxHealth * mul);
         currentHealth = maxHealth;
 
         OnHealthChanged?.Invoke(this);
 
 
-        damage = Mathf.FloorToInt(damage * mul);
         moveSpeed = CalcFinalFloatStat(def.moveSpeed, MasteryStat.MoveSpeedPercent);
         baseMoveSpeed = moveSpeed;
         attackRange = def.attackRange;
@@ -150,12 +151,12 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
         // 2) Percent after (stored as fraction: 0.08 = 8%)
         float p = 0f;
-        if (MasteryBonusManager.Instance != null)
+        if (MasteryBonusManager.Instance != null && definition.unitTeam == Team.MyTeam)
             p = MasteryBonusManager.Instance.GetPercent(percentStat);
 
         v *= (1f + p);
 
-        return Mathf.RoundToInt(v);
+        return Mathf.FloorToInt(v);
     }
 
     private float CalcFinalFloatStat(float baseValue, MasteryStat percentStat)
