@@ -13,6 +13,9 @@ public class UIRepeatingIconBackground : MonoBehaviour
     [Tooltip("יותר = חרבות יותר קרובות (בלי לשנות את גודל החרב)")]
     [Range(1, 16)] public int tilesPerAxis = 5;
 
+    [Tooltip("Vertical spacing multiplier between rows (1 = original, lower = denser)")]
+    [Range(0.4f, 1f)] public float rowHeightMultiplier = 0.8f;
+
     [Tooltip("ריווח בתוך התא (פיקסלים) סביב החרב. קטן = קרוב יותר")]
     [Range(0, 64)] public int padding = 0;
 
@@ -83,22 +86,42 @@ public class UIRepeatingIconBackground : MonoBehaviour
         );
 
         // cell size (controls spacing between icons)
-        int cell = textureSize / tilesPerAxis;
+        float cell = (float)textureSize / tilesPerAxis;
 
-        // IMPORTANT: keep original behavior -> don't upscale the sword
-        int drawW = Mathf.Min(w, cell - padding * 2);
-        int drawH = Mathf.Min(h, cell - padding * 2);
+        int drawW = Mathf.Min(w, Mathf.FloorToInt(cell) - padding * 2);
+        int drawH = Mathf.Min(h, Mathf.FloorToInt(cell) - padding * 2);
 
-        for (int ty = 0; ty < tilesPerAxis; ty++)
+        int row = 0;
+        float y = 0f;
+
+        while (y < textureSize)
         {
+            bool isOffsetRow = (row % 2 == 1);
+            int rowOffsetX = isOffsetRow ? Mathf.RoundToInt(cell * 0.5f) : 0;
+
             for (int tx = 0; tx < tilesPerAxis; tx++)
             {
-                int startX = tx * cell + padding;
-                int startY = ty * cell + padding;
+                int startX = Mathf.RoundToInt(tx * cell) + rowOffsetX + padding;
+                int startY = Mathf.RoundToInt(y) + padding;
 
-                BlitScaledWrapped(sprPixels, w, h, generated, startX, startY, drawW, drawH, iconAlpha);
+                BlitScaledWrapped(
+                    sprPixels,
+                    w,
+                    h,
+                    generated,
+                    startX,
+                    startY,
+                    drawW,
+                    drawH,
+                    iconAlpha
+                );
             }
+
+            y += cell * rowHeightMultiplier;
+            row++;
         }
+
+
 
         generated.Apply(false);
 

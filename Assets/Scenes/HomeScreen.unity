@@ -20929,7 +20929,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIRepeatingIconBackground
   iconSprite: {fileID: 21300000, guid: dcfad041e376e3c45aa419ce70e06428, type: 3}
   iconAlpha: 0.25
-  tilesPerAxis: 4
+  tilesPerAxis: 3
+  rowHeightMultiplier: 0.6
   padding: 0
   textureSize: 1024
   speed: {x: 0.02, y: 0.03}
