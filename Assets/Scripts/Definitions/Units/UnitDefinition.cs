@@ -8,6 +8,7 @@ public class UnitDefinition : ScriptableObject
     public string id;
     public string displayName;
     public string description;
+    public GameObject prefab;
     public UnitRarity rarity;
     public Team unitTeam;
     public UnitClass unitClass;
@@ -22,7 +23,6 @@ public class UnitDefinition : ScriptableObject
 
     [Header("Fill this for our units only")]
     public Sprite icon;
-    public GameObject prefab;
     public float iconScale = 1f;
     public int soulCost;
     public float spawnTime = 5f;
