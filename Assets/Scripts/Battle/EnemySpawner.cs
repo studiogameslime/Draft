@@ -66,6 +66,11 @@ public class EnemySpawner : MonoBehaviour
         var stats = go.GetComponent<CharacterStats>();
         stats.Init(Team.EnemyTeam, def, level);
 
+        if (def != null && def.isBoss && BossHealthBarUI.Instance != null)
+        {
+            BossHealthBarUI.Instance.Show(stats);
+        }
+
         var ai = go.GetComponent<UnitAI>();
         if (ai != null)
             ai.enabled = true;

@@ -37,6 +37,10 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     public System.Action<CharacterStats, int> OnTakeDamage;
     public System.Action<CharacterStats> OnKillEnemy;
 
+    public System.Action<CharacterStats> OnHealthChanged;
+    public System.Action<CharacterStats> OnDied;
+
+
 
     // --- Other info ---
     [HideInInspector] public Team team;
@@ -101,6 +105,9 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         float mul = UnitLevelingService.GetHpDamageMultiplier(this.level);
         maxHealth = Mathf.RoundToInt(maxHealth * mul);
         currentHealth = maxHealth;
+
+        OnHealthChanged?.Invoke(this);
+
 
         damage = Mathf.RoundToInt(damage * mul);
         moveSpeed = CalcFinalFloatStat(def.moveSpeed, MasteryStat.MoveSpeedPercent);
@@ -186,6 +193,10 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
         currentHealth -= amount;
 
+        currentHealth = Mathf.Max(0, currentHealth);
+        OnHealthChanged?.Invoke(this);
+
+
         OnTakeDamage?.Invoke(attacker, amount);
         attacker?.OnDealDamage?.Invoke(this, amount);
 
@@ -270,6 +281,8 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         int before = currentHealth;
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
 
+        OnHealthChanged?.Invoke(this);
+
         showFloatingDamage(amount, FloatingNumberType.Heal);
         // in the future if event needed:
         // OnReceiveHeal?.Invoke(healer, currentHealth - before);
@@ -287,6 +300,9 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     {
         if (isDead) return;
         isDead = true;
+
+        OnDied?.Invoke(this);
+
 
         // Notify spawner (per-cell capacity system)
         GetComponent<SpawnedUnitOwnerLink>()?.NotifyOwnerDied();

@@ -15,28 +15,29 @@ MonoBehaviour:
   id: unit_ent
   displayName: Ent
   description: EntEnt
-  rarity: 0
-  icon: {fileID: -1619662025158104270, guid: adaa08312fe4adf4188b9d2fa086d723, type: 3}
   prefab: {fileID: 501027721989515594, guid: da010a7283696af48b36645cf2a2a23d, type: 3}
-  iconScale: 0.4
+  rarity: 0
   unitTeam: 1
   unitClass: 1
   targetPriorityClass: 0
-  soulCost: 0
-  soulDropChance: 0.25
   maxHealth: 1000
   damage: 20
   moveSpeed: 0.4
   attackRange: 1.7
   attackCooldown: 1.5
-  spawnTime: 5
   critChance: 0.1
   critMultiplier: 1.5
-  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  icon: {fileID: -1619662025158104270, guid: adaa08312fe4adf4188b9d2fa086d723, type: 3}
+  iconScale: 0.4
+  soulCost: 0
+  spawnTime: 5
   animatorController: {fileID: 0}
   maxTier: 3
   partSlots: []
   baseCapacity: 1
-  headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: 61a61d854adedcd438e6916aecbda2c2, type: 3}
   unlockNode: {fileID: 0}
   nodes: []
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: 61a61d854adedcd438e6916aecbda2c2, type: 3}
+  isBoss: 1
+  HeadWithEyes: {fileID: 3667681588813468039, guid: ce8e913a30d98064ebbdd08362bbc1e5, type: 3}

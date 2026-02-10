@@ -36,6 +36,9 @@ public class UnitDefinition : ScriptableObject
     [Header("Fill this for enemies only")]
     [Range(0f, 1f)] public float soulDropChance = 0.25f;
     public GameObject headPrefabForBattlePreview;
+    public bool isBoss = false;
+    public Sprite HeadWithEyes;
+
 
 
     public UnitUpgradeNodeDefinition GetNode(string nodeId)

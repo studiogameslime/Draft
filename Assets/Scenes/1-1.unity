@@ -72172,7 +72172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 367488de7a585494495ce6c3b8ff9887, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BattleManager
-  levelDefinition: {fileID: 11400000, guid: 13fd2c5a4e4690c408e175d4af8c8866, type: 2}
+  levelDefinition: {fileID: 11400000, guid: 127a5a3037603594abc807ab938d0d08, type: 2}
   playerUnitsLevel: 1
   startBattleDelay: 1
   deckUI: {fileID: 0}
