@@ -69,6 +69,7 @@ public class UnitsCollectionManager : MonoBehaviour
 
     public void RebuildCollection()
     {
+        Debug.Log("RebuildCollection");
         BuildCollection();
     }
 

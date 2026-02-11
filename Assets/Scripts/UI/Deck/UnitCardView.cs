@@ -39,6 +39,7 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
     private Image cardImage;
 
     public UnitDefinition Definition => _definition;
+    private UnitsCollectionManager unitsCollectionManager;
 
     private UnitUnlockState _unlockState;
 
@@ -57,6 +58,11 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
 
         if (equipButton != null)
             equipButton.onClick.AddListener(OnEquipButtonPressed);
+
+        if (unitsCollectionManager == null)
+        {
+            unitsCollectionManager = FindAnyObjectByType<UnitsCollectionManager>();
+        }
     }
 
     // -------------------------------------------------
@@ -204,6 +210,8 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
             UnitsDeckManager.Instance.IsReplaceModeActive)
         {
             UnitsDeckManager.Instance.ReplaceWithDeckCard(_definition);
+            unitsCollectionManager.RebuildCollection();
+
             return;
         }
 
@@ -257,6 +265,7 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
         if (_deckManager.CurrentDeck.Count < UnitsDeckManager.MaxDeckSize)
         {
             _deckManager.ToggleUnit(_definition);
+            unitsCollectionManager.RebuildCollection();
             UnitsGridController.Instance?.CollapseCurrent();
             return;
         }
