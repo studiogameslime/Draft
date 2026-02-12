@@ -59,7 +59,7 @@ public class BattleManager : MonoBehaviour
         StartCoroutine(InitAfterUIReady());
         Initialize();
 
-        
+
     }
 
     public void Initialize()
@@ -214,15 +214,19 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    private void HandleRoundLost()
+    public void HandleRoundLost()
     {
         Debug.Log("The Wall is destroyed - Battle lost");
+
+        int roundsCompleted = currentRoundIndex;
+        int roundsGold = levelDefinition.GetGoldFromRounds(roundsCompleted);
+        int roundsXp = levelDefinition.GetXpFromRounds(roundsCompleted);
 
         battleStarted = false;
         SetAllAIEnabled(false);
         gameOver = true;
 
-        EndGameUI.Instance.ShowLoseScreen();
+        EndGameUI.Instance.ShowLoseScreen(roundsGold,roundsXp);
 
         foreach (var unitClass in unitClassUsedThisBattle)
             MissionsManager.Instance.ReportAction(MissionAction.PlayWithUnitClass, 1, null, unitClass);
@@ -231,18 +235,28 @@ public class BattleManager : MonoBehaviour
             MissionsManager.Instance.ReportAction(MissionAction.PlayWithSpecificUnit, 1, unitDef);
 
         MissionsManager.Instance.ReportAction(MissionAction.PlayBattles, 1);
+
+        PlayerCurrencyWallet.Instance.AddGold(roundsGold);
+        PlayerXPManager.Instance.AddXP(roundsXp);
+
     }
 
     private void HandleRoundWin()
     {
+        Debug.Log("HandleRoundWin");
+
+        int roundsCompleted = levelDefinition.RoundsCount;
+
         int levelGold = levelDefinition.goldOnLevelComplete;
-        int roundsGold = levelDefinition.GetGoldFromRounds();
+        int roundsGold = levelDefinition.GetGoldFromRounds(roundsCompleted);
         int totalBattleGold = levelGold + roundsGold;
+
+        int levelXp = levelDefinition.xpOnLevelComplete;
+        int roundsXp = levelDefinition.GetXpFromRounds(roundsCompleted);
+        int totalXp = levelXp + roundsXp;
 
         if (IsExitingBattle)
             return;
-
-        Debug.Log("HandleRoundWin");
 
         currentRoundIndex++;
 
@@ -257,14 +271,16 @@ public class BattleManager : MonoBehaviour
             MissionsManager.Instance.ReportAction(MissionAction.WinBattles, 1);
             MissionsManager.Instance.ReportAction(MissionAction.PlayBattles, 1);
 
-            PlayerXPManager.Instance.AddXP(levelDefinition.xpOnLevelComplete);
-            PlayerCurrencyWallet.Instance.AddGold(levelDefinition.goldOnLevelComplete);
-            PlayerCurrencyWallet.Instance.AddGold(levelDefinition.GetGoldFromRounds());
+            PlayerXPManager.Instance.AddXP(levelDefinition.xpOnLevelComplete + roundsXp);
+            PlayerCurrencyWallet.Instance.AddGold(levelDefinition.goldOnLevelComplete + roundsGold);
 
             EndGameUI.Instance.ShowWinScreen(
                 levelGold,
                 roundsGold,
-                totalBattleGold
+                totalBattleGold,
+                levelXp,
+                roundsXp,
+                totalXp
             );
 
             // --- SAVE PROGRESS (stage complete) ---

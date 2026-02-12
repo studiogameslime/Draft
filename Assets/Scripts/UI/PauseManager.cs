@@ -53,9 +53,9 @@ public class PauseManager : MonoBehaviour
     public void GoHome()
     {
         Debug.Log("Go Home");
-            BattleManager.instance.ExitBattle();
+        BattleManager.instance.ExitBattle();
+        BattleManager.instance.HandleRoundLost();
         Time.timeScale = 1f;
-        SceneManager.LoadScene("HomeScreen");
     }
 
     private void OnDestroy()

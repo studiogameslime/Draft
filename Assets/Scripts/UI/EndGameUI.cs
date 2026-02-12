@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 public class EndGameUI : MonoBehaviour
@@ -11,7 +12,21 @@ public class EndGameUI : MonoBehaviour
     [SerializeField] private TMP_Text goldEarnedText;
     [SerializeField] private TMP_Text goldEarnedFromRoundsText;
     [SerializeField] private TMP_Text totalGoldText;
+    [SerializeField] private TMP_Text xpFromLevelText;
+    [SerializeField] private TMP_Text xpEarnedFromRoundsText;
+    [SerializeField] private TMP_Text totalXpText;
+    [SerializeField] private Image goldEarnedSprite;
+    [SerializeField] private Image goldEarnedFromRoundsSprite;
+    [SerializeField] private Image totalGoldSprite;
 
+    
+
+    [Header("Hide UI")]
+    [SerializeField] private GameObject header;
+    [SerializeField] private GameObject footer;
+    [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject waveMessagePanel;
+    [SerializeField] private GameObject enemiesPreviewBubbles;
 
     private void Awake()
     {
@@ -21,9 +36,24 @@ public class EndGameUI : MonoBehaviour
         panel.blocksRaycasts = false;
     }
 
-    public void ShowWinScreen(int goldEarned, int goldEarnedFromRounds,  int totalGold)
+    public void ShowWinScreen(int goldEarned, int goldEarnedFromRounds,  int totalGold, int xpFromLevel, int xpFromRounds, int totalXp)
     {
-        titleText.text = "YOU WON!";
+
+        HideLevelUI();
+
+        titleText.text = "VICTORY!";
+
+        goldEarnedSprite.sprite = StyleManager.instance.goldSprite;
+        goldEarnedFromRoundsSprite.sprite = StyleManager.instance.goldSprite;
+
+        if (xpFromLevelText != null)
+            xpFromLevelText.text = $"Level completed:\n +{goldEarned} XP";
+
+        if (xpEarnedFromRoundsText != null)
+            xpEarnedFromRoundsText.text = $"Finish all rounds:\n +{goldEarnedFromRounds} XP";
+
+        if (totalXpText != null)
+            totalXpText.text = $"Total gold:\n {totalGold} XP!";
 
         if (goldEarnedText != null)
             goldEarnedText.text = $"Level completed:\n +{goldEarned} Gold";
@@ -38,15 +68,30 @@ public class EndGameUI : MonoBehaviour
     }
 
 
-    public void ShowLoseScreen()
+    public void ShowLoseScreen(int goldEarnedFromRounds, int xpFromRounds)
     {
+        HideLevelUI();
+
+        goldEarnedSprite.gameObject.SetActive(false);
+        totalGoldSprite.gameObject.SetActive(false);
+        goldEarnedFromRoundsSprite.sprite = StyleManager.instance.goldSprite;
+
         titleText.text = "YOU LOST!";
 
+        if (xpFromLevelText != null)
+            xpFromLevelText.text = $"";
+
+        if (xpEarnedFromRoundsText != null)
+            xpEarnedFromRoundsText.text = $"Rounds bonus:{xpFromRounds} XP";
+
+        if (totalXpText != null)
+            totalXpText.text = $"";
+
         if (goldEarnedText != null)
-            goldEarnedText.text = "";
+            goldEarnedText.text = $"";
 
         if (goldEarnedFromRoundsText != null)
-            goldEarnedFromRoundsText.text = "";
+            goldEarnedFromRoundsText.text = $"Rounds bonus:{goldEarnedFromRounds} Gold";
 
         if (totalGoldText != null)
             totalGoldText.text = "";
@@ -96,11 +141,22 @@ public class EndGameUI : MonoBehaviour
 
     public void BackToHome()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("HomeScreen");
+
     }
 
     private void OnDisable()
     {
         StopAllCoroutines();
     }
+
+    public void HideLevelUI()
+    {
+        header.gameObject.SetActive(false);
+        footer.gameObject.SetActive(false);
+        pausePanel.gameObject.SetActive(false);
+        waveMessagePanel.gameObject.SetActive(false);
+        enemiesPreviewBubbles.gameObject.SetActive(false);
+    }
+
 }

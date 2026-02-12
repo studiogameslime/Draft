@@ -31,16 +31,30 @@ public class LevelDefinition : ScriptableObject
         return total;
     }
 
-    public int GetGoldFromRounds()
+    public int GetGoldFromRounds(int roundsCompleted)
     {
         int total = 0;
-        if (alsoRewardGoldPerRound && rounds != null)
-        {
-            foreach (var r in rounds)
-                total += Mathf.Max(0, r.goldOnRoundWin);
-        }
+        if (!alsoRewardGoldPerRound || rounds == null) return 0;
+
+        int n = Mathf.Clamp(roundsCompleted, 0, rounds.Length);
+        for (int i = 0; i < n; i++)
+            total += Mathf.Max(0, rounds[i].goldOnRoundWin);
+
         return total;
     }
+
+    public int GetXpFromRounds(int roundsCompleted)
+    {
+        int total = 0;
+        if (rounds == null) return 0;
+
+        int n = Mathf.Clamp(roundsCompleted, 0, rounds.Length);
+        for (int i = 0; i < n; i++)
+            total += Mathf.Max(0, rounds[i].xpOnRoundWin);
+
+        return total;
+    }
+
 }
 
 [Serializable]
