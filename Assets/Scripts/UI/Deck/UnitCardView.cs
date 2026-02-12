@@ -43,6 +43,7 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
 
     private UnitUnlockState _unlockState;
 
+    [SerializeField] private GameObject inDeckCheckmark;
 
     private void Awake()
     {
@@ -118,6 +119,13 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
                 break;
         }
 
+        // Checkmark: show only on collection cards (not deck slots)
+        if (inDeckCheckmark != null)
+        {
+            bool show = (!_isDeckSlot) && (unlockState == UnitUnlockState.Unlocked) && isInDeck;
+            inDeckCheckmark.SetActive(show);
+        }
+
 
         if (quickActionsPanel != null)
             quickActionsPanel.SetActive(false);
@@ -146,6 +154,9 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
 
         if (cardImage != null)
             cardImage.color = lockedColor;
+
+        if (inDeckCheckmark != null)
+            inDeckCheckmark.SetActive(false);
 
         _originalSize = RectTransform.sizeDelta;
         gameObject.SetActive(true);
