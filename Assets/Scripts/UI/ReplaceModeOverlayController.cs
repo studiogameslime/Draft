@@ -5,44 +5,47 @@ public class ReplaceModeOverlayController : MonoBehaviour
 {
     public static ReplaceModeOverlayController Instance;
 
-    [SerializeField] private GameObject root;
-    [SerializeField] private Button overlayButton;
+    [Header("Overlays")]
+    [SerializeField] private GameObject collectionOverlay;
+    [SerializeField] private GameObject deckOverlay;
+
+    [SerializeField] private Button collectionOverlayButton;
+    [SerializeField] private Button deckOverlayButton;
 
     private void Awake()
     {
         Instance = this;
 
-        if (overlayButton != null)
-            overlayButton.onClick.AddListener(OnOverlayClicked);
+        if (collectionOverlayButton != null)
+            collectionOverlayButton.onClick.AddListener(OnOverlayClicked);
 
-        if (root != null)
-            root.SetActive(false);
+        if (deckOverlayButton != null)
+            deckOverlayButton.onClick.AddListener(OnOverlayClicked);
+
+        Hide();
     }
 
     public void Show()
     {
-        if (root != null)
-        {
-            root.SetActive(true);
-            root.transform.SetAsLastSibling();
-        }
+        if (collectionOverlay != null)
+            collectionOverlay.SetActive(true);
 
-        if (UnitsDeckManager.Instance != null)
-            UnitsDeckManager.Instance.transform.SetAsLastSibling();
+        if (deckOverlay != null)
+            deckOverlay.SetActive(true);
     }
-
 
     public void Hide()
     {
-        if (root != null)
-            root.SetActive(false);
+        if (collectionOverlay != null)
+            collectionOverlay.SetActive(false);
+
+        if (deckOverlay != null)
+            deckOverlay.SetActive(false);
     }
 
     private void OnOverlayClicked()
     {
         if (UnitsDeckManager.Instance != null)
-        {
             UnitsDeckManager.Instance.CancelReplaceMode();
-        }
     }
 }
