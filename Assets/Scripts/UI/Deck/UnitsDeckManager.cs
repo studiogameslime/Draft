@@ -190,15 +190,25 @@ public class UnitsDeckManager : MonoBehaviour
     {
         _pendingNewUnit = newUnit;
         _replaceModeActive = true;
+
         UpdateDeckReplaceVisuals(true);
+
+        if (ReplaceModeOverlayController.Instance != null)
+            ReplaceModeOverlayController.Instance.Show();
     }
+
 
     public void CancelReplaceMode()
     {
         _pendingNewUnit = null;
         _replaceModeActive = false;
+
         UpdateDeckReplaceVisuals(false);
+
+        if (ReplaceModeOverlayController.Instance != null)
+            ReplaceModeOverlayController.Instance.Hide();
     }
+
 
     public void ReplaceWithDeckCard(UnitDefinition deckUnit)
     {
@@ -209,8 +219,13 @@ public class UnitsDeckManager : MonoBehaviour
 
         _pendingNewUnit = null;
         _replaceModeActive = false;
+
         UpdateDeckReplaceVisuals(false);
+
+        if (ReplaceModeOverlayController.Instance != null)
+            ReplaceModeOverlayController.Instance.Hide();
     }
+
 
     private void UpdateDeckReplaceVisuals(bool active)
     {
