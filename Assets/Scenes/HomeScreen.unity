@@ -23905,7 +23905,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe9a6b1c9a403de4885c6e4fa34481e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitsGridController
-  extraHeight: 20
+  extraHeight: 70
 --- !u!1 &1368109881
 GameObject:
   m_ObjectHideFlags: 0
