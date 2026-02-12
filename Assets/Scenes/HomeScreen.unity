@@ -1224,6 +1224,7 @@ MonoBehaviour:
   deckOverlay: {fileID: 1018221666}
   collectionOverlayButton: {fileID: 1034486731}
   deckOverlayButton: {fileID: 1018221667}
+  fadeDuration: 0.2
 --- !u!1 &104068004
 GameObject:
   m_ObjectHideFlags: 0
@@ -19824,6 +19825,7 @@ GameObject:
   - component: {fileID: 1018221669}
   - component: {fileID: 1018221668}
   - component: {fileID: 1018221667}
+  - component: {fileID: 1018221671}
   m_Layer: 5
   m_Name: DeckOverlay
   m_TagString: Untagged
@@ -19932,6 +19934,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 80}
   m_SizeDelta: {x: 0, y: 380}
   m_Pivot: {x: 0.5, y: 1}
+--- !u!225 &1018221671
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1018221666}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &1024835606
 GameObject:
   m_ObjectHideFlags: 0
@@ -20555,6 +20569,7 @@ GameObject:
   - component: {fileID: 1034486733}
   - component: {fileID: 1034486732}
   - component: {fileID: 1034486731}
+  - component: {fileID: 1034486734}
   m_Layer: 5
   m_Name: CollectionOverlay
   m_TagString: Untagged
@@ -20663,6 +20678,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1034486729}
   m_CullTransparentMesh: 1
+--- !u!225 &1034486734
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1034486729}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &1048207372
 GameObject:
   m_ObjectHideFlags: 0
