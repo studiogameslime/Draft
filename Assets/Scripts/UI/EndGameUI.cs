@@ -22,6 +22,10 @@ public class EndGameUI : MonoBehaviour
     [SerializeField] private TMP_Text levelCompletedText;
     private int pendingTotalGold;
     private int pendingTotalXp;
+    [SerializeField] private float victoryPulseScale = 1.08f;
+    [SerializeField] private float victoryPulseSpeed = 2.2f;
+
+    private Coroutine victoryPulseRoutine;
 
 
     [Header("Hide UI")]
@@ -86,6 +90,11 @@ public class EndGameUI : MonoBehaviour
 
         pendingTotalGold = totalGold;
         pendingTotalXp = totalXp;
+
+        if (victoryPulseRoutine != null)
+            StopCoroutine(victoryPulseRoutine);
+
+        victoryPulseRoutine = StartCoroutine(VictoryPulse());
 
         StartCoroutine(FadeIn());
     }
@@ -178,6 +187,14 @@ public class EndGameUI : MonoBehaviour
         panel.alpha = 0f;
 
         panel.gameObject.SetActive(false);
+
+        if (victoryPulseRoutine != null)
+        {
+            StopCoroutine(victoryPulseRoutine);
+            victoryPulseRoutine = null;
+        }
+
+        titleText.transform.localScale = Vector3.one;
     }
 
     public void BackToHome()
@@ -232,5 +249,19 @@ public class EndGameUI : MonoBehaviour
 
         if (totalGoldText != null)
             StartCoroutine(CountUpTMP(totalGoldText, pendingTotalGold));
+    }
+
+    private IEnumerator VictoryPulse()
+    {
+        Vector3 baseScale = titleText.transform.localScale;
+
+        while (true)
+        {
+            float t = (Mathf.Sin(Time.time * victoryPulseSpeed) + 1f) * 0.5f;
+            float scale = Mathf.Lerp(1f, victoryPulseScale, t);
+            titleText.transform.localScale = baseScale * scale;
+            titleText.outlineWidth = Mathf.Lerp(0.2f, 0.35f, t);
+            yield return null;
+        }
     }
 }
