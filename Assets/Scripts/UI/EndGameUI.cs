@@ -20,7 +20,8 @@ public class EndGameUI : MonoBehaviour
     [SerializeField] private Image goldEarnedFromRoundsSprite;
     [SerializeField] private Image totalGoldSprite;
     [SerializeField] private TMP_Text levelCompletedText;
-
+    private int pendingTotalGold;
+    private int pendingTotalXp;
 
 
     [Header("Hide UI")]
@@ -72,7 +73,7 @@ public class EndGameUI : MonoBehaviour
         }
 
         if (totalXpText != null)
-            totalXpText.text = $"{totalXp}";
+            totalXpText.text = $"0";
 
         if (goldEarnedText != null)
             goldEarnedText.text = $"{goldEarned}";
@@ -81,7 +82,10 @@ public class EndGameUI : MonoBehaviour
             goldEarnedFromRoundsText.text = $"{goldEarnedFromRounds}";
 
         if (totalGoldText != null)
-            totalGoldText.text = $"{totalGold}";
+            totalGoldText.text = $"0";
+
+        pendingTotalGold = totalGold;
+        pendingTotalXp = totalXp;
 
         StartCoroutine(FadeIn());
     }
@@ -107,11 +111,11 @@ public class EndGameUI : MonoBehaviour
         if (xpEarnedFromRoundsText != null)
         {
             xpEarnedFromRoundsText.gameObject.SetActive(false);
-            xpEarnedFromRoundsText.text = $"Rounds bonus:{xpFromRounds} XP";
+            xpEarnedFromRoundsText.text = $"";
         }
 
         if (totalXpText != null)
-            totalXpText.text = $"{xpFromRounds}";
+            totalXpText.text = $"0";
 
         if (goldEarnedText != null)
         {
@@ -120,10 +124,16 @@ public class EndGameUI : MonoBehaviour
         }
 
         if (goldEarnedFromRoundsText != null)
-            goldEarnedFromRoundsText.text = $"{goldEarnedFromRounds}";
+        {
+            goldEarnedFromRoundsText.gameObject.SetActive(false);
+            goldEarnedFromRoundsText.text = $"";
+        }
 
         if (totalGoldText != null)
-            totalGoldText.text = $"{goldEarnedFromRounds}";
+            totalGoldText.text = $"0";
+
+        pendingTotalGold = goldEarnedFromRounds;
+        pendingTotalXp = xpFromRounds;
 
         StartCoroutine(FadeIn());
     }
@@ -146,6 +156,8 @@ public class EndGameUI : MonoBehaviour
 
         panel.interactable = true;
         panel.blocksRaycasts = true;
+
+        StartCoroutine(PlayCountUps());
     }
 
     public void HideScreen()
@@ -188,5 +200,37 @@ public class EndGameUI : MonoBehaviour
         enemiesPreviewBubbles.gameObject.SetActive(false);
     }
 
+    private IEnumerator CountUpTMP(TMP_Text text, int target, string suffix = "", float duration = 1.2f)
+    {
+        float time = 0f;
+        int start = 0;
 
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+
+            float t = 1f - Mathf.Pow(1f - time / duration, 3f); // easing
+            int value = Mathf.RoundToInt(Mathf.Lerp(start, target, t));
+
+            text.text = value.ToString() + suffix;
+            yield return null;
+        }
+
+        text.transform.localScale = Vector3.one * 1.15f;
+        yield return new WaitForSeconds(0.08f);
+        text.transform.localScale = Vector3.one;
+
+        text.text = target.ToString() + suffix;
+    }
+
+    private IEnumerator PlayCountUps()
+    {
+        yield return new WaitForSeconds(0.25f);
+
+        if (totalXpText != null)
+            StartCoroutine(CountUpTMP(totalXpText, pendingTotalXp));
+
+        if (totalGoldText != null)
+            StartCoroutine(CountUpTMP(totalGoldText, pendingTotalGold));
+    }
 }
