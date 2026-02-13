@@ -19,7 +19,7 @@ public class EndGameUI : MonoBehaviour
     [SerializeField] private Image goldEarnedFromRoundsSprite;
     [SerializeField] private Image totalGoldSprite;
 
-    
+
 
     [Header("Hide UI")]
     [SerializeField] private GameObject header;
@@ -36,7 +36,7 @@ public class EndGameUI : MonoBehaviour
         panel.blocksRaycasts = false;
     }
 
-    public void ShowWinScreen(int goldEarned, int goldEarnedFromRounds,  int totalGold, int xpFromLevel, int xpFromRounds, int totalXp)
+    public void ShowWinScreen(int goldEarned, int goldEarnedFromRounds, int totalGold, int xpFromLevel, int xpFromRounds, int totalXp)
     {
 
         HideLevelUI();
@@ -47,22 +47,28 @@ public class EndGameUI : MonoBehaviour
         goldEarnedFromRoundsSprite.sprite = StyleManager.instance.goldSprite;
 
         if (xpFromLevelText != null)
-            xpFromLevelText.text = $"Level completed:\n +{goldEarned} XP";
+        {
+            xpFromLevelText.gameObject.SetActive(false);
+            xpFromLevelText.text = $"";
+        }
 
         if (xpEarnedFromRoundsText != null)
-            xpEarnedFromRoundsText.text = $"Finish all rounds:\n +{goldEarnedFromRounds} XP";
+        {
+            xpEarnedFromRoundsText.gameObject.SetActive(false);
+            xpEarnedFromRoundsText.text = $"Rounds bonus:{xpFromRounds} XP";
+        }
 
         if (totalXpText != null)
-            totalXpText.text = $"Total gold:\n {totalGold} XP!";
+            totalXpText.text = $"{totalXp}";
 
         if (goldEarnedText != null)
-            goldEarnedText.text = $"Level completed:\n +{goldEarned} Gold";
+            goldEarnedText.text = $"{goldEarned}";
 
         if (goldEarnedFromRoundsText != null)
-            goldEarnedFromRoundsText.text = $"Finish all rounds:\n +{goldEarnedFromRounds} Gold";
+            goldEarnedFromRoundsText.text = $"{goldEarnedFromRounds}";
 
         if (totalGoldText != null)
-            totalGoldText.text = $"Total gold:\n {totalGold} Gold!";
+            totalGoldText.text = $"{totalGold}";
 
         StartCoroutine(FadeIn());
     }
@@ -72,29 +78,36 @@ public class EndGameUI : MonoBehaviour
     {
         HideLevelUI();
 
-        goldEarnedSprite.gameObject.SetActive(false);
-        totalGoldSprite.gameObject.SetActive(false);
         goldEarnedFromRoundsSprite.sprite = StyleManager.instance.goldSprite;
 
-        titleText.text = "YOU LOST!";
+        titleText.text = "Level Lost!";
 
         if (xpFromLevelText != null)
+        {
+            xpFromLevelText.gameObject.SetActive(false);
             xpFromLevelText.text = $"";
+        }
 
         if (xpEarnedFromRoundsText != null)
+        {
+            xpEarnedFromRoundsText.gameObject.SetActive(false);
             xpEarnedFromRoundsText.text = $"Rounds bonus:{xpFromRounds} XP";
+        }
 
         if (totalXpText != null)
-            totalXpText.text = $"";
+            totalXpText.text = $"{xpFromRounds}";
 
         if (goldEarnedText != null)
-            goldEarnedText.text = $"";
+        {
+            goldEarnedSprite.gameObject.SetActive(false);
+            goldEarnedText.text = $"Incomplete";
+        }
 
         if (goldEarnedFromRoundsText != null)
-            goldEarnedFromRoundsText.text = $"Rounds bonus:{goldEarnedFromRounds} Gold";
+            goldEarnedFromRoundsText.text = $"{goldEarnedFromRounds}";
 
         if (totalGoldText != null)
-            totalGoldText.text = "";
+            totalGoldText.text = $"{goldEarnedFromRounds}";
 
         StartCoroutine(FadeIn());
     }
