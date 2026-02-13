@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Unity.Android.Gradle.Manifest;
 
 public class UnitPartSlotUI : MonoBehaviour
 {

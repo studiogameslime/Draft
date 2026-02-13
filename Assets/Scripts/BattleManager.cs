@@ -280,7 +280,8 @@ public class BattleManager : MonoBehaviour
                 totalBattleGold,
                 levelXp,
                 roundsXp,
-                totalXp
+                totalXp,
+                levelDefinition.name
             );
 
             // --- SAVE PROGRESS (stage complete) ---

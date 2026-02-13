@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Unity.Android.Types;
 public class EndGameUI : MonoBehaviour
 {
     public static EndGameUI Instance;
@@ -18,6 +19,7 @@ public class EndGameUI : MonoBehaviour
     [SerializeField] private Image goldEarnedSprite;
     [SerializeField] private Image goldEarnedFromRoundsSprite;
     [SerializeField] private Image totalGoldSprite;
+    [SerializeField] private TMP_Text levelCompletedText;
 
 
 
@@ -36,15 +38,26 @@ public class EndGameUI : MonoBehaviour
         panel.blocksRaycasts = false;
     }
 
-    public void ShowWinScreen(int goldEarned, int goldEarnedFromRounds, int totalGold, int xpFromLevel, int xpFromRounds, int totalXp)
+    public void ShowWinScreen(
+        int goldEarned,
+        int goldEarnedFromRounds,
+        int totalGold,
+        int xpFromLevel,
+        int xpFromRounds,
+        int totalXp,
+        string levelName
+        )
     {
 
         HideLevelUI();
 
         titleText.text = "VICTORY!";
+        titleText.color = ColorUtility.TryParseHtmlString("#96FF6E", out var c) ? c : Color.white;
 
         goldEarnedSprite.sprite = StyleManager.instance.goldSprite;
         goldEarnedFromRoundsSprite.sprite = StyleManager.instance.goldSprite;
+
+        levelCompletedText.text = $"Level {levelName} completed!";
 
         if (xpFromLevelText != null)
         {
@@ -79,8 +92,11 @@ public class EndGameUI : MonoBehaviour
         HideLevelUI();
 
         goldEarnedFromRoundsSprite.sprite = StyleManager.instance.goldSprite;
+        levelCompletedText.gameObject.SetActive(false);
 
         titleText.text = "Level Lost!";
+        titleText.color = ColorUtility.TryParseHtmlString("#FF7872", out var c) ? c : Color.white;
+
 
         if (xpFromLevelText != null)
         {
@@ -171,5 +187,6 @@ public class EndGameUI : MonoBehaviour
         waveMessagePanel.gameObject.SetActive(false);
         enemiesPreviewBubbles.gameObject.SetActive(false);
     }
+
 
 }

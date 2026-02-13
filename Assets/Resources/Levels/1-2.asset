@@ -13,70 +13,12 @@ MonoBehaviour:
   m_Name: 1-2
   m_EditorClassIdentifier: Assembly-CSharp::LevelDefinition
   rounds:
-  - playerPicks: 0
-    souls: 5
+  - souls: 5
     goldOnRoundWin: 10
     enemyPhases:
     - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
       count: 5
       spawnInterval: 2
-    enemyLevel: 1
-    xpOnRoundWin: 20
-  - playerPicks: 0
-    souls: 5
-    goldOnRoundWin: 10
-    enemyPhases:
-    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
-      count: 8
-      spawnInterval: 2
-    - unit: {fileID: 11400000, guid: 5546c6601084d8d4bb5ad2da3216a6ad, type: 2}
-      count: 1
-      spawnInterval: 5
-    - unit: {fileID: 11400000, guid: 46b2a7674bab87a418ff396c40ee8e35, type: 2}
-      count: 5
-      spawnInterval: 3
-    enemyLevel: 1
-    xpOnRoundWin: 20
-  - playerPicks: 0
-    souls: 3
-    goldOnRoundWin: 15
-    enemyPhases:
-    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
-      count: 5
-      spawnInterval: 2
-    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
-      count: 5
-      spawnInterval: 2
-    enemyLevel: 1
-    xpOnRoundWin: 20
-  - playerPicks: 0
-    souls: 5
-    goldOnRoundWin: 10
-    enemyPhases:
-    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
-      count: 5
-      spawnInterval: 2
-    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
-      count: 8
-      spawnInterval: 3
-    - unit: {fileID: 11400000, guid: 46b2a7674bab87a418ff396c40ee8e35, type: 2}
-      count: 3
-      spawnInterval: 3
-    enemyLevel: 1
-    xpOnRoundWin: 20
-  - playerPicks: 0
-    souls: 5
-    goldOnRoundWin: 10
-    enemyPhases:
-    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
-      count: 8
-      spawnInterval: 2
-    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
-      count: 8
-      spawnInterval: 3
-    - unit: {fileID: 11400000, guid: 46b2a7674bab87a418ff396c40ee8e35, type: 2}
-      count: 5
-      spawnInterval: 3
     enemyLevel: 1
     xpOnRoundWin: 20
   xpOnLevelComplete: 50
