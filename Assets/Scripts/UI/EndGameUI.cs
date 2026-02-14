@@ -20,6 +20,9 @@ public class EndGameUI : MonoBehaviour
     [SerializeField] private Image goldEarnedFromRoundsSprite;
     [SerializeField] private Image totalGoldSprite;
     [SerializeField] private TMP_Text levelCompletedText;
+
+    private int pendingLevelGold;
+    private int pendingRoundsGold;
     private int pendingTotalGold;
     private int pendingTotalXp;
     [SerializeField] private float victoryPulseScale = 1.08f;
@@ -80,14 +83,17 @@ public class EndGameUI : MonoBehaviour
             totalXpText.text = $"0";
 
         if (goldEarnedText != null)
-            goldEarnedText.text = $"{goldEarned}";
+            goldEarnedText.text = $"0";
 
         if (goldEarnedFromRoundsText != null)
-            goldEarnedFromRoundsText.text = $"{goldEarnedFromRounds}";
+            goldEarnedFromRoundsText.text = $"0";
 
         if (totalGoldText != null)
             totalGoldText.text = $"0";
 
+
+        pendingLevelGold = goldEarned;
+        pendingRoundsGold = goldEarnedFromRounds;
         pendingTotalGold = totalGold;
         pendingTotalXp = totalXp;
 
@@ -107,7 +113,7 @@ public class EndGameUI : MonoBehaviour
         goldEarnedFromRoundsSprite.sprite = StyleManager.instance.goldSprite;
         levelCompletedText.gameObject.SetActive(false);
 
-        titleText.text = "Level Lost!";
+        titleText.text = "Defeat!";
         titleText.color = ColorUtility.TryParseHtmlString("#FF7872", out var c) ? c : Color.white;
 
 
@@ -129,11 +135,13 @@ public class EndGameUI : MonoBehaviour
         if (goldEarnedText != null)
         {
             goldEarnedSprite.gameObject.SetActive(false);
+            goldEarnedText.color = ColorUtility.TryParseHtmlString("#FF7872", out var e) ? e : Color.white;
             goldEarnedText.text = $"Incomplete";
         }
 
         if (goldEarnedFromRoundsText != null)
         {
+            goldEarnedFromRoundsSprite.gameObject.SetActive(false);
             goldEarnedFromRoundsText.gameObject.SetActive(false);
             goldEarnedFromRoundsText.text = $"";
         }
@@ -217,7 +225,7 @@ public class EndGameUI : MonoBehaviour
         enemiesPreviewBubbles.gameObject.SetActive(false);
     }
 
-    private IEnumerator CountUpTMP(TMP_Text text, int target, string suffix = "", float duration = 1.2f)
+    private IEnumerator CountUpTMP(TMP_Text text, int target, string suffix = "", float duration = 0.8f)
     {
         float time = 0f;
         int start = 0;
@@ -233,9 +241,10 @@ public class EndGameUI : MonoBehaviour
             yield return null;
         }
 
-        text.transform.localScale = Vector3.one * 1.15f;
-        yield return new WaitForSeconds(0.08f);
-        text.transform.localScale = Vector3.one;
+        // pop
+        //text.transform.localScale = Vector3.one * 1.15f;
+        //yield return new WaitForSeconds(0.08f);
+        //text.transform.localScale = Vector3.one;
 
         text.text = target.ToString() + suffix;
     }
@@ -244,11 +253,21 @@ public class EndGameUI : MonoBehaviour
     {
         yield return new WaitForSeconds(0.25f);
 
+        // XP
         if (totalXpText != null)
-            StartCoroutine(CountUpTMP(totalXpText, pendingTotalXp));
+            yield return CountUpTMP(totalXpText, pendingTotalXp);
 
+        // Level gold
+        if (goldEarnedText != null && goldEarnedText.text != "Incomplete") 
+            yield return CountUpTMP(goldEarnedText, pendingLevelGold);
+
+        // Rounds gold
+        if (goldEarnedFromRoundsText != null)
+            yield return CountUpTMP(goldEarnedFromRoundsText, pendingRoundsGold);
+
+        // Total gold
         if (totalGoldText != null)
-            StartCoroutine(CountUpTMP(totalGoldText, pendingTotalGold));
+            yield return CountUpTMP(totalGoldText, pendingTotalGold);
     }
 
     private IEnumerator VictoryPulse()
@@ -260,7 +279,7 @@ public class EndGameUI : MonoBehaviour
             float t = (Mathf.Sin(Time.time * victoryPulseSpeed) + 1f) * 0.5f;
             float scale = Mathf.Lerp(1f, victoryPulseScale, t);
             titleText.transform.localScale = baseScale * scale;
-            titleText.outlineWidth = Mathf.Lerp(0.2f, 0.35f, t);
+            titleText.outlineWidth = Mathf.Lerp(0.2f, 0.30f, t);
             yield return null;
         }
     }
