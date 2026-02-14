@@ -116,6 +116,7 @@ public class BattleManager : MonoBehaviour
 
         SoulsManager.instance.AddRoundSouls();
         RoundUIManager.instance.ChangeRoundText(currentRoundIndex + 1, levelDefinition.RoundsCount);
+        RoundUIManager.instance.ChangeLevelText(levelDefinition.name);
 
         if (CameraAnimation.instance != null)
             CameraAnimation.instance.EnterGridMode();

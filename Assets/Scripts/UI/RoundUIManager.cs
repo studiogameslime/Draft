@@ -5,6 +5,7 @@ public class RoundUIManager : MonoBehaviour
 {
     public static RoundUIManager instance;
     [SerializeField] TMP_Text roundText;
+    [SerializeField] TMP_Text LevelText;
 
     private void Awake()
     {
@@ -16,5 +17,10 @@ public class RoundUIManager : MonoBehaviour
         roundText.text = $"{currentRound}/{maxRound}";
     }
 
-    
+    public void ChangeLevelText(string levelName)
+    {
+        LevelText.text = levelName;
+    }
+
+
 }
