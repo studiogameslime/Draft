@@ -1,0 +1,26 @@
+name: Build AllScripts
+
+on:
+  push:
+    paths:
+      - "Assets/Scripts/**"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build AllScripts
+        shell: pwsh
+        run: |
+          ./tools/build_all_scripts.ps1
+
+      - name: Commit AllScripts
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add AllScripts.txt
+          git commit -m "auto update AllScripts" || echo "no changes"
+          git push
