@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BossMeleeAttack : MonoBehaviour, IAttackStrategy
 {
-    private ICombatTarget currentTarget; 
+    private ICombatTarget currentTarget;
     private CharacterStats stats;
     private Animator animator;
 
