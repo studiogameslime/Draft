@@ -15,28 +15,29 @@ MonoBehaviour:
   id: unit_skull
   displayName: Skull
   description: 
-  rarity: 1
-  icon: {fileID: -5455630811309129204, guid: 59eb2e00eababf049b24150a003b152b, type: 3}
   prefab: {fileID: 501027721989515594, guid: c4cc72bbf7ff2e744beaebf59a5ed9b0, type: 3}
-  iconScale: 0.4
+  rarity: 1
   unitTeam: 1
   unitClass: 1
   targetPriorityClass: 1
-  soulCost: 3
-  soulDropChance: 0.25
   maxHealth: 200
   damage: 15
-  moveSpeed: 1.3
+  moveSpeed: 0.6
   attackRange: 1
   attackCooldown: 1.3
-  spawnTime: 5
-  critChance: 0.2
+  critChance: 0.1
   critMultiplier: 1.5
-  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  icon: {fileID: -5455630811309129204, guid: 59eb2e00eababf049b24150a003b152b, type: 3}
+  iconScale: 0.4
+  soulCost: 3
+  spawnTime: 5
   animatorController: {fileID: 0}
   maxTier: 3
   partSlots: []
   baseCapacity: 1
-  headPrefabForBattlePreview: {fileID: 0}
   unlockNode: {fileID: 0}
   nodes: []
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 0}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}
