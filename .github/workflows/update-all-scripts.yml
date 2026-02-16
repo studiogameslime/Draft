@@ -1,9 +1,13 @@
-name: Build AllScripts
+# .github/workflows/update-all-scripts.yml
+name: Build AllScripts + AllScriptables
 
 on:
   push:
     paths:
       - "Assets/Scripts/**"
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -17,10 +21,16 @@ jobs:
         run: |
           ./tools/build_all_scripts.ps1
 
-      - name: Commit AllScripts
+      - name: Build AllScriptables
+        shell: pwsh
+        run: |
+          ./tools/build_all_scriptables.ps1
+
+      - name: Commit outputs
+        shell: pwsh
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add AllScripts.txt
-          git commit -m "auto update AllScripts" || echo "no changes"
+          git add AllScripts.txt AllScriptables.txt
+          git commit -m "auto update code dumps" || echo "no changes"
           git push
