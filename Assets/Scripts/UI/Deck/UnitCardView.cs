@@ -217,6 +217,12 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
         if (_isLocked)
             return;
 
+        if (_unlockState == UnitUnlockState.Undiscovered)
+        {
+            UnitsGridController.Instance.CollapseCurrent();
+            return;
+        }
+
         if (_isDeckSlot && UnitsDeckManager.Instance != null &&
             UnitsDeckManager.Instance.IsReplaceModeActive)
         {

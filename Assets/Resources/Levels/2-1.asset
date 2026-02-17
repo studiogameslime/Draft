@@ -16,11 +16,25 @@ MonoBehaviour:
   - souls: 5
     goldOnRoundWin: 15
     enemyPhases:
-    - unit: {fileID: 11400000, guid: bb4d2ca15090fb748918d6857809fd03, type: 2}
+    - unit: {fileID: 11400000, guid: adfd8c042245faa49b96a2c7ebfc1baa, type: 2}
+      count: 3
+      spawnInterval: 3
+    - unit: {fileID: 11400000, guid: 0613f25a4299fa1409255836974641cc, type: 2}
+      count: 3
+      spawnInterval: 3
+    - unit: {fileID: 11400000, guid: adfd8c042245faa49b96a2c7ebfc1baa, type: 2}
       count: 3
       spawnInterval: 1
+    - unit: {fileID: 11400000, guid: 0613f25a4299fa1409255836974641cc, type: 2}
+      count: 2
+      spawnInterval: 4
+    enemyLevel: 2
+    xpOnRoundWin: 20
+  - souls: 5
+    goldOnRoundWin: 15
+    enemyPhases:
     - unit: {fileID: 11400000, guid: adfd8c042245faa49b96a2c7ebfc1baa, type: 2}
-      count: 7
+      count: 5
       spawnInterval: 3
     - unit: {fileID: 11400000, guid: 0613f25a4299fa1409255836974641cc, type: 2}
       count: 4
