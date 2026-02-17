@@ -75,6 +75,7 @@ public class UnitUpgradeDetailsPopupController : MonoBehaviour
         if (root != null)
             root.SetActive(true);
 
+
         RefreshUI();
 
         // open animation (optional)
@@ -150,6 +151,7 @@ public class UnitUpgradeDetailsPopupController : MonoBehaviour
             FindAnyObjectByType<UnitsCollectionManager>()?.RebuildCollection();
         }
 
+        UnitDetailsPopupController.Instance.FillData();
         RefreshUI();
 
         

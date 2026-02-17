@@ -1,6 +1,7 @@
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 /// <summary>
 /// Controls the Unit Details popup content (data + tabs).
@@ -76,8 +77,8 @@ public class UnitDetailsPopupController : MonoBehaviour
     [SerializeField] private UpgradeTreeUIController upgradesTabController;
 
     private UnitDefinition _unit;
-    private UnitsDeckManager _deckManager;
     private RectTransform _lastOpenedCardRect;
+    private UnitUnlockState unlockState;
 
     private void Awake()
     {
@@ -111,9 +112,10 @@ public class UnitDetailsPopupController : MonoBehaviour
             Debug.LogWarning("UnitDetailsPopupController.OpenFromCard: unit is null");
             return;
         }
-
+        
         _unit = unit;
-        _deckManager = deckManager;
+        unlockState = UnitUnlockState.Undiscovered;
+
         _lastOpenedCardRect = cardRect;
 
         // Ensure popup is visible before filling (so SetNativeSize etc. behave consistently)
@@ -164,7 +166,7 @@ public class UnitDetailsPopupController : MonoBehaviour
     // DATA
     // =========================
 
-    private void FillData()
+    public void FillData()
     {
         if (_unit == null)
             return;
@@ -285,8 +287,13 @@ public class UnitDetailsPopupController : MonoBehaviour
         bool inBattle = (BattleManager.instance != null && BattleManager.instance.IsBattleRunning);
         bool canAfford = ownedScrolls >= cost;
 
+        var progress = GameData.Instance.Save.ownedUnits
+            .FirstOrDefault(u => u.unitId == _unit.id);
+        if (progress != null)
+            unlockState = progress.unlockState;
+
         if (upgradeButton != null)
-            upgradeButton.interactable = (!inBattle) && (!atMax) && canAfford;
+            upgradeButton.interactable = (!inBattle) && (!atMax) && canAfford && unlockState == UnitUnlockState.Unlocked;
     }
 
 
@@ -323,6 +330,9 @@ public class UnitDetailsPopupController : MonoBehaviour
     private void OnUpgradeClicked()
     {
         if (_unit == null) return;
+
+        if (unlockState != UnitUnlockState.Unlocked)
+            return;
 
         bool ok = UnitLevelingService.TryUpgradeUnit(_unit.id);
         if (!ok) return;
