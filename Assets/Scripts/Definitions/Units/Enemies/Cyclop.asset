@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Cyclop
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_goblin
+  displayName: Cyclop
+  description: 
+  prefab: {fileID: 2783144815761969831, guid: 34c4869847519bc46b47518e44fc2ad3, type: 3}
+  rarity: 0
+  unitTeam: 1
+  unitClass: 1
+  targetPriorityClass: 0
+  maxHealth: 150
+  damage: 8
+  moveSpeed: 0.4
+  attackRange: 1
+  attackCooldown: 1
+  critChance: 0.2
+  critMultiplier: 1.5
+  icon: {fileID: -5455630811309129204, guid: 9ac4b89c2bb99a0499d216eb33474cbd, type: 3}
+  iconScale: 0.4
+  soulCost: 0
+  spawnTime: 5
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  unlockNode: {fileID: 0}
+  nodes: []
+  soulDropChance: 1
+  headPrefabForBattlePreview: {fileID: 4806593250366934745, guid: 2737a12d8290474439c8313ffdd224c9, type: 3}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}
