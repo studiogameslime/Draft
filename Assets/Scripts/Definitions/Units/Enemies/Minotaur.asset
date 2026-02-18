@@ -15,27 +15,29 @@ MonoBehaviour:
   id: unit_minotaur
   displayName: Minotaur
   description: 
-  rarity: 0
-  icon: {fileID: -3737095125607796811, guid: 16a4fd1d2c3212346935fdd6166edc03, type: 3}
   prefab: {fileID: 501027721989515594, guid: b1e329d9cfe163c44b90cda605922125, type: 3}
-  iconScale: 0.4
+  rarity: 0
   unitTeam: 1
   unitClass: 1
   targetPriorityClass: 6
-  soulCost: 0
-  soulDropChance: 1
   maxHealth: 150
-  damage: 50
+  damage: 10
   moveSpeed: 1.5
   attackRange: 1
-  attackCooldown: 1
-  spawnTime: 5
+  attackCooldown: 1.5
   critChance: 0.2
   critMultiplier: 1.5
+  icon: {fileID: -3737095125607796811, guid: 16a4fd1d2c3212346935fdd6166edc03, type: 3}
+  iconScale: 0.2
+  soulCost: 0
+  spawnTime: 5
   animatorController: {fileID: 0}
   maxTier: 3
   partSlots: []
   baseCapacity: 1
-  headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: d6fbab3502fa9d44f9eacf15387e9549, type: 3}
   unlockNode: {fileID: 0}
   nodes: []
+  soulDropChance: 1
+  headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: d6fbab3502fa9d44f9eacf15387e9549, type: 3}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}

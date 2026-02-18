@@ -105,8 +105,6 @@ public class UnitAI : MonoBehaviour
 
     private void Update()
     {
-
-
         if (myStats == null || myStats.currentHealth <= 0)
         {
             StopMoving();
@@ -123,8 +121,7 @@ public class UnitAI : MonoBehaviour
             return;
         }
 
-
-        // Enemy logic (unchanged)
+        // Enemy logic: check if already locked on the wall
         if (myStats.team == Team.EnemyTeam && wall != null && wallTarget != null && wallLocked)
         {
             targetStats = null;
@@ -141,39 +138,51 @@ public class UnitAI : MonoBehaviour
                 AttackWallIfInRange();
             }
             return;
-
         }
 
+        // Enemy logic: general targeting
         if (myStats.team == Team.EnemyTeam && wall != null && wallTarget != null)
         {
-            CharacterStats candidate = FindClosestTargetableEnemy();
             float distToWall = DistanceToWallCollider();
 
-            if (candidate != null)
+            // CHANGED: Only search for nearby player units if our priority is NOT the Wall
+            // This allows units like the Gnoll (Wall priority) to ignore blockers.
+            if (myStats.definition.targetPriorityClass != UnitClass.Wall)
             {
-                float distToUnit = Vector3.Distance(transform.position, candidate.transform.position);
-                if (distToUnit < distToWall)
+                CharacterStats candidate = FindClosestTargetableEnemy();
+
+                if (candidate != null)
                 {
-                    SetUnitTarget(candidate);
-                    HandleUnitTargetMovementAndAttack();
-                    return;
+                    float distToUnit = Vector3.Distance(transform.position, candidate.transform.position);
+                    // Standard behavior: attack closer units
+                    if (distToUnit < distToWall)
+                    {
+                        SetUnitTarget(candidate);
+                        HandleUnitTargetMovementAndAttack();
+                        return;
+                    }
                 }
             }
 
+            // If unit priority is Wall OR no unit blockers are closer, move to wall
             SetWallTargetSoft();
             UpdateFacingToTransform(wall.transform);
 
             if (distToWall > myStats.attackRange - stoppingBuffer)
+            {
+                Debug.Log("if");
                 MoveTowardWall();
+            }
             else
             {
+                Debug.Log("Else");
                 StopMoving();
                 AttackWallIfInRange();
             }
             return;
         }
 
-        // Non-enemy normal targeting
+        // Non-enemy normal targeting (Player Units)
         if (targetStats == null || targetStats.currentHealth <= 0 || targetStats.isUntargetable)
         {
             targetStats = FindClosestTargetableEnemy();
@@ -190,7 +199,6 @@ public class UnitAI : MonoBehaviour
         }
 
         MaybeRetargetToClosest();
-
         HandleUnitTargetMovementAndAttack();
     }
 
@@ -422,17 +430,26 @@ public class UnitAI : MonoBehaviour
 
     private void AttackWallIfInRange()
     {
+        Debug.Log("AttackWallIfInRange 1");
         if (wallTarget == null) return;
+        Debug.Log("AttackWallIfInRange 2");
 
         float dist = DistanceToWallCollider();
         if (dist > myStats.attackRange)
+        {
+
+        Debug.Log($"AttackWallIfInRange 3 {dist}");
             return;
+        }
 
         animator?.SetBool("isMoving", false);
         target = wallTarget;
+        
+        Debug.Log($"AttackWallIfInRange 4 {Time.time - lastAttackTime} {myStats.attackCooldown}");
 
         if (Time.time - lastAttackTime >= myStats.attackCooldown)
         {
+        Debug.Log("AttackWallIfInRange 5");
             lastAttackTime = Time.time;
             wallLocked = true;
             attackStrategy?.Attack(wallTarget);
