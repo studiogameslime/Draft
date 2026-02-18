@@ -400,7 +400,7 @@ MonoBehaviour:
   unitTeam: 1
   unitClass: 1
   targetPriorityClass: 6
-  maxHealth: 150
+  maxHealth: 50
   damage: 10
   moveSpeed: 1.5
   attackRange: 1
@@ -418,7 +418,7 @@ MonoBehaviour:
   unlockNode: {fileID: 0}
   nodes: []
   soulDropChance: 1
-  headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: d6fbab3502fa9d44f9eacf15387e9549, type: 3}
+  headPrefabForBattlePreview: {fileID: 5051906023280408227, guid: 7fbd6b32681f3274d890de53914f2dae, type: 3}
   isBoss: 0
   HeadWithEyes: {fileID: 0}
 
