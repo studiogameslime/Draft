@@ -17,8 +17,11 @@ public class EnemyPreviewBubblesController : MonoBehaviour
 
     public void BuildForRound(LevelDefinition levelDefinition, int roundIndex)
     {
+        Debug.Log("BuildForRound");
         if (levelDefinition == null || levelDefinition.rounds == null) return;
+        Debug.Log("BuildForRound 2");
         if (roundIndex < 0 || roundIndex >= levelDefinition.rounds.Length) return;
+        Debug.Log("BuildForRound 3");
 
         BuildForRound(levelDefinition.rounds[roundIndex]);
     }

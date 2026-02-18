@@ -59,7 +59,6 @@ public class BattleManager : MonoBehaviour
         StartCoroutine(InitAfterUIReady());
         Initialize();
 
-
     }
 
     public void Initialize()
@@ -72,17 +71,6 @@ public class BattleManager : MonoBehaviour
         RefreshStartBattleButton();
     }
 
-    public void ShowDeck()
-    {
-        PlanningPhase();
-    }
-
-    public void HideDeck()
-    {
-        // Deck may not exist yet if CommonUI not loaded.
-        if (deckUI != null)
-            deckUI.HideDeck();
-    }
 
     private IEnumerator InitAfterUIReady()
     {
@@ -122,6 +110,9 @@ public class BattleManager : MonoBehaviour
             CameraAnimation.instance.EnterGridMode();
         if (BattleFooterAnimation.instance != null)
             BattleFooterAnimation.instance.EnterGridMode();
+
+        PlanningPhase();
+
     }
 
 
@@ -144,8 +135,12 @@ public class BattleManager : MonoBehaviour
         if (deckUI != null)
             deckUI.SetCardsInteractable(true);
 
+        Debug.Log(EnemyPreviewBubblesController.Instance);
+
         if (EnemyPreviewBubblesController.Instance != null)
+        {
             EnemyPreviewBubblesController.Instance.BuildForRound(levelDefinition, currentRoundIndex);
+        }
 
         RemoveAllFallenWeapons();
         RemoveAllProjectiles();

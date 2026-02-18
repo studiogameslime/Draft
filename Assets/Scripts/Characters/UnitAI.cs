@@ -170,12 +170,10 @@ public class UnitAI : MonoBehaviour
 
             if (distToWall > myStats.attackRange - stoppingBuffer)
             {
-                Debug.Log("if");
                 MoveTowardWall();
             }
             else
             {
-                Debug.Log("Else");
                 StopMoving();
                 AttackWallIfInRange();
             }
@@ -430,26 +428,21 @@ public class UnitAI : MonoBehaviour
 
     private void AttackWallIfInRange()
     {
-        Debug.Log("AttackWallIfInRange 1");
         if (wallTarget == null) return;
-        Debug.Log("AttackWallIfInRange 2");
 
         float dist = DistanceToWallCollider();
         if (dist > myStats.attackRange)
         {
 
-        Debug.Log($"AttackWallIfInRange 3 {dist}");
             return;
         }
 
         animator?.SetBool("isMoving", false);
         target = wallTarget;
         
-        Debug.Log($"AttackWallIfInRange 4 {Time.time - lastAttackTime} {myStats.attackCooldown}");
 
         if (Time.time - lastAttackTime >= myStats.attackCooldown)
         {
-        Debug.Log("AttackWallIfInRange 5");
             lastAttackTime = Time.time;
             wallLocked = true;
             attackStrategy?.Attack(wallTarget);
