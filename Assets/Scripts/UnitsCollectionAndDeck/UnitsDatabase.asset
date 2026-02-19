@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0519cb96e02bdbc4b825d55af86cf77e, type: 3}
-  m_Name: New Units Database
+  m_Name: UnitsDatabase
   m_EditorClassIdentifier: Assembly-CSharp::UnitsDatabase
   allUnits:
   - {fileID: 11400000, guid: ad4287dbc795daf4da4915b5d3fcd156, type: 2}
@@ -20,3 +20,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 624a24cba8fbd3b469665d2ac0fc3846, type: 2}
   - {fileID: 11400000, guid: b7fa78734c59dcf459d2349865d741bf, type: 2}
   - {fileID: 11400000, guid: 75259a8b2ef03f54a80f8f3cee277d96, type: 2}
+  - {fileID: 11400000, guid: 876fbe3d5fdfc79488bb86318ec5fa03, type: 2}
