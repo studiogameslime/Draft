@@ -216,6 +216,7 @@ public class BattleCellSelectionController : MonoBehaviour
 
         if (bottomPanel != null)
         {
+            bottomPanel.Clear();
             bottomPanel.ShowPlaceholderText(bottomPanel.defaultPlaceholder);
             bottomPanel.HideSellButton();
         }

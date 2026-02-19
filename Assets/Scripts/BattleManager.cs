@@ -121,12 +121,18 @@ public class BattleManager : MonoBehaviour
     // =======================
     private void PlanningPhase()
     {
+
         Debug.Log("PlanningPhase");
 
         unitClassUsedThisBattle.Clear();
         unitsUsedThisBattle.Clear();
 
-        BattleBottomPanelController.Instance.ShowDeck(PlayerDeckProvider.Instance.CurrentDeck);
+        // ADD THIS INSTEAD: Set the initial state to no cell selected
+        if (BattleCellSelectionController.Instance != null)
+        {
+            BattleCellSelectionController.Instance.ClearSelection();
+        }
+
         ShowDropAreasGrid();
 
         SetAllAIEnabled(false);
