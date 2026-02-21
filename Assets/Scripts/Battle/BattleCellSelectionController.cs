@@ -68,11 +68,9 @@ public class BattleCellSelectionController : MonoBehaviour
     public void SelectCell(DropAreaCell cell)
     {
         if (BattleManager.instance.IsBattleRunning) return;
-
         if (cell == null)
             return;
 
-        // Clicking the same cell again toggles selection off (hides deck).
         if (selectedCell == cell)
         {
             ClearSelection();
@@ -80,6 +78,12 @@ public class BattleCellSelectionController : MonoBehaviour
         }
 
         SetSelectedInternal(cell);
+
+        // Show the bonus UI for the newly selected cell
+        if (bottomPanel != null)
+        {
+            bottomPanel.ShowCellBonus(cell);
+        }
 
         if (BattleManager.instance != null && BattleManager.instance.IsBattleRunning)
         {
@@ -96,7 +100,6 @@ public class BattleCellSelectionController : MonoBehaviour
         }
         else
         {
-            // NEW: show upgrades for that spawner (same container), instead of hiding
             ShowUpgradesForSpawner(spawnerOnCell);
         }
     }
@@ -219,6 +222,7 @@ public class BattleCellSelectionController : MonoBehaviour
             bottomPanel.Clear();
             bottomPanel.ShowPlaceholderText(bottomPanel.defaultPlaceholder);
             bottomPanel.HideSellButton();
+            bottomPanel.HideCellBonus();
         }
     }
 

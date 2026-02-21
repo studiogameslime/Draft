@@ -25,6 +25,9 @@ public class BattleBottomPanelController : MonoBehaviour
     [SerializeField] public string defaultPlaceholder;
     [SerializeField] public string fullUpgradePlaceholder;
 
+    [Header("Cell Bonus")]
+    [SerializeField] private GameObject cellBonusRoot;
+    [SerializeField] private TMP_Text cellBonusText;
 
 
     private void Awake()
@@ -156,5 +159,59 @@ public class BattleBottomPanelController : MonoBehaviour
         placeholderText.gameObject.SetActive(false);
     }
 
+    public void ShowCellBonus(DropAreaCell cell)
+    {
+        if (cellBonusRoot == null || cellBonusText == null) return;
 
+        // Hide if the cell is null or doesn't have a special bonus/penalty
+        if (cell == null || !cell.IsSpecial)
+        {
+            cellBonusRoot.SetActive(false);
+            return;
+        }
+
+        cellBonusRoot.SetActive(true);
+
+        // Determine the stat name using a switch statement for future scalability
+        string statName = "";
+        switch (cell.bonusType)
+        {
+            case CellBonusType.AttackPercent:
+                statName = "Attack";
+                break;
+            case CellBonusType.HpPercent:
+                statName = "HP";
+                break;
+            // Add new bonus types here in the future:
+            // case CellBonusType.SpeedPercent:
+            //     statName = "Speed";
+            //     break;
+            default:
+                statName = "Stat";
+                break;
+        }
+
+        // Add a plus sign for positive values (negative values naturally include a minus sign)
+        string sign = cell.percentValue > 0 ? "+" : "";
+
+        cellBonusText.text = $"{sign}{cell.percentValue}% {statName}";
+
+        // Set the text color to green for bonus, red for penalty
+        if (cell.percentValue > 0)
+        {
+            cellBonusText.color = Color.green;
+        }
+        else
+        {
+            cellBonusText.color = Color.red;
+        }
+    }
+
+    public void HideCellBonus()
+    {
+        if (cellBonusRoot != null)
+        {
+            cellBonusRoot.SetActive(false);
+        }
+    }
 }
