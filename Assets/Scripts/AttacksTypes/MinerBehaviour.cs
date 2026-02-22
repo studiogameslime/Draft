@@ -1,101 +1,74 @@
 using UnityEngine;
-using UnityEngine.UI;
 
-[RequireComponent(typeof(CharacterStats))]
-public class MinerBehaviour : MonoBehaviour
+// This behavior controls the Gold Miner. 
+// It handles soul production and updates the cell's progress bar in blue.
+public class GoldMinerBehaviour : UnitSkillBehaviour
 {
-    [Header("Mining Settings")]
-    public float timeToMine = 15f;
-    public int soulsPerMine = 1;
+    private float productionTimer;
+    private UnitSpawner mySpawner;
+    private Color soulProductionColor = Color.blue;
 
-    private CharacterStats stats;
-    private SpawnedUnitOwnerLink link;
-    private Image cellFillImage;
-
-    private bool isInitialized = false;
-    private Color originalFillColor = Color.white;
-    private float currentTimer = 0f;
-
-    private void Awake()
+    protected override void OnInit()
     {
-        stats = GetComponent<CharacterStats>();
-        link = GetComponent<SpawnedUnitOwnerLink>();
+        // Disable AI as the Miner is a static structure
+        var ai = GetComponent<UnitAI>();
+        if (ai != null) ai.enabled = false;
+
+        // Find the spawner that owns this unit via the owner link
+        var link = GetComponent<SpawnedUnitOwnerLink>();
+        if (link != null)
+        {
+            mySpawner = link.owner;
+            
+            // Set the progress bar color to Blue as requested
+            if (mySpawner != null)
+            {
+                mySpawner.SetProgressColor(soulProductionColor);
+            }
+        }
     }
 
     private void Update()
     {
-        // Do nothing if battle is not actively running
-        if (BattleManager.instance == null || !BattleManager.instance.IsBattleRunning)
-            return;
+        // Only produce souls if the battle is running and unit is alive
+        if (!BattleManager.instance.IsBattleRunning || !stats.IsAlive) return;
 
-        // Do nothing if miner is dead
-        if (stats.currentHealth <= 0)
-            return;
+        productionTimer += Time.deltaTime;
 
-        // Wait until the link is fully established with the spawner UI
-        if (!isInitialized)
+        // Use attackCooldown from definition as the soul production interval
+        float interval = stats.attackCooldown;
+        float progress = Mathf.Clamp01(productionTimer / interval);
+
+        // Update the visual UI on the grid cell manually
+        if (mySpawner != null)
         {
-            InitializeMiner();
-            return;
+            mySpawner.SetManualProgress(progress);
         }
 
-        // Advance timer
-        currentTimer += Time.deltaTime;
-
-        // Update the spawner's UI fill ring
-        if (cellFillImage != null)
+        if (productionTimer >= interval)
         {
-            cellFillImage.fillAmount = currentTimer / timeToMine;
-        }
-
-        // Check if it's time to produce a soul
-        if (currentTimer >= timeToMine)
-        {
-            ProduceSouls();
-            currentTimer = 0f; // Reset timer for the next soul
+            productionTimer = 0f;
+            ProduceSoul();
         }
     }
 
-    private void InitializeMiner()
+    private void ProduceSoul()
     {
-        // Ensure enemies completely ignore the miner
-        stats.isUntargetable = true;
-
-        if (link != null && link.owner != null)
+        if (SoulsManager.instance != null)
         {
-            // Grab the UI fill image from the DropAreaCell
-            var cell = link.owner.GetComponentInParent<DropAreaCell>();
-            if (cell != null && cell.fillImage != null)
-            {
-                cellFillImage = cell.fillImage;
-                originalFillColor = cellFillImage.color;
-
-                // Change the progress ring color to souls to indicate mining
-                cellFillImage.color = Color.blue;
-            }
-
-            // Start the timer fresh
-            currentTimer = 0f;
-            isInitialized = true;
-        }
-    }
-
-    private void ProduceSouls()
-    {
-        if (SoulOrbSpawner.instance != null)
-        {
-            // Spawn soul visual that will automatically fly to UI and add balance
-            SoulOrbSpawner.instance.SpawnSoul(transform.position + Vector3.up * 0.5f, soulsPerMine);
+            SoulsManager.instance.AddSouls(1);
+            // Visual feedback using the existing floating text system
+            stats.showFloatingDamage(1, FloatingNumberType.Heal); 
         }
     }
 
     private void OnDestroy()
     {
-        // Reset the UI styling when the unit is destroyed at the end of the round
-        if (cellFillImage != null)
+        // Clean up: Reset spawner color when the miner is removed/round ends
+        if (mySpawner != null)
         {
-            cellFillImage.fillAmount = 0f;
-            cellFillImage.color = originalFillColor;
+            mySpawner.ResetProgressColor();
+            mySpawner.SetManualProgress(0f);
         }
     }
 }
