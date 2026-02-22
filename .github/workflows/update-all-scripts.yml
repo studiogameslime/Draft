@@ -5,7 +5,7 @@ on:
   push:
     paths:
       - "Assets/Scripts/**"
-      - "Assets/Scripts/Definitions/Units/**"
+      - "Assets/Scripts/Definitions/**"
       - "tools/**"
       - ".github/workflows/**"
 
@@ -17,14 +17,15 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Build AllScripts
         shell: pwsh
         run: |
           ./tools/build_all_scripts.ps1
 
-      - name: Build AllScriptables Units
+      - name: Build AllScriptables
         shell: pwsh
         run: |
           ./tools/build_all_scriptables.ps1
@@ -34,6 +35,8 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add AllScripts.txt AllScriptables_Units.txt
-          git commit -m "auto update code dumps" || echo "no changes"
+
+          git add All*.txt
+
+          git diff --cached --quiet || git commit -m "auto update code dumps"
           git push
