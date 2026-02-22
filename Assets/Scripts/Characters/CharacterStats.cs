@@ -445,7 +445,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
     private void DieFromStatus(CharacterStats attacker)
     {
-        Die();
+        Die(); 
     }
 
 }

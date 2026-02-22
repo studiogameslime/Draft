@@ -2,7 +2,7 @@ using UnityEngine;
 
 // This behavior controls the Gold Miner. 
 // It handles soul production and updates the cell's progress bar in blue.
-public class GoldMinerBehaviour : UnitSkillBehaviour
+public class MinerBehaviour : UnitSkillBehaviour
 {
     private float productionTimer;
     private UnitSpawner mySpawner;
@@ -30,6 +30,7 @@ public class GoldMinerBehaviour : UnitSkillBehaviour
 
     private void Update()
     {
+        if (stats == null) return;
         // Only produce souls if the battle is running and unit is alive
         if (!BattleManager.instance.IsBattleRunning || !stats.IsAlive) return;
 
