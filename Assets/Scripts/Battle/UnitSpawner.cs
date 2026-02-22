@@ -41,10 +41,19 @@ public class UnitSpawner : MonoBehaviour
     private float progressTarget = 0f;
     private Coroutine progressRoutine;
     private Transform unitsContainer;
+    // Inside fields section
+    private Color defaultProgressColor; // Stores the original bar color [1]
+    private bool spawnedStaticUnit = false;
+
 
     private void Awake()
     {
         unitsContainer = GameObject.FindGameObjectWithTag("UnitsContainer").transform;
+
+        if (spawnProgressFill != null)
+        {
+            defaultProgressColor = spawnProgressFill.color;
+        }
     }
 
     public void Configure(UnitDefinition def, Team t, int level)
@@ -86,20 +95,67 @@ public class UnitSpawner : MonoBehaviour
         if (unitDef == null || unitDef.prefab == null)
             yield break;
 
-        while (battleRunning && BattleManager.instance != null && BattleManager.instance.IsBattleRunning && !BattleManager.instance.IsGameOver)
+        // NEW: Spawn exactly one unit immediately for units that disable reserve
+        if (unitDef.disableReserveUnit && !spawnedStaticUnit)
+        {
+            SpawnSingleUnitImmediate();
+            spawnedStaticUnit = true;
+        }
+
+        while (battleRunning && BattleManager.instance != null &&
+               BattleManager.instance.IsBattleRunning && !BattleManager.instance.IsGameOver)
         {
             int cap = Mathf.Max(1, unitDef.baseCapacity);
 
-            // Ensure we have a reserve unit in progress or ready
-            if (!reserveReady && !isSpawningReserve)
-                StartCoroutine(SpawnReserveRoutine());
+            if (!unitDef.disableReserveUnit)
+            {
+                if (!reserveReady && !isSpawningReserve)
+                    StartCoroutine(SpawnReserveRoutine());
 
-            // If we have room for another attacker and reserve is ready, release immediately
-            if (reserveReady && attackersActive < cap)
-                ReleaseReserveToBattle();
+                if (reserveReady && attackersActive < cap)
+                    ReleaseReserveToBattle();
+            }
 
             yield return null;
         }
+    }
+    private void SpawnSingleUnitImmediate()
+    {
+        GameObject go = Instantiate(unitDef.prefab, transform.position, Quaternion.identity);
+
+        // Ensure owner link exists and points to this spawner BEFORE skill init
+        var link = go.GetComponent<SpawnedUnitOwnerLink>();
+        if (link == null)
+            link = go.AddComponent<SpawnedUnitOwnerLink>();
+        link.owner = this;
+
+        var stats = go.GetComponent<CharacterStats>();
+        if (stats == null)
+        {
+            Debug.LogError("Spawned prefab has no CharacterStats.");
+            Destroy(go);
+            return;
+        }
+
+        stats.Init(team, unitDef, unitLevel);
+
+        // Init built-in skills on prefab (MinerBehaviour will now find link.owner)
+        InitExistingSkillBehaviours(go, stats);
+
+        ApplyUpgradesToSpawnedUnit(go, stats);
+        stats.SetInitialPosition();
+        go.transform.SetParent(unitsContainer, true);
+
+        // Apply cell bonus
+        stats.maxHealth = Mathf.RoundToInt(stats.maxHealth * hpMul);
+        stats.currentHealth = stats.maxHealth;
+        stats.damage = Mathf.RoundToInt(stats.damage * dmgMul);
+
+        stats.isUntargetable = true;
+
+        SetReserveCollision(go, false);
+
+        attackersActive = Mathf.Max(attackersActive, 1);
     }
 
     private IEnumerator SpawnReserveRoutine()
@@ -148,6 +204,10 @@ public class UnitSpawner : MonoBehaviour
 
         // Now create the reserve unit at its normal scale
         GameObject go = Instantiate(unitDef.prefab, transform.position, Quaternion.identity);
+        var link = go.GetComponent<SpawnedUnitOwnerLink>();
+        if (link == null)
+            link = go.AddComponent<SpawnedUnitOwnerLink>();
+        link.owner = this;
         var stats = go.GetComponent<CharacterStats>();
         if (stats == null)
         {
@@ -159,6 +219,8 @@ public class UnitSpawner : MonoBehaviour
 
         // Init stats
         stats.Init(team, unitDef, unitLevel);
+        InitExistingSkillBehaviours(go, stats);
+
         ApplyUpgradesToSpawnedUnit(go, stats);
         stats.SetInitialPosition();
         go.transform.SetParent(unitsContainer, true);
@@ -267,7 +329,8 @@ public class UnitSpawner : MonoBehaviour
 
         SetSpawnerAlpha(1f);
 
-        // Reset UI
+        // NEW: Ensure color and progress are reset for next round [9]
+        ResetProgressColor();
         SetProgressImmediate(0f);
     }
 
@@ -290,6 +353,10 @@ public class UnitSpawner : MonoBehaviour
     {
         if (cell == null) return;
         spawnProgressFill = cell.fillImage;
+
+        // NEW: cache original color now that we actually have the image
+        if (spawnProgressFill != null)
+            defaultProgressColor = spawnProgressFill.color;
     }
 
     private void SetProgressTarget(float value01)
@@ -475,5 +542,47 @@ public class UnitSpawner : MonoBehaviour
         return total;
     }
 
+
+    public void SetManualProgress(float value01)
+    {
+        // Allows external units to drive the progress bar (0 to 1) [5]
+        SetProgressTarget(value01);
+        if (spawnProgressFill != null)
+        {
+            spawnProgressFill.fillAmount = value01;
+        }
+    }
+
+    public void SetProgressColor(Color newColor)
+    {
+        // Changes the bar color (e.g., to Blue for Miner) [4]
+        if (spawnProgressFill != null)
+        {
+            spawnProgressFill.color = newColor;
+        }
+    }
+
+    public void ResetProgressColor()
+    {
+        // Reverts the bar to its original unit-creation color [6]
+        if (spawnProgressFill != null)
+        {
+            spawnProgressFill.color = defaultProgressColor;
+        }
+    }
+
+    private void InitExistingSkillBehaviours(GameObject go, CharacterStats stats)
+    {
+        if (go == null || stats == null) return;
+
+        var skills = go.GetComponents<UnitSkillBehaviour>();
+        for (int i = 0; i < skills.Length; i++)
+        {
+            if (skills[i] == null) continue;
+
+            // Node is null because this is a built-in behaviour on the prefab (not an upgrade node)
+            skills[i].Init(stats, null);
+        }
+    }
 
 }

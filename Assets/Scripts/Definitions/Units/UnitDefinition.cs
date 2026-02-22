@@ -32,6 +32,7 @@ public class UnitDefinition : ScriptableObject
     public int baseCapacity = 1;
     public UnitUpgradeNodeDefinition unlockNode;
     public List<UnitUpgradeNodeDefinition> nodes = new();
+    public bool disableReserveUnit = false;
 
     [Header("Fill this for enemies only")]
     [Range(0f, 1f)] public float soulDropChance = 0.25f;

@@ -424,7 +424,6 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
     public void ApplyStatusDamage(int amount, CharacterStats attacker, FloatingNumberType floatingType)
     {
-        Debug.Log("ApplyStatusDamage");
         if (amount <= 0) return;
         if (isUntargetable || currentHealth <= 0) return;
 
