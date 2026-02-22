@@ -1,0 +1,2659 @@
+========================
+FILE: CommonChest.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Chests\CommonChest.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7032090b4acbfe3458e70be5b41e9abc, type: 3}
+  m_Name: CommonChest
+  m_EditorClassIdentifier: Assembly-CSharp::ChestDefinition
+  id: chest_common
+  displayName: Common Chest
+  backgroundImage: {fileID: 4093272143986726598, guid: 7ea6928b236392949952aeca2581cba2, type: 3}
+  chestOpenScreenIcon: {fileID: 21300000, guid: 3be80395f95ffb04694877d1fa859186, type: 3}
+  buttonIcon: {fileID: 21300000, guid: c967415b7afa3ea4e8b629dc9762ad9f, type: 3}
+  chestRarity: 1
+  animatorController: {fileID: 9100000, guid: 7bfe4c27b84591d4aa9d81c883cfa1c7, type: 2}
+  goldRange:
+    min: 20
+    max: 50
+  diamondsRange:
+    min: 1
+    max: 3
+  partDropChance: 0.3
+  wheelOfFortuneChance: 0.1
+  partRarityWeights:
+  - rarity: 0
+    weight: 100
+  - rarity: 1
+    weight: 0
+  - rarity: 2
+    weight: 0
+
+
+
+========================
+FILE: RareChest.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Chests\RareChest.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7032090b4acbfe3458e70be5b41e9abc, type: 3}
+  m_Name: RareChest
+  m_EditorClassIdentifier: Assembly-CSharp::ChestDefinition
+  id: chest_rare
+  displayName: Rare Chest
+  backgroundImage: {fileID: 6076472054665402848, guid: 5dddc90a224388e48b5b43e3734d0b2e, type: 3}
+  chestOpenScreenIcon: {fileID: 21300000, guid: 4ac5b60f2cdee64408fd68d777f60b2f, type: 3}
+  buttonIcon: {fileID: 21300000, guid: 8dac2d66a1dd3524eae6c146e562094c, type: 3}
+  chestRarity: 2
+  animatorController: {fileID: 9100000, guid: 7dc1b15897cda87459b93cc2ad4701be, type: 2}
+  goldRange:
+    min: 100
+    max: 180
+  diamondsRange:
+    min: 3
+    max: 6
+  partDropChance: 1
+  wheelOfFortuneChance: 1
+  partRarityWeights:
+  - rarity: 0
+    weight: 1
+  - rarity: 1
+    weight: 1
+  - rarity: 2
+    weight: 98
+
+
+
+========================
+FILE: MasteryDatabase.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\MasteryItems\MasteryDatabase.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 684c717e7edd63248a3128ff0c706d62, type: 3}
+  m_Name: MasteryDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::MasteryDatabase
+  baseDrawCost: 1500
+  costMultiplier: 1.2
+  items:
+  - {fileID: 11400000, guid: 6413a0fe42bc54541a2f09e6525a7f32, type: 2}
+  - {fileID: 11400000, guid: dc3afc96c1e78774ab3d46eef67c682a, type: 2}
+  - {fileID: 11400000, guid: dfde8259679708842b942423fe8e17f0, type: 2}
+  - {fileID: 11400000, guid: 83b4debf83c815d4e8213f8f1d02669a, type: 2}
+  - {fileID: 11400000, guid: e51fbd031e060194984aee0f2122521f, type: 2}
+  - {fileID: 11400000, guid: cdbfdebec30936d409360c1bb5eede59, type: 2}
+  - {fileID: 11400000, guid: 57abe4db61d10d548ad31c5f57706bc8, type: 2}
+  - {fileID: 11400000, guid: 316659e35a44e5641b98dab1d2f8750c, type: 2}
+  - {fileID: 11400000, guid: 26a6ac8d0e797704483734ce34620d2d, type: 2}
+  - {fileID: 11400000, guid: 54d0a518ed3c738419a023c495b5fbb4, type: 2}
+  - {fileID: 11400000, guid: 68217e8ff20816c49baac0730515a380, type: 2}
+
+
+
+========================
+FILE: Attack Speed.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\MasteryItems\Common\Attack Speed.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5f8d6c6bca3024994ab317ac82b464, type: 3}
+  m_Name: Attack Speed
+  m_EditorClassIdentifier: Assembly-CSharp::MasteryItemDefinition
+  id: mastery_common_attack_speed
+  displayName: Attack Speed
+  description: All units attacks faster
+  rarity: 0
+  icon: {fileID: 2968030537341498565, guid: 2117ec6a22c79524db2e3a42bd8ae824, type: 3}
+  iconScale: 1
+  stat: 2
+  valueKind: 0
+  valuePerLevel: 0.8
+  maxLevel: 100
+
+
+
+========================
+FILE: Damage.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\MasteryItems\Common\Damage.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5f8d6c6bca3024994ab317ac82b464, type: 3}
+  m_Name: Damage
+  m_EditorClassIdentifier: Assembly-CSharp::MasteryItemDefinition
+  id: mastery_common_damage
+  displayName: Damage
+  description: All units deal more damage
+  rarity: 0
+  icon: {fileID: -9105523663915182995, guid: 2117ec6a22c79524db2e3a42bd8ae824, type: 3}
+  iconScale: 1
+  stat: 0
+  valueKind: 0
+  valuePerLevel: 0.8
+  maxLevel: 100
+
+
+
+========================
+FILE: Gold Cost Reduction.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\MasteryItems\Common\Gold Cost Reduction.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5f8d6c6bca3024994ab317ac82b464, type: 3}
+  m_Name: Gold Cost Reduction
+  m_EditorClassIdentifier: Assembly-CSharp::MasteryItemDefinition
+  id: mastery_common_gold_cost_reduction
+  displayName: Gold Cost Reduction
+  description: Reduces gold costs across the game
+  rarity: 0
+  icon: {fileID: -1650023830213464031, guid: 79310628a0183f3469ccf507641e4f58, type: 3}
+  iconScale: 1
+  stat: 10
+  valueKind: 0
+  valuePerLevel: 1
+  maxLevel: 20
+
+
+
+========================
+FILE: Max Health.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\MasteryItems\Common\Max Health.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5f8d6c6bca3024994ab317ac82b464, type: 3}
+  m_Name: Max Health
+  m_EditorClassIdentifier: Assembly-CSharp::MasteryItemDefinition
+  id: mastery_common_max_health
+  displayName: Max Health
+  description: All units have more max hp
+  rarity: 0
+  icon: {fileID: -2104548799049882302, guid: 2117ec6a22c79524db2e3a42bd8ae824, type: 3}
+  iconScale: 1
+  stat: 1
+  valueKind: 0
+  valuePerLevel: 0.8
+  maxLevel: 100
+
+
+
+========================
+FILE: Move Speed.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\MasteryItems\Common\Move Speed.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5f8d6c6bca3024994ab317ac82b464, type: 3}
+  m_Name: Move Speed
+  m_EditorClassIdentifier: Assembly-CSharp::MasteryItemDefinition
+  id: mastery_common_move_speed
+  displayName: Move Speed
+  description: Units move faster
+  rarity: 0
+  icon: {fileID: -316266774671604702, guid: 2117ec6a22c79524db2e3a42bd8ae824, type: 3}
+  iconScale: 1
+  stat: 3
+  valueKind: 0
+  valuePerLevel: 0.8
+  maxLevel: 100
+
+
+
+========================
+FILE: Extra Daily Chest.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\MasteryItems\Epic\Extra Daily Chest.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5f8d6c6bca3024994ab317ac82b464, type: 3}
+  m_Name: Extra Daily Chest
+  m_EditorClassIdentifier: Assembly-CSharp::MasteryItemDefinition
+  id: mastery_epic_extra_daily_chest
+  displayName: Extra Daily Chest
+  description: Get extra free chests every day
+  rarity: 2
+  icon: {fileID: 21300000, guid: f8db82f4a36719f449737b06cb63e0b2, type: 3}
+  iconScale: 1.5
+  stat: 5
+  valueKind: 1
+  valuePerLevel: 1
+  maxLevel: 1
+
+
+
+========================
+FILE: Souls Overflow.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\MasteryItems\Epic\Souls Overflow.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5f8d6c6bca3024994ab317ac82b464, type: 3}
+  m_Name: Souls Overflow
+  m_EditorClassIdentifier: Assembly-CSharp::MasteryItemDefinition
+  id: mastery_epic_souls_overflow
+  displayName: Souls Overflow
+  description: Excess souls collected in battle are converted into gold at the end
+    of the fight
+  rarity: 2
+  icon: {fileID: 21300000, guid: ecb2567a3e158b3408933a7e95da7a6f, type: 3}
+  iconScale: 1.5
+  stat: 11
+  valueKind: 1
+  valuePerLevel: 100
+  maxLevel: 10
+
+
+
+========================
+FILE: Gem Cost Reduction.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\MasteryItems\Rare\Gem Cost Reduction.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5f8d6c6bca3024994ab317ac82b464, type: 3}
+  m_Name: Gem Cost Reduction
+  m_EditorClassIdentifier: Assembly-CSharp::MasteryItemDefinition
+  id: mastery_rare_gem_cost_reduction
+  displayName: Gem Cost Reduction
+  description: Reduces gem costs for purchases and upgrades
+  rarity: 1
+  icon: {fileID: 323977596622862515, guid: 499b0d45abb9a5d4d8ce8d637df6b6d1, type: 3}
+  iconScale: 1.5
+  stat: 9
+  valueKind: 0
+  valuePerLevel: 1
+  maxLevel: 10
+
+
+
+========================
+FILE: Gold Gain.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\MasteryItems\Rare\Gold Gain.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5f8d6c6bca3024994ab317ac82b464, type: 3}
+  m_Name: Gold Gain
+  m_EditorClassIdentifier: Assembly-CSharp::MasteryItemDefinition
+  id: mastery_epic_gold_gain
+  displayName: Gold Gain
+  description: Gain more gold from all sources
+  rarity: 1
+  icon: {fileID: -3529181562942689087, guid: af6330ad8838e744a9287858bc11d90e, type: 3}
+  iconScale: 1
+  stat: 4
+  valueKind: 0
+  valuePerLevel: 2
+  maxLevel: 100
+
+
+
+========================
+FILE: Gold per Kill.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\MasteryItems\Rare\Gold per Kill.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5f8d6c6bca3024994ab317ac82b464, type: 3}
+  m_Name: Gold per Kill
+  m_EditorClassIdentifier: Assembly-CSharp::MasteryItemDefinition
+  id: mastery_rare_gold_per_kill
+  displayName: Gold per Kill
+  description: Gain extra gold for every enemy you kill
+  rarity: 1
+  icon: {fileID: 21300000, guid: 9ab1fc9603a003046885ddd2b6c8471d, type: 3}
+  iconScale: 1
+  stat: 8
+  valueKind: 1
+  valuePerLevel: 1
+  maxLevel: 10
+
+
+
+========================
+FILE: Soul Drop Chance.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\MasteryItems\Rare\Soul Drop Chance.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd5f8d6c6bca3024994ab317ac82b464, type: 3}
+  m_Name: Soul Drop Chance
+  m_EditorClassIdentifier: Assembly-CSharp::MasteryItemDefinition
+  id: mastery_rare_soul_drop_percent
+  displayName: Soul Drop Chance
+  description: Increases the chance for monsters to drop Souls.
+  rarity: 1
+  icon: {fileID: -4697424154706883055, guid: ce3a82dc11a598040babe4d4356b303b, type: 3}
+  iconScale: 1.5
+  stat: 7
+  valueKind: 0
+  valuePerLevel: 1
+  maxLevel: 20
+
+
+
+========================
+FILE: MissionDatabase.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Missions\MissionDatabase.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a87a8a78ecd419b46976c3efaf42f0fc, type: 3}
+  m_Name: MissionDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::MissionDatabase
+  dailyMissions:
+  - {fileID: 11400000, guid: a4b03b27a0e36324aafee15ff9d4f910, type: 2}
+  - {fileID: 11400000, guid: a31393c2d98e68041934cc1a478f2f80, type: 2}
+  - {fileID: 11400000, guid: 516b8ac59f80cdc469907aec1bbc8d59, type: 2}
+  - {fileID: 11400000, guid: 56870b37aa9100043be5f1f5f68a2244, type: 2}
+  - {fileID: 11400000, guid: 723a68b2d2c47d247be38810fc36a987, type: 2}
+  - {fileID: 11400000, guid: 2f478b3deb0d6074e8b78402da9fa38d, type: 2}
+  - {fileID: 11400000, guid: 2c9de330dd93712419c6840e9483176a, type: 2}
+  - {fileID: 11400000, guid: 33408dea9392e134daf4bd59b19c6841, type: 2}
+  - {fileID: 11400000, guid: 317a2cf9187a8d7478cf33d7aa4bec20, type: 2}
+  - {fileID: 11400000, guid: a44d691fdefe0bc44893729ec7ebcaf1, type: 2}
+  weeklyMissions:
+  - {fileID: 11400000, guid: 85ec42dd1a2d5294b82ac3c708f296ee, type: 2}
+  - {fileID: 11400000, guid: 7e3b1098afa9bf54d8eab5903d5ff0c9, type: 2}
+  - {fileID: 11400000, guid: b5003b6d112b1fc4b8ca07052396f388, type: 2}
+  - {fileID: 11400000, guid: 070064512b9bead4d9585fa72abf4bde, type: 2}
+  - {fileID: 11400000, guid: ac37c99e2172faf4e8ef8cce74aea565, type: 2}
+
+
+
+========================
+FILE: PlayerPartsInventory.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Parts\PlayerPartsInventory.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24b9574b82ae1f34f977b358a934e1c5, type: 3}
+  m_Name: PlayerPartsInventory
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerPartsInventory
+  ownedParts: []
+
+
+
+========================
+FILE: UnitRarityWeight.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Parts\UnitRarityWeight.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c6b0a7c392ab4740a81fa9e361b3688, type: 3}
+  m_Name: UnitRarityWeight
+  m_EditorClassIdentifier: Assembly-CSharp::UnitRarityWeights
+  commonWeight: 4
+  rareWeight: 2
+  epicWeight: 1
+  legendaryWeight: 0.5
+
+
+
+========================
+FILE: StoreDatabase.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Store\StoreDatabase.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c29c61b284595c49bdbd520e691c10b, type: 3}
+  m_Name: StoreDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::StoreDatabase
+  allItems:
+  - {fileID: 11400000, guid: 99d8826719d650a40b6526b2821d4dae, type: 2}
+  - {fileID: 11400000, guid: 304cabd76eff8d9428dd7b892263fd8d, type: 2}
+  - {fileID: 11400000, guid: 685fdcb197fc8fb4ba09f935509927ce, type: 2}
+  - {fileID: 11400000, guid: 0bbacaa1d5022fc46b60e7fef866ae9d, type: 2}
+  - {fileID: 11400000, guid: ad9fe45ad9bc5694e8eb921f57129641, type: 2}
+  - {fileID: 11400000, guid: f5eda4ddb29152e4d8a3e882a64be17c, type: 2}
+  - {fileID: 11400000, guid: f927fe3603ffbdb4ea564e5f3c1eebec, type: 2}
+  - {fileID: 11400000, guid: e9d93ca152682814195f7509739da594, type: 2}
+  - {fileID: 11400000, guid: 75a8ceba3749fe24996698b36fe1bbd6, type: 2}
+
+
+
+========================
+FILE: CommonChest.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Store\ChestsPacks\CommonChest.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec691c4f9c83d134299629e7725434fb, type: 3}
+  m_Name: CommonChest
+  m_EditorClassIdentifier: Assembly-CSharp::StoreItemDefinition
+  id: store_chest_common
+  category: 1
+  title: Common Chest
+  icon: {fileID: 21300000, guid: c967415b7afa3ea4e8b629dc9762ad9f, type: 3}
+  goldAmount: 0
+  chestReward: {fileID: 11400000, guid: 3dc7bbe10158e2f49a5c25def79a07f2, type: 2}
+  costType: 0
+  priceInGems: 0
+  priceInGold: 500
+  discountPercent: 0
+  isEnabled: 1
+
+
+
+========================
+FILE: RareChest.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Store\ChestsPacks\RareChest.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec691c4f9c83d134299629e7725434fb, type: 3}
+  m_Name: RareChest
+  m_EditorClassIdentifier: Assembly-CSharp::StoreItemDefinition
+  id: store_chest_rare
+  category: 1
+  title: Rare Chest
+  icon: {fileID: 21300000, guid: 8dac2d66a1dd3524eae6c146e562094c, type: 3}
+  goldAmount: 0
+  chestReward: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+  costType: 0
+  priceInGems: 0
+  priceInGold: 2000
+  discountPercent: 20
+  isEnabled: 1
+  isDailyFree: 0
+  dailyResetHour: 8
+
+
+
+========================
+FILE: FreeGoldPack.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Store\GoldPacks\FreeGoldPack.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec691c4f9c83d134299629e7725434fb, type: 3}
+  m_Name: FreeGoldPack
+  m_EditorClassIdentifier: Assembly-CSharp::StoreItemDefinition
+  id: store_free_gold_pack
+  category: 0
+  title: FREE Pack
+  icon: {fileID: 5325537983010943776, guid: 44eaaba6535f6c24489a9ee11fdf9bd8, type: 3}
+  goldAmount: 500
+  chestReward: {fileID: 0}
+  costType: 0
+  priceInGems: 0
+  priceInGold: 0
+  discountPercent: 0
+  isEnabled: 1
+  isDailyFree: 1
+  dailyResetHour: 8
+
+
+
+========================
+FILE: GoldBigPack.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Store\GoldPacks\GoldBigPack.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec691c4f9c83d134299629e7725434fb, type: 3}
+  m_Name: GoldBigPack
+  m_EditorClassIdentifier: Assembly-CSharp::StoreItemDefinition
+  id: store_gold_big_pack
+  category: 0
+  title: Big Pack
+  icon: {fileID: -8053192523244977537, guid: 6e8a4d0876bf84545bb09b1167f25ed9, type: 3}
+  goldAmount: 4000
+  chestReward: {fileID: 0}
+  costType: 1
+  priceInGems: 60
+  priceInGold: 0
+  discountPercent: 10
+  isEnabled: 1
+
+
+
+========================
+FILE: GoldMediumPack.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Store\GoldPacks\GoldMediumPack.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec691c4f9c83d134299629e7725434fb, type: 3}
+  m_Name: GoldMediumPack
+  m_EditorClassIdentifier: Assembly-CSharp::StoreItemDefinition
+  id: store_gold_medium_pack
+  category: 0
+  title: Medium Pack
+  icon: {fileID: -7036802690940725796, guid: 5c0e5e03024c9a1429ffaf49cd5bb278, type: 3}
+  goldAmount: 1500
+  chestReward: {fileID: 0}
+  costType: 1
+  priceInGems: 25
+  priceInGold: 0
+  discountPercent: 0
+  isEnabled: 1
+
+
+
+========================
+FILE: GoldMonsterPack.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Store\GoldPacks\GoldMonsterPack.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec691c4f9c83d134299629e7725434fb, type: 3}
+  m_Name: GoldMonsterPack
+  m_EditorClassIdentifier: Assembly-CSharp::StoreItemDefinition
+  id: store_gold_monster_pack
+  category: 0
+  title: Monster Pack
+  icon: {fileID: 4329863666594238230, guid: ca6e7c1f887121b4fb9350a39d37c79f, type: 3}
+  goldAmount: 10000
+  chestReward: {fileID: 0}
+  costType: 1
+  priceInGems: 100
+  priceInGold: 0
+  discountPercent: 0
+  isEnabled: 1
+
+
+
+========================
+FILE: GoldSmallPack.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Store\GoldPacks\GoldSmallPack.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec691c4f9c83d134299629e7725434fb, type: 3}
+  m_Name: GoldSmallPack
+  m_EditorClassIdentifier: Assembly-CSharp::StoreItemDefinition
+  id: store_gold_small_pack
+  category: 0
+  title: Small Pack
+  icon: {fileID: 6494866780102057765, guid: 89a00a9b06f0787459e40805a6995634, type: 3}
+  goldAmount: 500
+  chestReward: {fileID: 0}
+  costType: 1
+  priceInGems: 10
+  priceInGold: 0
+  discountPercent: 0
+  isEnabled: 1
+
+
+
+========================
+FILE: MatanPack.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Store\GoldPacks\MatanPack.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec691c4f9c83d134299629e7725434fb, type: 3}
+  m_Name: MatanPack
+  m_EditorClassIdentifier: Assembly-CSharp::StoreItemDefinition
+  id: store_matan_pack
+  category: 0
+  title: Matan Pack
+  icon: {fileID: 3626803995572650231, guid: 723e9d4a807bfda40b3ed4f7367d7fbc, type: 3}
+  goldAmount: 50000
+  chestReward: {fileID: 0}
+  costType: 1
+  priceInGems: 500
+  priceInGold: 0
+  discountPercent: 0
+  isEnabled: 1
+
+
+
+========================
+FILE: FireMageParts.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Store\Parts\FireMageParts.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec691c4f9c83d134299629e7725434fb, type: 3}
+  m_Name: FireMageParts
+  m_EditorClassIdentifier: Assembly-CSharp::StoreItemDefinition
+  id: store_buy-fire_mage_parts
+  category: 2
+  title: Fire Mage Parts
+  icon: {fileID: 7674125699001298711, guid: 97352762abec38447a52057c2a5126a6, type: 3}
+  goldAmount: 0
+  chestReward: {fileID: 0}
+  partRewards:
+  - part: {fileID: 11400000, guid: 3e3a99c9e61a88f4dbe7733d27227a2c, type: 2}
+    amount: 1
+  - part: {fileID: 11400000, guid: 6f03cbb98dbb06d4cab68052c4d3c3c5, type: 2}
+    amount: 1
+  - part: {fileID: 11400000, guid: 7769a27358a50034696266dfdf6a4b91, type: 2}
+    amount: 1
+  - part: {fileID: 11400000, guid: 0d2e13c07b9e433478a63d5b3e588a4f, type: 2}
+    amount: 1
+  - part: {fileID: 11400000, guid: d57f4257a99ff274f84afbe04b1cbcfd, type: 2}
+    amount: 1
+  - part: {fileID: 11400000, guid: 95511ce325c43ac4b99161054cb6c93f, type: 2}
+    amount: 1
+  - part: {fileID: 11400000, guid: 3aa3f0e7bb1841844bf8910a818f8a32, type: 2}
+    amount: 1
+  costType: 0
+  priceInGems: 0
+  priceInGold: 100
+  discountPercent: 50
+  isEnabled: 1
+  isDailyFree: 0
+  dailyResetHour: 8
+
+
+
+========================
+FILE: UnitsUnlockConfig.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\UnitsUnlockConfig.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcc63f68faccdf84da309a51d57a05b7, type: 3}
+  m_Name: UnitsUnlockConfig
+  m_EditorClassIdentifier: Assembly-CSharp::UnitsUnlockConfig
+  allUnits:
+  - {fileID: 11400000, guid: ad4287dbc795daf4da4915b5d3fcd156, type: 2}
+  - {fileID: 11400000, guid: 6cab19afac977304e898761cc9185bd1, type: 2}
+  - {fileID: 11400000, guid: d9282f24b2268dd4688a50473d8bdee7, type: 2}
+  - {fileID: 11400000, guid: 624a24cba8fbd3b469665d2ac0fc3846, type: 2}
+  - {fileID: 11400000, guid: b7fa78734c59dcf459d2349865d741bf, type: 2}
+  - {fileID: 11400000, guid: 681e39eeac684f2448e304010c689052, type: 2}
+  startingUnits:
+  - {fileID: 11400000, guid: ad4287dbc795daf4da4915b5d3fcd156, type: 2}
+  - {fileID: 11400000, guid: 681e39eeac684f2448e304010c689052, type: 2}
+
+
+
+========================
+FILE: Axe Thrower Golem.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Enemies\Axe Thrower Golem.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Axe Thrower Golem
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_axe_thrower_golem
+  displayName: Axe Thrower Golem
+  description: 
+  rarity: 1
+  icon: {fileID: -5927858591751588972, guid: 5fcab3648aaa6f54bb393cdf81dd9b29, type: 3}
+  prefab: {fileID: 8120014860710774337, guid: acc7de7bd49f62e4a86bb81a26ad4d5d, type: 3}
+  iconScale: 1
+  unitTeam: 1
+  unitClass: 3
+  targetPriorityClass: 0
+  soulCost: 0
+  soulDropChance: 0.25
+  maxHealth: 80
+  damage: 15
+  moveSpeed: 0.3
+  attackRange: 5
+  attackCooldown: 1
+  spawnTime: 5
+  critChance: 0.2
+  critMultiplier: 1.5
+  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 667374381617566049, guid: 01bc67b0612c7d14ba6244e991b0c3d0, type: 3}
+  unlockNode: {fileID: 0}
+  nodes: []
+
+
+
+========================
+FILE: Bruiser.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Enemies\Bruiser.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Bruiser
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_bruiser
+  displayName: Bruiser
+  description: 
+  rarity: 0
+  icon: {fileID: 5842733951393599697, guid: 374db10c0fc33304cba737759420544f, type: 3}
+  prefab: {fileID: 501027721989515594, guid: 0812158088b600d4a842381138a45bf5, type: 3}
+  iconScale: 0.5
+  unitTeam: 1
+  unitClass: 1
+  targetPriorityClass: 1
+  soulCost: 0
+  soulDropChance: 0.25
+  maxHealth: 100
+  damage: 15
+  moveSpeed: 2
+  attackRange: 0.8
+  attackCooldown: 1
+  spawnTime: 5
+  critChance: 0.2
+  critMultiplier: 1.5
+  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 0}
+  unlockNode: {fileID: 0}
+  nodes: []
+
+
+
+========================
+FILE: Cyclop.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Enemies\Cyclop.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Cyclop
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_goblin
+  displayName: Cyclop
+  description: 
+  prefab: {fileID: 2783144815761969831, guid: 34c4869847519bc46b47518e44fc2ad3, type: 3}
+  rarity: 0
+  unitTeam: 1
+  unitClass: 1
+  targetPriorityClass: 0
+  maxHealth: 150
+  damage: 8
+  moveSpeed: 0.4
+  attackRange: 1
+  attackCooldown: 1
+  critChance: 0.2
+  critMultiplier: 1.5
+  icon: {fileID: -5455630811309129204, guid: 9ac4b89c2bb99a0499d216eb33474cbd, type: 3}
+  iconScale: 0.4
+  soulCost: 0
+  spawnTime: 5
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  unlockNode: {fileID: 0}
+  nodes: []
+  soulDropChance: 1
+  headPrefabForBattlePreview: {fileID: 4806593250366934745, guid: 2737a12d8290474439c8313ffdd224c9, type: 3}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}
+
+
+
+========================
+FILE: Ent.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Enemies\Ent.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Ent
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_ent
+  displayName: Ent
+  description: EntEnt
+  prefab: {fileID: 501027721989515594, guid: da010a7283696af48b36645cf2a2a23d, type: 3}
+  rarity: 0
+  unitTeam: 1
+  unitClass: 1
+  targetPriorityClass: 0
+  maxHealth: 1000
+  damage: 20
+  moveSpeed: 0.4
+  attackRange: 1.7
+  attackCooldown: 1.5
+  critChance: 0.1
+  critMultiplier: 1.5
+  icon: {fileID: -1619662025158104270, guid: adaa08312fe4adf4188b9d2fa086d723, type: 3}
+  iconScale: 0.4
+  soulCost: 0
+  spawnTime: 5
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  unlockNode: {fileID: 0}
+  nodes: []
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: 61a61d854adedcd438e6916aecbda2c2, type: 3}
+  isBoss: 1
+  HeadWithEyes: {fileID: 3667681588813468039, guid: ce8e913a30d98064ebbdd08362bbc1e5, type: 3}
+
+
+
+========================
+FILE: GiantSkeleton.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Enemies\GiantSkeleton.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: GiantSkeleton
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_giant_skeleton
+  displayName: GiantSkeleton
+  description: 
+  rarity: 2
+  icon: {fileID: 6976913724491762843, guid: b8d2a56a971c695448a2f3adb645d99a, type: 3}
+  prefab: {fileID: 501027721989515594, guid: 9ef15c7d379a26248a985984bf0f6ced, type: 3}
+  iconScale: 0.3
+  unitTeam: 1
+  unitClass: 1
+  targetPriorityClass: 1
+  soulCost: 7
+  soulDropChance: 0.25
+  maxHealth: 250
+  damage: 10
+  moveSpeed: 1
+  attackRange: 0.8
+  attackCooldown: 1.5
+  spawnTime: 5
+  critChance: 0.2
+  critMultiplier: 1.5
+  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 0}
+  unlockNode: {fileID: 0}
+  nodes: []
+
+
+
+========================
+FILE: Goblin.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Enemies\Goblin.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Goblin
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_goblin
+  displayName: Goblin
+  description: 
+  rarity: 0
+  icon: {fileID: -5455630811309129204, guid: 9ac4b89c2bb99a0499d216eb33474cbd, type: 3}
+  prefab: {fileID: 1962212957759589538, guid: 86654c0814329e347b269c8778cdb847, type: 3}
+  iconScale: 0.4
+  unitTeam: 1
+  unitClass: 1
+  targetPriorityClass: 0
+  soulCost: 0
+  soulDropChance: 1
+  maxHealth: 40
+  damage: 10
+  moveSpeed: 0.6
+  attackRange: 1
+  attackCooldown: 1
+  spawnTime: 5
+  critChance: 0.2
+  critMultiplier: 1.5
+  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: d6fbab3502fa9d44f9eacf15387e9549, type: 3}
+  unlockNode: {fileID: 0}
+  nodes: []
+
+
+
+========================
+FILE: Mage.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Enemies\Mage.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Mage
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_mage
+  displayName: Mage
+  description: 
+  rarity: 1
+  icon: {fileID: -3400982213634020427, guid: 2cca22e838a38c34e8c007e7a8d97af5, type: 3}
+  prefab: {fileID: 3672369371563529809, guid: d8eeed233f99b564e863f0df4b26e646, type: 3}
+  iconScale: 0.5
+  unitTeam: 1
+  unitClass: 4
+  targetPriorityClass: 4
+  soulCost: 0
+  soulDropChance: 0.25
+  maxHealth: 50
+  damage: 10
+  moveSpeed: 2
+  attackRange: 4
+  attackCooldown: 2
+  spawnTime: 5
+  critChance: 0.2
+  critMultiplier: 1.5
+  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 0}
+  unlockNode: {fileID: 0}
+  nodes: []
+
+
+
+========================
+FILE: Minotaur.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Enemies\Minotaur.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Minotaur
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_minotaur
+  displayName: Minotaur
+  description: 
+  prefab: {fileID: 501027721989515594, guid: b1e329d9cfe163c44b90cda605922125, type: 3}
+  rarity: 0
+  unitTeam: 1
+  unitClass: 1
+  targetPriorityClass: 6
+  maxHealth: 50
+  damage: 10
+  moveSpeed: 1.5
+  attackRange: 1
+  attackCooldown: 1.5
+  critChance: 0.2
+  critMultiplier: 1.5
+  icon: {fileID: -3737095125607796811, guid: 16a4fd1d2c3212346935fdd6166edc03, type: 3}
+  iconScale: 0.2
+  soulCost: 0
+  spawnTime: 5
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  unlockNode: {fileID: 0}
+  nodes: []
+  soulDropChance: 1
+  headPrefabForBattlePreview: {fileID: 5051906023280408227, guid: 7fbd6b32681f3274d890de53914f2dae, type: 3}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}
+
+
+
+========================
+FILE: Necromancer.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Enemies\Necromancer.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Necromancer
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_necromancer
+  displayName: Necromancer
+  description: 
+  rarity: 0
+  icon: {fileID: 5215311243222774236, guid: b9d33462f93a6da4f892c2259dda5274, type: 3}
+  prefab: {fileID: 4815875221805417533, guid: 52b49f7839e031048a8305d6c96e46f4, type: 3}
+  iconScale: 0.4
+  unitTeam: 1
+  unitClass: 5
+  targetPriorityClass: 3
+  soulCost: 8
+  soulDropChance: 0.25
+  maxHealth: 50
+  damage: 10
+  moveSpeed: 2
+  attackRange: 10
+  attackCooldown: 1
+  spawnTime: 5
+  critChance: 0.2
+  critMultiplier: 1.5
+  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 0}
+  unlockNode: {fileID: 0}
+  nodes: []
+
+
+
+========================
+FILE: Skeleton.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Enemies\Skeleton.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Skeleton
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_skeleton
+  displayName: Skeleton
+  description: 
+  prefab: {fileID: 501027721989515594, guid: c5d687e618389294e850de7fbb128154, type: 3}
+  rarity: 0
+  unitTeam: 1
+  unitClass: 1
+  targetPriorityClass: 0
+  maxHealth: 30
+  damage: 5
+  moveSpeed: 0.8
+  attackRange: 0.7
+  attackCooldown: 1.2
+  critChance: 0.2
+  critMultiplier: 1.5
+  icon: {fileID: -1746593996306021751, guid: 49c9bdc6a94a48542bc46ff12f6b0237, type: 3}
+  iconScale: 0.4
+  soulCost: 1
+  spawnTime: 5
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  unlockNode: {fileID: 0}
+  nodes: []
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 0}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}
+
+
+
+========================
+FILE: SkeletonArcher.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Enemies\SkeletonArcher.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: SkeletonArcher
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_skeleton_archer
+  displayName: Skeleton Archer
+  description: 
+  prefab: {fileID: 501027721989515594, guid: bb1cae93fa8bb3046b7b5b04d85ec182, type: 3}
+  rarity: 0
+  unitTeam: 1
+  unitClass: 3
+  targetPriorityClass: 0
+  maxHealth: 40
+  damage: 15
+  moveSpeed: 0.6
+  attackRange: 5
+  attackCooldown: 1.2
+  critChance: 0.2
+  critMultiplier: 1.5
+  icon: {fileID: 8055814443983777150, guid: fbf7431fa08a9254fbea8f2e6775c793, type: 3}
+  iconScale: 0.4
+  soulCost: 4
+  spawnTime: 5
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  unlockNode: {fileID: 0}
+  nodes: []
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 0}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}
+
+
+
+========================
+FILE: Skull.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Enemies\Skull.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Skull
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_skull
+  displayName: Skull
+  description: 
+  prefab: {fileID: 501027721989515594, guid: c4cc72bbf7ff2e744beaebf59a5ed9b0, type: 3}
+  rarity: 1
+  unitTeam: 1
+  unitClass: 1
+  targetPriorityClass: 1
+  maxHealth: 200
+  damage: 15
+  moveSpeed: 0.6
+  attackRange: 1
+  attackCooldown: 1.3
+  critChance: 0.1
+  critMultiplier: 1.5
+  icon: {fileID: -5455630811309129204, guid: 59eb2e00eababf049b24150a003b152b, type: 3}
+  iconScale: 0.4
+  soulCost: 3
+  spawnTime: 5
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  unlockNode: {fileID: 0}
+  nodes: []
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 0}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}
+
+
+
+========================
+FILE: Archer.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\Archer.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Archer
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_archer
+  displayName: Archer
+  description: A silent archer whose patience turns every shot into a deadly threat.
+  rarity: 0
+  icon: {fileID: -5455630811309129204, guid: e67152362f4e84d4fad9e9d081e15b46, type: 3}
+  prefab: {fileID: 501027721989515594, guid: 4e6aca7962de6874ab96739414c075aa, type: 3}
+  iconScale: 0.4
+  unitTeam: 0
+  unitClass: 3
+  targetPriorityClass: 1
+  soulCost: 3
+  soulDropChance: 0.25
+  maxHealth: 70
+  damage: 15
+  moveSpeed: 1.1
+  attackRange: 7
+  attackCooldown: 1.8
+  spawnTime: 5
+  critChance: 0.2
+  critMultiplier: 1.5
+  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  animatorController: {fileID: 9100000, guid: a291fea9f6cd97c4e93747da11c0ed46, type: 2}
+  maxTier: 3
+  partSlots:
+  - slot: 0
+  - slot: 1
+  - slot: 2
+  - slot: 3
+  - slot: 4
+  - slot: 5
+  - slot: 6
+  baseCapacity: 2
+  headPrefabForBattlePreview: {fileID: 0}
+  unlockNode: {fileID: 11400000, guid: 48de0110926b81d449b463f400dde0c6, type: 2}
+  nodes:
+  - {fileID: 11400000, guid: 48de0110926b81d449b463f400dde0c6, type: 2}
+  - {fileID: 11400000, guid: 3e1e938ad2c7e3d4c8ed6d15e17a80c0, type: 2}
+  - {fileID: 11400000, guid: cc31dbc7b73c1cb42a2f10aa5da2dcc3, type: 2}
+  - {fileID: 11400000, guid: fcf10e71eb15c0d4ba207dfc7cbfdd27, type: 2}
+  - {fileID: 11400000, guid: f5573a08fb126574b840a5447e4b0e26, type: 2}
+  - {fileID: 11400000, guid: 0d12b2f0932cdf44abe162a7ad55e0d4, type: 2}
+  - {fileID: 11400000, guid: a974629cf01e84f4c9410d7814e10111, type: 2}
+
+
+
+========================
+FILE: Fairy.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\Fairy.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Fairy
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_fairy
+  displayName: Fairy
+  description: What fairy poop smell? like confettus!
+  prefab: {fileID: 501027721989515594, guid: 295d93ebc543e8d4da81861aac3150fc, type: 3}
+  rarity: 1
+  unitTeam: 0
+  unitClass: 3
+  targetPriorityClass: 0
+  maxHealth: 100
+  damage: 10
+  moveSpeed: 1
+  attackRange: 5
+  attackCooldown: 1
+  critChance: 0.2
+  critMultiplier: 1.5
+  icon: {fileID: -5455630811309129204, guid: a095310ac1d203143bba40640717e1de, type: 3}
+  iconScale: 0.4
+  soulCost: 3
+  spawnTime: 6
+  animatorController: {fileID: 9100000, guid: e39ed235862f38c41bcff07fdbad3b42, type: 2}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  unlockNode: {fileID: 0}
+  nodes: []
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 0}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}
+
+
+
+========================
+FILE: FireMage.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\FireMage.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: FireMage
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_fire_mage
+  displayName: Fire Mage
+  description: "A fire mage who looks harmless \u2014 until everything starts burning."
+  rarity: 2
+  icon: {fileID: 7674125699001298711, guid: 97352762abec38447a52057c2a5126a6, type: 3}
+  prefab: {fileID: 153394670701094284, guid: 220b9052bb302b94094855251cf1e45c, type: 3}
+  iconScale: 0.4
+  unitTeam: 0
+  unitClass: 4
+  targetPriorityClass: 0
+  soulCost: 6
+  soulDropChance: 0.25
+  maxHealth: 25
+  damage: 30
+  moveSpeed: 0.6
+  attackRange: 7
+  attackCooldown: 3
+  spawnTime: 9
+  critChance: 0.2
+  critMultiplier: 1.5
+  animatorController: {fileID: 9100000, guid: 99d38f58891b08e4498441edc4b108f0, type: 2}
+  maxTier: 3
+  partSlots:
+  - slot: 0
+  - slot: 1
+  - slot: 2
+  - slot: 3
+  - slot: 4
+  - slot: 5
+  - slot: 6
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 0}
+  unlockNode: {fileID: 11400000, guid: 53dba96814fcd934bb17b34d304ac393, type: 2}
+  nodes:
+  - {fileID: 11400000, guid: 53dba96814fcd934bb17b34d304ac393, type: 2}
+
+
+
+========================
+FILE: Knight.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\Knight.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Knight
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_knight
+  displayName: Knight
+  description: A quiet knight whose armor speaks louder than words.
+  rarity: 1
+  icon: {fileID: -5455630811309129204, guid: 3aa29cd6553ff4542a7c6676903a7f49, type: 3}
+  prefab: {fileID: 501027721989515594, guid: 79261859f482dfa49a1dc66df5ce2d67, type: 3}
+  iconScale: 0.4
+  unitTeam: 0
+  unitClass: 1
+  targetPriorityClass: 1
+  soulCost: 4
+  soulDropChance: 0.25
+  maxHealth: 200
+  damage: 8
+  moveSpeed: 1.6
+  attackRange: 1
+  attackCooldown: 1.2
+  spawnTime: 5
+  critChance: 0.2
+  critMultiplier: 1.5
+  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  animatorController: {fileID: 9100000, guid: ed6a3a845171f4741bc7f5e4716e9e05, type: 2}
+  maxTier: 3
+  partSlots:
+  - slot: 0
+  - slot: 1
+  - slot: 2
+  - slot: 3
+  - slot: 4
+  - slot: 5
+  - slot: 6
+  - slot: 7
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 0}
+  unlockNode: {fileID: 11400000, guid: 1111962aa64f484438a43e113d6c6beb, type: 2}
+  nodes:
+  - {fileID: 11400000, guid: 1111962aa64f484438a43e113d6c6beb, type: 2}
+
+
+
+========================
+FILE: Lightning Mage.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\Lightning Mage.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Lightning Mage
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_lightning_mage
+  displayName: Lightning Mage
+  description: A calm mage whose lightning strikes faster than anyone can react.
+  rarity: 2
+  icon: {fileID: -5455630811309129204, guid: ee9c8600264c12f4c92cd4c1185c54a5, type: 3}
+  prefab: {fileID: 501027721989515594, guid: 8cec8200b45e28b48bcd611ea8a31893, type: 3}
+  iconScale: 0.4
+  unitTeam: 0
+  unitClass: 4
+  targetPriorityClass: 1
+  soulCost: 4
+  soulDropChance: 0.25
+  maxHealth: 80
+  damage: 15
+  moveSpeed: 1
+  attackRange: 7
+  attackCooldown: 1.6
+  spawnTime: 7
+  critChance: 0.2
+  critMultiplier: 1.5
+  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  animatorController: {fileID: 9100000, guid: 6e387bc49275cb84798c2467ae219008, type: 2}
+  maxTier: 3
+  partSlots:
+  - slot: 0
+  - slot: 1
+  - slot: 2
+  - slot: 3
+  - slot: 4
+  - slot: 5
+  - slot: 6
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 0}
+  unlockNode: {fileID: 11400000, guid: dc2a3f08958a6b54f9d09e685760e803, type: 2}
+  nodes:
+  - {fileID: 11400000, guid: dc2a3f08958a6b54f9d09e685760e803, type: 2}
+
+
+
+========================
+FILE: Miner.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\Miner.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Miner
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_miner
+  displayName: Miner
+  description: A dedicated miner. Generates 1 Soul every 15 seconds. Protected behind
+    the wall. Timer resets each round.
+  prefab: {fileID: 501027721989515594, guid: e39d0c43c505f8c4c85584442b8989d8, type: 3}
+  rarity: 2
+  unitTeam: 0
+  unitClass: 5
+  targetPriorityClass: 0
+  maxHealth: 1
+  damage: 0
+  moveSpeed: 0
+  attackRange: 0
+  attackCooldown: 15
+  critChance: 0
+  critMultiplier: 0
+  icon: {fileID: -5455630811309129204, guid: c7564c6ab9db34842bd94e080b5867f5, type: 3}
+  iconScale: 0.4
+  soulCost: 8
+  spawnTime: 0
+  animatorController: {fileID: 0}
+  maxTier: 2
+  partSlots: []
+  baseCapacity: 1
+  unlockNode: {fileID: 0}
+  nodes: []
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 0}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}
+
+
+
+========================
+FILE: Shadow NInja.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\Shadow NInja.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Shadow NInja
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_shadow_ninja
+  displayName: Shadow Ninja
+  description: Moves unseen across the battlefield, reaching the backline before
+    anyone can react.
+  rarity: 1
+  icon: {fileID: -5455630811309129204, guid: ea70bf2e746c9fd4ba1f5b7704074b7c, type: 3}
+  prefab: {fileID: 7490814552398352428, guid: 180fbf18808afee4cbfa6f5112186611, type: 3}
+  iconScale: 0.4
+  unitTeam: 0
+  unitClass: 1
+  targetPriorityClass: 3
+  soulCost: 5
+  soulDropChance: 0.25
+  maxHealth: 80
+  damage: 10
+  moveSpeed: 3.5
+  attackRange: 1
+  attackCooldown: 0.6
+  spawnTime: 5
+  critChance: 0.2
+  critMultiplier: 1.5
+  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  animatorController: {fileID: 9100000, guid: 0503d62f462d8b34ba33d498b842c56f, type: 2}
+  maxTier: 3
+  partSlots:
+  - slot: 0
+  - slot: 1
+  - slot: 2
+  - slot: 3
+  - slot: 4
+  - slot: 5
+  - slot: 6
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 0}
+  unlockNode: {fileID: 11400000, guid: 7e3f956c8b609d844a79bd7c350d06d7, type: 2}
+  nodes:
+  - {fileID: 11400000, guid: 7e3f956c8b609d844a79bd7c350d06d7, type: 2}
+
+
+
+========================
+FILE: Warrior.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\Warrior.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Warrior
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_warrior
+  displayName: Warrior
+  description: A quick little fighter who skips heavy armor and wins with speed and
+    charm.
+  rarity: 0
+  icon: {fileID: -5455630811309129204, guid: 290105db12d408342bc316647a1e35c5, type: 3}
+  prefab: {fileID: 501027721989515594, guid: 037d4c6a00f2afe47b4a733f5e492d55, type: 3}
+  iconScale: 0.4
+  unitTeam: 0
+  unitClass: 1
+  targetPriorityClass: 0
+  soulCost: 2
+  soulDropChance: 0.25
+  maxHealth: 100
+  damage: 10
+  moveSpeed: 0.9
+  attackRange: 0.9
+  attackCooldown: 1
+  spawnTime: 4
+  critChance: 0.2
+  critMultiplier: 1.5
+  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  animatorController: {fileID: 9100000, guid: a70770eaf9533314a891db17faa90433, type: 2}
+  maxTier: 3
+  partSlots:
+  - slot: 0
+  - slot: 1
+  - slot: 2
+  - slot: 3
+  - slot: 4
+  - slot: 5
+  - slot: 6
+  baseCapacity: 1
+  headPrefabForBattlePreview: {fileID: 0}
+  unlockNode: {fileID: 11400000, guid: 176ff0db089f7714bb2032c640997040, type: 2}
+  nodes:
+  - {fileID: 11400000, guid: c9ccd99131f22a84aba5336094a9cb5d, type: 2}
+  - {fileID: 11400000, guid: 58fbb6e562898b147bd08a21fea7faaa, type: 2}
+  - {fileID: 11400000, guid: 176ff0db089f7714bb2032c640997040, type: 2}
+
+
+
+========================
+FILE: upgrade_node_archer_tier1_left.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Archer\upgrade_node_archer_tier1_left.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_archer_tier1_left
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_archer_tier1_left
+  tier: 1
+  lane: 1
+  title: Hardened Body
+  description: "Increases the Archer\u2019s maximum health by 10%, allowing it to
+    survive longer in combat."
+  icon: {fileID: 21300000, guid: 54f8a6953b722ec4a9660c4b204069ad, type: 3}
+  skillPointCost: 1
+  soulsCost: 1
+  prerequisites:
+  - {fileID: 11400000, guid: 48de0110926b81d449b463f400dde0c6, type: 2}
+  skillEffect: {fileID: 5758634658266461858, guid: f57c397567d47cd46b75fd27eb076f34, type: 3}
+  skillPercentValue: 0.1
+  skillDuration: 0
+
+
+
+========================
+FILE: upgrade_node_archer_tier1_right.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Archer\upgrade_node_archer_tier1_right.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_archer_tier1_right
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_archer_tier1_right
+  tier: 1
+  lane: 2
+  title: Sharpened Strikes
+  description: "Increases the Archer\u2019s damage by 10%, making each attack more
+    lethal."
+  icon: {fileID: 21300000, guid: 620bf9d80e782064d954a634d7957f3c, type: 3}
+  skillPointCost: 1
+  prerequisites:
+  - {fileID: 11400000, guid: 48de0110926b81d449b463f400dde0c6, type: 2}
+
+
+
+========================
+FILE: upgrade_node_archer_tier2_left.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Archer\upgrade_node_archer_tier2_left.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_archer_tier2_left
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_archer_tier2_left
+  tier: 2
+  lane: 1
+  title: Frost Arrow
+  description: Arrows infused with icy magic drastically slow enemies, reducing their
+    movement speed by 80% for 1.5 seconds.
+  icon: {fileID: 21300000, guid: 64f789252a934be43a2ee7e63c20e5e5, type: 3}
+  skillPointCost: 1
+  soulsCost: 1
+  prerequisites:
+  - {fileID: 11400000, guid: cc31dbc7b73c1cb42a2f10aa5da2dcc3, type: 2}
+  skillEffect: {fileID: 8673524793478914682, guid: 5fe79d03a2639e248985f2e51b55d6c0, type: 3}
+  skillPercentValue: 0.8
+  skillDuration: 2
+
+
+
+========================
+FILE: upgrade_node_archer_tier2_right.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Archer\upgrade_node_archer_tier2_right.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_archer_tier2_right
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_archer_tier2_right
+  tier: 2
+  lane: 2
+  title: Poison Arrow
+  description: "Arrows are coated with poison, dealing damage over time. Poisoned
+    enemies lose 15% of the Archer\u2019s damage over 2 seconds."
+  icon: {fileID: 21300000, guid: 2f6555565a8b6e14fae21729d20f9464, type: 3}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 3e1e938ad2c7e3d4c8ed6d15e17a80c0, type: 2}
+  skillEffect: {fileID: 8390396442966547067, guid: 640699ea5d2c3eb4087267edb5e81ff6, type: 3}
+  skillPercentValue: 0.15
+  skillDuration: 3
+
+
+
+========================
+FILE: upgrade_node_archer_tier3_left.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Archer\upgrade_node_archer_tier3_left.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_archer_tier3_left
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_archer_tier3_left
+  tier: 3
+  lane: 1
+  title: Multishot
+  description: Fires two arrows in quick succession, striking enemies one after another.
+  icon: {fileID: 21300000, guid: abd007e9ee3fc834bbb2faf8f5a49d33, type: 3}
+  skillPointCost: 1
+  prerequisites:
+  - {fileID: 11400000, guid: f5573a08fb126574b840a5447e4b0e26, type: 2}
+
+
+
+========================
+FILE: upgrade_node_archer_tier3_right.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Archer\upgrade_node_archer_tier3_right.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_archer_tier3_right
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_archer_tier3_right
+  tier: 3
+  lane: 2
+  title: Ricochet
+  description: Arrows bounce from one enemy to a nearby target, hitting an additional
+    foe.
+  icon: {fileID: 21300000, guid: db343a90bcd34bf41a91b65d7978f080, type: 3}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites:
+  - {fileID: 11400000, guid: fcf10e71eb15c0d4ba207dfc7cbfdd27, type: 2}
+  skillEffect: {fileID: 8189046509825835520, guid: b4d1eb1ada90dd646a179a6770c6dede, type: 3}
+  skillPercentValue: 0.5
+  skillRadiusValue: 2
+  skillIntValue: 1
+  skillDuration: 0
+
+
+
+========================
+FILE: upgrade_node_archer_unlock.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Archer\upgrade_node_archer_unlock.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_archer_unlock
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_archer_unlock
+  tier: 0
+  lane: 0
+  title: Archer Training
+  description: Unlocks the Archer unit, allowing it to be deployed and upgraded during
+    battle.
+  icon: {fileID: 3667681588813468039, guid: f623305d7be99a140922b288af5e5e56, type: 3}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites: []
+
+
+
+========================
+FILE: upgrade_node_fire_mage_unlock.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Fire Mage\upgrade_node_fire_mage_unlock.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_fire_mage_unlock
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_fire_mage_unlock
+  tier: 0
+  lane: 0
+  title: Fire Mage Training
+  description: Unlocks the fire mage unit, allowing it to be deployed and upgraded
+    during battle.
+  icon: {fileID: 3667681588813468039, guid: adf3a03aa0f4f56428a2d12977188ee5, type: 3}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites: []
+
+
+
+========================
+FILE: upgrade_node_knight_unlock.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Knight\upgrade_node_knight_unlock.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_knight_unlock
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_knight_unlock
+  tier: 0
+  lane: 0
+  title: Knight Training
+  description: Unlocks the knight unit, allowing it to be deployed and upgraded during
+    battle.
+  icon: {fileID: 3667681588813468039, guid: ecda62d56a6a17346b15799011021df7, type: 3}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites: []
+
+
+
+========================
+FILE: upgrade_node_lightning_mage_unlock.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Lightning Mage\upgrade_node_lightning_mage_unlock.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_lightning_mage_unlock
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_lightning_mage_unlock
+  tier: 0
+  lane: 0
+  title: Lightning Mage Training
+  description: Unlocks the lightning mage unit, allowing it to be deployed and upgraded
+    during battle.
+  icon: {fileID: 3667681588813468039, guid: 09ea848120780a941ac6565f9c6911a0, type: 3}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites: []
+
+
+
+========================
+FILE: upgrade_node_ninja_unlock.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Ninja\upgrade_node_ninja_unlock.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_ninja_unlock
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_ninja_unlock
+  tier: 0
+  lane: 0
+  title: Ninja Training
+  description: Unlocks the ninja unit, allowing it to be deployed and upgraded during
+    battle.
+  icon: {fileID: 3667681588813468039, guid: 52385a407d4947d41b7c6910ce75220c, type: 3}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites: []
+
+
+
+========================
+FILE: upgrade_node_warrior_tier1_left.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Warrior\upgrade_node_warrior_tier1_left.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_warrior_tier1_left
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_warrior_tier1_left
+  tier: 1
+  lane: 1
+  title: Last Stand
+  description: At critical health, desperation fuels fury. Attack speed is doubled
+    while below 50% HP.
+  icon: {fileID: 21300000, guid: dcd9afe4c6ddea847896c453615c98ff, type: 3}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 176ff0db089f7714bb2032c640997040, type: 2}
+  skillEffect: {fileID: 603291380290585171, guid: f247a0401eaaafd4882a4a4e8fe8258b, type: 3}
+  skillPercentValue: 0
+  skillRadiusValue: 0
+  skillIntValue: 0
+  skillDuration: 0
+
+
+
+========================
+FILE: upgrade_node_warrior_tier1_right.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Warrior\upgrade_node_warrior_tier1_right.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_warrior_tier1_right
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_warrior_tier1_right
+  tier: 1
+  lane: 2
+  title: Battle Hunger
+  description: Every strike feeds the warrior, healing 5% of health on hit
+  icon: {fileID: 21300000, guid: 1716c6dd7bb39754bba2a8376f921f1a, type: 3}
+  skillPointCost: 1
+  soulsCost: 4
+  prerequisites:
+  - {fileID: 11400000, guid: 176ff0db089f7714bb2032c640997040, type: 2}
+  skillEffect: {fileID: 1858537340302211894, guid: 25f301ddeeb60bd4eb521daadc6411aa, type: 3}
+  skillPercentValue: 0.05
+
+
+
+========================
+FILE: upgrade_node_warrior_unlock.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Warrior\upgrade_node_warrior_unlock.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_warrior_unlock
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_warrior_unlock
+  tier: 0
+  lane: 0
+  title: Unlock
+  description: Allows deploying the warrior in battle.
+  icon: {fileID: 3667681588813468039, guid: e0742868194a3b440902e290c0dd4829, type: 3}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites: []
+
+
+
+========================
+FILE: FortuneWheelDatabase.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\WheelOfFortune\FortuneWheelDatabase.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b126717ee7c0374c93f7b3875795306, type: 3}
+  m_Name: FortuneWheelDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::FortuneWheelDatabase
+  slots:
+  - {fileID: 11400000, guid: 345f1c04cf9bffb4894fa8d3955b66fb, type: 2}
+  - {fileID: 11400000, guid: 31b84a7327424df42969c235b8b62a6e, type: 2}
+  - {fileID: 11400000, guid: 415b699d5a74c1843a0ff149e46b07ef, type: 2}
+  - {fileID: 11400000, guid: fa1b47fb95445f44bb91a854f3b83b10, type: 2}
+  - {fileID: 11400000, guid: c46e45c77c35d46418a3b006251309ad, type: 2}
+  - {fileID: 11400000, guid: 19e0ac9f83960a04abcc9b10305cadd8, type: 2}
+  - {fileID: 11400000, guid: dcc8e03e98422b64e87cecf12372fb6c, type: 2}
+  commonChance: 0
+  rareChance: 0
+  epicChance: 100
+
+
+
+========================
+FILE: WheelSlot_coin_large.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\WheelOfFortune\Common\WheelSlot_coin_large.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aa6e759ac6f51944a4404b8ff77ab71, type: 3}
+  m_Name: WheelSlot_coin_large
+  m_EditorClassIdentifier: Assembly-CSharp::FortuneWheelSlotDefinition
+  id: WheelSlot_coin_large
+  displayName: Gold
+  icon: {fileID: 5325537983010943776, guid: 44eaaba6535f6c24489a9ee11fdf9bd8, type: 3}
+  reward:
+    type: 1
+    rarity: 0
+    amount: 500
+    chestDefinition: {fileID: 0}
+
+
+
+========================
+FILE: WheelSlot_coin_medium.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\WheelOfFortune\Common\WheelSlot_coin_medium.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aa6e759ac6f51944a4404b8ff77ab71, type: 3}
+  m_Name: WheelSlot_coin_medium
+  m_EditorClassIdentifier: Assembly-CSharp::FortuneWheelSlotDefinition
+  id: WheelSlot_coin_medium
+  displayName: Gold
+  icon: {fileID: 5325537983010943776, guid: 44eaaba6535f6c24489a9ee11fdf9bd8, type: 3}
+  reward:
+    type: 1
+    rarity: 0
+    amount: 250
+    chestDefinition: {fileID: 0}
+
+
+
+========================
+FILE: WheelSlot_coin_small 1.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\WheelOfFortune\Common\WheelSlot_coin_small 1.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aa6e759ac6f51944a4404b8ff77ab71, type: 3}
+  m_Name: WheelSlot_coin_small 1
+  m_EditorClassIdentifier: Assembly-CSharp::FortuneWheelSlotDefinition
+  id: WheelSlot_gems_small
+  displayName: Gems
+  icon: {fileID: -1056818688221956500, guid: 29c55222517a6fc44acb4267a908b40b, type: 3}
+  reward:
+    type: 2
+    rarity: 0
+    amount: 5
+    chestDefinition: {fileID: 0}
+
+
+
+========================
+FILE: WheelSlot_coin_small.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\WheelOfFortune\Common\WheelSlot_coin_small.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aa6e759ac6f51944a4404b8ff77ab71, type: 3}
+  m_Name: WheelSlot_coin_small
+  m_EditorClassIdentifier: Assembly-CSharp::FortuneWheelSlotDefinition
+  id: WheelSlot_coin_small
+  displayName: Gold
+  icon: {fileID: 5325537983010943776, guid: 44eaaba6535f6c24489a9ee11fdf9bd8, type: 3}
+  reward:
+    type: 1
+    rarity: 0
+    amount: 150
+    chestDefinition: {fileID: 0}
+
+
+
+========================
+FILE: WheelSlot_rare_chest.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\WheelOfFortune\Epic\WheelSlot_rare_chest.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aa6e759ac6f51944a4404b8ff77ab71, type: 3}
+  m_Name: WheelSlot_rare_chest
+  m_EditorClassIdentifier: Assembly-CSharp::FortuneWheelSlotDefinition
+  id: WheelSlot_rare_chest
+  displayName: Rare Chest
+  icon: {fileID: 21300000, guid: 8dac2d66a1dd3524eae6c146e562094c, type: 3}
+  reward:
+    type: 0
+    rarity: 2
+    amount: 1
+    chestDefinition: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+
+
+
+========================
+FILE: WheelSlot_gems_small.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\WheelOfFortune\Rare\WheelSlot_gems_small.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aa6e759ac6f51944a4404b8ff77ab71, type: 3}
+  m_Name: WheelSlot_gems_small
+  m_EditorClassIdentifier: Assembly-CSharp::FortuneWheelSlotDefinition
+  id: WheelSlot_gems_medium
+  displayName: Gems
+  icon: {fileID: -1056818688221956500, guid: 29c55222517a6fc44acb4267a908b40b, type: 3}
+  reward:
+    type: 2
+    rarity: 1
+    amount: 10
+    chestDefinition: {fileID: 0}
+
+
+
+========================
+FILE: WheelSlot_green_part.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\WheelOfFortune\Rare\WheelSlot_green_part.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4aa6e759ac6f51944a4404b8ff77ab71, type: 3}
+  m_Name: WheelSlot_green_part
+  m_EditorClassIdentifier: Assembly-CSharp::FortuneWheelSlotDefinition
+  id: WheelSlot_green_part
+  displayName: Green Part
+  icon: {fileID: -5099292496197868168, guid: ef42132d0bef41e44bf20512a849d020, type: 3}
+  reward:
+    type: 3
+    rarity: 1
+    amount: 1
+    chestDefinition: {fileID: 0}
+
+
+
