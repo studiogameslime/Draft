@@ -60,7 +60,7 @@ public class StatusEffectPoison : MonoBehaviour
     {
         if (damagePerTick <= 0) return;
 
-        target.ApplyStatusDamage(damagePerTick, source);
+        target.ApplyStatusDamage(damagePerTick, source, FloatingNumberType.Poison);
         Debug.Log($"Poison tick: {damagePerTick}");
     }
 }

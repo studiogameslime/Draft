@@ -117,6 +117,7 @@ public enum FloatingNumberType
     Normal,
     Crit,
     Heal,
+    Poison
 }
 
 public enum RangeLabel

@@ -238,22 +238,24 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
 
         switch (floatingNumberType)
-    {
-        case FloatingNumberType.Heal:
-            tmp.color = Color.green;
-            break;
+        {
+            case FloatingNumberType.Heal:
+                tmp.color = Color.green;
+                break;
 
-        case FloatingNumberType.Crit:
-            tmp.color = critColor;
-            break;
-
-        case FloatingNumberType.Normal:
-        default:
-            tmp.color = (team == Team.MyTeam)
-                ? Color.white
-                : Color.red;
-            break;
-    }
+            case FloatingNumberType.Crit:
+                tmp.color = critColor;
+                break;
+            case FloatingNumberType.Poison:
+                tmp.color = new Color(0.6f, 0.1f, 0.8f);
+                break;
+            case FloatingNumberType.Normal:
+            default:
+                tmp.color = (team == Team.MyTeam)
+                    ? Color.white
+                    : Color.red;
+                break;
+        }
 
 
 
@@ -420,13 +422,16 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         Destroy(gameObject);
     }
 
-    public void ApplyStatusDamage(int amount, CharacterStats attacker)
+    public void ApplyStatusDamage(int amount, CharacterStats attacker, FloatingNumberType floatingType)
     {
         Debug.Log("ApplyStatusDamage");
         if (amount <= 0) return;
         if (isUntargetable || currentHealth <= 0) return;
 
         currentHealth -= amount;
+
+        // ADDED THIS LINE: Show the purple floating text for the poison tick
+        showFloatingDamage(amount, floatingType);
 
         OnTakeDamage?.Invoke(attacker, amount);
         attacker?.OnDealDamage?.Invoke(this, amount);
