@@ -1058,7 +1058,8 @@ MonoBehaviour:
   baseCapacity: 1
   unlockNode: {fileID: 0}
   nodes: []
-  soulDropChance: 1
+  disableReserveUnit: 0
+  soulDropChance: 0
   headPrefabForBattlePreview: {fileID: 4806593250366934745, guid: 2737a12d8290474439c8313ffdd224c9, type: 3}
   isBoss: 0
   HeadWithEyes: {fileID: 0}
@@ -1305,7 +1306,8 @@ MonoBehaviour:
   baseCapacity: 1
   unlockNode: {fileID: 0}
   nodes: []
-  soulDropChance: 1
+  disableReserveUnit: 0
+  soulDropChance: 0
   headPrefabForBattlePreview: {fileID: 5051906023280408227, guid: 7fbd6b32681f3274d890de53914f2dae, type: 3}
   isBoss: 0
   HeadWithEyes: {fileID: 0}
@@ -1826,7 +1828,7 @@ MonoBehaviour:
   damage: 0
   moveSpeed: 0
   attackRange: 0
-  attackCooldown: 15
+  attackCooldown: 4
   critChance: 0
   critMultiplier: 0
   icon: {fileID: -5455630811309129204, guid: c7564c6ab9db34842bd94e080b5867f5, type: 3}
@@ -1839,6 +1841,7 @@ MonoBehaviour:
   baseCapacity: 1
   unlockNode: {fileID: 0}
   nodes: []
+  disableReserveUnit: 1
   soulDropChance: 0.25
   headPrefabForBattlePreview: {fileID: 0}
   isBoss: 0
