@@ -6,7 +6,7 @@ public class BossMeleeAttack : MonoBehaviour, IAttackStrategy
     private CharacterStats stats;
     private Animator animator;
 
-    [Header("Knockback")]
+    [Header("Knockback ")]
     [SerializeField] private float knockbackDistance = 0.8f;
     [SerializeField] private float knockbackDuration = 0.15f;
 
