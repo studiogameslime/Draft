@@ -189,8 +189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60fa6504595008a4cb546cc67747522b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MinerBehaviour
-  timeToMine: 15
-  soulsPerMine: 1
+  soulProductionColor: {r: 0.48499107, g: 0.6809967, b: 0.9924528, a: 1}
 --- !u!1001 &6742682009590774837
 PrefabInstance:
   m_ObjectHideFlags: 0
