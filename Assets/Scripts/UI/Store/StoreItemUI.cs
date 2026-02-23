@@ -11,6 +11,7 @@ public class StoreItemUI : MonoBehaviour
     [SerializeField] private TMP_Text priceText;
     [SerializeField] private Image iconImage;
     [SerializeField] private Image costIconImage;
+    [SerializeField] private GameObject costIconImageContainer;
     [SerializeField] private Sprite goldSprite;
     [SerializeField] private Sprite gemSprite;
     [SerializeField] private Button buyButton;
@@ -67,7 +68,7 @@ public class StoreItemUI : MonoBehaviour
         {
             bool canClaim = StoreManager.Instance != null && StoreManager.Instance.CanClaimDailyFree(def);
 
-            costIconImage.gameObject.SetActive(false);
+            Destroy(costIconImageContainer);
             saleBadgeRoot.SetActive(false);
 
             if (canClaim)

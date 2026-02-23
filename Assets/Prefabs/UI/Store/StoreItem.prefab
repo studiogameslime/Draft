@@ -845,6 +845,7 @@ MonoBehaviour:
   priceText: {fileID: 7187966007716146086}
   iconImage: {fileID: 1701369768971072708}
   costIconImage: {fileID: 2979336049202607933}
+  costIconImageContainer: {fileID: 4586042961339094688}
   goldSprite: {fileID: 5325537983010943776, guid: 44eaaba6535f6c24489a9ee11fdf9bd8, type: 3}
   gemSprite: {fileID: -1056818688221956500, guid: 29c55222517a6fc44acb4267a908b40b, type: 3}
   buyButton: {fileID: 6320705238226026757}
