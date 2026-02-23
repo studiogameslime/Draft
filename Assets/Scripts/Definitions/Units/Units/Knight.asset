@@ -47,6 +47,8 @@ MonoBehaviour:
   nodes:
   - {fileID: 11400000, guid: 1111962aa64f484438a43e113d6c6beb, type: 2}
   - {fileID: 11400000, guid: e8e1f39cb1d871a49a54a1cba7e3b720, type: 2}
+  - {fileID: 11400000, guid: 2266dd873b706304ea0a9e4d21512c1e, type: 2}
+  - {fileID: 11400000, guid: 55813055d1f4d6f40aead98e58db83a9, type: 2}
   disableReserveUnit: 0
   soulDropChance: 0.25
   headPrefabForBattlePreview: {fileID: 0}
