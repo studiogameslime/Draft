@@ -601,7 +601,7 @@ MonoBehaviour:
   unitTeam: 1
   unitClass: 1
   targetPriorityClass: 1
-  maxHealth: 200
+  maxHealth: 350
   damage: 15
   moveSpeed: 0.6
   attackRange: 1
@@ -618,6 +618,7 @@ MonoBehaviour:
   baseCapacity: 1
   unlockNode: {fileID: 0}
   nodes: []
+  disableReserveUnit: 0
   soulDropChance: 0.25
   headPrefabForBattlePreview: {fileID: 0}
   isBoss: 0
@@ -822,7 +823,7 @@ MonoBehaviour:
   targetPriorityClass: 1
   maxHealth: 200
   damage: 8
-  moveSpeed: 1.6
+  moveSpeed: 0.7
   attackRange: 1
   attackCooldown: 1.2
   critChance: 0.2
@@ -849,6 +850,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e8e1f39cb1d871a49a54a1cba7e3b720, type: 2}
   - {fileID: 11400000, guid: 2266dd873b706304ea0a9e4d21512c1e, type: 2}
   - {fileID: 11400000, guid: 55813055d1f4d6f40aead98e58db83a9, type: 2}
+  - {fileID: 11400000, guid: 9086d7797a4d09a4ba65a0cfc30d8d97, type: 2}
   disableReserveUnit: 0
   soulDropChance: 0.25
   headPrefabForBattlePreview: {fileID: 0}
@@ -1410,7 +1412,7 @@ MonoBehaviour:
   title: Shield Bash
   description: The Knight has a 20% chance on hit to bash enemies with his shield,
     knocking them back and delaying their advance.
-  icon: {fileID: 0}
+  icon: {fileID: -2519793373705320958, guid: 209ad22181d3ebf439a3410de91892ff, type: 3}
   skillPointCost: 1
   soulsCost: 0
   prerequisites:
@@ -1420,6 +1422,43 @@ MonoBehaviour:
   skillRadiusValue: 0.8
   skillIntValue: 0
   skillDuration: 0.15
+
+
+
+========================
+FILE: upgrade_node_knight_tier2_left 2.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Knight\upgrade_node_knight_tier2_left 2.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_knight_tier2_left 2
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_knight_tier2_left
+  tier: 2
+  lane: 1
+  title: Taunt
+  description: Taunts nearby enemies every 6 seconds, forcing them to attack the
+    Knight for 3 seconds.
+  icon: {fileID: 8820032543443808914, guid: ac5b5598b81645e43821b7c02ef33b1a, type: 3}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites:
+  - {fileID: 11400000, guid: e8e1f39cb1d871a49a54a1cba7e3b720, type: 2}
+  skillEffect: {fileID: 5967831147706526372, guid: c36fe59413572f1419f14a8decb6df56, type: 3}
+  skillPercentValue: 0
+  skillRadiusValue: 3
+  skillIntValue: 6
+  skillDuration: 3
 
 
 
@@ -1447,7 +1486,7 @@ MonoBehaviour:
   title: Spiked Armor
   description: Incoming melee attacks are reflected by spiked armor, returning 30%
     of the damage taken back to the attacker.
-  icon: {fileID: 0}
+  icon: {fileID: 8820032543443808914, guid: ac5b5598b81645e43821b7c02ef33b1a, type: 3}
   skillPointCost: 1
   soulsCost: 0
   prerequisites:
