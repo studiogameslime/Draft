@@ -46,9 +46,20 @@ public class DropAreaCell : MonoBehaviour
             return;
 
         Color c = new Color(1, 1, 1, 0.4f);
+
         if (IsSpecial)
         {
-            c = percentValue >= 0f
+            // Default logic: positive value is a good bonus
+            bool isGoodBonus = percentValue > 0f;
+
+            // Special logic for spawn time: negative value is a good bonus
+            if (bonusType == CellBonusType.SpawnTimePercent)
+            {
+                isGoodBonus = percentValue < 0f;
+            }
+
+            // Apply green for a good bonus, red for a bad penalty
+            c = isGoodBonus
                 ? new Color(0f, 1f, 0f, 0.7f)
                 : new Color(1f, 0f, 0f, 0.7f);
         }

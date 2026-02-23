@@ -163,7 +163,6 @@ public class BattleBottomPanelController : MonoBehaviour
     {
         if (cellBonusRoot == null || cellBonusText == null) return;
 
-        // Hide if the cell is null or doesn't have a special bonus/penalty
         if (cell == null || !cell.IsSpecial)
         {
             cellBonusRoot.SetActive(false);
@@ -172,8 +171,9 @@ public class BattleBottomPanelController : MonoBehaviour
 
         cellBonusRoot.SetActive(true);
 
-        // Determine the stat name using a switch statement for future scalability
         string statName = "";
+        bool isGoodBonus = cell.percentValue > 0; // Default: positive is good
+
         switch (cell.bonusType)
         {
             case CellBonusType.AttackPercent:
@@ -182,22 +182,22 @@ public class BattleBottomPanelController : MonoBehaviour
             case CellBonusType.HpPercent:
                 statName = "HP";
                 break;
-            // Add new bonus types here in the future:
-            // case CellBonusType.SpeedPercent:
-            //     statName = "Speed";
-            //     break;
+            case CellBonusType.SpawnTimePercent:
+                statName = "Spawn Time";
+                // For spawn time, less time (negative value) is a good thing
+                isGoodBonus = cell.percentValue < 0;
+                break;
             default:
                 statName = "Stat";
                 break;
         }
 
-        // Add a plus sign for positive values (negative values naturally include a minus sign)
         string sign = cell.percentValue > 0 ? "+" : "";
 
         cellBonusText.text = $"{sign}{cell.percentValue}% {statName}";
 
-        // Set the text color to green for bonus, red for penalty
-        if (cell.percentValue > 0)
+        // Set the text color based on whether the bonus helps the player
+        if (isGoodBonus)
         {
             cellBonusText.color = Color.green;
         }

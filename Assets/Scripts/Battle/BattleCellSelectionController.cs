@@ -153,6 +153,7 @@ public class BattleCellSelectionController : MonoBehaviour
         // Apply special cell bonus multipliers.
         float hpMul = 1f;
         float dmgMul = 1f;
+        float spawnTimeMul = 1f;
 
         if (selectedCell.IsSpecial)
         {
@@ -160,9 +161,11 @@ public class BattleCellSelectionController : MonoBehaviour
                 hpMul = 1 + (selectedCell.percentValue / 100);
             else if (selectedCell.bonusType == CellBonusType.AttackPercent)
                 dmgMul = 1 + (selectedCell.percentValue / 100);
+            else if (selectedCell.bonusType == CellBonusType.SpawnTimePercent) // ADDED THIS BLOCK
+                spawnTimeMul = 1 + (selectedCell.percentValue / 100);
         }
 
-        spawner.SetCellBonusMultipliers(hpMul, dmgMul);
+        spawner.SetCellBonusMultipliers(hpMul, dmgMul, spawnTimeMul);
         BattleManager.instance?.RefreshStartBattleButton();
 
         // Per your flow: after placing, close the bottom deck and clear focus.

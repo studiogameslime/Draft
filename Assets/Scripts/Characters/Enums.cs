@@ -80,7 +80,8 @@ public enum CellBonusType
 {
     None,
     HpPercent,
-    AttackPercent
+    AttackPercent,
+    SpawnTimePercent
 }
 
 public enum RewardType

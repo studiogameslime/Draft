@@ -36,6 +36,7 @@ public class UnitSpawner : MonoBehaviour
     private bool isSpawningReserve = false;
     private float hpMul = 1f;
     private float dmgMul = 1f;
+    private float spawnTimeMul = 1f;
 
     // UI smoothing runtime
     private float progressTarget = 0f;
@@ -70,10 +71,11 @@ public class UnitSpawner : MonoBehaviour
         }
     }
 
-    public void SetCellBonusMultipliers(float hpMultiplier, float dmgMultiplier)
+    public void SetCellBonusMultipliers(float hpMultiplier, float dmgMultiplier, float spawnMultiplier)
     {
         hpMul = Mathf.Max(0.01f, hpMultiplier);
         dmgMul = Mathf.Max(0.01f, dmgMultiplier);
+        spawnTimeMul = Mathf.Max(0.01f, spawnMultiplier);
     }
 
     public void StartSpawning()
@@ -181,7 +183,7 @@ public class UnitSpawner : MonoBehaviour
         // Wait spawnTime while updating only the progress UI (no unit instantiation, no scale animation)
         //float levelMul = UnitLevelingService.GetSpawnTimeMultiplier(unitLevel);
         //float duration = Mathf.Max(0.01f, unitDef.spawnTime * levelMul);
-        float duration = unitDef.spawnTime;
+        float duration = unitDef.spawnTime * spawnTimeMul;
         float t = 0f;
 
         while (t < duration && battleRunning && BattleManager.instance != null && BattleManager.instance.IsBattleRunning && !BattleManager.instance.IsGameOver)
