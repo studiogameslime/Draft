@@ -18,7 +18,7 @@ MonoBehaviour:
   title: Shield Bash
   description: The Knight has a 20% chance on hit to bash enemies with his shield,
     knocking them back and delaying their advance.
-  icon: {fileID: 0}
+  icon: {fileID: -2519793373705320958, guid: 209ad22181d3ebf439a3410de91892ff, type: 3}
   skillPointCost: 1
   soulsCost: 0
   prerequisites:

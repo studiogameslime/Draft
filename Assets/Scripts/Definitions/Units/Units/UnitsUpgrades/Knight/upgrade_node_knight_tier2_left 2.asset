@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
-  m_Name: upgrade_node_knight_tier2_right 1
+  m_Name: upgrade_node_knight_tier2_left 2
   m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
-  nodeId: upgrade_node_knight_tier2_right
+  nodeId: upgrade_node_knight_tier2_left
   tier: 2
-  lane: 2
-  title: Spiked Armor
-  description: Incoming melee attacks are reflected by spiked armor, returning 30%
-    of the damage taken back to the attacker.
+  lane: 1
+  title: Taunt
+  description: Taunts nearby enemies every 6 seconds, forcing them to attack the
+    Knight for 3 seconds.
   icon: {fileID: 8820032543443808914, guid: ac5b5598b81645e43821b7c02ef33b1a, type: 3}
   skillPointCost: 1
   soulsCost: 0
   prerequisites:
-  - {fileID: 11400000, guid: 2266dd873b706304ea0a9e4d21512c1e, type: 2}
-  skillEffect: {fileID: -482331019784328973, guid: dc02e706dec912b4f9e3536ada286c73, type: 3}
-  skillPercentValue: 0.3
-  skillRadiusValue: 1.5
-  skillIntValue: 0
-  skillDuration: 0
+  - {fileID: 11400000, guid: e8e1f39cb1d871a49a54a1cba7e3b720, type: 2}
+  skillEffect: {fileID: 5967831147706526372, guid: c36fe59413572f1419f14a8decb6df56, type: 3}
+  skillPercentValue: 0
+  skillRadiusValue: 3
+  skillIntValue: 6
+  skillDuration: 3

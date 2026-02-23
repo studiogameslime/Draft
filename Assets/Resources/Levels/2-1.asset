@@ -13,6 +13,20 @@ MonoBehaviour:
   m_Name: 2-1
   m_EditorClassIdentifier: Assembly-CSharp::LevelDefinition
   rounds:
+  - souls: 10
+    goldOnRoundWin: 15
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: adfd8c042245faa49b96a2c7ebfc1baa, type: 2}
+      count: 2
+      spawnInterval: 5
+    - unit: {fileID: 11400000, guid: adfd8c042245faa49b96a2c7ebfc1baa, type: 2}
+      count: 2
+      spawnInterval: 5
+    - unit: {fileID: 11400000, guid: adfd8c042245faa49b96a2c7ebfc1baa, type: 2}
+      count: 2
+      spawnInterval: 5
+    enemyLevel: 1
+    xpOnRoundWin: 20
   - souls: 12
     goldOnRoundWin: 15
     enemyPhases:

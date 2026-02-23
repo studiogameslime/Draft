@@ -38,6 +38,10 @@ public class UnitAI : MonoBehaviour
     [SerializeField] private Transform shootPoint;
     private Vector3 shootPointDefaultLocalPos;
 
+    [Header("Taunt State")]
+    private CharacterStats activeTaunter;
+    private float tauntEndTime;
+
     public WallHealth wall;
     public WallCombatTarget wallTarget;
 
@@ -118,6 +122,14 @@ public class UnitAI : MonoBehaviour
                 isInterrupted = false;
 
             animator?.SetBool("isMoving", false);
+            return;
+        }
+
+        // ADDED FOR TAUNT: Force the unit to only chase/attack the taunter
+        // This completely bypasses the wall logic and normal targeting
+        if (activeTaunter != null && activeTaunter.IsAlive && Time.time < tauntEndTime)
+        {
+            HandleUnitTargetMovementAndAttack();
             return;
         }
 
@@ -221,6 +233,18 @@ public class UnitAI : MonoBehaviour
             StopMoving();
             AttackCurrentTarget();
         }
+    }
+
+    public void ApplyTaunt(CharacterStats taunter, float duration)
+    {
+        if (taunter == null || !taunter.IsAlive) return;
+
+        activeTaunter = taunter;
+        tauntEndTime = Time.time + duration;
+
+        // Force the unit to switch target to the taunter immediately
+        SetUnitTarget(taunter);
+        CleanupGateRouting();
     }
 
     // CHANGED: Gate routing that opens on entry and closes on exit
@@ -439,7 +463,7 @@ public class UnitAI : MonoBehaviour
 
         animator?.SetBool("isMoving", false);
         target = wallTarget;
-        
+
 
         if (Time.time - lastAttackTime >= myStats.attackCooldown)
         {
@@ -508,6 +532,12 @@ public class UnitAI : MonoBehaviour
 
         if (myStats == null) return;
         if (isInterrupted || isKnockbacked) return;
+
+        // Ignore retargeting if currently taunted
+        if (activeTaunter != null && activeTaunter.IsAlive && Time.time < tauntEndTime)
+        {
+            return;
+        }
 
         CharacterStats closest = FindClosestTargetableEnemy();
         if (closest == null) return;
