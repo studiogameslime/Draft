@@ -40,7 +40,8 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     public System.Action<CharacterStats> OnHealthChanged;
     public System.Action<CharacterStats> OnDied;
 
-
+    // ADDED THIS LINE: Event triggered when this unit heals an ally
+    public System.Action<CharacterStats, int> OnHealAlly;
 
     // --- Other info ---
     [HideInInspector] public Team team;
@@ -287,9 +288,14 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         OnHealthChanged?.Invoke(this);
 
         showFloatingDamage(amount, FloatingNumberType.Heal);
-        // in the future if event needed:
-        // OnReceiveHeal?.Invoke(healer, currentHealth - before);
+
+        //  Notify the healer that they successfully healed someone
+        if (healer != null)
+        {
+            healer.OnHealAlly?.Invoke(this, amount);
+        }
     }
+
 
 
 

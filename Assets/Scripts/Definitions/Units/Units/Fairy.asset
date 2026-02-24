@@ -24,7 +24,7 @@ MonoBehaviour:
   damage: 10
   moveSpeed: 1
   attackRange: 5
-  attackCooldown: 1
+  attackCooldown: 1.5
   critChance: 0.2
   critMultiplier: 1.5
   icon: {fileID: -5455630811309129204, guid: a095310ac1d203143bba40640717e1de, type: 3}
@@ -35,8 +35,12 @@ MonoBehaviour:
   maxTier: 3
   partSlots: []
   baseCapacity: 1
-  unlockNode: {fileID: 0}
-  nodes: []
+  unlockNode: {fileID: 11400000, guid: 1acd49941bbb39546932b38ade13cdc9, type: 2}
+  nodes:
+  - {fileID: 11400000, guid: 1acd49941bbb39546932b38ade13cdc9, type: 2}
+  - {fileID: 11400000, guid: 5bda83e53426bce419a7c6acb2fe356a, type: 2}
+  - {fileID: 11400000, guid: f042966a0fd3c144b9208c80f998341b, type: 2}
+  disableReserveUnit: 0
   soulDropChance: 0.25
   headPrefabForBattlePreview: {fileID: 0}
   isBoss: 0

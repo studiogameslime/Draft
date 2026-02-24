@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_fairy_tier1_right
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_fairy_tier1_right
+  tier: 1
+  lane: 2
+  title: Fairy Dust
+  description: Improves the Fairy's magical dust, increasing her healing power by
+    20%.
+  icon: {fileID: 0}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 1acd49941bbb39546932b38ade13cdc9, type: 2}
+  skillEffect: {fileID: 5166218331215481056, guid: 693f05ca1938d9849b032c1f6b0bfb84, type: 3}
+  skillPercentValue: 0.2
+  skillRadiusValue: 0
+  skillIntValue: 0
+  skillDuration: 0
