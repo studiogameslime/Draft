@@ -1607,7 +1607,7 @@ MonoBehaviour:
   damage: 10
   moveSpeed: 1
   attackRange: 5
-  attackCooldown: 1
+  attackCooldown: 1.5
   critChance: 0.2
   critMultiplier: 1.5
   icon: {fileID: -5455630811309129204, guid: a095310ac1d203143bba40640717e1de, type: 3}
@@ -1618,8 +1618,12 @@ MonoBehaviour:
   maxTier: 3
   partSlots: []
   baseCapacity: 1
-  unlockNode: {fileID: 0}
-  nodes: []
+  unlockNode: {fileID: 11400000, guid: 1acd49941bbb39546932b38ade13cdc9, type: 2}
+  nodes:
+  - {fileID: 11400000, guid: 1acd49941bbb39546932b38ade13cdc9, type: 2}
+  - {fileID: 11400000, guid: 5bda83e53426bce419a7c6acb2fe356a, type: 2}
+  - {fileID: 11400000, guid: f042966a0fd3c144b9208c80f998341b, type: 2}
+  disableReserveUnit: 0
   soulDropChance: 0.25
   headPrefabForBattlePreview: {fileID: 0}
   isBoss: 0
@@ -2205,6 +2209,116 @@ MonoBehaviour:
   skillPointCost: 1
   soulsCost: 0
   prerequisites: []
+
+
+
+========================
+FILE: upgrade_node_fairy_tier1_left.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Fairy\upgrade_node_fairy_tier1_left.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_fairy_tier1_left
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_fairy_tier1_left
+  tier: 1
+  lane: 1
+  title: Energize
+  description: Allies healed by the Fairy become energized, increasing their attack
+    speed by 30% for 3 seconds.
+  icon: {fileID: 0}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 1acd49941bbb39546932b38ade13cdc9, type: 2}
+  skillEffect: {fileID: -7528814185405053176, guid: 669420102e31b714f9e536c279e4647a, type: 3}
+  skillPercentValue: 0.3
+  skillRadiusValue: 0
+  skillIntValue: 0
+  skillDuration: 3
+
+
+
+========================
+FILE: upgrade_node_fairy_tier1_right.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Fairy\upgrade_node_fairy_tier1_right.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_fairy_tier1_right
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_fairy_tier1_right
+  tier: 1
+  lane: 2
+  title: Fairy Dust
+  description: Improves the Fairy's magical dust, increasing her healing power by
+    20%.
+  icon: {fileID: 0}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 1acd49941bbb39546932b38ade13cdc9, type: 2}
+  skillEffect: {fileID: 5166218331215481056, guid: 693f05ca1938d9849b032c1f6b0bfb84, type: 3}
+  skillPercentValue: 0.2
+  skillRadiusValue: 0
+  skillIntValue: 0
+  skillDuration: 0
+
+
+
+========================
+FILE: upgrade_node_fairy_unlock.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Fairy\upgrade_node_fairy_unlock.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_fairy_unlock
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_fairy_unlock
+  tier: 0
+  lane: 0
+  title: Fairy Unlock
+  description: Unlocks the Fairy unit, allowing it to be deployed and upgraded during
+    battle.
+  icon: {fileID: 0}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites: []
+  skillEffect: {fileID: 0}
+  skillPercentValue: 0
+  skillRadiusValue: 0
+  skillIntValue: 0
+  skillDuration: 0
 
 
 
