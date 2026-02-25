@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 2015843867729631879}
   - component: {fileID: 749418999547639902}
   - component: {fileID: 7318352921530171307}
+  - component: {fileID: 265882702406389071}
   m_Layer: 3
   m_Name: Vampire
   m_TagString: Untagged
@@ -145,10 +146,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   definition: {fileID: 0}
   level: 1
-  maxHealth: 120
+  maxHealth: 30
   currentHealth: 0
   damage: 10
-  moveSpeed: 2
+  moveSpeed: 0.1
   attackRange: 1
   attackCooldown: 1
   baseMoveSpeed: 0
@@ -331,6 +332,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyLifeSteal
   lifeStealPercent: 0.3
+--- !u!114 &265882702406389071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3185964181808462246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 272a0ab89efe8354ba842190f92b244f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VampireDeathSpawn
+  batPrefab: {fileID: 7365788123788386144, guid: 0340ecd1e1ea97741a3d524ca6527c5c, type: 3}
 --- !u!1001 &6087302138289344388
 PrefabInstance:
   m_ObjectHideFlags: 0

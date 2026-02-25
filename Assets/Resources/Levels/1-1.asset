@@ -18,13 +18,10 @@ MonoBehaviour:
     enemyPhases:
     - unit: {fileID: 11400000, guid: 67001f6089182b94cae98f392d9db070, type: 2}
       count: 3
-      spawnInterval: 2
+      spawnInterval: 8
     - unit: {fileID: 11400000, guid: 6fcd5901c08ca2343a3dcb0185bf4998, type: 2}
       count: 1
       spawnInterval: 3
-    - unit: {fileID: 11400000, guid: db630fc08371b3b4d99fcebb9bafe064, type: 2}
-      count: 3
-      spawnInterval: 2
     enemyLevel: 1
     xpOnRoundWin: 20
   xpOnLevelComplete: 50
