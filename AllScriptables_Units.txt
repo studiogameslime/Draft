@@ -627,6 +627,57 @@ MonoBehaviour:
 
 
 ========================
+FILE: Vampire.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Enemies\Vampire.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Vampire
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_vampire
+  displayName: Vampire
+  description: 
+  prefab: {fileID: 3185964181808462246, guid: 06aaddcca3de2444783ae5ba882c3708, type: 3}
+  rarity: 0
+  unitTeam: 1
+  unitClass: 1
+  targetPriorityClass: 1
+  maxHealth: 120
+  damage: 15
+  moveSpeed: 1.3
+  attackRange: 1
+  attackCooldown: 1
+  critChance: 0.2
+  critMultiplier: 1.5
+  icon: {fileID: -5455630811309129204, guid: 9ac4b89c2bb99a0499d216eb33474cbd, type: 3}
+  iconScale: 0.4
+  soulCost: 0
+  spawnTime: 5
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  unlockNode: {fileID: 0}
+  nodes: []
+  disableReserveUnit: 0
+  soulDropChance: 0.3
+  headPrefabForBattlePreview: {fileID: 1621325389262948559, guid: c904cf7f5f1a2be4c9fa7eb8bb8cb1fb, type: 3}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}
+
+
+
+========================
 FILE: Archer.asset
 PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\Archer.asset
 ========================
