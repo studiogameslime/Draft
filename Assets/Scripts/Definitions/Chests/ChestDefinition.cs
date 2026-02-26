@@ -18,6 +18,7 @@ public class ChestDefinition : ScriptableObject
     [Header("Currency Rewards")]
     public IntRange goldRange;        // Always awarded
     public IntRange diamondsRange;    // Can be 0 - use min=0
+    public IntRange scrollRange;
 
     [Header("Part Drop")]
     [Range(0f, 1f)]

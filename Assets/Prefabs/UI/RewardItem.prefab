@@ -59,6 +59,7 @@ MonoBehaviour:
   fxFrom: {fileID: 6043474999572694864}
   goldPrefab: {fileID: 9171459495067939283, guid: 71d9a18c548cae7468e525e648b5c20e, type: 3}
   diamondPrefab: {fileID: 3798805968539238179, guid: b01cc5625fe528248818ea5985b108b6, type: 3}
+  scrollsPrefab: {fileID: 9171459495067939283, guid: 5577865c16b6b974896666eed519b24f, type: 3}
   partContainerPrefab: {fileID: 4994692010130928843, guid: 5cc826f930906e249aad1ec5148473e3, type: 3}
   wheelTokenPrefab: {fileID: 9171459495067939283, guid: abbab485f5b339f44a634ec5277ed620, type: 3}
   rarityFrame: {fileID: 0}

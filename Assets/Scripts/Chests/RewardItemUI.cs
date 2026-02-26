@@ -7,7 +7,8 @@ public enum RewardItemType
     Gold,
     Diamonds,
     Part,
-    WheelToken
+    WheelToken,
+    Scrolls
 }
 
 public class RewardItemUI : MonoBehaviour
@@ -24,6 +25,7 @@ public class RewardItemUI : MonoBehaviour
     [Header("Prefabs")]
     public GameObject goldPrefab;
     public GameObject diamondPrefab;
+    public GameObject scrollsPrefab;
     public GameObject partContainerPrefab;
 
     public GameObject wheelTokenPrefab;
@@ -58,6 +60,17 @@ public class RewardItemUI : MonoBehaviour
         ClearVisual();
         InstantiatePrefabUnderRoot(diamondPrefab);
         if (nameText != null) nameText.text = "Diamonds";
+        if (amountText != null) amountText.text = amount.ToString();
+        if (rarityFrame != null) rarityFrame.color = Color.cyan;
+    }
+
+
+    public void SetupScrolls(int amount)
+    {
+        _type = RewardItemType.Scrolls;
+        ClearVisual();
+        InstantiatePrefabUnderRoot(scrollsPrefab);
+        if (nameText != null) nameText.text = "Scrolls";
         if (amountText != null) amountText.text = amount.ToString();
         if (rarityFrame != null) rarityFrame.color = Color.cyan;
     }

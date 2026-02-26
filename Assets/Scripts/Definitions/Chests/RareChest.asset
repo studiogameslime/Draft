@@ -25,6 +25,9 @@ MonoBehaviour:
   diamondsRange:
     min: 3
     max: 6
+  scrollRange:
+    min: 3
+    max: 5
   partDropChance: 1
   wheelOfFortuneChance: 1
   partRarityWeights:

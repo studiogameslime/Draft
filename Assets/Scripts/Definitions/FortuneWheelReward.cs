@@ -5,7 +5,8 @@ public enum FortuneRewardType
     Chest,
     Gold,
     Gems,
-    GreenPart
+    GreenPart,
+    Scrolls
 }
 
 public enum FortuneRewardRarity

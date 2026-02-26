@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
 public class WheelOfFortuneTokensManager : MonoBehaviour
 {
@@ -91,6 +90,11 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
             case FortuneRewardType.Gems:
                 if (amount > 0)
                     PlayerCurrencyWallet.Instance.AddGems(amount, fromRect);
+                break;
+
+            case FortuneRewardType.Scrolls:
+                if (amount > 0)
+                    PlayerCurrencyWallet.Instance.AddScrolls(amount, fromRect);
                 break;
 
             case FortuneRewardType.Chest:

@@ -22,6 +22,7 @@ public class ChestRewardsSpawner : MonoBehaviour
     private RewardItemUI _goldItem;
     private RewardItemUI _gemsItem;
     private RewardItemUI _partItem;
+    private RewardItemUI _scrollsItem;
     private RewardItemUI _wheelTokenItem;
 
     private void Awake()
@@ -39,6 +40,7 @@ public class ChestRewardsSpawner : MonoBehaviour
     public RectTransform GetGoldFxFrom() => _goldItem != null ? _goldItem.FxFrom : null;
     public RectTransform GetGemsFxFrom() => _gemsItem != null ? _gemsItem.FxFrom : null;
     public RectTransform GetPartFxFrom() => _partItem != null ? _partItem.FxFrom : null;
+    public RectTransform GetScrollsFxFrom() => _scrollsItem != null ? _scrollsItem.FxFrom : null;
 
     public RectTransform GetWheelTokenFxFrom() => _wheelTokenItem != null ? _wheelTokenItem.FxFrom : null;
 
@@ -49,6 +51,7 @@ public class ChestRewardsSpawner : MonoBehaviour
         _goldItem = null;
         _gemsItem = null;
         _partItem = null;
+        _scrollsItem = null;
         _wheelTokenItem = null;
 
         bool spawnedAny = false;
@@ -70,6 +73,16 @@ public class ChestRewardsSpawner : MonoBehaviour
             {
                 ui.SetupDiamonds(reward.gems);
                 _gemsItem = ui;
+            }));
+        }
+
+        if (reward.scrolls > 0)
+        {
+            spawnedAny = true;
+            yield return StartCoroutine(SpawnSingleItem(ui =>
+            {
+                ui.SetupScrolls(reward.scrolls);
+                _scrollsItem = ui;
             }));
         }
 

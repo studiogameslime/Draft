@@ -9,14 +9,12 @@ public class PlayerCurrencyWallet : MonoBehaviour
     public int Gems { get; private set; }
     public int Scrolls { get; private set; }
 
-
     public Action<int> OnGoldChanged;
     public Action<int> OnGemsChanged;
     public Action<int> OnScrollsChanged;
 
-
     [Header("Lifetime")]
-    [Tooltip("If true, wallet persists between scenes. If you want Home-only, set this to false and remove it from other scenes.")]
+    [Tooltip("If true, wallet persists between scenes.")]
     [SerializeField] private bool dontDestroyOnLoad = true;
 
     private void Awake()
@@ -45,19 +43,19 @@ public class PlayerCurrencyWallet : MonoBehaviour
         Gems = GameData.Instance.Save.gems;
         Scrolls = GameData.Instance.Save.scrolls;
 
-
-        // Push initial values to UI listeners.
+        // Push initial values to UI
         OnGoldChanged?.Invoke(Gold);
         OnGemsChanged?.Invoke(Gems);
         OnScrollsChanged?.Invoke(Scrolls);
 
-
-        Debug.Log($"Wallet loaded | Gold={Gold}, Gems={Gems}");
+        Debug.Log($"Wallet loaded | Gold={Gold}, Gems={Gems}, Scrolls={Scrolls}");
     }
 
-    // ----------------------
+    // ======================================================
     // GOLD
-    // ----------------------
+    // ======================================================
+    #region Gold
+
     public void AddGold(int amount, RectTransform fromUI = null, Action onFinished = null)
     {
         if (amount <= 0) return;
@@ -65,7 +63,6 @@ public class PlayerCurrencyWallet : MonoBehaviour
         int startValue = Gold;
         int targetValue = Gold + amount;
 
-        // No FX -> instant.
         if (RewardFlyFXManager.Instance == null || fromUI == null)
         {
             Gold = targetValue;
@@ -104,12 +101,25 @@ public class PlayerCurrencyWallet : MonoBehaviour
 
         OnGoldChanged?.Invoke(Gold);
         SaveGold();
+
         MissionsManager.Instance.ReportAction(MissionAction.SpendGold, amount);
     }
 
-    // ----------------------
+    private void SaveGold()
+    {
+        if (GameData.Instance == null || GameData.Instance.Save == null) return;
+
+        GameData.Instance.Save.gold = Gold;
+        GameData.Instance.SaveNow();
+    }
+
+    #endregion
+
+    // ======================================================
     // GEMS
-    // ----------------------
+    // ======================================================
+    #region Gems
+
     public void AddGems(int amount, RectTransform fromUI = null, Action onFinished = null)
     {
         if (amount <= 0) return;
@@ -117,7 +127,6 @@ public class PlayerCurrencyWallet : MonoBehaviour
         int startValue = Gems;
         int targetValue = Gems + amount;
 
-        // No FX -> instant.
         if (RewardFlyFXManager.Instance == null || fromUI == null)
         {
             Gems = targetValue;
@@ -160,9 +169,57 @@ public class PlayerCurrencyWallet : MonoBehaviour
         MissionsManager.Instance.ReportAction(MissionAction.SpendGems, amount);
     }
 
-    // ----------------------
-    // SCROLLS (NEW)
-    // ----------------------
+    private void SaveGems()
+    {
+        if (GameData.Instance == null || GameData.Instance.Save == null) return;
+
+        GameData.Instance.Save.gems = Gems;
+        GameData.Instance.SaveNow();
+    }
+
+    #endregion
+
+    // ======================================================
+    // SCROLLS  (same logic as Gold/Gems)
+    // ======================================================
+    #region Scrolls
+
+    public void AddScrolls(int amount, RectTransform fromUI = null, Action onFinished = null)
+    {
+        if (amount <= 0) return;
+
+        int startValue = Scrolls;
+        int targetValue = Scrolls + amount;
+
+        if (RewardFlyFXManager.Instance == null || fromUI == null)
+        {
+            Scrolls = targetValue;
+            OnScrollsChanged?.Invoke(Scrolls);
+            SaveScrolls();
+            return;
+        }
+
+        int iconCount = RewardFlyFXManager.Instance.GetIconCountForAmount(amount);
+
+        RewardFlyFXManager.Instance.Play(
+            RewardType.Scrolls,  
+            fromUI,
+            iconCount,
+            onProgress: (p) =>
+            {
+                int preview = Mathf.RoundToInt(Mathf.Lerp(startValue, targetValue, Mathf.Clamp01(p)));
+                OnScrollsChanged?.Invoke(preview);
+            },
+            onComplete: () =>
+            {
+                Scrolls = targetValue;
+                OnScrollsChanged?.Invoke(Scrolls);
+                SaveScrolls();
+                onFinished?.Invoke();
+            }
+        );
+    }
+
     public bool TrySpendScrolls(int amount)
     {
         if (amount <= 0) return true;
@@ -170,39 +227,22 @@ public class PlayerCurrencyWallet : MonoBehaviour
 
         Scrolls -= amount;
         if (Scrolls < 0) Scrolls = 0;
-        OnScrollsChanged?.Invoke(Scrolls);
-        SaveScrolls();
-        return true;
-    }
 
-    public void AddScrolls(int amount)
-    {
-        if (amount <= 0) return;
-        Scrolls += amount;
         OnScrollsChanged?.Invoke(Scrolls);
         SaveScrolls();
+
+        MissionsManager.Instance.ReportAction(MissionAction.SpendScrolls, amount);
+
+        return true;
     }
 
     private void SaveScrolls()
     {
         if (GameData.Instance == null || GameData.Instance.Save == null) return;
+
         GameData.Instance.Save.scrolls = Scrolls;
         GameData.Instance.SaveNow();
     }
-    // ----------------------
-    // SAVE HELPERS
-    // ----------------------
-    private void SaveGold()
-    {
-        if (GameData.Instance == null || GameData.Instance.Save == null) return;
-        GameData.Instance.Save.gold = Gold;
-        GameData.Instance.SaveNow();
-    }
 
-    private void SaveGems()
-    {
-        if (GameData.Instance == null || GameData.Instance.Save == null) return;
-        GameData.Instance.Save.gems = Gems;
-        GameData.Instance.SaveNow();
-    }
+    #endregion
 }

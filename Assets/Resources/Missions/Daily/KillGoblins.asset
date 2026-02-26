@@ -20,7 +20,8 @@ MonoBehaviour:
   targetAmount: 5
   requiredUnitClass: 0
   requiredUnit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
-  goldReward: 500
+  goldReward: 0
   gemsReward: 0
   partsReward: 0
+  scrollsReward: 15
   chestReward: {fileID: 0}

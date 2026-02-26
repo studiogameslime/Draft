@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4aa6e759ac6f51944a4404b8ff77ab71, type: 3}
-  m_Name: WheelSlot_gems_small
+  m_Name: WheelSlot_scrolls
   m_EditorClassIdentifier: Assembly-CSharp::FortuneWheelSlotDefinition
-  id: WheelSlot_gems_medium
-  displayName: Gems
-  icon: {fileID: -1056818688221956500, guid: 29c55222517a6fc44acb4267a908b40b, type: 3}
+  id: WheelSlot_scrolls
+  displayName: Scrolls
+  icon: {fileID: 21300000, guid: f61d3b9678982f74c8a9e8fba7612440, type: 3}
   reward:
-    type: 2
+    type: 4
     rarity: 1
-    amount: 10
+    amount: 15
     chestDefinition: {fileID: 0}

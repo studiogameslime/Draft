@@ -22,7 +22,8 @@ public enum MissionAction
     Login,
     SpinWheelOfFortune,
     KillSpecificEnemyUnit,
-    WatchAds
+    WatchAds,
+    SpendScrolls //New
 }
 
 [CreateAssetMenu(menuName = "Missions/Mission Definition")]
@@ -47,5 +48,6 @@ public class MissionDefinition : ScriptableObject
     public int goldReward;
     public int gemsReward;
     public int partsReward;
+    public int scrollsReward;
     public ChestDefinition chestReward;
 }

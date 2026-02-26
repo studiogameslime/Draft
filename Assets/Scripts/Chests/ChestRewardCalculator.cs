@@ -29,6 +29,8 @@ public static class ChestRewardCalculator
         // 2) Diamonds (can be 0 if range min = 0).
         reward.gems = chest.diamondsRange.GetRandom();
 
+        reward.scrolls = chest.scrollRange.GetRandom();
+
         // 3) Wheel token (0 or 1 for now).
         reward.wheelTokens = 0;
         float tokenChance01 = Mathf.Clamp01(chest.wheelOfFortuneChance);
