@@ -4,6 +4,7 @@ public struct ChestReward
 {
     public int gold;
     public int gems;
+    public int scrolls;
 
     public int wheelTokens;
 
@@ -24,6 +25,6 @@ public struct ChestReward
 
         string tokenText = wheelTokens > 0 ? $" | WheelTokens: {wheelTokens}" : "";
 
-        return $"Gold: {gold}, Diamonds: {gems}, Part: {partText}{tokenText}";
+        return $"Gold: {gold}, Diamonds: {gems}, scrolls: {scrolls}, Part: {partText}{tokenText}";
     }
 }
