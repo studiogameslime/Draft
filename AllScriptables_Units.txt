@@ -662,7 +662,7 @@ MonoBehaviour:
   icon: {fileID: -5455630811309129204, guid: 9ac4b89c2bb99a0499d216eb33474cbd, type: 3}
   iconScale: 0.4
   soulCost: 0
-  spawnTime: 5
+  spawnTime: 0
   animatorController: {fileID: 0}
   maxTier: 3
   partSlots: []
