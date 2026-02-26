@@ -12031,10 +12031,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1767653000}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 60, y: 50}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &621954505
 MonoBehaviour:
@@ -12083,7 +12083,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 44.75
+  m_fontSize: 72
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -23391,7 +23391,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 30, y: 650}
+  m_AnchoredPosition: {x: 160, y: 624.99994}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1265463834
@@ -23414,7 +23414,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Lv.1
+  m_text: Lv.10/10
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4ac20c3ce38cd8d439682cfabb6bc2fc, type: 2}
   m_sharedMaterial: {fileID: 2281642442144843139, guid: 4ac20c3ce38cd8d439682cfabb6bc2fc, type: 2}
@@ -27139,7 +27139,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 50, y: 50}
+  m_SizeDelta: {x: 75, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1652873861
 MonoBehaviour:
@@ -27161,7 +27161,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2467491259192402747, guid: f61d3b9678982f74c8a9e8fba7612440, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f61d3b9678982f74c8a9e8fba7612440, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -28306,8 +28306,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 30, y: 550}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 370, y: 635}
+  m_SizeDelta: {x: 130, y: 130}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1767653001
 MonoBehaviour:
@@ -33544,7 +33544,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -250, y: 550}
+  m_AnchoredPosition: {x: -200, y: 530}
   m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &365787096847573957
@@ -34403,7 +34403,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 300, y: 600}
+  m_AnchoredPosition: {x: 160, y: 540}
   m_SizeDelta: {x: 231, y: 74}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &791592356839455034
@@ -45658,7 +45658,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 300, y: 510}
+  m_AnchoredPosition: {x: 160, y: 450}
   m_SizeDelta: {x: 238.5, y: 79.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7515152234863328645
@@ -47317,6 +47317,7 @@ MonoBehaviour:
   hpText: {fileID: 7539122091522709231}
   dmgText: {fileID: 2550821967263371237}
   atkSpeedText: {fileID: 2550821966962809333}
+  atkSpeedTitle: {fileID: 7528877631775941201}
   rangeText: {fileID: 2550821965257548859}
   speedText: {fileID: 2550821966802472139}
   targetPriorityText: {fileID: 2550821965399012235}
@@ -47332,6 +47333,7 @@ MonoBehaviour:
   levelText: {fileID: 1265463834}
   upgradeButton: {fileID: 1494757618}
   upgradeCostText: {fileID: 1728353714}
+  upgradeCostIcon: {fileID: 1652873861}
   commonRaritySprite: {fileID: -1461007579287385866, guid: 7c5d5b9da12b13542a35eb4f7ce16086, type: 3}
   rareRaritySprite: {fileID: 6404915367043594261, guid: 7c5d5b9da12b13542a35eb4f7ce16086, type: 3}
   epicRaritySprite: {fileID: 572148174371770395, guid: 7c5d5b9da12b13542a35eb4f7ce16086, type: 3}
