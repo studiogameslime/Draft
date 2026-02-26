@@ -19155,6 +19155,7 @@ public class UnitDetailsPopupController : MonoBehaviour
     [SerializeField] private TMP_Text hpText;
     [SerializeField] private TMP_Text dmgText;
     [SerializeField] private TMP_Text atkSpeedText;
+    [SerializeField] private TMP_Text atkSpeedTitle;
     [SerializeField] private TMP_Text rangeText;
     [SerializeField] private TMP_Text speedText;
     [SerializeField] private TMP_Text targetPriorityText;
@@ -19172,7 +19173,7 @@ public class UnitDetailsPopupController : MonoBehaviour
     [SerializeField] private TMP_Text levelText;
     [SerializeField] private Button upgradeButton;
     [SerializeField] private TMP_Text upgradeCostText;
-    [HideInInspector] private Image upgradeCostIcon;
+    [SerializeField] private Image upgradeCostIcon;
 
 
     [Header("Rarity Sprites")]
@@ -19326,40 +19327,63 @@ public class UnitDetailsPopupController : MonoBehaviour
 
 
         // ---------- STATS TEXT ----------
-        if (damageHealTitle != null) 
+        bool isMiner = _unit.id == "unit_miner";
+
+        if (damageHealTitle != null)
         {
             damageHealTitle.text = _unit.displayName == "Fairy" ? "Heal" : "Damage";
         }
 
-        if (hpText != null) hpText.text = hpNow.ToString();
-        if (dmgText != null) dmgText.text = dmgNow.ToString();
+        // Toggle rows visibility (assuming the Text is inside a parent container like a Row)
+        if (hpText != null)
+        {
+            hpText.text = hpNow.ToString();
+            hpText.transform.parent.parent.gameObject.SetActive(!isMiner);
+        }
+
+        if (dmgText != null)
+        {
+            dmgText.text = dmgNow.ToString();
+            dmgText.transform.parent.parent.gameObject.SetActive(!isMiner);
+        }
+
+        if (rangeText != null)
+        {
+            var label = UILabels.GetRangeLabel(_unit.attackRange);
+            rangeText.text = UILabels.RangeToDisplay(label);
+            rangeText.transform.parent.gameObject.SetActive(!isMiner);
+        }
+
+        if (speedText != null)
+        {
+            var speedCategory = UILabels.GetSpeedLabel(_unit.moveSpeed);
+            speedText.text = UILabels.SpeedToDisplay(speedCategory);
+            speedText.transform.parent.gameObject.SetActive(!isMiner);
+        }
+
+        if (targetPriorityText != null)
+        {
+            targetPriorityText.text = _unit.targetPriorityClass.ToString();
+            targetPriorityText.transform.parent.gameObject.SetActive(!isMiner);
+        }
+
+        // Custom Miner display
+        if (spawnTimeText != null)
+        {
+            spawnTimeText.text = isMiner ? "None" : _unit.spawnTime.ToString();
+        }
+
+        if (atkSpeedText != null)
+        {
+            atkSpeedText.text = _unit.attackCooldown.ToString();
+        }
+
+        if (atkSpeedTitle != null)
+        {
+            atkSpeedTitle.text = isMiner ? "Mining Speed" : "Hit Speed";
+        }
 
 
-        if (spawnTimeText != null) spawnTimeText.text = _unit.spawnTime.ToString();
-
-        //if (decreaseSpawnTimeText != null)
-        //{
-        //    decreaseSpawnTimeText.text = (lvl < maxLvl)
-        //        ? $"-{spawnDecrease.ToString("0.#")}"
-        //        : "-";
-        //}
-
-            //if (spawnTimeText != null)
-            //{
-            //    spawnTimeText.text = currentSpawnTime.ToString("0.#");
-            //}
-
-
-        if (atkSpeedText != null) atkSpeedText.text = _unit.attackCooldown.ToString();
-
-        var label = UILabels.GetRangeLabel(_unit.attackRange);
-        rangeText.text = UILabels.RangeToDisplay(label);
-
-        var speedCategory = UILabels.GetSpeedLabel(_unit.moveSpeed);
-        speedText.text = UILabels.SpeedToDisplay(speedCategory);
-
-
-        if (targetPriorityText != null) targetPriorityText.text = _unit.targetPriorityClass.ToString();
         if (SoulsCostText != null) SoulsCostText.text = _unit.soulCost.ToString();
 
         if (capcityText != null) capcityText.text = _unit.baseCapacity.ToString();
@@ -19386,12 +19410,14 @@ public class UnitDetailsPopupController : MonoBehaviour
 
             if (addHpText != null)
             {
-                addHpText.gameObject.SetActive(true);
+
+                addHpText.gameObject.SetActive(!isMiner); // HIDE FOR MINER
                 addHpText.text = $"+{hpAdd}";
             }
+
             if (addDmgText != null)
             {
-                addDmgText.gameObject.SetActive(true);
+                addDmgText.gameObject.SetActive(!isMiner); // HIDE FOR MINER
                 addDmgText.text = $"+{dmgAdd}";
             }
         }
@@ -19401,27 +19427,8 @@ public class UnitDetailsPopupController : MonoBehaviour
             if (addDmgText != null) addDmgText.gameObject.SetActive(false);
         }
 
-        int cost = atMax ? 0 : UnitLevelingService.GetUpgradeCost(lvl);
+        upgradeCostIcon.sprite = StyleManager.instance.scrollSprite;
 
-        if (upgradeCostText != null)
-            upgradeCostText.text = atMax ? "MAX" : cost.ToString();
-
-        if (upgradeCostIcon != null) upgradeCostIcon.sprite = StyleManager.instance.scrollSprite;
-
-        int ownedScrolls = 0;
-        if (PlayerCurrencyWallet.Instance != null)
-            ownedScrolls = PlayerCurrencyWallet.Instance.Scrolls;
-
-        bool inBattle = (BattleManager.instance != null && BattleManager.instance.IsBattleRunning);
-        bool canAfford = ownedScrolls >= cost;
-
-        var progress = GameData.Instance.Save.ownedUnits
-            .FirstOrDefault(u => u.unitId == _unit.id);
-        if (progress != null)
-            unlockState = progress.unlockState;
-
-        if (upgradeButton != null)
-            upgradeButton.interactable = (!inBattle) && (!atMax) && canAfford && unlockState == UnitUnlockState.Unlocked;
     }
 
 
