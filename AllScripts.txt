@@ -3693,7 +3693,8 @@ public enum RewardType
     Gems,
     Chest,
     Part,
-    DiscoverNewUnit
+    DiscoverNewUnit,
+    Scrolls
 }
 
 public enum RewardLane
@@ -5673,6 +5674,8 @@ public static class ChestRewardCalculator
         // 2) Diamonds (can be 0 if range min = 0).
         reward.gems = chest.diamondsRange.GetRandom();
 
+        reward.scrolls = chest.scrollRange.GetRandom();
+
         // 3) Wheel token (0 or 1 for now).
         reward.wheelTokens = 0;
         float tokenChance01 = Mathf.Clamp01(chest.wheelOfFortuneChance);
@@ -5762,6 +5765,7 @@ public class ChestRewardsSpawner : MonoBehaviour
     private RewardItemUI _goldItem;
     private RewardItemUI _gemsItem;
     private RewardItemUI _partItem;
+    private RewardItemUI _scrollsItem;
     private RewardItemUI _wheelTokenItem;
 
     private void Awake()
@@ -5779,6 +5783,7 @@ public class ChestRewardsSpawner : MonoBehaviour
     public RectTransform GetGoldFxFrom() => _goldItem != null ? _goldItem.FxFrom : null;
     public RectTransform GetGemsFxFrom() => _gemsItem != null ? _gemsItem.FxFrom : null;
     public RectTransform GetPartFxFrom() => _partItem != null ? _partItem.FxFrom : null;
+    public RectTransform GetScrollsFxFrom() => _scrollsItem != null ? _scrollsItem.FxFrom : null;
 
     public RectTransform GetWheelTokenFxFrom() => _wheelTokenItem != null ? _wheelTokenItem.FxFrom : null;
 
@@ -5789,6 +5794,7 @@ public class ChestRewardsSpawner : MonoBehaviour
         _goldItem = null;
         _gemsItem = null;
         _partItem = null;
+        _scrollsItem = null;
         _wheelTokenItem = null;
 
         bool spawnedAny = false;
@@ -5810,6 +5816,16 @@ public class ChestRewardsSpawner : MonoBehaviour
             {
                 ui.SetupDiamonds(reward.gems);
                 _gemsItem = ui;
+            }));
+        }
+
+        if (reward.scrolls > 0)
+        {
+            spawnedAny = true;
+            yield return StartCoroutine(SpawnSingleItem(ui =>
+            {
+                ui.SetupScrolls(reward.scrolls);
+                _scrollsItem = ui;
             }));
         }
 
@@ -5891,7 +5907,8 @@ public enum RewardItemType
     Gold,
     Diamonds,
     Part,
-    WheelToken
+    WheelToken,
+    Scrolls
 }
 
 public class RewardItemUI : MonoBehaviour
@@ -5908,6 +5925,7 @@ public class RewardItemUI : MonoBehaviour
     [Header("Prefabs")]
     public GameObject goldPrefab;
     public GameObject diamondPrefab;
+    public GameObject scrollsPrefab;
     public GameObject partContainerPrefab;
 
     public GameObject wheelTokenPrefab;
@@ -5942,6 +5960,17 @@ public class RewardItemUI : MonoBehaviour
         ClearVisual();
         InstantiatePrefabUnderRoot(diamondPrefab);
         if (nameText != null) nameText.text = "Diamonds";
+        if (amountText != null) amountText.text = amount.ToString();
+        if (rarityFrame != null) rarityFrame.color = Color.cyan;
+    }
+
+
+    public void SetupScrolls(int amount)
+    {
+        _type = RewardItemType.Scrolls;
+        ClearVisual();
+        InstantiatePrefabUnderRoot(scrollsPrefab);
+        if (nameText != null) nameText.text = "Scrolls";
         if (amountText != null) amountText.text = amount.ToString();
         if (rarityFrame != null) rarityFrame.color = Color.cyan;
     }
@@ -6054,7 +6083,8 @@ public enum FortuneRewardType
     Chest,
     Gold,
     Gems,
-    GreenPart
+    GreenPart,
+    Scrolls
 }
 
 public enum FortuneRewardRarity
@@ -6108,6 +6138,7 @@ public class ChestDefinition : ScriptableObject
     [Header("Currency Rewards")]
     public IntRange goldRange;        // Always awarded
     public IntRange diamondsRange;    // Can be 0 - use min=0
+    public IntRange scrollRange;
 
     [Header("Part Drop")]
     [Range(0f, 1f)]
@@ -6480,7 +6511,8 @@ public enum MissionAction
     Login,
     SpinWheelOfFortune,
     KillSpecificEnemyUnit,
-    WatchAds
+    WatchAds,
+    SpendScrolls //New
 }
 
 [CreateAssetMenu(menuName = "Missions/Mission Definition")]
@@ -6505,6 +6537,7 @@ public class MissionDefinition : ScriptableObject
     public int goldReward;
     public int gemsReward;
     public int partsReward;
+    public int scrollsReward;
     public ChestDefinition chestReward;
 }
 
@@ -8599,14 +8632,12 @@ public class PlayerCurrencyWallet : MonoBehaviour
     public int Gems { get; private set; }
     public int Scrolls { get; private set; }
 
-
     public Action<int> OnGoldChanged;
     public Action<int> OnGemsChanged;
     public Action<int> OnScrollsChanged;
 
-
     [Header("Lifetime")]
-    [Tooltip("If true, wallet persists between scenes. If you want Home-only, set this to false and remove it from other scenes.")]
+    [Tooltip("If true, wallet persists between scenes.")]
     [SerializeField] private bool dontDestroyOnLoad = true;
 
     private void Awake()
@@ -8635,19 +8666,19 @@ public class PlayerCurrencyWallet : MonoBehaviour
         Gems = GameData.Instance.Save.gems;
         Scrolls = GameData.Instance.Save.scrolls;
 
-
-        // Push initial values to UI listeners.
+        // Push initial values to UI
         OnGoldChanged?.Invoke(Gold);
         OnGemsChanged?.Invoke(Gems);
         OnScrollsChanged?.Invoke(Scrolls);
 
-
-        Debug.Log($"Wallet loaded | Gold={Gold}, Gems={Gems}");
+        Debug.Log($"Wallet loaded | Gold={Gold}, Gems={Gems}, Scrolls={Scrolls}");
     }
 
-    // ----------------------
+    // ======================================================
     // GOLD
-    // ----------------------
+    // ======================================================
+    #region Gold
+
     public void AddGold(int amount, RectTransform fromUI = null, Action onFinished = null)
     {
         if (amount <= 0) return;
@@ -8655,7 +8686,6 @@ public class PlayerCurrencyWallet : MonoBehaviour
         int startValue = Gold;
         int targetValue = Gold + amount;
 
-        // No FX -> instant.
         if (RewardFlyFXManager.Instance == null || fromUI == null)
         {
             Gold = targetValue;
@@ -8694,12 +8724,25 @@ public class PlayerCurrencyWallet : MonoBehaviour
 
         OnGoldChanged?.Invoke(Gold);
         SaveGold();
+
         MissionsManager.Instance.ReportAction(MissionAction.SpendGold, amount);
     }
 
-    // ----------------------
+    private void SaveGold()
+    {
+        if (GameData.Instance == null || GameData.Instance.Save == null) return;
+
+        GameData.Instance.Save.gold = Gold;
+        GameData.Instance.SaveNow();
+    }
+
+    #endregion
+
+    // ======================================================
     // GEMS
-    // ----------------------
+    // ======================================================
+    #region Gems
+
     public void AddGems(int amount, RectTransform fromUI = null, Action onFinished = null)
     {
         if (amount <= 0) return;
@@ -8707,7 +8750,6 @@ public class PlayerCurrencyWallet : MonoBehaviour
         int startValue = Gems;
         int targetValue = Gems + amount;
 
-        // No FX -> instant.
         if (RewardFlyFXManager.Instance == null || fromUI == null)
         {
             Gems = targetValue;
@@ -8750,9 +8792,57 @@ public class PlayerCurrencyWallet : MonoBehaviour
         MissionsManager.Instance.ReportAction(MissionAction.SpendGems, amount);
     }
 
-    // ----------------------
-    // SCROLLS (NEW)
-    // ----------------------
+    private void SaveGems()
+    {
+        if (GameData.Instance == null || GameData.Instance.Save == null) return;
+
+        GameData.Instance.Save.gems = Gems;
+        GameData.Instance.SaveNow();
+    }
+
+    #endregion
+
+    // ======================================================
+    // SCROLLS  (same logic as Gold/Gems)
+    // ======================================================
+    #region Scrolls
+
+    public void AddScrolls(int amount, RectTransform fromUI = null, Action onFinished = null)
+    {
+        if (amount <= 0) return;
+
+        int startValue = Scrolls;
+        int targetValue = Scrolls + amount;
+
+        if (RewardFlyFXManager.Instance == null || fromUI == null)
+        {
+            Scrolls = targetValue;
+            OnScrollsChanged?.Invoke(Scrolls);
+            SaveScrolls();
+            return;
+        }
+
+        int iconCount = RewardFlyFXManager.Instance.GetIconCountForAmount(amount);
+
+        RewardFlyFXManager.Instance.Play(
+            RewardType.Scrolls,  
+            fromUI,
+            iconCount,
+            onProgress: (p) =>
+            {
+                int preview = Mathf.RoundToInt(Mathf.Lerp(startValue, targetValue, Mathf.Clamp01(p)));
+                OnScrollsChanged?.Invoke(preview);
+            },
+            onComplete: () =>
+            {
+                Scrolls = targetValue;
+                OnScrollsChanged?.Invoke(Scrolls);
+                SaveScrolls();
+                onFinished?.Invoke();
+            }
+        );
+    }
+
     public bool TrySpendScrolls(int amount)
     {
         if (amount <= 0) return true;
@@ -8760,43 +8850,25 @@ public class PlayerCurrencyWallet : MonoBehaviour
 
         Scrolls -= amount;
         if (Scrolls < 0) Scrolls = 0;
-        OnScrollsChanged?.Invoke(Scrolls);
-        SaveScrolls();
-        return true;
-    }
 
-    public void AddScrolls(int amount)
-    {
-        if (amount <= 0) return;
-        Scrolls += amount;
         OnScrollsChanged?.Invoke(Scrolls);
         SaveScrolls();
+
+        MissionsManager.Instance.ReportAction(MissionAction.SpendScrolls, amount);
+
+        return true;
     }
 
     private void SaveScrolls()
     {
         if (GameData.Instance == null || GameData.Instance.Save == null) return;
+
         GameData.Instance.Save.scrolls = Scrolls;
         GameData.Instance.SaveNow();
     }
-    // ----------------------
-    // SAVE HELPERS
-    // ----------------------
-    private void SaveGold()
-    {
-        if (GameData.Instance == null || GameData.Instance.Save == null) return;
-        GameData.Instance.Save.gold = Gold;
-        GameData.Instance.SaveNow();
-    }
 
-    private void SaveGems()
-    {
-        if (GameData.Instance == null || GameData.Instance.Save == null) return;
-        GameData.Instance.Save.gems = Gems;
-        GameData.Instance.SaveNow();
-    }
+    #endregion
 }
-
 
 
 ========================
@@ -12628,6 +12700,10 @@ public class MissionsManager : MonoBehaviour
         if (mission.definition.gemsReward > 0)
         {
             PlayerCurrencyWallet.Instance.AddGems(mission.definition.gemsReward, from);
+        }
+        if (mission.definition.scrollsReward > 0)
+        {
+            PlayerCurrencyWallet.Instance.AddScrolls(mission.definition.gemsReward, from);
         }
 
         if (mission.definition.chestReward != null && chestOpeningUI != null)
@@ -20711,7 +20787,6 @@ PATH: D:\a\Draft\Draft\Assets\Scripts\UI\WheelOfFortune\WheelOfFortuneTokenManag
 ========================
 using UnityEngine;
 using TMPro;
-using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
 public class WheelOfFortuneTokensManager : MonoBehaviour
 {
@@ -20802,6 +20877,11 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
             case FortuneRewardType.Gems:
                 if (amount > 0)
                     PlayerCurrencyWallet.Instance.AddGems(amount, fromRect);
+                break;
+
+            case FortuneRewardType.Scrolls:
+                if (amount > 0)
+                    PlayerCurrencyWallet.Instance.AddScrolls(amount, fromRect);
                 break;
 
             case FortuneRewardType.Chest:
