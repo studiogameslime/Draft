@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: KnightHead
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_knight_head_green
+  id: part_knight_head
   unit: {fileID: 11400000, guid: d9282f24b2268dd4688a50473d8bdee7, type: 2}
   slot: 0
   rarity: 1
-  prefab: {fileID: 6449521994661686968, guid: 9c5491b727af7d84c915d7835e2e9cb2, type: 3}
+  partSprite: {fileID: 3667681588813468039, guid: ecda62d56a6a17346b15799011021df7, type: 3}

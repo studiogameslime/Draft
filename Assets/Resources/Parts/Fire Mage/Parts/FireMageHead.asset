@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: FireMageHead
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_fire_mage_head_epic
+  id: part_fire_mage_head
   unit: {fileID: 11400000, guid: 6cab19afac977304e898761cc9185bd1, type: 2}
   slot: 0
   rarity: 2
-  prefab: {fileID: 1171474474503337359, guid: cda39158428699146abf72c2cc28d0ce, type: 3}
-  upgradeTo: {fileID: 0}
+  partSprite: {fileID: 3667681588813468039, guid: adf3a03aa0f4f56428a2d12977188ee5, type: 3}

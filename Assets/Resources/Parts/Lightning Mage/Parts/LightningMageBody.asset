@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: LightningMageBody
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_lightning_mage_body_green
+  id: part_lightning_mage_body
   unit: {fileID: 11400000, guid: 624a24cba8fbd3b469665d2ac0fc3846, type: 2}
   slot: 1
   rarity: 2
-  prefab: {fileID: 4653735275622065663, guid: c8962559d05c542468ca944f687ec40d, type: 3}
+  partSprite: {fileID: -6199720543617963891, guid: 4f27c3129841aa343b54c28ba0ec0798, type: 3}

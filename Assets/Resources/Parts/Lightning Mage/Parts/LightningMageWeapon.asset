@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: LightningMageWeapon
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_lightning_mage_weapon_green
+  id: part_lightning_mage_weapon
   unit: {fileID: 11400000, guid: 624a24cba8fbd3b469665d2ac0fc3846, type: 2}
   slot: 6
   rarity: 2
-  prefab: {fileID: 223078073097210891, guid: 81d4b0a5ed6486a4597fc51f56ccd7cb, type: 3}
+  partSprite: {fileID: 21300000, guid: 58c63a70efc15af448bb5c8ec8da8503, type: 3}

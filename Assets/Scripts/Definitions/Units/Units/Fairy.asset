@@ -33,7 +33,14 @@ MonoBehaviour:
   spawnTime: 6
   animatorController: {fileID: 9100000, guid: e39ed235862f38c41bcff07fdbad3b42, type: 2}
   maxTier: 3
-  partSlots: []
+  partSlots:
+  - slot: 0
+  - slot: 1
+  - slot: 2
+  - slot: 3
+  - slot: 4
+  - slot: 5
+  - slot: 6
   baseCapacity: 1
   unlockNode: {fileID: 11400000, guid: 1acd49941bbb39546932b38ade13cdc9, type: 2}
   nodes:

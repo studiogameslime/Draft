@@ -83,7 +83,7 @@ public class UnitPartsTabController : MonoBehaviour
         // Choose the lowest rarity part for this unit+slot (as "default visual")
         // If you have multiple, this picks the first in that order.
         return _allPartsCache
-            .Where(p => p != null && p.unit == unit && p.slot == slot && p.prefab != null)
+            .Where(p => p != null && p.unit == unit && p.slot == slot)
             .OrderBy(p => p.rarity)
             .FirstOrDefault();
     }

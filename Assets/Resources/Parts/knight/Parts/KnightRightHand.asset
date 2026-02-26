@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: KnightRightHand
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_knight_right_arm_green
+  id: part_knight_right_arm
   unit: {fileID: 11400000, guid: d9282f24b2268dd4688a50473d8bdee7, type: 2}
   slot: 3
   rarity: 1
-  prefab: {fileID: 6316964052526751939, guid: dba52a7c77d96e44c8ee820da27c3b2b, type: 3}
+  partSprite: {fileID: -4699449975840286572, guid: 358ba6930d6139843a0aba1706924edb, type: 3}

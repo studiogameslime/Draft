@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: FireMageLeftHand
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_fire_mage_left_arm_epic
+  id: part_fire_mage_left_arm
   unit: {fileID: 11400000, guid: 6cab19afac977304e898761cc9185bd1, type: 2}
   slot: 2
   rarity: 2
-  prefab: {fileID: 1368105734053081345, guid: 11354ae9d941ba444ab6dac368cb9dc1, type: 3}
-  upgradeTo: {fileID: 0}
+  partSprite: {fileID: 2539358619575542627, guid: 4dbae933fceadc448a23bdc6c0f477bb, type: 3}

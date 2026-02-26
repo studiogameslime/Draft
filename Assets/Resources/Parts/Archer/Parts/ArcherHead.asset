@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: ArcherHead
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_archer_head_green
+  id: part_archer_head
   unit: {fileID: 11400000, guid: ad4287dbc795daf4da4915b5d3fcd156, type: 2}
   slot: 0
   rarity: 0
-  prefab: {fileID: 7564084494132771128, guid: 42af9ebafe7c42e4dac72c82928632d0, type: 3}
-  upgradeTo: {fileID: 0}
+  partSprite: {fileID: 3667681588813468039, guid: f623305d7be99a140922b288af5e5e56, type: 3}

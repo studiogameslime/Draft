@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: KnightRightLeg
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_knight_right_leg_green
+  id: part_knight_right_leg
   unit: {fileID: 11400000, guid: d9282f24b2268dd4688a50473d8bdee7, type: 2}
   slot: 5
   rarity: 1
-  prefab: {fileID: 4321931677139389887, guid: 1b4d7a9aab5a0174ab7b464a481e8918, type: 3}
+  partSprite: {fileID: -7023873813356635808, guid: 24c76113a144fd145b6aa706d68a529b, type: 3}

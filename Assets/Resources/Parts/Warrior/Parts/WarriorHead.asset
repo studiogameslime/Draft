@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: WarriorHead
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_warrior_head_green
+  id: part_warrior_head
   unit: {fileID: 11400000, guid: 681e39eeac684f2448e304010c689052, type: 2}
   slot: 0
   rarity: 0
-  prefab: {fileID: 2275183634072203851, guid: efbb3e441617c7144949ec8426808545, type: 3}
-  upgradeTo: {fileID: 0}
+  partSprite: {fileID: 3667681588813468039, guid: e0742868194a3b440902e290c0dd4829, type: 3}

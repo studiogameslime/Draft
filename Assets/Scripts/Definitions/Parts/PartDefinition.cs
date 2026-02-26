@@ -7,8 +7,8 @@ public class PartDefinition : ScriptableObject
     public UnitDefinition unit;
     public PartSlot slot;
     public PartRarity rarity;
-    public GameObject prefab;
-    }
+    public Sprite partSprite;
+}
 
 public enum PartRarity
 {

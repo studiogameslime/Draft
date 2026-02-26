@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: NInjaHead
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_ninja_head_green
+  id: part_ninja_head
   unit: {fileID: 11400000, guid: b7fa78734c59dcf459d2349865d741bf, type: 2}
   slot: 0
   rarity: 1
-  prefab: {fileID: 5643142645504980011, guid: a7c0ff800f5b5784b87142ea5e63bad8, type: 3}
+  partSprite: {fileID: 3667681588813468039, guid: 52385a407d4947d41b7c6910ce75220c, type: 3}

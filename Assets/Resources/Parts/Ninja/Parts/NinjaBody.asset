@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: NinjaBody
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_ninja_body_green
+  id: part_ninja_body
   unit: {fileID: 11400000, guid: b7fa78734c59dcf459d2349865d741bf, type: 2}
   slot: 1
   rarity: 1
-  prefab: {fileID: 5135087063630935461, guid: 2e99be6d665238f4da69bc0138219050, type: 3}
+  partSprite: {fileID: -6199720543617963891, guid: 00eb53d7556be394a8129642d7f08bb0, type: 3}

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: NInjaWeapon
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_ninja_weapon_green
+  id: part_ninja_weapon
   unit: {fileID: 11400000, guid: b7fa78734c59dcf459d2349865d741bf, type: 2}
   slot: 6
   rarity: 1
-  prefab: {fileID: 360692475668415346, guid: a9bf233ffc1ba5e4b87fd76a89558946, type: 3}
+  partSprite: {fileID: 21300000, guid: c8bd7dda04d39be4a859b96ddc86962c, type: 3}

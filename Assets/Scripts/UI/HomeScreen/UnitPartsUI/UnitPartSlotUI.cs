@@ -37,20 +37,36 @@ public class UnitPartSlotUI : MonoBehaviour
 
     private void SetPartInternal(PartDefinition part, bool owned)
     {
-        ClearInstance();
-
-        if (part != null && part.prefab != null && contentRoot != null)
+        if (contentRoot != null)
         {
-            _currentInstance = Instantiate(part.prefab, contentRoot);
-            _currentInstance.transform.localPosition = Vector3.zero;
-            _currentInstance.transform.localScale = Vector3.one;
+            // Get the Image component from contentRoot, or add it if it doesn't exist yet
+            Image partImage = contentRoot.GetComponent<Image>();
+            if (partImage == null)
+            {
+                partImage = contentRoot.gameObject.AddComponent<Image>();
+            }
 
-            float a = owned ? 1f : missingAlpha;
-            SetInstanceAlpha(_currentInstance, a);
+            if (part != null && part.partSprite != null)
+            {
+                partImage.enabled = true;
+                partImage.sprite = part.partSprite;
+                partImage.preserveAspect = true;
+
+                // Set alpha directly on the Image based on ownership
+                Color c = Color.white;
+                c.a = owned ? 1f : missingAlpha;
+                partImage.color = c;
+            }
+            else
+            {
+                // Hide the image if no part is assigned
+                partImage.enabled = false;
+            }
         }
-        if (background)
-        {
 
+        // Set background color based on rarity
+        if (background && part != null)
+        {
             background.color = part.rarity switch
             {
                 PartRarity.Common => StyleManager.instance.commonColor,
@@ -59,17 +75,26 @@ public class UnitPartSlotUI : MonoBehaviour
                 _ => Color.white
             };
         }
-            //background.color = owned ? ownedColor : missingColor;
-        
-        if (lockedOverlay) lockedOverlay.SetActive(false); // no lock anymore
+
+        if (lockedOverlay) lockedOverlay.SetActive(false);
     }
 
     private void SetMissingVisual()
     {
         if (background) background.color = missingColor;
         if (lockedOverlay) lockedOverlay.SetActive(false);
-        if (_currentInstance != null)
-            SetInstanceAlpha(_currentInstance, missingAlpha);
+
+        // Dim the part image if it exists
+        if (contentRoot != null)
+        {
+            Image partImage = contentRoot.GetComponent<Image>();
+            if (partImage != null && partImage.enabled)
+            {
+                Color c = partImage.color;
+                c.a = missingAlpha;
+                partImage.color = c;
+            }
+        }
     }
 
     public void SetCounts(int greenCount, int rareCount, int epicCount)
@@ -96,35 +121,4 @@ public class UnitPartSlotUI : MonoBehaviour
         }
     }
 
-    private void ClearInstance()
-    {
-        if (_currentInstance != null)
-        {
-            Destroy(_currentInstance);
-            _currentInstance = null;
-        }
-    }
-
-    private void SetInstanceAlpha(GameObject root, float a)
-    {
-        a = Mathf.Clamp01(a);
-
-        var srs = root.GetComponentsInChildren<SpriteRenderer>(true);
-        foreach (var sr in srs)
-        {
-            var c = sr.color; c.a = a; sr.color = c;
-        }
-
-        var imgs = root.GetComponentsInChildren<Image>(true);
-        foreach (var img in imgs)
-        {
-            var c = img.color; c.a = a; img.color = c;
-        }
-
-        var tmps = root.GetComponentsInChildren<TMP_Text>(true);
-        foreach (var t in tmps)
-        {
-            var c = t.color; c.a = a; t.color = c;
-        }
-    }
 }

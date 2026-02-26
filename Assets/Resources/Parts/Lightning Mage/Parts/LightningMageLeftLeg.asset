@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: LightningMageLeftLeg
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_lightning_mage_left_leg_green
+  id: part_lightning_mage_left_leg
   unit: {fileID: 11400000, guid: 624a24cba8fbd3b469665d2ac0fc3846, type: 2}
   slot: 4
   rarity: 2
-  prefab: {fileID: 4294787107254667283, guid: 291d64fc113de5d459d6edae68a87634, type: 3}
+  partSprite: {fileID: 4337332875911960726, guid: e001dd64947ddbb4f92213089333b054, type: 3}

@@ -123,30 +123,28 @@ public class RewardItemUI : MonoBehaviour
 
         Transform parent = container != null ? container.transform : (Transform)visualRoot;
 
-        if (part != null && part.prefab != null && parent != null)
+        // CHANGED: Create a UI Image dynamically since we no longer use prefabs for parts
+        if (part != null && part.partSprite != null && parent != null)
         {
-            GameObject partObj = Instantiate(part.prefab, parent);
-            RectTransform pr = partObj.GetComponent<RectTransform>();
-            if (pr != null)
-            {
-                pr.anchoredPosition = Vector2.zero;
-                pr.localScale = Vector3.one;
-            }
+            GameObject partObj = new GameObject("PartSprite");
+            partObj.transform.SetParent(parent, false);
+
+            RectTransform pr = partObj.AddComponent<RectTransform>();
+            pr.anchoredPosition = Vector2.zero;
+            pr.localScale = Vector3.one;
+            // Stretch to fill parent container
+            pr.anchorMin = Vector2.zero;
+            pr.anchorMax = Vector2.one;
+            pr.offsetMin = Vector2.zero;
+            pr.offsetMax = Vector2.zero;
+
+            Image img = partObj.AddComponent<Image>();
+            img.sprite = part.partSprite;
+            img.preserveAspect = true;
         }
 
         if (nameText != null) nameText.text = part != null ? part.name : "Part";
         if (amountText != null) amountText.text = "1";
-
-        if (rarityFrame != null)
-        {
-            rarityFrame.color = rarity switch
-            {
-                PartRarity.Common => greenColor,
-                PartRarity.Rare => blueColor,
-                PartRarity.Epic => purpleColor,
-                _ => Color.white
-            };
-        }
     }
 
     private void ClearVisual()

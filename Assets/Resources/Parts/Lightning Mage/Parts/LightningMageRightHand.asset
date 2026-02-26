@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: LightningMageRightHand
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_lightning_mage_right_arm_green
+  id: part_lightning_mage_right_arm
   unit: {fileID: 11400000, guid: 624a24cba8fbd3b469665d2ac0fc3846, type: 2}
   slot: 3
   rarity: 2
-  prefab: {fileID: 8985052737359316544, guid: 707231fd90ea9214a94f2fd1912f4799, type: 3}
+  partSprite: {fileID: 7447170748215063948, guid: fc51fb49c40fbbf4e84ad4429afb6494, type: 3}

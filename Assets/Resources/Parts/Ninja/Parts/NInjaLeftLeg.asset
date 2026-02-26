@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: NInjaLeftLeg
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_ninja_left_leg_green
+  id: part_ninja_left_leg
   unit: {fileID: 11400000, guid: b7fa78734c59dcf459d2349865d741bf, type: 2}
   slot: 4
   rarity: 1
-  prefab: {fileID: 2367802144016926327, guid: 0e9a859d9f999dd4da8a5a1ede4c42b0, type: 3}
+  partSprite: {fileID: 3813835658311196779, guid: 757f44ed345e3024482a37f1244faac9, type: 3}

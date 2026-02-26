@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: WarriorLeftLeg
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_warrior_left_leg_green
+  id: part_warrior_left_leg
   unit: {fileID: 11400000, guid: 681e39eeac684f2448e304010c689052, type: 2}
   slot: 4
   rarity: 0
-  prefab: {fileID: 4424068179865531117, guid: 6c59becf085ac954e8be11ac2e1ee9d2, type: 3}
-  upgradeTo: {fileID: 0}
+  partSprite: {fileID: 3813835658311196779, guid: 0de34f355f9fdda4ca4fed56d77d13fd, type: 3}

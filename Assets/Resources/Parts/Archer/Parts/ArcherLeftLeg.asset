@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23068c2fc09588a4188860e065355c77, type: 3}
   m_Name: ArcherLeftLeg
   m_EditorClassIdentifier: Assembly-CSharp::PartDefinition
-  id: part_archer_left_leg_green
+  id: part_archer_left_leg
   unit: {fileID: 11400000, guid: ad4287dbc795daf4da4915b5d3fcd156, type: 2}
   slot: 4
   rarity: 0
-  prefab: {fileID: 8261162343826611949, guid: c917a869e7845be478968bc59d56f6fd, type: 3}
-  upgradeTo: {fileID: 0}
+  partSprite: {fileID: 3813835658311196779, guid: f334f6509d33c204eaa080960d04f1c8, type: 3}
