@@ -36,6 +36,7 @@ public class AutoCameraSize : MonoBehaviour
 }
 
 
+
 ========================
 FILE: AutoDestroyAfterSeconds.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\AutoDestroyAfterSeconds.cs
@@ -47,6 +48,7 @@ public class AutoDestroyAfterSeconds : MonoBehaviour
     [SerializeField] private float seconds = 1.5f;
     private void Start() => Destroy(gameObject, seconds);
 }
+
 
 
 ========================
@@ -114,7 +116,6 @@ public class BattleManager : MonoBehaviour
         StartCoroutine(InitAfterUIReady());
         Initialize();
 
-
     }
 
     public void Initialize()
@@ -127,17 +128,6 @@ public class BattleManager : MonoBehaviour
         RefreshStartBattleButton();
     }
 
-    public void ShowDeck()
-    {
-        PlanningPhase();
-    }
-
-    public void HideDeck()
-    {
-        // Deck may not exist yet if CommonUI not loaded.
-        if (deckUI != null)
-            deckUI.HideDeck();
-    }
 
     private IEnumerator InitAfterUIReady()
     {
@@ -177,6 +167,9 @@ public class BattleManager : MonoBehaviour
             CameraAnimation.instance.EnterGridMode();
         if (BattleFooterAnimation.instance != null)
             BattleFooterAnimation.instance.EnterGridMode();
+
+        PlanningPhase();
+
     }
 
 
@@ -185,12 +178,18 @@ public class BattleManager : MonoBehaviour
     // =======================
     private void PlanningPhase()
     {
+
         Debug.Log("PlanningPhase");
 
         unitClassUsedThisBattle.Clear();
         unitsUsedThisBattle.Clear();
 
-        BattleBottomPanelController.Instance.ShowDeck(PlayerDeckProvider.Instance.CurrentDeck);
+        // ADD THIS INSTEAD: Set the initial state to no cell selected
+        if (BattleCellSelectionController.Instance != null)
+        {
+            BattleCellSelectionController.Instance.ClearSelection();
+        }
+
         ShowDropAreasGrid();
 
         SetAllAIEnabled(false);
@@ -199,8 +198,12 @@ public class BattleManager : MonoBehaviour
         if (deckUI != null)
             deckUI.SetCardsInteractable(true);
 
+        Debug.Log(EnemyPreviewBubblesController.Instance);
+
         if (EnemyPreviewBubblesController.Instance != null)
+        {
             EnemyPreviewBubblesController.Instance.BuildForRound(levelDefinition, currentRoundIndex);
+        }
 
         RemoveAllFallenWeapons();
         RemoveAllProjectiles();
@@ -484,6 +487,7 @@ public class BattleManager : MonoBehaviour
 }
 
 
+
 ========================
 FILE: DeckUIController.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\DeckUIController.cs
@@ -545,6 +549,7 @@ public class DeckUIController : MonoBehaviour
 }
 
 
+
 ========================
 FILE: DropZonesSpacePreview.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\DropZonesSpacePreview.cs
@@ -592,6 +597,7 @@ public class DropZonesSpacePreview : MonoBehaviour
         _holdTimer = 0f;
     }
 }
+
 
 
 ========================
@@ -653,7 +659,7 @@ public class BossMeleeAttack : MonoBehaviour, IAttackStrategy
     private CharacterStats stats;
     private Animator animator;
 
-    [Header("Knockback")]
+    [Header("Knockback ")]
     [SerializeField] private float knockbackDistance = 0.8f;
     [SerializeField] private float knockbackDuration = 0.15f;
 
@@ -698,6 +704,7 @@ public class BossMeleeAttack : MonoBehaviour, IAttackStrategy
         }
     }
 }
+
 
 
 ========================
@@ -745,6 +752,7 @@ public class FairyHealAttack : MonoBehaviour, IAttackStrategy
         }
     }
 }
+
 
 
 ========================
@@ -803,6 +811,7 @@ public class FireMageAttack : MonoBehaviour, IAttackStrategy
         }
     }
 }
+
 
 
 ========================
@@ -939,6 +948,7 @@ public class LightningMageAttack : MonoBehaviour, IAttackStrategy
 }
 
 
+
 ========================
 FILE: MeleeAttack.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\AttacksTypes\MeleeAttack.cs
@@ -997,6 +1007,93 @@ public class MeleeAttack : MonoBehaviour, IAttackStrategy, ICancelableAttack
         }
     }
 
+}
+
+
+
+========================
+FILE: MinerBehaviour.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\AttacksTypes\MinerBehaviour.cs
+========================
+using System.Collections;
+using UnityEngine;
+
+public class MinerBehaviour : UnitSkillBehaviour
+{
+    [SerializeField] private Color soulProductionColor = Color.blue;
+
+    private UnitSpawner mySpawner;
+    private float productionTimer;
+
+    protected override void OnInit()
+    {
+        // Disable AI as the Miner is a static structure
+        var ai = GetComponent<UnitAI>();
+        if (ai != null) ai.enabled = false;
+
+        TryResolveSpawner();
+
+        // If spawner isn't ready yet (link.owner assigned after Instantiate), wait one frame
+        if (mySpawner == null)
+            StartCoroutine(ResolveSpawnerNextFrame());
+        else
+            ApplySpawnerVisuals();
+    }
+
+    private IEnumerator ResolveSpawnerNextFrame()
+    {
+        yield return null;
+        TryResolveSpawner();
+        ApplySpawnerVisuals();
+    }
+
+    private void TryResolveSpawner()
+    {
+        var link = GetComponent<SpawnedUnitOwnerLink>();
+        if (link != null)
+            mySpawner = link.owner;
+    }
+
+    private void ApplySpawnerVisuals()
+    {
+        if (mySpawner == null) return;
+        mySpawner.SetProgressColor(soulProductionColor);
+        mySpawner.SetManualProgress(0f);
+    }
+
+    private void Update()
+    {
+        if (stats == null) return;
+        if (BattleManager.instance == null) return;
+        if (!BattleManager.instance.IsBattleRunning) return;
+        if (!stats.IsAlive) return;
+
+        float interval = Mathf.Max(0.05f, stats.attackCooldown);
+        productionTimer += Time.deltaTime;
+
+        float progress = Mathf.Clamp01(productionTimer / interval);
+        if (mySpawner != null)
+            mySpawner.SetManualProgress(progress);
+
+        if (productionTimer >= interval)
+        {
+            productionTimer = 0f;
+
+            if (SoulsManager.instance != null)
+                SoulsManager.instance.AddSouls(1);
+
+            stats.showFloatingDamage(1, FloatingNumberType.Heal);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (mySpawner != null)
+        {
+            mySpawner.ResetProgressColor();
+            mySpawner.SetManualProgress(0f);
+        }
+    }
 }
 
 
@@ -1059,6 +1156,7 @@ public class RangerAttack : MonoBehaviour, IAttackStrategy
             spawnHooks[i].OnProjectileSpawned(p);
     }
 }
+
 
 
 ========================
@@ -1184,6 +1282,7 @@ public class SkeletonSummoner : MonoBehaviour
 }
 
 
+
 ========================
 FILE: SummonedUnitMarker.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\AttacksTypes\SummonedUnitMarker.cs
@@ -1201,6 +1300,7 @@ public class SummonedUnitMarker : MonoBehaviour
 
     public SkeletonSummoner Owner => owner;
 }
+
 
 
 ========================
@@ -1277,11 +1377,9 @@ public class BattleCellSelectionController : MonoBehaviour
     public void SelectCell(DropAreaCell cell)
     {
         if (BattleManager.instance.IsBattleRunning) return;
-
         if (cell == null)
             return;
 
-        // Clicking the same cell again toggles selection off (hides deck).
         if (selectedCell == cell)
         {
             ClearSelection();
@@ -1289,6 +1387,12 @@ public class BattleCellSelectionController : MonoBehaviour
         }
 
         SetSelectedInternal(cell);
+
+        // Show the bonus UI for the newly selected cell
+        if (bottomPanel != null)
+        {
+            bottomPanel.ShowCellBonus(cell);
+        }
 
         if (BattleManager.instance != null && BattleManager.instance.IsBattleRunning)
         {
@@ -1305,7 +1409,6 @@ public class BattleCellSelectionController : MonoBehaviour
         }
         else
         {
-            // NEW: show upgrades for that spawner (same container), instead of hiding
             ShowUpgradesForSpawner(spawnerOnCell);
         }
     }
@@ -1359,6 +1462,7 @@ public class BattleCellSelectionController : MonoBehaviour
         // Apply special cell bonus multipliers.
         float hpMul = 1f;
         float dmgMul = 1f;
+        float spawnTimeMul = 1f;
 
         if (selectedCell.IsSpecial)
         {
@@ -1366,9 +1470,11 @@ public class BattleCellSelectionController : MonoBehaviour
                 hpMul = 1 + (selectedCell.percentValue / 100);
             else if (selectedCell.bonusType == CellBonusType.AttackPercent)
                 dmgMul = 1 + (selectedCell.percentValue / 100);
+            else if (selectedCell.bonusType == CellBonusType.SpawnTimePercent) // ADDED THIS BLOCK
+                spawnTimeMul = 1 + (selectedCell.percentValue / 100);
         }
 
-        spawner.SetCellBonusMultipliers(hpMul, dmgMul);
+        spawner.SetCellBonusMultipliers(hpMul, dmgMul, spawnTimeMul);
         BattleManager.instance?.RefreshStartBattleButton();
 
         // Per your flow: after placing, close the bottom deck and clear focus.
@@ -1425,8 +1531,10 @@ public class BattleCellSelectionController : MonoBehaviour
 
         if (bottomPanel != null)
         {
+            bottomPanel.Clear();
             bottomPanel.ShowPlaceholderText(bottomPanel.defaultPlaceholder);
             bottomPanel.HideSellButton();
+            bottomPanel.HideCellBonus();
         }
     }
 
@@ -1494,6 +1602,7 @@ public class BattleCellSelectionController : MonoBehaviour
         return null;
     }
 }
+
 
 
 ========================
@@ -1643,6 +1752,7 @@ public class EnemySpawner : MonoBehaviour
 }
 
 
+
 ========================
 FILE: EnemyWaveSpawner.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Battle\EnemyWaveSpawner.cs
@@ -1749,6 +1859,7 @@ public class EnemyWaveSpawner : MonoBehaviour
 }
 
 
+
 ========================
 FILE: SpawnedUnitOwnerLink.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Battle\SpawnedUnitOwnerLink.cs
@@ -1769,6 +1880,7 @@ public class SpawnedUnitOwnerLink : MonoBehaviour
             owner.NotifyUnitDied();
     }
 }
+
 
 
 ========================
@@ -1840,6 +1952,7 @@ public class UnitCapacityManager : MonoBehaviour
 }
 
 
+
 ========================
 FILE: UnitSpawner.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Battle\UnitSpawner.cs
@@ -1882,15 +1995,25 @@ public class UnitSpawner : MonoBehaviour
     private bool isSpawningReserve = false;
     private float hpMul = 1f;
     private float dmgMul = 1f;
+    private float spawnTimeMul = 1f;
 
     // UI smoothing runtime
     private float progressTarget = 0f;
     private Coroutine progressRoutine;
     private Transform unitsContainer;
+    // Inside fields section
+    private Color defaultProgressColor; // Stores the original bar color [1]
+    private bool spawnedStaticUnit = false;
+
 
     private void Awake()
     {
         unitsContainer = GameObject.FindGameObjectWithTag("UnitsContainer").transform;
+
+        if (spawnProgressFill != null)
+        {
+            defaultProgressColor = spawnProgressFill.color;
+        }
     }
 
     public void Configure(UnitDefinition def, Team t, int level)
@@ -1907,10 +2030,11 @@ public class UnitSpawner : MonoBehaviour
         }
     }
 
-    public void SetCellBonusMultipliers(float hpMultiplier, float dmgMultiplier)
+    public void SetCellBonusMultipliers(float hpMultiplier, float dmgMultiplier, float spawnMultiplier)
     {
         hpMul = Mathf.Max(0.01f, hpMultiplier);
         dmgMul = Mathf.Max(0.01f, dmgMultiplier);
+        spawnTimeMul = Mathf.Max(0.01f, spawnMultiplier);
     }
 
     public void StartSpawning()
@@ -1932,20 +2056,67 @@ public class UnitSpawner : MonoBehaviour
         if (unitDef == null || unitDef.prefab == null)
             yield break;
 
-        while (battleRunning && BattleManager.instance != null && BattleManager.instance.IsBattleRunning && !BattleManager.instance.IsGameOver)
+        // NEW: Spawn exactly one unit immediately for units that disable reserve
+        if (unitDef.disableReserveUnit && !spawnedStaticUnit)
+        {
+            SpawnSingleUnitImmediate();
+            spawnedStaticUnit = true;
+        }
+
+        while (battleRunning && BattleManager.instance != null &&
+               BattleManager.instance.IsBattleRunning && !BattleManager.instance.IsGameOver)
         {
             int cap = Mathf.Max(1, unitDef.baseCapacity);
 
-            // Ensure we have a reserve unit in progress or ready
-            if (!reserveReady && !isSpawningReserve)
-                StartCoroutine(SpawnReserveRoutine());
+            if (!unitDef.disableReserveUnit)
+            {
+                if (!reserveReady && !isSpawningReserve)
+                    StartCoroutine(SpawnReserveRoutine());
 
-            // If we have room for another attacker and reserve is ready, release immediately
-            if (reserveReady && attackersActive < cap)
-                ReleaseReserveToBattle();
+                if (reserveReady && attackersActive < cap)
+                    ReleaseReserveToBattle();
+            }
 
             yield return null;
         }
+    }
+    private void SpawnSingleUnitImmediate()
+    {
+        GameObject go = Instantiate(unitDef.prefab, transform.position, Quaternion.identity);
+
+        // Ensure owner link exists and points to this spawner BEFORE skill init
+        var link = go.GetComponent<SpawnedUnitOwnerLink>();
+        if (link == null)
+            link = go.AddComponent<SpawnedUnitOwnerLink>();
+        link.owner = this;
+
+        var stats = go.GetComponent<CharacterStats>();
+        if (stats == null)
+        {
+            Debug.LogError("Spawned prefab has no CharacterStats.");
+            Destroy(go);
+            return;
+        }
+
+        stats.Init(team, unitDef, unitLevel);
+
+        // Init built-in skills on prefab (MinerBehaviour will now find link.owner)
+        InitExistingSkillBehaviours(go, stats);
+
+        ApplyUpgradesToSpawnedUnit(go, stats);
+        stats.SetInitialPosition();
+        go.transform.SetParent(unitsContainer, true);
+
+        // Apply cell bonus
+        stats.maxHealth = Mathf.RoundToInt(stats.maxHealth * hpMul);
+        stats.currentHealth = stats.maxHealth;
+        stats.damage = Mathf.RoundToInt(stats.damage * dmgMul);
+
+        stats.isUntargetable = true;
+
+        SetReserveCollision(go, false);
+
+        attackersActive = Mathf.Max(attackersActive, 1);
     }
 
     private IEnumerator SpawnReserveRoutine()
@@ -1971,7 +2142,7 @@ public class UnitSpawner : MonoBehaviour
         // Wait spawnTime while updating only the progress UI (no unit instantiation, no scale animation)
         //float levelMul = UnitLevelingService.GetSpawnTimeMultiplier(unitLevel);
         //float duration = Mathf.Max(0.01f, unitDef.spawnTime * levelMul);
-        float duration = unitDef.spawnTime;
+        float duration = unitDef.spawnTime * spawnTimeMul;
         float t = 0f;
 
         while (t < duration && battleRunning && BattleManager.instance != null && BattleManager.instance.IsBattleRunning && !BattleManager.instance.IsGameOver)
@@ -1994,6 +2165,10 @@ public class UnitSpawner : MonoBehaviour
 
         // Now create the reserve unit at its normal scale
         GameObject go = Instantiate(unitDef.prefab, transform.position, Quaternion.identity);
+        var link = go.GetComponent<SpawnedUnitOwnerLink>();
+        if (link == null)
+            link = go.AddComponent<SpawnedUnitOwnerLink>();
+        link.owner = this;
         var stats = go.GetComponent<CharacterStats>();
         if (stats == null)
         {
@@ -2005,12 +2180,13 @@ public class UnitSpawner : MonoBehaviour
 
         // Init stats
         stats.Init(team, unitDef, unitLevel);
+        InitExistingSkillBehaviours(go, stats);
+
         ApplyUpgradesToSpawnedUnit(go, stats);
         stats.SetInitialPosition();
         go.transform.SetParent(unitsContainer, true);
 
         // Apply cell bonus
-        Debug.Log($"stats.maxHealth = {stats.maxHealth}, hpMul = {hpMul}");
         stats.maxHealth = Mathf.RoundToInt(stats.maxHealth * hpMul);
         stats.currentHealth = stats.maxHealth;
         stats.damage = Mathf.RoundToInt(stats.damage * dmgMul);
@@ -2113,7 +2289,8 @@ public class UnitSpawner : MonoBehaviour
 
         SetSpawnerAlpha(1f);
 
-        // Reset UI
+        // NEW: Ensure color and progress are reset for next round [9]
+        ResetProgressColor();
         SetProgressImmediate(0f);
     }
 
@@ -2136,6 +2313,10 @@ public class UnitSpawner : MonoBehaviour
     {
         if (cell == null) return;
         spawnProgressFill = cell.fillImage;
+
+        // NEW: cache original color now that we actually have the image
+        if (spawnProgressFill != null)
+            defaultProgressColor = spawnProgressFill.color;
     }
 
     private void SetProgressTarget(float value01)
@@ -2322,7 +2503,50 @@ public class UnitSpawner : MonoBehaviour
     }
 
 
+    public void SetManualProgress(float value01)
+    {
+        // Allows external units to drive the progress bar (0 to 1) [5]
+        SetProgressTarget(value01);
+        if (spawnProgressFill != null)
+        {
+            spawnProgressFill.fillAmount = value01;
+        }
+    }
+
+    public void SetProgressColor(Color newColor)
+    {
+        // Changes the bar color (e.g., to Blue for Miner) [4]
+        if (spawnProgressFill != null)
+        {
+            spawnProgressFill.color = newColor;
+        }
+    }
+
+    public void ResetProgressColor()
+    {
+        // Reverts the bar to its original unit-creation color [6]
+        if (spawnProgressFill != null)
+        {
+            spawnProgressFill.color = defaultProgressColor;
+        }
+    }
+
+    private void InitExistingSkillBehaviours(GameObject go, CharacterStats stats)
+    {
+        if (go == null || stats == null) return;
+
+        var skills = go.GetComponents<UnitSkillBehaviour>();
+        for (int i = 0; i < skills.Length; i++)
+        {
+            if (skills[i] == null) continue;
+
+            // Node is null because this is a built-in behaviour on the prefab (not an upgrade node)
+            skills[i].Init(stats, null);
+        }
+    }
+
 }
+
 
 
 ========================
@@ -2356,6 +2580,9 @@ public class BattleBottomPanelController : MonoBehaviour
     [SerializeField] public string defaultPlaceholder;
     [SerializeField] public string fullUpgradePlaceholder;
 
+    [Header("Cell Bonus")]
+    [SerializeField] private GameObject cellBonusRoot;
+    [SerializeField] private TMP_Text cellBonusText;
 
 
     private void Awake()
@@ -2487,8 +2714,63 @@ public class BattleBottomPanelController : MonoBehaviour
         placeholderText.gameObject.SetActive(false);
     }
 
+    public void ShowCellBonus(DropAreaCell cell)
+    {
+        if (cellBonusRoot == null || cellBonusText == null) return;
 
+        if (cell == null || !cell.IsSpecial)
+        {
+            cellBonusRoot.SetActive(false);
+            return;
+        }
+
+        cellBonusRoot.SetActive(true);
+
+        string statName = "";
+        bool isGoodBonus = cell.percentValue > 0; // Default: positive is good
+
+        switch (cell.bonusType)
+        {
+            case CellBonusType.AttackPercent:
+                statName = "Attack";
+                break;
+            case CellBonusType.HpPercent:
+                statName = "HP";
+                break;
+            case CellBonusType.SpawnTimePercent:
+                statName = "Spawn Time";
+                // For spawn time, less time (negative value) is a good thing
+                isGoodBonus = cell.percentValue < 0;
+                break;
+            default:
+                statName = "Stat";
+                break;
+        }
+
+        string sign = cell.percentValue > 0 ? "+" : "";
+
+        cellBonusText.text = $"{sign}{cell.percentValue}% {statName}";
+
+        // Set the text color based on whether the bonus helps the player
+        if (isGoodBonus)
+        {
+            cellBonusText.color = Color.green;
+        }
+        else
+        {
+            cellBonusText.color = Color.red;
+        }
+    }
+
+    public void HideCellBonus()
+    {
+        if (cellBonusRoot != null)
+        {
+            cellBonusRoot.SetActive(false);
+        }
+    }
 }
+
 
 
 ========================
@@ -2510,6 +2792,7 @@ public static class BattleUpgradeLogic
         );
     }
 }
+
 
 
 ========================
@@ -2570,6 +2853,7 @@ public class BattleUpgradeOptionView : MonoBehaviour
 }
 
 
+
 ========================
 FILE: BattleUpgradesManager.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Battle\DeckAndUpgrades\BattleUpgradesManager.cs
@@ -2604,6 +2888,7 @@ public class BattleUpgradesManager : MonoBehaviour
 }
 
 
+
 ========================
 FILE: UnitSpawnerBattleUpgradeState.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Battle\DeckAndUpgrades\UnitSpawnerBattleUpgradeState.cs
@@ -2628,6 +2913,7 @@ public class UnitSpawnerBattleUpgradeState : MonoBehaviour
         currentTier = Mathf.Max(currentTier, node.tier + 1);
     }
 }
+
 
 
 ========================
@@ -2731,6 +3017,7 @@ public class EnemyPreviewBubble : MonoBehaviour
 }
 
 
+
 ========================
 FILE: EnemyPreviewBubblesController.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Battle\EnemyPreviewBubble\EnemyPreviewBubblesController.cs
@@ -2813,6 +3100,7 @@ public class EnemyPreviewBubblesController : MonoBehaviour
 }
 
 
+
 ========================
 FILE: CameraAnimation.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Camera\CameraAnimation.cs
@@ -2843,6 +3131,7 @@ public class CameraAnimation : MonoBehaviour
     
 
 }
+
 
 
 ========================
@@ -2891,7 +3180,8 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     public System.Action<CharacterStats> OnHealthChanged;
     public System.Action<CharacterStats> OnDied;
 
-
+    // ADDED THIS LINE: Event triggered when this unit heals an ally
+    public System.Action<CharacterStats, int> OnHealAlly;
 
     // --- Other info ---
     [HideInInspector] public Team team;
@@ -3089,22 +3379,24 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
 
         switch (floatingNumberType)
-    {
-        case FloatingNumberType.Heal:
-            tmp.color = Color.green;
-            break;
+        {
+            case FloatingNumberType.Heal:
+                tmp.color = Color.green;
+                break;
 
-        case FloatingNumberType.Crit:
-            tmp.color = critColor;
-            break;
-
-        case FloatingNumberType.Normal:
-        default:
-            tmp.color = (team == Team.MyTeam)
-                ? Color.white
-                : Color.red;
-            break;
-    }
+            case FloatingNumberType.Crit:
+                tmp.color = critColor;
+                break;
+            case FloatingNumberType.Poison:
+                tmp.color = new Color(0.6f, 0.1f, 0.8f);
+                break;
+            case FloatingNumberType.Normal:
+            default:
+                tmp.color = (team == Team.MyTeam)
+                    ? Color.white
+                    : Color.red;
+                break;
+        }
 
 
 
@@ -3136,9 +3428,14 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         OnHealthChanged?.Invoke(this);
 
         showFloatingDamage(amount, FloatingNumberType.Heal);
-        // in the future if event needed:
-        // OnReceiveHeal?.Invoke(healer, currentHealth - before);
+
+        //  Notify the healer that they successfully healed someone
+        if (healer != null)
+        {
+            healer.OnHealAlly?.Invoke(this, amount);
+        }
     }
+
 
 
 
@@ -3271,13 +3568,15 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         Destroy(gameObject);
     }
 
-    public void ApplyStatusDamage(int amount, CharacterStats attacker)
+    public void ApplyStatusDamage(int amount, CharacterStats attacker, FloatingNumberType floatingType)
     {
-        Debug.Log("ApplyStatusDamage");
         if (amount <= 0) return;
         if (isUntargetable || currentHealth <= 0) return;
 
         currentHealth -= amount;
+
+        // ADDED THIS LINE: Show the purple floating text for the poison tick
+        showFloatingDamage(amount, floatingType);
 
         OnTakeDamage?.Invoke(attacker, amount);
         attacker?.OnDealDamage?.Invoke(this, amount);
@@ -3291,10 +3590,11 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
 
     private void DieFromStatus(CharacterStats attacker)
     {
-        Die();
+        Die(); 
     }
 
 }
+
 
 
 ========================
@@ -3383,7 +3683,8 @@ public enum CellBonusType
 {
     None,
     HpPercent,
-    AttackPercent
+    AttackPercent,
+    SpawnTimePercent
 }
 
 public enum RewardType
@@ -3420,6 +3721,7 @@ public enum FloatingNumberType
     Normal,
     Crit,
     Heal,
+    Poison
 }
 
 public enum RangeLabel
@@ -3434,6 +3736,7 @@ public enum UnitSpeedCategory
     Normal,
     Fast,
 }
+
 
 
 
@@ -3656,6 +3959,7 @@ public class FairyAI : MonoBehaviour
 }
 
 
+
 ========================
 FILE: FloatingDamage.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Characters\FloatingDamage.cs
@@ -3724,6 +4028,7 @@ public class FloatingDamage : MonoBehaviour
 }
 
 
+
 ========================
 FILE: UnitAI.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Characters\UnitAI.cs
@@ -3767,6 +4072,10 @@ public class UnitAI : MonoBehaviour
     [Header("Shooting")]
     [SerializeField] private Transform shootPoint;
     private Vector3 shootPointDefaultLocalPos;
+
+    [Header("Taunt State")]
+    private CharacterStats activeTaunter;
+    private float tauntEndTime;
 
     public WallHealth wall;
     public WallCombatTarget wallTarget;
@@ -3835,8 +4144,6 @@ public class UnitAI : MonoBehaviour
 
     private void Update()
     {
-
-
         if (myStats == null || myStats.currentHealth <= 0)
         {
             StopMoving();
@@ -3853,8 +4160,15 @@ public class UnitAI : MonoBehaviour
             return;
         }
 
+        // ADDED FOR TAUNT: Force the unit to only chase/attack the taunter
+        // This completely bypasses the wall logic and normal targeting
+        if (activeTaunter != null && activeTaunter.IsAlive && Time.time < tauntEndTime)
+        {
+            HandleUnitTargetMovementAndAttack();
+            return;
+        }
 
-        // Enemy logic (unchanged)
+        // Enemy logic: check if already locked on the wall
         if (myStats.team == Team.EnemyTeam && wall != null && wallTarget != null && wallLocked)
         {
             targetStats = null;
@@ -3871,30 +4185,40 @@ public class UnitAI : MonoBehaviour
                 AttackWallIfInRange();
             }
             return;
-
         }
 
+        // Enemy logic: general targeting
         if (myStats.team == Team.EnemyTeam && wall != null && wallTarget != null)
         {
-            CharacterStats candidate = FindClosestTargetableEnemy();
             float distToWall = DistanceToWallCollider();
 
-            if (candidate != null)
+            // CHANGED: Only search for nearby player units if our priority is NOT the Wall
+            // This allows units like the Gnoll (Wall priority) to ignore blockers.
+            if (myStats.definition.targetPriorityClass != UnitClass.Wall)
             {
-                float distToUnit = Vector3.Distance(transform.position, candidate.transform.position);
-                if (distToUnit < distToWall)
+                CharacterStats candidate = FindClosestTargetableEnemy();
+
+                if (candidate != null)
                 {
-                    SetUnitTarget(candidate);
-                    HandleUnitTargetMovementAndAttack();
-                    return;
+                    float distToUnit = Vector3.Distance(transform.position, candidate.transform.position);
+                    // Standard behavior: attack closer units
+                    if (distToUnit < distToWall)
+                    {
+                        SetUnitTarget(candidate);
+                        HandleUnitTargetMovementAndAttack();
+                        return;
+                    }
                 }
             }
 
+            // If unit priority is Wall OR no unit blockers are closer, move to wall
             SetWallTargetSoft();
             UpdateFacingToTransform(wall.transform);
 
             if (distToWall > myStats.attackRange - stoppingBuffer)
+            {
                 MoveTowardWall();
+            }
             else
             {
                 StopMoving();
@@ -3903,7 +4227,7 @@ public class UnitAI : MonoBehaviour
             return;
         }
 
-        // Non-enemy normal targeting
+        // Non-enemy normal targeting (Player Units)
         if (targetStats == null || targetStats.currentHealth <= 0 || targetStats.isUntargetable)
         {
             targetStats = FindClosestTargetableEnemy();
@@ -3920,7 +4244,6 @@ public class UnitAI : MonoBehaviour
         }
 
         MaybeRetargetToClosest();
-
         HandleUnitTargetMovementAndAttack();
     }
 
@@ -3945,6 +4268,18 @@ public class UnitAI : MonoBehaviour
             StopMoving();
             AttackCurrentTarget();
         }
+    }
+
+    public void ApplyTaunt(CharacterStats taunter, float duration)
+    {
+        if (taunter == null || !taunter.IsAlive) return;
+
+        activeTaunter = taunter;
+        tauntEndTime = Time.time + duration;
+
+        // Force the unit to switch target to the taunter immediately
+        SetUnitTarget(taunter);
+        CleanupGateRouting();
     }
 
     // CHANGED: Gate routing that opens on entry and closes on exit
@@ -4156,10 +4491,14 @@ public class UnitAI : MonoBehaviour
 
         float dist = DistanceToWallCollider();
         if (dist > myStats.attackRange)
+        {
+
             return;
+        }
 
         animator?.SetBool("isMoving", false);
         target = wallTarget;
+
 
         if (Time.time - lastAttackTime >= myStats.attackCooldown)
         {
@@ -4229,6 +4568,12 @@ public class UnitAI : MonoBehaviour
         if (myStats == null) return;
         if (isInterrupted || isKnockbacked) return;
 
+        // Ignore retargeting if currently taunted
+        if (activeTaunter != null && activeTaunter.IsAlive && Time.time < tauntEndTime)
+        {
+            return;
+        }
+
         CharacterStats closest = FindClosestTargetableEnemy();
         if (closest == null) return;
 
@@ -4260,6 +4605,7 @@ public class UnitAI : MonoBehaviour
 }
 
 
+
 ========================
 FILE: UnitSellButton.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Characters\UnitSellButton.cs
@@ -4283,6 +4629,7 @@ public class UnitSellButton : MonoBehaviour
         _spawner.SellSpawner();
     }
 }
+
 
 
 ========================
@@ -4353,6 +4700,7 @@ public class NinjaGhostTrail : MonoBehaviour
         }
     }
 }
+
 
 
 ========================
@@ -4451,6 +4799,7 @@ public class NinjaStealthRun : MonoBehaviour
 }
 
 
+
 ========================
 FILE: UnitUpgradeDetailsPopupController.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Characters\UnitsUpgrade\UnitUpgradeDetailsPopupController.cs
@@ -4532,6 +4881,7 @@ public class UnitUpgradeDetailsPopupController : MonoBehaviour
         if (root != null)
             root.SetActive(true);
 
+
         RefreshUI();
 
         // open animation (optional)
@@ -4607,11 +4957,13 @@ public class UnitUpgradeDetailsPopupController : MonoBehaviour
             FindAnyObjectByType<UnitsCollectionManager>()?.RebuildCollection();
         }
 
+        UnitDetailsPopupController.Instance.FillData();
         RefreshUI();
 
         
     }
 }
+
 
 
 ========================
@@ -4660,6 +5012,7 @@ public class UnitUpgradeNodeView : MonoBehaviour
         }
     }
 }
+
 
 
 ========================
@@ -4751,6 +5104,7 @@ public static class UnitUpgradeProgressService
         return true;
     }
 }
+
 
 
 ========================
@@ -4992,6 +5346,7 @@ public class UpgradeTreeUIController : MonoBehaviour
 }
 
 
+
 ========================
 FILE: ChestOpenButton.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Chests\ChestOpenButton.cs
@@ -5052,6 +5407,7 @@ public class ChestOpenButton : MonoBehaviour
         if (_button) _button.interactable = true;
     }
 }
+
 
 
 ========================
@@ -5244,6 +5600,7 @@ public class ChestOpener : MonoBehaviour
 }
 
 
+
 ========================
 FILE: ChestReward.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Chests\ChestReward.cs
@@ -5254,6 +5611,7 @@ public struct ChestReward
 {
     public int gold;
     public int gems;
+    public int scrolls;
 
     public int wheelTokens;
 
@@ -5274,9 +5632,10 @@ public struct ChestReward
 
         string tokenText = wheelTokens > 0 ? $" | WheelTokens: {wheelTokens}" : "";
 
-        return $"Gold: {gold}, Diamonds: {gems}, Part: {partText}{tokenText}";
+        return $"Gold: {gold}, Diamonds: {gems}, scrolls: {scrolls}, Part: {partText}{tokenText}";
     }
 }
+
 
 
 ========================
@@ -5372,6 +5731,7 @@ public static class ChestRewardCalculator
         return weights[weights.Length - 1].rarity;
     }
 }
+
 
 
 ========================
@@ -5515,6 +5875,7 @@ public class ChestRewardsSpawner : MonoBehaviour
             Destroy(rewardsGrid.GetChild(i).gameObject);
     }
 }
+
 
 
 ========================
@@ -5681,6 +6042,7 @@ public class RewardItemUI : MonoBehaviour
 }
 
 
+
 ========================
 FILE: FortuneWheelReward.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\FortuneWheelReward.cs
@@ -5719,6 +6081,7 @@ public class FortuneWheelReward
     public ChestDefinition chestDefinition;
     // Keep it ScriptableObject for now so you can plug your chest asset without forcing a specific class.
 }
+
 
 
 ========================
@@ -5765,6 +6128,7 @@ public struct RarityWeight
     public PartRarity rarity;
     public float weight;
 }
+
 
 
 ========================
@@ -5868,6 +6232,7 @@ public class EnemySpawnPhase
 //    public int count = 1;
    
 //}
+
 
 
 ========================
@@ -5999,6 +6364,7 @@ public class LevelsDatabase : MonoBehaviour
 }
 
 
+
 ========================
 FILE: MasteryDatabase.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\MasteryItems\MasteryDatabase.cs
@@ -6022,6 +6388,7 @@ public class MasteryDatabase : ScriptableObject
     [Header("Items")]
     public List<MasteryItemDefinition> items = new List<MasteryItemDefinition>();
 }
+
 
 
 ========================
@@ -6084,6 +6451,7 @@ public class MasteryItemDefinition : ScriptableObject
 }
 
 
+
 ========================
 FILE: MissionDefinition.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Missions\MissionDefinition.cs
@@ -6141,6 +6509,7 @@ public class MissionDefinition : ScriptableObject
 }
 
 
+
 ========================
 FILE: PartDefinition.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Parts\PartDefinition.cs
@@ -6194,6 +6563,7 @@ public class UnitRarityWeights : ScriptableObject
 }
 
 
+
 ========================
 FILE: UnitSkillEffectDefinition.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Skills\UnitSkillEffectDefinition.cs
@@ -6207,6 +6577,7 @@ public abstract class UnitSkillEffectDefinition : ScriptableObject
 {
     public abstract UnitSkillBehaviour AddTo(GameObject host, CharacterStats stats);
 }
+
 
 
 ========================
@@ -6237,6 +6608,7 @@ public class StoreDatabase : ScriptableObject
         return result;
     }
 }
+
 
 
 ========================
@@ -6316,6 +6688,7 @@ public enum CostType
     Gold,
     Gems
 }
+
 
 
 
@@ -6468,6 +6841,7 @@ public class StoreManager : MonoBehaviour
 }
 
 
+
 ========================
 FILE: UnitDefinition.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\UnitDefinition.cs
@@ -6506,6 +6880,7 @@ public class UnitDefinition : ScriptableObject
     public int baseCapacity = 1;
     public UnitUpgradeNodeDefinition unlockNode;
     public List<UnitUpgradeNodeDefinition> nodes = new();
+    public bool disableReserveUnit = false;
 
     [Header("Fill this for enemies only")]
     [Range(0f, 1f)] public float soulDropChance = 0.25f;
@@ -6567,6 +6942,7 @@ public class UnitsUnlockConfig : ScriptableObject
     public UnitDefinition[] allUnits;    
     public UnitDefinition[] startingUnits; 
 }
+
 
 
 ========================
@@ -6795,6 +7171,7 @@ public class UnlockedUnitsManager : MonoBehaviour
 }
 
 
+
 ========================
 FILE: UnitUpgradeNodeDefinition.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\UnitUpgradeNodeDefinition.cs
@@ -6837,6 +7214,7 @@ public class UnitUpgradeNodeDefinition : ScriptableObject
 
     public bool IsValid() => !string.IsNullOrEmpty(nodeId);
 }
+
 
 
 ========================
@@ -6926,6 +7304,7 @@ public class FortuneWheelSlotDefinition : ScriptableObject
 }
 
 
+
 ========================
 FILE: DropAreaCell.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\DropArea\DropAreaCell.cs
@@ -6978,9 +7357,20 @@ public class DropAreaCell : MonoBehaviour
             return;
 
         Color c = new Color(1, 1, 1, 0.4f);
+
         if (IsSpecial)
         {
-            c = percentValue >= 0f
+            // Default logic: positive value is a good bonus
+            bool isGoodBonus = percentValue > 0f;
+
+            // Special logic for spawn time: negative value is a good bonus
+            if (bonusType == CellBonusType.SpawnTimePercent)
+            {
+                isGoodBonus = percentValue < 0f;
+            }
+
+            // Apply green for a good bonus, red for a bad penalty
+            c = isGoodBonus
                 ? new Color(0f, 1f, 0f, 0.7f)
                 : new Color(1f, 0f, 0f, 0.7f);
         }
@@ -7022,6 +7412,7 @@ public class DropAreaCell : MonoBehaviour
         BattleCellSelectionController.Instance?.SelectCell(this);
     }
 }
+
 
 
 ========================
@@ -7278,6 +7669,7 @@ public class DropAreaGrid : MonoBehaviour
 }
 
 
+
 ========================
 FILE: HitFlash.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Effects\HitFlash.cs
@@ -7303,6 +7695,7 @@ public class HitFlash : MonoBehaviour
 }
 
 
+
 ========================
 FILE: MeteorExplosion.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Effects\MeteorExplosion.cs
@@ -7317,6 +7710,7 @@ public class MeteorExplosion : MonoBehaviour
         Destroy(gameObject);
     }
 }
+
 
 
 ========================
@@ -7398,6 +7792,49 @@ public class SkeletonEmerge : MonoBehaviour
 }
 
 
+
+========================
+FILE: VampireDeathSpawn.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Effects\VampireDeathSpawn.cs
+========================
+using UnityEngine;
+
+public class VampireDeathSpawn : MonoBehaviour
+{
+    [Header("Setup")]
+    [SerializeField] private GameObject batPrefab;
+
+    private CharacterStats stats;
+
+    private void Awake()
+    {
+        stats = GetComponent<CharacterStats>();
+    }
+
+    private void OnEnable()
+    {
+        if (stats != null)
+            stats.OnDied += HandleVampireDied;
+    }
+
+    private void OnDisable()
+    {
+        if (stats != null)
+            stats.OnDied -= HandleVampireDied;
+    }
+
+    private void HandleVampireDied(CharacterStats vampireStats)
+    {
+        Debug.Log("HandleVampireDied");
+        if (batPrefab != null)
+        {
+            // Spawn the bat at current vampire position
+            Instantiate(batPrefab, transform.position, Quaternion.identity);
+        }
+    }
+}
+
+
 ========================
 FILE: DailyLoginManager.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\GameSystems\DailyLoginManager.cs
@@ -7449,6 +7886,7 @@ public class DailyLoginManager : MonoBehaviour
 }
 
 
+
 ========================
 FILE: GameBootstrapper.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\GameSystems\GameBootstrapper.cs
@@ -7470,6 +7908,7 @@ public class GameBootstrapper : MonoBehaviour
         Debug.Log("GameBootstrapper: Parts inventory loaded");
     }
 }
+
 
 
 ========================
@@ -7583,6 +8022,7 @@ public class GameData : MonoBehaviour
 }
 
 
+
 ========================
 FILE: HomeBootstrapper.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\GameSystems\HomeBootstrapper.cs
@@ -7656,6 +8096,7 @@ public class HomeBootstrapper : MonoBehaviour
         return false;
     }
 }
+
 
 
 ========================
@@ -7861,6 +8302,7 @@ public class HomeCurrencyUI : MonoBehaviour
 }
 
 
+
 ========================
 FILE: JsonSaveSystem.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\GameSystems\JsonSaveSystem.cs
@@ -7902,6 +8344,7 @@ public static class JsonSaveSystem
             File.Delete(FullPath);
     }
 }
+
 
 
 ========================
@@ -8010,6 +8453,7 @@ public class LoadingSceneController : MonoBehaviour
         loadingText.text = "Loading" + new string('.', dots);
     }
 }
+
 
 
 ========================
@@ -8137,6 +8581,7 @@ public class PartDropManager : MonoBehaviour
 
     // You can keep the old GetRandomPartForUnlockedUnits() if you still use it elsewhere.
 }
+
 
 
 ========================
@@ -8351,6 +8796,7 @@ public class PlayerCurrencyWallet : MonoBehaviour
         GameData.Instance.SaveNow();
     }
 }
+
 
 
 ========================
@@ -8591,6 +9037,7 @@ public class MasteryLevelData
 
 
 
+
 ========================
 FILE: SettingsManager.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\GameSystems\SettingsManager.cs
@@ -8719,6 +9166,7 @@ public class SettingsManager : MonoBehaviour
     }
 #endif*/
 }
+
 
 
 ========================
@@ -9016,6 +9464,7 @@ public class AdsManager : MonoBehaviour
 }
 
 
+
 ========================
 FILE: FirebaseAnalyticsManager.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\GameSystems\Firebase\FirebaseAnalyticsManager.cs
@@ -9040,6 +9489,7 @@ public class FirebaseAnalyticsManager : MonoBehaviour
 #endif
     }
 }
+
 
 
 ========================
@@ -9264,6 +9714,7 @@ public class FirebaseBootstrap : MonoBehaviour
             logText.text = string.Join("\n", lines, lines.Length - maxLines, maxLines);
     }
 }
+
 
 
 ========================
@@ -9742,6 +10193,7 @@ public class FirebaseSaveSync : MonoBehaviour
 }
 
 
+
 ========================
 FILE: GameAssets.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\GameSystems\GameAssets\GameAssets.cs
@@ -9753,6 +10205,7 @@ public class GameAssets : ScriptableObject
 {
     public GameObject floatingDamagePrefab;
 }
+
 
 
 ========================
@@ -9782,6 +10235,7 @@ public class GameAssetsProvider : MonoBehaviour
             Debug.LogError("[GameAssetsProvider] Missing GameAssets reference in inspector!");
     }
 }
+
 
 
 ========================
@@ -9893,6 +10347,7 @@ public class HourlyChestClaimButton : MonoBehaviour
         return (t.TotalSeconds < 0) ? TimeSpan.Zero : t;
     }
 }
+
 
 
 ========================
@@ -10074,6 +10529,7 @@ public class LevelRewardRowView : MonoBehaviour
 }
 
 
+
 ========================
 FILE: LevelRewardsDatabase.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\LevelRewards\LevelRewardsDatabase.cs
@@ -10133,6 +10589,7 @@ public class LevelRewardsDatabase : ScriptableObject
         return $"lvl_{level}_lane_{(int)lane}";
     }
 }
+
 
 
 ========================
@@ -10368,6 +10825,7 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
         GameData.Instance.SaveNow();
     }
 }
+
 
 
 ========================
@@ -10668,6 +11126,7 @@ public class LevelRewardWindowController : MonoBehaviour
 }
 
 
+
 ========================
 FILE: MasteryBonusManager.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Mastery\MasteryBonusManager.cs
@@ -10748,6 +11207,7 @@ public class MasteryBonusManager : MonoBehaviour
     public int GetFlatInt(MasteryStat stat)
         => Mathf.RoundToInt(GetFlat(stat)); // or FloorToInt if you prefer
 }
+
 
 
 ========================
@@ -11035,6 +11495,7 @@ public class MasteryCollectionController : MonoBehaviour
 }
 
 
+
 ========================
 FILE: MasteryItemDetailsPopup.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Mastery\MasteryItemDetailsPopup.cs
@@ -11118,6 +11579,7 @@ public class MasteryItemDetailsPopup : MonoBehaviour
         popupAnimator.Close();
     }
 }
+
 
 
 ========================
@@ -11237,6 +11699,7 @@ public class MasteryItemView : MonoBehaviour
 }
 
 
+
 ========================
 FILE: MasteryProgress.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Mastery\MasteryProgress.cs
@@ -11311,6 +11774,7 @@ public static class MasteryProgress
         GameData.Instance.SaveNow();
     }
 }
+
 
 
 ========================
@@ -11525,6 +11989,7 @@ public static class MasterySystem
 }
 
 
+
 ========================
 FILE: MissionContainer.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Missions\MissionContainer.cs
@@ -11545,8 +12010,6 @@ public class MissionContainer : MonoBehaviour
     [SerializeField] private Button claimButton;
     [SerializeField] private TMP_Text claimButtonText;
     [SerializeField] private Image rewardIcon;
-    [SerializeField] private Sprite goldSprite;
-    [SerializeField] private Sprite gemSprite;
     [SerializeField] private Image completedMissionMark;
     [SerializeField] private Sprite activeButtonSprite;
     [SerializeField] private Sprite inactiveButtonSprite;
@@ -11561,12 +12024,17 @@ public class MissionContainer : MonoBehaviour
         if (mission.definition.goldReward > 0)
         {
             rewardText.text = mission.definition.goldReward.ToString();
-            rewardIcon.sprite = goldSprite;
+            rewardIcon.sprite = StyleManager.instance.goldSprite;
         }
         if (mission.definition.gemsReward > 0)
         {
             rewardText.text = mission.definition.gemsReward.ToString();
-            rewardIcon.sprite = gemSprite;
+            rewardIcon.sprite = StyleManager.instance.gemSprite;
+        }
+        if (mission.definition.scrollsReward> 0)
+        {
+            rewardText.text = mission.definition.scrollsReward.ToString();
+            rewardIcon.sprite = StyleManager.instance.scrollSprite;
         }
         if (mission.definition.chestReward != null)
         {
@@ -11661,6 +12129,7 @@ public class MissionContainer : MonoBehaviour
 }
 
 
+
 ========================
 FILE: MissionDatabase.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Missions\MissionDatabase.cs
@@ -11721,6 +12190,7 @@ public class MissionDatabase : ScriptableObject
 }
 
 
+
 ========================
 FILE: MissionInstance.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Missions\MissionInstance.cs
@@ -11764,6 +12234,7 @@ public class MissionInstance
 }
 
 
+
 ========================
 FILE: MissionsButtonNotifier.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Missions\MissionsButtonNotifier.cs
@@ -11798,6 +12269,7 @@ public class MissionsButtonNotifier : MonoBehaviour
         exclamationIcon.SetActive(show);
     }
 }
+
 
 
 ========================
@@ -11947,6 +12419,7 @@ public class MissionsCompletionBar : MonoBehaviour
             MissionsManager.Instance.ClaimWeeklySetReward(from);
     }
 }
+
 
 
 ========================
@@ -12377,6 +12850,7 @@ public class MissionsManager : MonoBehaviour
 }
 
 
+
 ========================
 FILE: MissionsScreen.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Missions\MissionsScreen.cs
@@ -12671,6 +13145,7 @@ public class PlayerXPManager : MonoBehaviour
 }
 
 
+
 ========================
 FILE: ArrowEffect.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Projectiles\ArrowEffect.cs
@@ -12738,6 +13213,131 @@ public class ArrowEffect : MonoBehaviour
 
         if (trailEffect != null)
             trailEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+    }
+}
+
+
+
+========================
+FILE: DeathBatBehaviour.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Projectiles\DeathBatBehaviour.cs
+========================
+using System.Collections;
+using UnityEngine;
+
+// This script handles the natural flight path of the death bat:
+// 1. Rises up from the Vampire's death position.
+// 2. Swoops in a curved motion toward the wall.
+public class DeathBatBehaviour : MonoBehaviour
+{
+    [Header("Phase 1: Rise")]
+    public float riseHeight = 1.5f;
+    public float riseDuration = 0.4f;
+
+    [Header("Phase 2: Swoop to Wall")]
+    public float flightSpeed = 5f;
+    public float curveHeight = 1.0f; // Extra height for the "turn" arc
+    public float arrivalDistance = 0.2f;
+
+    [Header("Damage")]
+    public int damageToWall = 10;
+
+    private WallHealth targetWall;
+    private NinjaGhostTrail ghostTrail;
+    private SpriteRenderer spriteRenderer;
+
+    private void Start()
+    {
+        targetWall = FindFirstObjectByType<WallHealth>();
+        ghostTrail = GetComponent<NinjaGhostTrail>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (ghostTrail != null)
+            ghostTrail.StartTrail();
+
+        if (targetWall != null)
+        {
+            StartCoroutine(FlightRoutine());
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private IEnumerator FlightRoutine()
+    {
+        Vector3 startPos = transform.position;
+        Vector3 peakPos = startPos + Vector3.up * riseHeight;
+
+        // --- STEP 1: RISE UP ---
+        float elapsed = 0f;
+        while (elapsed < riseDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / riseDuration;
+            // Smoothly lerp to the peak
+            transform.position = Vector3.Lerp(startPos, peakPos, Mathf.SmoothStep(0, 1, t));
+            yield return null;
+        }
+
+        // --- STEP 2: CURVED SWOOP TO WALL ---
+        Vector3 currentPos = transform.position;
+        Vector3 wallPos = targetWall.transform.position;
+
+        // Calculate duration based on distance and speed
+        float distance = Vector3.Distance(currentPos, wallPos);
+        float flightDuration = distance / flightSpeed;
+
+        elapsed = 0f;
+        while (elapsed < flightDuration)
+        {
+            if (targetWall == null || targetWall.destroyed) break;
+
+            elapsed += Time.deltaTime;
+            float t = elapsed / flightDuration;
+
+            // Update wall position in case it moves (though walls are usually static)
+            wallPos = targetWall.transform.position;
+
+            // Quadratic Bezier Curve for the "Turn/Circle" feel
+            // p0 = peak, p2 = wall, p1 = mid-point with extra height
+            Vector3 p0 = currentPos;
+            Vector3 p2 = wallPos;
+            Vector3 p1 = (p0 + p2) * 0.5f + Vector3.up * curveHeight;
+
+            // Move along the curve
+            Vector3 m1 = Vector3.Lerp(p0, p1, t);
+            Vector3 m2 = Vector3.Lerp(p1, p2, t);
+            transform.position = Vector3.Lerp(m1, m2, t);
+
+            // Flip sprite based on direction
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.flipX = wallPos.x < transform.position.x;
+            }
+
+            // Check arrival
+            if (Vector3.Distance(transform.position, p2) <= arrivalDistance)
+            {
+                HitWall();
+                yield break;
+            }
+
+            yield return null;
+        }
+
+        // Fallback if loop ends
+        HitWall();
+    }
+
+    private void HitWall()
+    {
+        if (targetWall != null && !targetWall.destroyed)
+        {
+            targetWall.TakeDamage(damageToWall);
+        }
+        Destroy(gameObject);
     }
 }
 
@@ -12810,6 +13410,7 @@ public class HealProjectile : MonoBehaviour
 }
 
 
+
 ========================
 FILE: LightningBoltVfx.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Projectiles\LightningBoltVfx.cs
@@ -12859,6 +13460,7 @@ public class LightningBoltVfx : MonoBehaviour
         Destroy(gameObject);
     }
 }
+
 
 
 ========================
@@ -12993,6 +13595,7 @@ public class MeteorProjectile : MonoBehaviour
     }
 #endif
 }
+
 
 
 ========================
@@ -13169,6 +13772,7 @@ public class Projectile : MonoBehaviour
 }
 
 
+
 ========================
 FILE: UnitSkillBehaviour.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\UnitSkillBehaviour.cs
@@ -13188,6 +13792,79 @@ public abstract class UnitSkillBehaviour : MonoBehaviour
     }
 
     protected virtual void OnInit() { }
+}
+
+
+
+========================
+FILE: StatusEffectEnergize.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\Effects\StatusEffectEnergize.cs
+========================
+using UnityEngine;
+
+public class StatusEffectEnergize : MonoBehaviour
+{
+    private CharacterStats target;
+    private float speedBuffPercent;
+    private float duration;
+
+    private float baseCooldown;
+    private float timer;
+    private bool initialized = false;
+
+    public void Apply(CharacterStats targetStats, float buffPercent, float buffDuration)
+    {
+        target = targetStats;
+        speedBuffPercent = Mathf.Clamp01(buffPercent);
+        duration = buffDuration;
+
+        if (!initialized)
+        {
+            initialized = true;
+            // Save the original cooldown so we can restore it later
+            baseCooldown = target.attackCooldown;
+
+            // Reduce the attack cooldown (meaning faster attacks)
+            target.attackCooldown = baseCooldown * (1f - speedBuffPercent);
+        }
+
+        // Reset the timer if the fairy heals this unit again before the buff expires
+        timer = duration;
+    }
+
+    private void Update()
+    {
+        if (target == null || !target.IsAlive)
+        {
+            Remove();
+            return;
+        }
+
+        timer -= Time.deltaTime;
+        if (timer <= 0f)
+        {
+            Remove();
+        }
+    }
+
+    private void Remove()
+    {
+        if (target != null && initialized)
+        {
+            // Restore original attack speed
+            target.attackCooldown = baseCooldown;
+        }
+        Destroy(this);
+    }
+
+    private void OnDestroy()
+    {
+        // Safety catch in case the object is destroyed abruptly
+        if (target != null && initialized)
+        {
+            target.attackCooldown = baseCooldown;
+        }
+    }
 }
 
 
@@ -13257,10 +13934,11 @@ public class StatusEffectPoison : MonoBehaviour
     {
         if (damagePerTick <= 0) return;
 
-        target.ApplyStatusDamage(damagePerTick, source);
+        target.ApplyStatusDamage(damagePerTick, source, FloatingNumberType.Poison);
         Debug.Log($"Poison tick: {damagePerTick}");
     }
 }
+
 
 
 ========================
@@ -13334,6 +14012,147 @@ public class StatusEffectSlow : MonoBehaviour
 }
 
 
+
+========================
+FILE: AoEImpactSkill.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\AoEImpactSkill.cs
+========================
+using UnityEngine;
+using System.Collections.Generic;
+
+// This script implements a reusable AoE Cleave ability.
+// It syncs with the unit's internal attack speed and includes a recursion guard.
+public class AoEImpactSkill : MonoBehaviour
+{
+    private CharacterStats myStats;
+
+    [Header("Skill Settings")]
+    [SerializeField] private float effectRadius = 2.0f;
+    [SerializeField] private LayerMask targetLayer;
+
+    private float lastExecutionTime;
+    private bool isExecuting = false; // Guard to prevent infinite damage loops
+
+    private void Awake()
+    {
+        myStats = GetComponent<CharacterStats>();
+    }
+
+    private void OnEnable()
+    {
+        if (myStats != null)
+        {
+            // Subscribing to the built-in event in CharacterStats.cs [2]
+            myStats.OnDealDamage += HandleAoEEffect;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (myStats != null)
+        {
+            myStats.OnDealDamage -= HandleAoEEffect;
+        }
+    }
+
+    private void HandleAoEEffect(CharacterStats mainTarget, int damageDealt)
+    {
+        // RECURSION GUARD: Prevents AoE damage from triggering another AoE cycle
+        if (isExecuting) return;
+
+        // SYNC COOLDOWN: Uses the character's base attack speed from stats [2, 4]
+        if (Time.time - lastExecutionTime < myStats.attackCooldown) return;
+
+        isExecuting = true;
+        lastExecutionTime = Time.time;
+
+        // Find nearby enemies [5]
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, effectRadius, targetLayer);
+
+        foreach (var hit in hits)
+        {
+            CharacterStats secondaryTarget = hit.GetComponent<CharacterStats>();
+
+            // Validations: check team and ensure target is alive [6, 7]
+            if (secondaryTarget != null && secondaryTarget != mainTarget && secondaryTarget.IsAlive)
+            {
+                if (secondaryTarget.team != myStats.team)
+                {
+                    // Calculate damage based on character stats [8]
+                    int aoeDamage = Mathf.RoundToInt(myStats.damage);
+
+                    // Apply damage through the standard system [9]
+                    secondaryTarget.TakeDamage(aoeDamage, myStats);
+                }
+            }
+        }
+
+        // Release the guard after the loop finishes
+        isExecuting = false;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, effectRadius);
+    }
+}
+
+
+========================
+FILE: EnemyLifeSteal.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\EnemyLifeSteal.cs
+========================
+using UnityEngine;
+
+// Specialized lifesteal for enemy units like the Vampire.
+public class EnemyLifeSteal : MonoBehaviour
+{
+    [Header("Settings")]
+    [SerializeField] private float lifeStealPercent = 0.2f; // Default 20%
+
+    private CharacterStats stats;
+
+    private void Awake()
+    {
+        stats = GetComponent<CharacterStats>();
+    }
+
+    private void Start()
+    {
+        // Subscribe to the damage event common to all CharacterStats
+        if (stats != null)
+        {
+            stats.OnDealDamage += HandleDealDamage;
+        }
+    }
+
+    private void HandleDealDamage(CharacterStats target, int damage)
+    {
+        if (stats == null || !stats.IsAlive) return;
+
+        // Calculate heal amount based on damage dealt
+        int heal = Mathf.RoundToInt(damage * lifeStealPercent);
+        if (heal <= 0) return;
+
+        // Apply heal and stay within max health limits
+        stats.currentHealth = Mathf.Min(stats.currentHealth + heal, stats.maxHealth);
+
+        // Use existing floating text system for feedback
+        stats.showFloatingDamage(heal, FloatingNumberType.Heal);
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe to avoid memory leaks
+        if (stats != null)
+        {
+            stats.OnDealDamage -= HandleDealDamage;
+        }
+    }
+}
+
+
 ========================
 FILE: ProjectileRicochet.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\ProjectileRicochet.cs
@@ -13402,6 +14221,32 @@ public class ProjectileRicochet : MonoBehaviour, IProjectileOnHit
 }
 
 
+
+========================
+FILE: SkillBonusDamagePercent.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillBonusDamagePercent.cs
+========================
+using UnityEngine;
+
+public class SkillBonusDamagePercent : UnitSkillBehaviour
+{
+    protected override void OnInit()
+    {
+        if (stats == null || node == null) return;
+
+        // Map values from the upgrade node definition (e.g., 0.2 for 20%)
+        float percentMultiplier = Mathf.Clamp(node.skillPercentValue, 0f, 10f);
+
+        // Calculate the extra damage
+        // Note: For the Fairy unit, 'damage' acts as her healing power
+        int extraDamage = Mathf.RoundToInt(stats.damage * percentMultiplier);
+
+        // Apply the bonus directly to the unit's stats
+        stats.damage += extraDamage;
+    }
+}
+
+
 ========================
 FILE: SkillBonusMaxHpPercent.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillBonusMaxHpPercent.cs
@@ -13418,6 +14263,58 @@ public class SkillBonusMaxHpPercent : UnitSkillBehaviour
 
         stats.maxHealth = newMax;
         stats.currentHealth += delta;
+    }
+}
+
+
+
+========================
+FILE: SkillEnergize.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillEnergize.cs
+========================
+using UnityEngine;
+
+public class SkillEnergize : UnitSkillBehaviour
+{
+    private float buffPercent;
+    private float duration;
+
+    protected override void OnInit()
+    {
+        if (stats == null || node == null) return;
+
+        // Map values from the upgrade node definition
+        buffPercent = Mathf.Clamp01(node.skillPercentValue);
+        duration = Mathf.Max(0.5f, node.skillDuration);
+
+        // Subscribe to the healing event
+        stats.OnHealAlly += HandleHealAlly;
+    }
+
+    private void HandleHealAlly(CharacterStats healedTarget, int amountHealed)
+    {
+        if (healedTarget == null || !healedTarget.IsAlive) return;
+
+        // Prevent fairies from energizing themselves or other units ignoring buffs (if needed)
+        if (healedTarget == stats) return;
+
+        // Add or update the energize status effect on the target
+        var energize = healedTarget.GetComponent<StatusEffectEnergize>();
+        if (energize == null)
+        {
+            energize = healedTarget.gameObject.AddComponent<StatusEffectEnergize>();
+        }
+
+        energize.Apply(healedTarget, buffPercent, duration);
+    }
+
+    private void OnDestroy()
+    {
+        // Cleanup event subscription
+        if (stats != null)
+        {
+            stats.OnHealAlly -= HandleHealAlly;
+        }
     }
 }
 
@@ -13476,6 +14373,7 @@ public class SkillFuryBelowHalfHp : UnitSkillBehaviour
 }
 
 
+
 ========================
 FILE: SkillIcyArrow.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillIcyArrow.cs
@@ -13513,6 +14411,7 @@ public class SkillIcyArrow : UnitSkillBehaviour, IOnHitEffect, IOnProjectileSpaw
         slow.Apply(target, slowPercent, slowDuration);
     }
 }
+
 
 
 ========================
@@ -13555,6 +14454,7 @@ public class SkillLifeSteal : UnitSkillBehaviour
 }
 
 
+
 ========================
 FILE: SkillPoisonArrow.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillPoisonArrow.cs
@@ -13592,6 +14492,7 @@ public class SkillPoisonArrow : UnitSkillBehaviour, IOnHitEffect, IOnProjectileS
 }
 
 
+
 ========================
 FILE: SkillRicochet.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillRicochet.cs
@@ -13619,6 +14520,193 @@ public class SkillRicochet : UnitSkillBehaviour, IOnProjectileSpawned
         if (ric == null) ric = projectile.gameObject.AddComponent<ProjectileRicochet>();
 
         ric.Init(bounces, radius, falloff);
+    }
+}
+
+
+
+========================
+FILE: SkillShieldBash.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillShieldBash.cs
+========================
+using UnityEngine;
+
+public class SkillShieldBash : UnitSkillBehaviour
+{
+    private float knockbackChance;
+    private float knockbackDistance;
+    private float knockbackDuration;
+
+    protected override void OnInit()
+    {
+        if (stats == null || node == null) return;
+
+        // Map values from the upgrade node definition
+        knockbackChance = Mathf.Clamp01(node.skillPercentValue);
+        knockbackDistance = Mathf.Max(0.1f, node.skillRadiusValue);
+        knockbackDuration = Mathf.Max(0.05f, node.skillDuration);
+
+        // Subscribe to the deal damage event
+        stats.OnDealDamage += HandleDealDamage;
+    }
+
+    private void HandleDealDamage(CharacterStats target, int damage)
+    {
+        if (target == null || !target.IsAlive) return;
+
+        // Roll the chance to apply knockback
+        if (Random.value > knockbackChance) return;
+
+        // Calculate direction away from the Knight
+        Vector2 dir = (target.transform.position - transform.position).normalized;
+
+        // Apply knockback based on target type
+        var unitAI = target.GetComponent<UnitAI>();
+        if (unitAI != null)
+        {
+            unitAI.ApplyKnockback(dir, knockbackDistance, knockbackDuration);
+        }
+        else
+        {
+            var fairyAI = target.GetComponent<FairyAI>();
+            if (fairyAI != null)
+            {
+                fairyAI.ApplyKnockback(dir, knockbackDistance, knockbackDuration);
+            }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // Cleanup event subscription
+        if (stats != null)
+        {
+            stats.OnDealDamage -= HandleDealDamage;
+        }
+    }
+}
+
+
+========================
+FILE: SkillSpikedArmor.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillSpikedArmor.cs
+========================
+using UnityEngine;
+
+public class SkillSpikedArmor : UnitSkillBehaviour
+{
+    private float returnDamagePercent;
+    private float meleeRangeThreshold;
+
+    protected override void OnInit()
+    {
+        if (stats == null || node == null) return;
+
+        // Map values from the upgrade node definition
+        returnDamagePercent = Mathf.Clamp01(node.skillPercentValue);
+        meleeRangeThreshold = Mathf.Max(0.5f, node.skillRadiusValue);
+
+        // Subscribe to the take damage event
+        stats.OnTakeDamage += HandleTakeDamage;
+    }
+
+    private void HandleTakeDamage(CharacterStats attacker, int damageTaken)
+    {
+        if (attacker == null || attacker == stats || !attacker.IsAlive) return;
+
+        // Check distance to ensure it is a melee attack
+        float dist = Vector3.Distance(transform.position, attacker.transform.position);
+        if (dist > meleeRangeThreshold) return;
+
+        // Calculate damage to return
+        int returnDamage = Mathf.RoundToInt(damageTaken * returnDamagePercent);
+
+        if (returnDamage > 0)
+        {
+            // Deal damage back to the attacker
+            attacker.TakeDamage(returnDamage, stats);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // Cleanup event subscription
+        if (stats != null)
+        {
+            stats.OnTakeDamage -= HandleTakeDamage;
+        }
+    }
+}
+
+
+========================
+FILE: SkillTaunt.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillTaunt.cs
+========================
+using UnityEngine;
+
+public class SkillTaunt : UnitSkillBehaviour
+{
+    private float tauntRadius;
+    private float tauntDuration;
+    private float tauntCooldown;
+    private float timer;
+
+    protected override void OnInit()
+    {
+        if (stats == null || node == null) return;
+
+        // Map values from the upgrade node definition
+        tauntRadius = Mathf.Max(1f, node.skillRadiusValue);
+        tauntDuration = Mathf.Max(0.5f, node.skillDuration);
+        tauntCooldown = Mathf.Max(1f, node.skillIntValue);
+
+        // Start the timer at half cooldown so the knight taunts shortly after spawning
+        timer = tauntCooldown * 0.5f;
+    }
+
+    private void Update()
+    {
+        if (stats == null || stats.currentHealth <= 0) return;
+        if (BattleManager.instance == null || !BattleManager.instance.IsBattleRunning) return;
+
+        // ADDED: Prevent the unit from casting taunt while waiting in the spawner
+        if (stats.isUntargetable) return;
+
+        timer -= Time.deltaTime;
+        if (timer <= 0f)
+        {
+            timer = tauntCooldown;
+            CastTaunt();
+        }
+    }
+
+    private void CastTaunt()
+    {
+        // Find all units currently on the board
+        var allUnits = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
+
+        foreach (var unit in allUnits)
+        {
+            if (unit == null || unit == stats || !unit.IsAlive) continue;
+
+            // Only affect enemies
+            if (unit.team == stats.team) continue;
+
+            // Ignore untargetable units (like the gold miner)
+            if (unit.isUntargetable) continue;
+
+            float dist = Vector3.Distance(transform.position, unit.transform.position);
+            if (dist <= tauntRadius)
+            {
+                var ai = unit.GetComponent<UnitAI>();
+                if (ai != null)
+                {
+                    // Apply the taunt effect to this specific enemy
+                    ai.ApplyTaunt(stats, tauntDuration);
+                }
+            }
+        }
     }
 }
 
@@ -13682,6 +14770,7 @@ public static class DailyResetUtil
 }
 
 
+
 ========================
 FILE: StorePageController.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Store\StorePageController.cs
@@ -13730,6 +14819,7 @@ public class StorePageController : MonoBehaviour
         section.Setup(title, items, category);
     }
 }
+
 
 
 ========================
@@ -13806,6 +14896,7 @@ public class StoreSection : MonoBehaviour
 }
 
 
+
 ========================
 FILE: BattleFooterAnimation.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\BattleFooterAnimation.cs
@@ -13837,6 +14928,7 @@ public class BattleFooterAnimation : MonoBehaviour
 
 
 }
+
 
 
 ========================
@@ -13925,6 +15017,7 @@ public class BossHealthBarUI : MonoBehaviour
         Hide();
     }
 }
+
 
 
 ========================
@@ -14073,6 +15166,7 @@ public class DropZone : MonoBehaviour
         return null;
     }
 }
+
 
 
 ========================
@@ -14367,6 +15461,7 @@ public class EndGameUI : MonoBehaviour
 }
 
 
+
 ========================
 FILE: FloatingToast.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\FloatingToast.cs
@@ -14432,6 +15527,7 @@ public class FloatingToast : MonoBehaviour
 }
 
 
+
 ========================
 FILE: LoadCommonUI.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\LoadCommonUI.cs
@@ -14449,6 +15545,7 @@ public class LoadCommonUI : MonoBehaviour
         }
     }
 }
+
 
 
 
@@ -14480,6 +15577,7 @@ public class MissionsButton : MonoBehaviour
         missionsPanel.SetActive(false);
     }
 }
+
 
 
 
@@ -14567,6 +15665,7 @@ public class PageSwiper : MonoBehaviour
 }
 
 
+
 ========================
 FILE: PauseManager.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\PauseManager.cs
@@ -14637,6 +15736,7 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = 1f;
     }
 }
+
 
 
 ========================
@@ -14792,6 +15892,7 @@ public class ReplaceModeOverlayController : MonoBehaviour
 }
 
 
+
 ========================
 FILE: RestartButton.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\RestartButton.cs
@@ -14808,6 +15909,7 @@ public class RestartButton : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
+
 
 
 ========================
@@ -15089,6 +16191,7 @@ public class RewardFlyFXManager : MonoBehaviour
 }
 
 
+
 ========================
 FILE: RoundUIManager.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\RoundUIManager.cs
@@ -15119,6 +16222,7 @@ public class RoundUIManager : MonoBehaviour
 
 
 }
+
 
 
 ========================
@@ -15162,6 +16266,7 @@ public class SoulOrbSpawner : MonoBehaviour
         orb.Init(worldPos, soulPoolTarget, amount);
     }
 }
+
 
 
 ========================
@@ -15238,6 +16343,7 @@ public class SoulsManager : MonoBehaviour
         return true;
     }
 }
+
 
 
 ========================
@@ -15369,6 +16475,7 @@ public class SoulOrb : MonoBehaviour
 }
 
 
+
 ========================
 FILE: StartBattleButton.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\StartBattleButton.cs
@@ -15418,6 +16525,7 @@ public class StartBattleButton : MonoBehaviour
 }
 
 
+
 ========================
 FILE: StyleManager.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\StyleManager.cs
@@ -15451,6 +16559,7 @@ public static StyleManager instance;
     }
 
 }
+
 
 
 ========================
@@ -15489,6 +16598,7 @@ public class ToastManager : MonoBehaviour
         toast.Play(message);
     }
 }
+
 
 
 ========================
@@ -15656,6 +16766,7 @@ public class UIRepeatingIconBackground : MonoBehaviour
 }
 
 
+
 ========================
 FILE: UnitSpawnButton.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\UnitSpawnButton.cs
@@ -15765,6 +16876,7 @@ public class UnitSpawnButton : MonoBehaviour
 }
 
 
+
 ========================
 FILE: WaveMessageUI.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\WaveMessageUI.cs
@@ -15822,6 +16934,7 @@ public class WaveMessageUI : MonoBehaviour
         StopAllCoroutines();
     }
 }
+
 
 
 ========================
@@ -16018,6 +17131,7 @@ public class ChestOpeningUI : MonoBehaviour, IPointerClickHandler
         OnChestClicked();
     }
 }
+
 
 
 ========================
@@ -16243,6 +17357,12 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
         if (_isLocked)
             return;
 
+        if (_unlockState == UnitUnlockState.Undiscovered)
+        {
+            UnitsGridController.Instance.CollapseCurrent();
+            return;
+        }
+
         if (_isDeckSlot && UnitsDeckManager.Instance != null &&
             UnitsDeckManager.Instance.IsReplaceModeActive)
         {
@@ -16346,6 +17466,7 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
 }
 
 
+
 ========================
 FILE: UnitsCollectionManager.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Deck\UnitsCollectionManager.cs
@@ -16426,6 +17547,7 @@ public class UnitsCollectionManager : MonoBehaviour
     }
 
 }
+
 
 
 ========================
@@ -16709,6 +17831,7 @@ public class UnitsDeckManager : MonoBehaviour
 }
 
 
+
 ========================
 FILE: UnitsGridController.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Deck\UnitsGridController.cs
@@ -16806,6 +17929,7 @@ public class UnitsGridController : MonoBehaviour
         CollapseCurrent();
     }
 }
+
 
 
 ========================
@@ -16994,6 +18118,7 @@ public class UIRandomStarSparkles : MonoBehaviour
 }
 
 
+
 ========================
 FILE: BackgroundWanderUI.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Environment\BackgroundWanderUI.cs
@@ -17131,6 +18256,7 @@ public class BackgroundWanderUI : MonoBehaviour
 }
 
 
+
 ========================
 FILE: ChapterPreviewController.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\HomeScreen\ChapterPreviewController.cs
@@ -17171,6 +18297,7 @@ public class ChapterPreviewController : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
     }
 }
+
 
 
 ========================
@@ -17489,6 +18616,7 @@ public class ChapterPreviewUnitAI : MonoBehaviour
 }
 
 
+
 ========================
 FILE: PlayButton.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\HomeScreen\PlayButton.cs
@@ -17534,6 +18662,7 @@ public class PlayButton : MonoBehaviour
         StartCoroutine(ChapterPreviewController.Instance.LoadSceneAfterWinning(stageId));
     }
 }
+
 
 
 ========================
@@ -17709,6 +18838,7 @@ public class PopupAnimator : MonoBehaviour
 }
 
 
+
 ========================
 FILE: ReplaceDeckButton.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\HomeScreen\ReplaceDeckButton.cs
@@ -17736,6 +18866,7 @@ public class ReplaceDeckButton : MonoBehaviour
         UnitDetailsPopupController.Instance.Close();
     }
 }
+
 
 
 ========================
@@ -17905,6 +19036,7 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 }
 
 
+
 ========================
 FILE: serializableAttribute.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\HomeScreen\serializableAttribute.cs
@@ -17920,9 +19052,10 @@ internal class serializableAttribute : Attribute
 FILE: UnitDetailsPopupController.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\HomeScreen\UnitDetailsPopupController.cs
 ========================
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 /// <summary>
 /// Controls the Unit Details popup content (data + tabs).
@@ -17998,8 +19131,8 @@ public class UnitDetailsPopupController : MonoBehaviour
     [SerializeField] private UpgradeTreeUIController upgradesTabController;
 
     private UnitDefinition _unit;
-    private UnitsDeckManager _deckManager;
     private RectTransform _lastOpenedCardRect;
+    private UnitUnlockState unlockState;
 
     private void Awake()
     {
@@ -18033,9 +19166,10 @@ public class UnitDetailsPopupController : MonoBehaviour
             Debug.LogWarning("UnitDetailsPopupController.OpenFromCard: unit is null");
             return;
         }
-
+        
         _unit = unit;
-        _deckManager = deckManager;
+        unlockState = UnitUnlockState.Undiscovered;
+
         _lastOpenedCardRect = cardRect;
 
         // Ensure popup is visible before filling (so SetNativeSize etc. behave consistently)
@@ -18086,7 +19220,7 @@ public class UnitDetailsPopupController : MonoBehaviour
     // DATA
     // =========================
 
-    private void FillData()
+    public void FillData()
     {
         if (_unit == null)
             return;
@@ -18207,8 +19341,13 @@ public class UnitDetailsPopupController : MonoBehaviour
         bool inBattle = (BattleManager.instance != null && BattleManager.instance.IsBattleRunning);
         bool canAfford = ownedScrolls >= cost;
 
+        var progress = GameData.Instance.Save.ownedUnits
+            .FirstOrDefault(u => u.unitId == _unit.id);
+        if (progress != null)
+            unlockState = progress.unlockState;
+
         if (upgradeButton != null)
-            upgradeButton.interactable = (!inBattle) && (!atMax) && canAfford;
+            upgradeButton.interactable = (!inBattle) && (!atMax) && canAfford && unlockState == UnitUnlockState.Unlocked;
     }
 
 
@@ -18245,6 +19384,9 @@ public class UnitDetailsPopupController : MonoBehaviour
     private void OnUpgradeClicked()
     {
         if (_unit == null) return;
+
+        if (unlockState != UnitUnlockState.Unlocked)
+            return;
 
         bool ok = UnitLevelingService.TryUpgradeUnit(_unit.id);
         if (!ok) return;
@@ -18379,6 +19521,7 @@ public class UnitDetailsPopupController : MonoBehaviour
     }
 
 }
+
 
 
 ========================
@@ -18617,6 +19760,7 @@ public class PlayerPartsInventory : ScriptableObject
 }
 
 
+
 ========================
 FILE: UnitPartSlotUI.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\HomeScreen\UnitPartsUI\UnitPartSlotUI.cs
@@ -18751,6 +19895,7 @@ public class UnitPartSlotUI : MonoBehaviour
         }
     }
 }
+
 
 
 ========================
@@ -18891,6 +20036,7 @@ public class UnitPartsTabController : MonoBehaviour
 }
 
 
+
 ========================
 FILE: ChestPartDropChance.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Store\ChestPartDropChance.cs
@@ -18931,6 +20077,7 @@ public class ChestPartDropChance : MonoBehaviour
 
 
 }
+
 
 
 ========================
@@ -18976,6 +20123,7 @@ public class ShopButtonFreeIndicator : MonoBehaviour
         freeIndicatorRoot.SetActive(hasFree);
     }
 }
+
 
 
 
@@ -19159,6 +20307,7 @@ public class StoreItemChestPanel : MonoBehaviour
 }
 
 
+
 ========================
 FILE: StoreItemPanelUI.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Store\StoreItemPanelUI.cs
@@ -19318,6 +20467,7 @@ public class StoreItemPanelUI : MonoBehaviour
 }
 
 
+
 ========================
 FILE: StoreItemUI.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Store\StoreItemUI.cs
@@ -19335,6 +20485,7 @@ public class StoreItemUI : MonoBehaviour
     [SerializeField] private TMP_Text priceText;
     [SerializeField] private Image iconImage;
     [SerializeField] private Image costIconImage;
+    [SerializeField] private GameObject costIconImageContainer;
     [SerializeField] private Sprite goldSprite;
     [SerializeField] private Sprite gemSprite;
     [SerializeField] private Button buyButton;
@@ -19391,7 +20542,7 @@ public class StoreItemUI : MonoBehaviour
         {
             bool canClaim = StoreManager.Instance != null && StoreManager.Instance.CanClaimDailyFree(def);
 
-            costIconImage.gameObject.SetActive(false);
+            Destroy(costIconImageContainer);
             saleBadgeRoot.SetActive(false);
 
             if (canClaim)
@@ -19487,6 +20638,7 @@ public class StoreItemUI : MonoBehaviour
 }
 
 
+
 ========================
 FILE: WheelOfFortunePopup.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\WheelOfFortune\WheelOfFortunePopup.cs
@@ -19550,6 +20702,7 @@ public class WheelOfFortunePopup : MonoBehaviour
         popupAnimator.OpenFromRect(buttonRect, hideButton: true);
     }
 }
+
 
 
 ========================
@@ -19719,6 +20872,7 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
 }
 
 
+
 ========================
 FILE: UnitLevelingService.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UnitLeveling\UnitLevelingService.cs
@@ -19826,6 +20980,7 @@ public static class UnitLevelingService
         return true;
     }
 }
+
 
 
 ========================
@@ -19954,6 +21109,7 @@ public class PlayerDeckProvider : MonoBehaviour
 }
 
 
+
 ========================
 FILE: UnitsDatabase.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UnitsCollectionAndDeck\UnitsDatabase.cs
@@ -19965,6 +21121,7 @@ public class UnitsDatabase : ScriptableObject
 {
     public UnitDefinition[] allUnits;
 }
+
 
 
 ========================
@@ -20201,6 +21358,7 @@ public class GateController : MonoBehaviour
 }
 
 
+
 ========================
 FILE: GateRegistry.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Wall\GateRegistry.cs
@@ -20248,6 +21406,7 @@ public static class GateRegistry
 }
 
 
+
 ========================
 FILE: GateTrigger.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Wall\GateTrigger.cs
@@ -20267,6 +21426,7 @@ public class GateTrigger : MonoBehaviour
         }
     }
 }
+
 
 
 ========================
@@ -20291,6 +21451,7 @@ public class WallCombatTarget : MonoBehaviour, ICombatTarget
         wall?.TakeDamage(amount);
     }
 }
+
 
 
 ========================
@@ -20347,6 +21508,7 @@ public class WallHealth : MonoBehaviour
 }
 
 
+
 ========================
 FILE: WallHPUI.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Wall\WallHPUI.cs
@@ -20393,5 +21555,6 @@ public class WallHPUI : MonoBehaviour
             wallHPFill.fillAmount = max > 0 ? (float)current / max : 0f;
     }
 }
+
 
 
