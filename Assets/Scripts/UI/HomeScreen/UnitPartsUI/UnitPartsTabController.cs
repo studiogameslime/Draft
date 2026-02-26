@@ -93,7 +93,9 @@ public class UnitPartsTabController : MonoBehaviour
         if (_currentUnit == null || partsInventory == null) return;
         if (GameData.Instance == null || GameData.Instance.Save == null) return;
 
+        // converted holds the number of complete sets that were consumed
         int converted = partsInventory.ConvertAllCompleteSetsToSkillPoints(_currentUnit);
+
         if (converted <= 0)
         {
             UpdateConvertButtonState();
@@ -104,6 +106,15 @@ public class UnitPartsTabController : MonoBehaviour
         if (up != null)
         {
             up.skillPoints += converted;
+
+            // ADDED: Grant XP for every complete set converted
+            if (PlayerXPManager.Instance != null)
+            {
+                // Example: 25 XP per completed set. 
+                // If they converted 2 sets at once, they get 50 XP.
+                PlayerXPManager.Instance.AddXP(converted * 25);
+            }
+
             GameData.Instance.SaveNow();
         }
 

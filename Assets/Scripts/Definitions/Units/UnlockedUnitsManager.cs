@@ -73,6 +73,12 @@ public class UnlockedUnitsManager : MonoBehaviour
             unlockedUpgradeNodeIds = new List<string>()
         });
 
+        // ADDED: Grant XP for discovering a specific new unit
+        if (PlayerXPManager.Instance != null)
+        {
+            PlayerXPManager.Instance.AddXP(50); // You can change 50 to your desired XP amount
+        }
+
         if (save)
             GameData.Instance.SaveNow();
     }
@@ -124,6 +130,12 @@ public class UnlockedUnitsManager : MonoBehaviour
             skillPoints = 0,
             unlockedUpgradeNodeIds = new List<string>() // unlock skill NOT added here
         });
+
+        // ADDED: Grant XP for discovering a random new unit from a chest
+        if (PlayerXPManager.Instance != null)
+        {
+            PlayerXPManager.Instance.AddXP(50); // You can change 50 to your desired XP amount
+        }
 
         GameData.Instance.SaveNow();
 
