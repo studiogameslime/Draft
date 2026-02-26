@@ -1,12 +1,10 @@
-$root = "Assets/Scripts/Definitions"
-$out = "AllScriptables.txt"
+$root = "Assets/Scripts"
+$out = "AllScripts.txt"
 
 Remove-Item $out -ErrorAction Ignore
 
-Get-ChildItem $root -Recurse -Filter *.asset | ForEach-Object {
+Get-ChildItem $root -Recurse -Filter *.cs | ForEach-Object {
     $content = Get-Content $_.FullName -Raw
-
-    if ($content -notmatch "MonoBehaviour:") { return }
 
     Add-Content $out "========================"
     Add-Content $out "FILE: $($_.Name)"
