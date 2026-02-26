@@ -14,8 +14,6 @@ public class MissionContainer : MonoBehaviour
     [SerializeField] private Button claimButton;
     [SerializeField] private TMP_Text claimButtonText;
     [SerializeField] private Image rewardIcon;
-    [SerializeField] private Sprite goldSprite;
-    [SerializeField] private Sprite gemSprite;
     [SerializeField] private Image completedMissionMark;
     [SerializeField] private Sprite activeButtonSprite;
     [SerializeField] private Sprite inactiveButtonSprite;
@@ -30,12 +28,17 @@ public class MissionContainer : MonoBehaviour
         if (mission.definition.goldReward > 0)
         {
             rewardText.text = mission.definition.goldReward.ToString();
-            rewardIcon.sprite = goldSprite;
+            rewardIcon.sprite = StyleManager.instance.goldSprite;
         }
         if (mission.definition.gemsReward > 0)
         {
             rewardText.text = mission.definition.gemsReward.ToString();
-            rewardIcon.sprite = gemSprite;
+            rewardIcon.sprite = StyleManager.instance.gemSprite;
+        }
+        if (mission.definition.scrollsReward> 0)
+        {
+            rewardText.text = mission.definition.scrollsReward.ToString();
+            rewardIcon.sprite = StyleManager.instance.scrollSprite;
         }
         if (mission.definition.chestReward != null)
         {
