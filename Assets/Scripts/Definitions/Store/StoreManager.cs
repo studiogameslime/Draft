@@ -102,6 +102,11 @@ public class StoreManager : MonoBehaviour
                 GrantPartRewards(item);
                 GameData.Instance.SaveNow();
                 break;
+            case StoreCategory.BuyScrollsWithGold:
+                wallet.SpendGold(finalPrice);
+                wallet.AddScrolls(item.scrollAmount);
+                GameData.Instance.SaveNow();
+                break;
             case StoreCategory.Specials:
                 break;
             default:

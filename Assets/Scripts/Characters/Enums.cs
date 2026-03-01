@@ -68,7 +68,8 @@ public enum StoreCategory
     BuyGoldWithGems,
     BuyChestsWithGold,
     BuyPartWithGold,
-    Specials
+    Specials,
+    BuyScrollsWithGold
 }
 
 public enum AdRewardType

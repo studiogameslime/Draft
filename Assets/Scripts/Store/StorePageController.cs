@@ -23,6 +23,7 @@ public class StorePageController : MonoBehaviour
         CreateSection("Chests Packs", StoreCategory.BuyChestsWithGold, 2);
         CreateSection("Parts Packs", StoreCategory.BuyPartWithGold, 3);
         CreateSection("Special Offers", StoreCategory.Specials, 1);
+        CreateSection("Upgrade Scrolls", StoreCategory.BuyScrollsWithGold, 3);
     }
 
     private void CreateSection(string title, StoreCategory category, int itemsPerRow)

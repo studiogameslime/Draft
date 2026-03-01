@@ -35,6 +35,10 @@ public class StoreSection : MonoBehaviour
                 leftIcon.sprite = StyleManager.instance.PartWeaponSprite;
                 rightIcon.sprite = StyleManager.instance.PartWeaponSprite;
                 break;
+            case StoreCategory.BuyScrollsWithGold:
+                leftIcon.sprite = StyleManager.instance.scrollSprite;
+                rightIcon.sprite = StyleManager.instance.scrollSprite;
+                break;
         }
         Clear();
 

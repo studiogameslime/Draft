@@ -59,7 +59,9 @@ public class StoreItemUI : MonoBehaviour
         definition = def;
 
         titleText.text = def.title;
-        amountText.text = $"x{def.goldAmount}";
+        amountText.text = def.category == StoreCategory.BuyScrollsWithGold
+            ? $"x{def.scrollAmount}"
+            : $"x{def.goldAmount}";
         iconImage.sprite = def.icon;
         NormalizeIconSize(iconImage);
 

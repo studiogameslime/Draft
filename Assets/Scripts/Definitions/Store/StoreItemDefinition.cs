@@ -15,6 +15,7 @@ public class StoreItemDefinition : ScriptableObject
 
     [Header("Reward")]
     public int goldAmount;
+    public int scrollAmount;
     public ChestDefinition chestReward;
     public List<PartRewardEntry> partRewards;
 
