@@ -285,7 +285,7 @@ public class BattleManager : MonoBehaviour
         SetAllAIEnabled(false);
         gameOver = true;
 
-        EndGameUI.Instance.ShowLoseScreen(roundsGold,roundsXp);
+        EndGameUI.Instance.ShowLoseScreen(roundsGold, roundsXp);
 
         foreach (var unitClass in unitClassUsedThisBattle)
             MissionsManager.Instance.ReportAction(MissionAction.PlayWithUnitClass, 1, null, unitClass);
@@ -308,7 +308,11 @@ public class BattleManager : MonoBehaviour
 
         int levelGold = levelDefinition.goldOnLevelComplete;
         int roundsGold = levelDefinition.GetGoldFromRounds(roundsCompleted);
-        int totalBattleGold = levelGold + roundsGold;
+
+        // Calculate boosted amounts for UI and Wallet
+        int boostedLevelGold = MasteryBonusManager.Instance.GetBoostedGold(levelGold);
+        int boostedRoundsGold = MasteryBonusManager.Instance.GetBoostedGold(roundsGold);
+        int totalBattleGold = boostedLevelGold + boostedRoundsGold;
 
         int levelXp = levelDefinition.xpOnLevelComplete;
         int roundsXp = levelDefinition.GetXpFromRounds(roundsCompleted);
@@ -334,9 +338,9 @@ public class BattleManager : MonoBehaviour
             PlayerCurrencyWallet.Instance.AddGold(levelDefinition.goldOnLevelComplete + roundsGold);
 
             EndGameUI.Instance.ShowWinScreen(
-                levelGold,
-                roundsGold,
-                totalBattleGold,
+                boostedLevelGold,
+            boostedRoundsGold,
+            totalBattleGold,
                 levelXp,
                 roundsXp,
                 totalXp,
@@ -5525,17 +5529,18 @@ public class ChestOpener : MonoBehaviour
 
         if (reward.gold > 0)
         {
+            int boostedGold = MasteryBonusManager.Instance.GetBoostedGold(reward.gold);
             RectTransform from = rewardsSpawner != null ? rewardsSpawner.GetGoldFxFrom() : null;
             if (from == null) from = collectButtonFallback;
 
             if (from != null && RewardFlyFXManager.Instance != null)
             {
                 _pendingFxCount++;
-                PlayerCurrencyWallet.Instance.AddGold(reward.gold, from, OnSingleFxFinished);
+                PlayerCurrencyWallet.Instance.AddGold(boostedGold, from, OnSingleFxFinished);
             }
             else
             {
-                PlayerCurrencyWallet.Instance.AddGold(reward.gold, null);
+                PlayerCurrencyWallet.Instance.AddGold(boostedGold, null);
             }
         }
 
@@ -5816,7 +5821,8 @@ public class ChestRewardsSpawner : MonoBehaviour
             spawnedAny = true;
             yield return StartCoroutine(SpawnSingleItem(ui =>
             {
-                ui.SetupGold(reward.gold);
+                int boostedGold = MasteryBonusManager.Instance.GetBoostedGold(reward.gold);
+                ui.SetupGold(boostedGold);
                 _goldItem = ui;
             }));
         }
@@ -8704,7 +8710,6 @@ public class PlayerCurrencyWallet : MonoBehaviour
     public void AddGold(int amount, RectTransform fromUI = null, Action onFinished = null)
     {
         if (amount <= 0) return;
-
         int startValue = Gold;
         int targetValue = Gold + amount;
 
@@ -11282,6 +11287,13 @@ public class MasteryBonusManager : MonoBehaviour
         }
     }
 
+    public int GetBoostedGold(int baseGold)
+    {
+        float bonusPercent = GetPercent(MasteryStat.GoldGainPercent);
+        // English comment: Calculate final gold amount based on mastery level
+        return Mathf.FloorToInt(baseGold * (1f + bonusPercent));
+    }
+
     private static void AddTo(Dictionary<MasteryStat, float> dict, MasteryStat stat, float value)
     {
         dict.TryGetValue(stat, out float cur);
@@ -12115,17 +12127,25 @@ public class MissionContainer : MonoBehaviour
         this.mission = mission;
 
         descriptionText.text = mission.definition.description;
+
         if (mission.definition.goldReward > 0)
         {
-            rewardText.text = mission.definition.goldReward.ToString();
+            // Calculate the full amount including mastery bonus
+            int finalGold = MasteryBonusManager.Instance != null
+                ? MasteryBonusManager.Instance.GetBoostedGold(mission.definition.goldReward)
+                : mission.definition.goldReward;
+
+            // Display only the final boosted total
+            rewardText.text = finalGold.ToString();
             rewardIcon.sprite = StyleManager.instance.goldSprite;
         }
+
         if (mission.definition.gemsReward > 0)
         {
             rewardText.text = mission.definition.gemsReward.ToString();
             rewardIcon.sprite = StyleManager.instance.gemSprite;
         }
-        if (mission.definition.scrollsReward> 0)
+        if (mission.definition.scrollsReward > 0)
         {
             rewardText.text = mission.definition.scrollsReward.ToString();
             rewardIcon.sprite = StyleManager.instance.scrollSprite;
@@ -12714,10 +12734,18 @@ public class MissionsManager : MonoBehaviour
         if (mission == null || !mission.completed || mission.claimed)
             return;
 
+
         if (mission.definition.goldReward > 0)
         {
-            PlayerCurrencyWallet.Instance.AddGold(mission.definition.goldReward, from);
+            // Calculate final boosted amount to match UI display
+            int boostedGold = MasteryBonusManager.Instance != null
+                ? MasteryBonusManager.Instance.GetBoostedGold(mission.definition.goldReward)
+                : mission.definition.goldReward;
+
+            // Add gold to wallet, skipping internal mastery calculation to avoid double boosting
+            PlayerCurrencyWallet.Instance.AddGold(boostedGold, from);
         }
+
 
         if (mission.definition.gemsReward > 0)
         {
@@ -12846,11 +12874,18 @@ public class MissionsManager : MonoBehaviour
     {
         return activeWeeklyMissions.Count;
     }
-    
+
     private void GrantDailySetReward(RectTransform from)
     {
         if (dailyAllMissionsGoldReward > 0)
-            PlayerCurrencyWallet.Instance.AddGold(dailyAllMissionsGoldReward, from);
+        {
+            // Apply mastery bonus to the set reward
+            int finalGold = MasteryBonusManager.Instance != null
+                ? MasteryBonusManager.Instance.GetBoostedGold(dailyAllMissionsGoldReward)
+                : dailyAllMissionsGoldReward;
+
+            PlayerCurrencyWallet.Instance.AddGold(finalGold, from);
+        }
 
         if (dailyAllMissionsGemsReward > 0)
             PlayerCurrencyWallet.Instance.AddGems(dailyAllMissionsGemsReward, from);
@@ -12867,7 +12902,14 @@ public class MissionsManager : MonoBehaviour
     private void GrantWeeklySetReward(RectTransform from)
     {
         if (weeklyAllMissionsGoldReward > 0)
-            PlayerCurrencyWallet.Instance.AddGold(weeklyAllMissionsGoldReward, from);
+        {
+            // Apply mastery bonus to the weekly reward
+            int finalGold = MasteryBonusManager.Instance != null
+                ? MasteryBonusManager.Instance.GetBoostedGold(weeklyAllMissionsGoldReward)
+                : weeklyAllMissionsGoldReward;
+
+            PlayerCurrencyWallet.Instance.AddGold(finalGold, from);
+        }
 
         if (weeklyAllMissionsGemsReward > 0)
             PlayerCurrencyWallet.Instance.AddGems(weeklyAllMissionsGemsReward, from);
@@ -20954,7 +20996,10 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
         {
             case FortuneRewardType.Gold:
                 if (amount > 0)
-                    PlayerCurrencyWallet.Instance.AddGold(amount, fromRect);
+                {
+                    int boostedGold = MasteryBonusManager.Instance.GetBoostedGold(amount);
+                    PlayerCurrencyWallet.Instance.AddGold(boostedGold, fromRect);
+                }
                 break;
 
             case FortuneRewardType.Gems:
