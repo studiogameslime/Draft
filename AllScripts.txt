@@ -3701,7 +3701,8 @@ public enum StoreCategory
     BuyGoldWithGems,
     BuyChestsWithGold,
     BuyPartWithGold,
-    Specials
+    Specials,
+    BuyScrollsWithGold
 }
 
 public enum AdRewardType
@@ -6695,6 +6696,7 @@ public class StoreItemDefinition : ScriptableObject
 
     [Header("Reward")]
     public int goldAmount;
+    public int scrollAmount;
     public ChestDefinition chestReward;
     public List<PartRewardEntry> partRewards;
 
@@ -6862,6 +6864,11 @@ public class StoreManager : MonoBehaviour
             case StoreCategory.BuyPartWithGold:
                 wallet.SpendGold(finalPrice);
                 GrantPartRewards(item);
+                GameData.Instance.SaveNow();
+                break;
+            case StoreCategory.BuyScrollsWithGold:
+                wallet.SpendGold(finalPrice);
+                wallet.AddScrolls(item.scrollAmount);
                 GameData.Instance.SaveNow();
                 break;
             case StoreCategory.Specials:
@@ -15003,6 +15010,7 @@ public class StorePageController : MonoBehaviour
         CreateSection("Chests Packs", StoreCategory.BuyChestsWithGold, 2);
         CreateSection("Parts Packs", StoreCategory.BuyPartWithGold, 3);
         CreateSection("Special Offers", StoreCategory.Specials, 1);
+        CreateSection("Upgrade Scrolls", StoreCategory.BuyScrollsWithGold, 3);
     }
 
     private void CreateSection(string title, StoreCategory category, int itemsPerRow)
@@ -15065,6 +15073,10 @@ public class StoreSection : MonoBehaviour
             case StoreCategory.BuyPartWithGold:
                 leftIcon.sprite = StyleManager.instance.PartWeaponSprite;
                 rightIcon.sprite = StyleManager.instance.PartWeaponSprite;
+                break;
+            case StoreCategory.BuyScrollsWithGold:
+                leftIcon.sprite = StyleManager.instance.scrollSprite;
+                rightIcon.sprite = StyleManager.instance.scrollSprite;
                 break;
         }
         Clear();
@@ -20748,7 +20760,9 @@ public class StoreItemUI : MonoBehaviour
         definition = def;
 
         titleText.text = def.title;
-        amountText.text = $"x{def.goldAmount}";
+        amountText.text = def.category == StoreCategory.BuyScrollsWithGold
+            ? $"x{def.scrollAmount}"
+            : $"x{def.goldAmount}";
         iconImage.sprite = def.icon;
         NormalizeIconSize(iconImage);
 
