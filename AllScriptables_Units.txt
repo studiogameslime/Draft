@@ -869,6 +869,10 @@ MonoBehaviour:
   unlockNode: {fileID: 11400000, guid: 53dba96814fcd934bb17b34d304ac393, type: 2}
   nodes:
   - {fileID: 11400000, guid: 53dba96814fcd934bb17b34d304ac393, type: 2}
+  - {fileID: 11400000, guid: 11223344556677889900aabbccddeef0, type: 2}
+  - {fileID: 11400000, guid: 1ce1da21beac4e029900636bf3e0f49a, type: 2}
+  - {fileID: 11400000, guid: ee55ff66778899001122aabbccddeeff, type: 2}
+  - {fileID: 11400000, guid: a1256bd0b8694b10825cb16960e0b33b, type: 2}
 
 
 
@@ -990,6 +994,8 @@ MonoBehaviour:
   unlockNode: {fileID: 11400000, guid: dc2a3f08958a6b54f9d09e685760e803, type: 2}
   nodes:
   - {fileID: 11400000, guid: dc2a3f08958a6b54f9d09e685760e803, type: 2}
+  - {fileID: 11400000, guid: e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0, type: 2}
+  - {fileID: 11400000, guid: f6a7b8c9d0e1f2a3b4c5d6a7b8c9d0e1, type: 2}
 
 
 
@@ -1516,6 +1522,153 @@ MonoBehaviour:
 
 
 ========================
+FILE: upgrade_node_fire_mage_tier1_left.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Fire Mage\upgrade_node_fire_mage_tier1_left.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_fire_mage_tier1_left
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_fire_mage_tier1_left
+  tier: 1
+  lane: 1
+  title: Fiery Power
+  description: "Increases the Fire Mage\u2019s damage by 20%."
+  icon: {fileID: 3667681588813468039, guid: adf3a03aa0f4f56428a2d12977188ee5, type: 3}
+  skillPointCost: 1
+  soulsCost: 2
+  prerequisites:
+  - {fileID: 11400000, guid: 53dba96814fcd934bb17b34d304ac393, type: 2}
+  skillEffect: {fileID: 5166218331215481056, guid: 693f05ca1938d9849b032c1f6b0bfb84, type: 3}
+  skillPercentValue: 0.2
+  skillRadiusValue: 0
+  skillIntValue: 0
+  skillDuration: 0
+
+
+
+========================
+FILE: upgrade_node_fire_mage_tier1_right.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Fire Mage\upgrade_node_fire_mage_tier1_right.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_fire_mage_tier1_right
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_fire_mage_tier1_right
+  tier: 1
+  lane: 2
+  title: Fire Blast
+  description: "Fire arrows explode on impact, dealing 50% of their damage to all
+    nearby enemies."
+  icon: {fileID: 3667681588813468039, guid: adf3a03aa0f4f56428a2d12977188ee5, type: 3}
+  skillPointCost: 1
+  soulsCost: 2
+  prerequisites:
+  - {fileID: 11400000, guid: 53dba96814fcd934bb17b34d304ac393, type: 2}
+  skillEffect: {fileID: 9001234567890123458, guid: cc33dd44ee55ff66778899001122aabb, type: 3}
+  skillPercentValue: 0.5
+  skillRadiusValue: 1.5
+  skillIntValue: 0
+  skillDuration: 0
+
+
+
+========================
+FILE: upgrade_node_fire_mage_tier2_center.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Fire Mage\upgrade_node_fire_mage_tier2_center.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_fire_mage_tier2_center
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_fire_mage_tier2_left
+  tier: 2
+  lane: 1
+  title: Burning Touch
+  description: "Fire arrows ignite enemies on impact, dealing 15% of the Fire Mage\u2019s
+    damage per second for 3 seconds."
+  icon: {fileID: 3667681588813468039, guid: adf3a03aa0f4f56428a2d12977188ee5, type: 3}
+  skillPointCost: 1
+  soulsCost: 2
+  prerequisites:
+  - {fileID: 11400000, guid: 11223344556677889900aabbccddeef0, type: 2}
+  skillEffect: {fileID: 5001234567890123458, guid: cec894b69cf24b85ad89296ff7e02646, type: 3}
+  skillPercentValue: 0.15
+  skillRadiusValue: 0
+  skillIntValue: 0
+  skillDuration: 3
+
+
+
+========================
+FILE: upgrade_node_fire_mage_tier2_right.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Fire Mage\upgrade_node_fire_mage_tier2_right.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_fire_mage_tier2_right
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_fire_mage_tier2_right
+  tier: 2
+  lane: 2
+  title: Meteor Rain
+  description: "Unlocks a meteor that falls from the sky on the closest enemy every
+    5 seconds."
+  icon: {fileID: 3667681588813468039, guid: adf3a03aa0f4f56428a2d12977188ee5, type: 3}
+  skillPointCost: 1
+  soulsCost: 2
+  prerequisites:
+  - {fileID: 11400000, guid: 1ce1da21beac4e029900636bf3e0f49a, type: 2}
+  skillEffect: {fileID: 1101234567890123458, guid: dd44ee55ff66778899001122aabbccdd, type: 3}
+  skillPercentValue: 0
+  skillRadiusValue: 0
+  skillIntValue: 0
+  skillDuration: 5
+
+
+
+========================
 FILE: upgrade_node_fire_mage_unlock.asset
 PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Fire Mage\upgrade_node_fire_mage_unlock.asset
 ========================
@@ -1722,6 +1875,80 @@ MonoBehaviour:
   skillPointCost: 1
   soulsCost: 0
   prerequisites: []
+
+
+
+========================
+FILE: upgrade_node_lightning_mage_tier1_left.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Lightning Mage\upgrade_node_lightning_mage_tier1_left.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_lightning_mage_tier1_left
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_lightning_mage_tier1_left
+  tier: 1
+  lane: 1
+  title: Chain Mastery
+  description: "Lightning chains to 1 additional enemy, striking up to 3 targets
+    total."
+  icon: {fileID: 3667681588813468039, guid: 09ea848120780a941ac6565f9c6911a0, type: 3}
+  skillPointCost: 1
+  soulsCost: 2
+  prerequisites:
+  - {fileID: 11400000, guid: dc2a3f08958a6b54f9d09e685760e803, type: 2}
+  skillEffect: {fileID: 7001234567890123458, guid: c3d4e5f6a7b8c9d0e1f2a3b4c5d6a7b8, type: 3}
+  skillPercentValue: 0
+  skillRadiusValue: 0
+  skillIntValue: 1
+  skillDuration: 0
+
+
+
+========================
+FILE: upgrade_node_lightning_mage_tier1_right.asset
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Units\Units\UnitsUpgrades\Lightning Mage\upgrade_node_lightning_mage_tier1_right.asset
+========================
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_lightning_mage_tier1_right
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_lightning_mage_tier1_right
+  tier: 1
+  lane: 2
+  title: Conductivity
+  description: "Increases the chain lightning search radius by 2 units, allowing
+    bolts to reach further enemies."
+  icon: {fileID: 3667681588813468039, guid: 09ea848120780a941ac6565f9c6911a0, type: 3}
+  skillPointCost: 1
+  soulsCost: 2
+  prerequisites:
+  - {fileID: 11400000, guid: dc2a3f08958a6b54f9d09e685760e803, type: 2}
+  skillEffect: {fileID: 8001234567890123458, guid: d4e5f6a7b8c9d0e1f2a3b4c5d6a7b8c9, type: 3}
+  skillPercentValue: 0
+  skillRadiusValue: 2
+  skillIntValue: 0
+  skillDuration: 0
 
 
 

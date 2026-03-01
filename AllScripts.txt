@@ -767,7 +767,11 @@ using UnityEngine;
 
 public class FireMageAttack : MonoBehaviour, IAttackStrategy
 {
-    [Header("Meteor settings")]
+    [Header("Projectile (base attack)")]
+    public GameObject projectilePrefab;
+    public Transform shootPoint;
+
+    [Header("Meteor (unlocked by skill)")]
     public GameObject meteorPrefab;
     public float spawnHeight = 5f;
     public float horizontalRandomOffset = 0.5f;
@@ -795,24 +799,20 @@ public class FireMageAttack : MonoBehaviour, IAttackStrategy
         }
     }
 
-    // Animation Event
-    public void SpawnMeteor()
+    public void StartProjectile()
     {
         if (currentTarget == null || !currentTarget.IsAlive) return;
-        if (meteorPrefab == null || stats == null) return;
+        if (projectilePrefab == null || shootPoint == null || stats == null) return;
 
-        Vector3 targetPos = currentTarget.TargetTransform.position;
+        GameObject proj = Instantiate(projectilePrefab, shootPoint.position, Quaternion.identity);
 
-        Vector3 spawnPos = targetPos + Vector3.up * spawnHeight;
-        spawnPos.x += Random.Range(-horizontalRandomOffset, horizontalRandomOffset);
+        var p = proj.GetComponent<Projectile>();
+        if (p != null)
+            p.Init(stats, currentTarget);
 
-        GameObject meteor = Instantiate(meteorPrefab, spawnPos, Quaternion.identity);
-
-        MeteorProjectile proj = meteor.GetComponent<MeteorProjectile>();
-        if (proj != null)
-        {
-            proj.Init(currentTarget, stats.damage, stats);
-        }
+        var spawnHooks = GetComponents<IOnProjectileSpawned>();
+        for (int i = 0; i < spawnHooks.Length; i++)
+            spawnHooks[i].OnProjectileSpawned(p);
     }
 }
 
@@ -3394,6 +3394,9 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
             case FloatingNumberType.Poison:
                 tmp.color = new Color(0.6f, 0.1f, 0.8f);
                 break;
+            case FloatingNumberType.Burn:
+                tmp.color = new Color(1f, 0.5f, 0f);
+                break;
             case FloatingNumberType.Normal:
             default:
                 tmp.color = (team == Team.MyTeam)
@@ -3753,7 +3756,13 @@ public enum FloatingNumberType
     Normal,
     Crit,
     Heal,
-    Poison
+    Poison,
+    Burn
+}
+
+public interface IMeteorSkill
+{
+    void OnMeteorSpawned(MeteorProjectile meteor);
 }
 
 public enum RangeLabel
@@ -6475,7 +6484,8 @@ public enum MasteryStat
     GoldPerKillFlat,
     GemsCostReduction,
     GoldCostReduction,
-    SoulsOverflow
+    SoulsOverflow,
+    HourlyChestCooldownReduction
 }
 
 [CreateAssetMenu(menuName = "Mastery/Mastery Item Definition", fileName = "MasteryItem_")]
@@ -9068,6 +9078,10 @@ public class PlayerSaveData
     public string masteryLastPickedId;          // anti-streak 
     public List<MasteryLevelData> masteryLevels = new List<MasteryLevelData>();
 
+    // ==============================
+    // WALL
+    // ==============================
+    public int wallLevel = 1;
 
 }
 
@@ -10444,8 +10458,12 @@ public class HourlyChestClaimButton : MonoBehaviour
             Debug.LogWarning("HourlyChest: chestReward/chestOpeningUI missing");
         }
 
-        // Set next available time: now + 3 hours
-        DateTime nextUtc = DateTime.UtcNow.AddHours(cooldownHours);
+        // Set next available time: base cooldown minus mastery reduction (min 120 min)
+        float reductionMinutes = MasteryBonusManager.Instance != null
+            ? MasteryBonusManager.Instance.GetFlat(MasteryStat.HourlyChestCooldownReduction)
+            : 0f;
+        float totalMinutes = Mathf.Max(cooldownHours * 60f - reductionMinutes, 120f);
+        DateTime nextUtc = DateTime.UtcNow.AddMinutes(totalMinutes);
         save.nextHourlyChestUtcTicks = nextUtc.Ticks;
         GameData.Instance.SaveNow();
 
@@ -13638,7 +13656,7 @@ public class MeteorProjectile : MonoBehaviour
 
     [Header("Splash Damage")]
     public float splashRadius = 1.5f;
-    [Range(0f, 1f)] public float splashDamageFraction = 0.5f;
+    [Range(0f, 1f)] public float splashDamageFraction = 0f;
     public LayerMask splashLayerMask;
 
     [Header("VFX")]
@@ -13648,6 +13666,8 @@ public class MeteorProjectile : MonoBehaviour
     private int damage;
     private CharacterStats attacker;
     private Team attackerTeam;
+
+    public ICombatTarget Target => target;
 
     /// <summary>
     /// Initializes this meteor with a target, damage and attacker (for correct damage attribution).
@@ -13689,6 +13709,12 @@ public class MeteorProjectile : MonoBehaviour
         if (target != null && target.IsAlive)
         {
             target.TakeDamage(damage, attacker);
+
+            if (attacker != null && target is CharacterStats hitStats)
+            {
+                var effects = attacker.GetComponents<IOnHitEffect>();
+                foreach (var e in effects) e.OnHit(attacker, hitStats);
+            }
         }
 
         Vector3 center = ComputeImpactCenter(hitPosition);
@@ -13953,6 +13979,89 @@ public abstract class UnitSkillBehaviour : MonoBehaviour
     }
 
     protected virtual void OnInit() { }
+}
+
+
+
+========================
+FILE: StatusEffectBurn.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\Effects\StatusEffectBurn.cs
+========================
+using UnityEngine;
+
+public class StatusEffectBurn : MonoBehaviour
+{
+    private CharacterStats target;
+    private CharacterStats source;
+
+    private float duration;
+    private float timer;
+
+    private float tickInterval = 1f;
+    private float tickTimer;
+
+    private int damagePerTick;
+
+    private Color burnColor = new Color(1f, 0.4f, 0f);
+
+    public void Apply(
+        CharacterStats attacker,
+        CharacterStats targetStats,
+        float percentPerSecond,
+        float durationSeconds
+    )
+    {
+        source = attacker;
+        target = targetStats;
+
+        duration = Mathf.Max(0.1f, durationSeconds);
+        timer = duration;
+
+        damagePerTick = Mathf.RoundToInt(
+            Mathf.Max(0f, attacker.damage) * Mathf.Clamp01(percentPerSecond)
+        );
+
+        target.SetUnitColor(burnColor);
+    }
+
+    private void Update()
+    {
+        if (target == null || !target.IsAlive)
+        {
+            Destroy(this);
+            return;
+        }
+
+        timer -= Time.deltaTime;
+
+        tickTimer += Time.deltaTime;
+
+        if (tickTimer >= tickInterval)
+        {
+            tickTimer -= tickInterval;
+            DoTick();
+        }
+
+        if (timer <= 0f)
+        {
+            Destroy(this);
+        }
+    }
+
+    private void DoTick()
+    {
+        if (damagePerTick <= 0) return;
+
+        target.ApplyStatusDamage(damagePerTick, source, FloatingNumberType.Burn);
+    }
+
+    private void OnDestroy()
+    {
+        if (target != null)
+        {
+            target.ResetColor();
+        }
+    }
 }
 
 
@@ -14479,6 +14588,57 @@ public class SkillBonusMaxHpPercent : UnitSkillBehaviour
 
 
 ========================
+FILE: SkillBurn.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillBurn.cs
+========================
+using UnityEngine;
+
+public class SkillBurn : UnitSkillBehaviour, IOnHitEffect
+{
+    private float percentPerSecond;
+    private float duration;
+
+    protected override void OnInit()
+    {
+        percentPerSecond = Mathf.Clamp01(node.skillPercentValue);
+        duration = node.skillDuration;
+    }
+
+    public void OnHit(CharacterStats attacker, CharacterStats target)
+    {
+        if (target == null) return;
+
+        var burn = target.GetComponent<StatusEffectBurn>();
+        if (burn == null)
+            burn = target.gameObject.AddComponent<StatusEffectBurn>();
+
+        burn.Apply(attacker, target, percentPerSecond, duration);
+    }
+}
+
+
+
+========================
+FILE: SkillChainRange.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillChainRange.cs
+========================
+using UnityEngine;
+
+public class SkillChainRange : UnitSkillBehaviour
+{
+    protected override void OnInit()
+    {
+        float extra = Mathf.Max(0.1f, node.skillRadiusValue);
+
+        var attack = GetComponent<LightningMageAttack>();
+        if (attack != null)
+            attack.chainRange += extra;
+    }
+}
+
+
+
+========================
 FILE: SkillEnergize.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillEnergize.cs
 ========================
@@ -14527,6 +14687,71 @@ public class SkillEnergize : UnitSkillBehaviour
         }
     }
 }
+
+
+========================
+FILE: SkillExtraBounce.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillExtraBounce.cs
+========================
+using UnityEngine;
+
+public class SkillExtraBounce : UnitSkillBehaviour
+{
+    protected override void OnInit()
+    {
+        int extra = Mathf.Max(1, node.skillIntValue);
+
+        var attack = GetComponent<LightningMageAttack>();
+        if (attack != null)
+            attack.maxBounces += extra;
+    }
+}
+
+
+
+========================
+FILE: SkillFireBlast.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillFireBlast.cs
+========================
+using UnityEngine;
+
+public class SkillFireBlast : UnitSkillBehaviour, IOnHitEffect
+{
+    private float damageFraction;
+    private float radius;
+
+    protected override void OnInit()
+    {
+        damageFraction = Mathf.Clamp01(node.skillPercentValue);
+        radius = node.skillRadiusValue;
+    }
+
+    public void OnHit(CharacterStats attacker, CharacterStats target)
+    {
+        if (target == null || attacker == null) return;
+        if (radius <= 0f || damageFraction <= 0f) return;
+
+        int splashDmg = Mathf.RoundToInt(attacker.damage * damageFraction);
+        if (splashDmg <= 0) return;
+
+        Vector3 center = target.transform.position;
+        Team enemyTeam = (attacker.team == Team.MyTeam) ? Team.EnemyTeam : Team.MyTeam;
+
+        var all = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
+        foreach (var u in all)
+        {
+            if (u == null || u == target) continue;
+            if (u.team != enemyTeam) continue;
+            if (u.currentHealth <= 0) continue;
+            if (u.isUntargetable) continue;
+
+            float d = Vector3.Distance(center, u.transform.position);
+            if (d <= radius)
+                u.TakeDamage(splashDmg, attacker);
+        }
+    }
+}
+
 
 
 ========================
@@ -14660,6 +14885,287 @@ public class SkillLifeSteal : UnitSkillBehaviour
     {
         if (stats != null)
             stats.OnDealDamage -= HandleDealDamage;
+    }
+}
+
+
+
+========================
+FILE: SkillMeteorRain.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillMeteorRain.cs
+========================
+using UnityEngine;
+
+public class SkillMeteorRain : UnitSkillBehaviour
+{
+    private float cooldown;
+    private float timer;
+
+    protected override void OnInit()
+    {
+        cooldown = node.skillDuration > 0f ? node.skillDuration : 5f;
+        timer = cooldown;
+
+        var fireAttack = GetComponent<FireMageAttack>();
+        if (fireAttack == null)
+            Debug.LogWarning("SkillMeteorRain: FireMageAttack not found on " + gameObject.name);
+        else if (fireAttack.meteorPrefab == null)
+            Debug.LogWarning("SkillMeteorRain: meteorPrefab is not assigned on " + gameObject.name);
+    }
+
+    private void Update()
+    {
+        if (stats == null || stats.currentHealth <= 0) return;
+        if (BattleManager.instance == null || !BattleManager.instance.IsBattleRunning) return;
+        if (stats.isUntargetable) return;
+
+        timer -= Time.deltaTime;
+        if (timer <= 0f)
+        {
+            timer = cooldown;
+            FireMeteor();
+        }
+    }
+
+    private void FireMeteor()
+    {
+        var fireAttack = GetComponent<FireMageAttack>();
+        if (fireAttack == null || fireAttack.meteorPrefab == null) return;
+
+        CharacterStats target = FindClosestEnemy();
+        if (target == null) return;
+
+        Vector3 targetPos = target.transform.position;
+        Vector3 spawnPos = targetPos + Vector3.up * fireAttack.spawnHeight;
+        spawnPos.x += Random.Range(-fireAttack.horizontalRandomOffset, fireAttack.horizontalRandomOffset);
+
+        GameObject meteor = Instantiate(fireAttack.meteorPrefab, spawnPos, Quaternion.identity);
+        MeteorProjectile proj = meteor.GetComponent<MeteorProjectile>();
+        if (proj != null)
+        {
+            proj.Init(target, stats.damage, stats);
+
+            var meteorSkills = GetComponents<IMeteorSkill>();
+            foreach (var ms in meteorSkills)
+                ms.OnMeteorSpawned(proj);
+        }
+    }
+
+    private CharacterStats FindClosestEnemy()
+    {
+        var allUnits = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
+        CharacterStats closest = null;
+        float closestDist = float.MaxValue;
+
+        foreach (var unit in allUnits)
+        {
+            if (unit == null || unit == stats || !unit.IsAlive) continue;
+            if (unit.team == stats.team) continue;
+            if (unit.isUntargetable) continue;
+
+            float dist = Vector3.Distance(transform.position, unit.transform.position);
+            if (dist < closestDist)
+            {
+                closestDist = dist;
+                closest = unit;
+            }
+        }
+
+        return closest;
+    }
+}
+
+
+
+========================
+FILE: SkillMeteorSplash.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillMeteorSplash.cs
+========================
+using UnityEngine;
+
+public class SkillMeteorSplash : UnitSkillBehaviour, IMeteorSkill
+{
+    private float damageFraction;
+    private float radius;
+
+    protected override void OnInit()
+    {
+        damageFraction = Mathf.Clamp01(node.skillPercentValue);
+        radius = node.skillRadiusValue;
+    }
+
+    public void OnMeteorSpawned(MeteorProjectile meteor)
+    {
+        meteor.splashDamageFraction = damageFraction;
+        meteor.splashRadius = radius;
+    }
+}
+
+
+
+========================
+FILE: SkillMeteorStrike.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillMeteorStrike.cs
+========================
+using UnityEngine;
+
+public class SkillMeteorStrike : UnitSkillBehaviour
+{
+    private float cooldown;
+    private float timer;
+
+    protected override void OnInit()
+    {
+        cooldown = node.skillDuration > 0f ? node.skillDuration : 5f;
+        timer = cooldown;
+    }
+
+    private void Update()
+    {
+        if (stats == null || stats.currentHealth <= 0) return;
+        if (BattleManager.instance == null || !BattleManager.instance.IsBattleRunning) return;
+        if (stats.isUntargetable) return;
+
+        timer -= Time.deltaTime;
+        if (timer <= 0f)
+        {
+            timer = cooldown;
+            FireMeteor();
+        }
+    }
+
+    private void FireMeteor()
+    {
+        var fireAttack = GetComponent<FireMageAttack>();
+        if (fireAttack == null || fireAttack.meteorPrefab == null) return;
+
+        CharacterStats target = FindClosestEnemy();
+        if (target == null) return;
+
+        Vector3 targetPos = target.transform.position;
+        Vector3 spawnPos = targetPos + Vector3.up * fireAttack.spawnHeight;
+        spawnPos.x += Random.Range(-fireAttack.horizontalRandomOffset, fireAttack.horizontalRandomOffset);
+
+        GameObject meteor = Instantiate(fireAttack.meteorPrefab, spawnPos, Quaternion.identity);
+        MeteorProjectile proj = meteor.GetComponent<MeteorProjectile>();
+        if (proj != null)
+        {
+            proj.Init(target, stats.damage, stats);
+
+            var meteorSkills = GetComponents<IMeteorSkill>();
+            foreach (var ms in meteorSkills)
+                ms.OnMeteorSpawned(proj);
+        }
+    }
+
+    private CharacterStats FindClosestEnemy()
+    {
+        var allUnits = FindObjectsByType<CharacterStats>(FindObjectsSortMode.None);
+        CharacterStats closest = null;
+        float closestDist = float.MaxValue;
+
+        foreach (var unit in allUnits)
+        {
+            if (unit == null || unit == stats || !unit.IsAlive) continue;
+            if (unit.team == stats.team) continue;
+            if (unit.isUntargetable) continue;
+
+            float dist = Vector3.Distance(transform.position, unit.transform.position);
+            if (dist < closestDist)
+            {
+                closestDist = dist;
+                closest = unit;
+            }
+        }
+
+        return closest;
+    }
+}
+
+
+
+========================
+FILE: SkillMultiShot.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillMultiShot.cs
+========================
+using System.Collections;
+using UnityEngine;
+
+public class SkillMultiShot : UnitSkillBehaviour, IOnProjectileSpawned, IMeteorSkill
+{
+    private int extraShots;
+    private float delayBetweenShots = 0.15f;
+    private bool isSpawningExtra;
+
+    protected override void OnInit()
+    {
+        extraShots = node.skillIntValue > 0 ? node.skillIntValue : 1;
+    }
+
+    // --- Archer (Projectile) ---
+
+    public void OnProjectileSpawned(Projectile projectile)
+    {
+        if (isSpawningExtra || projectile == null) return;
+
+        var rangerAttack = GetComponent<RangerAttack>();
+        if (rangerAttack == null) return;
+
+        StartCoroutine(SpawnExtraProjectiles(rangerAttack));
+    }
+
+    private IEnumerator SpawnExtraProjectiles(RangerAttack rangerAttack)
+    {
+        isSpawningExtra = true;
+        for (int i = 0; i < extraShots; i++)
+        {
+            yield return new WaitForSeconds(delayBetweenShots);
+            rangerAttack.StartProjectile();
+        }
+        isSpawningExtra = false;
+    }
+
+    // --- Fire Mage (Meteor) ---
+
+    public void OnMeteorSpawned(MeteorProjectile meteor)
+    {
+        if (isSpawningExtra || meteor == null) return;
+
+        var fireAttack = GetComponent<FireMageAttack>();
+        if (fireAttack == null || fireAttack.meteorPrefab == null) return;
+
+        ICombatTarget target = meteor.Target;
+        if (target == null || !target.IsAlive) return;
+
+        StartCoroutine(SpawnExtraMeteors(fireAttack, target));
+    }
+
+    private IEnumerator SpawnExtraMeteors(FireMageAttack fireAttack, ICombatTarget target)
+    {
+        isSpawningExtra = true;
+        for (int i = 0; i < extraShots; i++)
+        {
+            yield return new WaitForSeconds(delayBetweenShots);
+
+            if (target is Object obj && obj == null) break;
+            if (!target.IsAlive) break;
+
+            Vector3 targetPos = target.TargetTransform.position;
+            Vector3 spawnPos = targetPos + Vector3.up * fireAttack.spawnHeight;
+            spawnPos.x += Random.Range(-fireAttack.horizontalRandomOffset, fireAttack.horizontalRandomOffset);
+
+            GameObject meteorObj = Instantiate(fireAttack.meteorPrefab, spawnPos, Quaternion.identity);
+            MeteorProjectile proj = meteorObj.GetComponent<MeteorProjectile>();
+            if (proj != null)
+            {
+                proj.Init(target, stats.damage, stats);
+
+                var meteorSkills = GetComponents<IMeteorSkill>();
+                foreach (var ms in meteorSkills)
+                    ms.OnMeteorSpawned(proj);
+            }
+        }
+        isSpawningExtra = false;
     }
 }
 
@@ -20910,6 +21416,7 @@ public class WheelOfFortunePopup : MonoBehaviour
     public void Close()
     {
         if (popupAnimator == null) return;
+        if (pickerWheel != null && pickerWheel.IsSpinning) return;
         popupAnimator.Close();
     }
 
