@@ -22048,8 +22048,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DropAreaCell
   row: 2
   column: 4
-  bonusType: 0
-  percentValue: 0
+  bonusType: 3
+  percentValue: 30
   spriteRenderer: {fileID: 439987752}
   fillImage: {fileID: 631888543}
   selectedBrightnessMul: 1.35
@@ -23857,8 +23857,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DropAreaCell
   row: 0
   column: 2
-  bonusType: 1
-  percentValue: -20
+  bonusType: 0
+  percentValue: 0
   spriteRenderer: {fileID: 478572241}
   fillImage: {fileID: 2134117358}
   selectedBrightnessMul: 1.35
@@ -29107,8 +29107,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DropAreaCell
   row: 1
   column: 0
-  bonusType: 0
-  percentValue: 0
+  bonusType: 3
+  percentValue: -25
   spriteRenderer: {fileID: 607778863}
   fillImage: {fileID: 2039695926}
   selectedBrightnessMul: 1.35
@@ -29693,8 +29693,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DropAreaCell
   row: 0
   column: 1
-  bonusType: 0
-  percentValue: 0
+  bonusType: 2
+  percentValue: 15
   spriteRenderer: {fileID: 614626692}
   fillImage: {fileID: 212749956}
   selectedBrightnessMul: 1.35
@@ -36228,8 +36228,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DropAreaCell
   row: 2
   column: 2
-  bonusType: 0
-  percentValue: 0
+  bonusType: 1
+  percentValue: 25
   spriteRenderer: {fileID: 788631019}
   fillImage: {fileID: 1987367515}
   selectedBrightnessMul: 1.35
@@ -38320,8 +38320,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DropAreaCell
   row: 1
   column: 3
-  bonusType: 1
-  percentValue: 20
+  bonusType: 0
+  percentValue: 0
   spriteRenderer: {fileID: 846358909}
   fillImage: {fileID: 693684469}
   selectedBrightnessMul: 1.35
@@ -48898,8 +48898,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DropAreaCell
   row: 0
   column: 4
-  bonusType: 0
-  percentValue: 0
+  bonusType: 1
+  percentValue: -15
   spriteRenderer: {fileID: 1011403916}
   fillImage: {fileID: 1449366926}
   selectedBrightnessMul: 1.35
@@ -56788,8 +56788,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DropAreaCell
   row: 1
   column: 5
-  bonusType: 0
-  percentValue: 0
+  bonusType: 2
+  percentValue: -20
   spriteRenderer: {fileID: 1165534598}
   fillImage: {fileID: 752873133}
   selectedBrightnessMul: 1.35
@@ -67116,14 +67116,30 @@ MonoBehaviour:
   backgroundSprite: {fileID: 0}
   areaCollider: {fileID: 0}
   specialCells:
-  - row: 1
-    column: 3
-    bonusType: 1
-    percentValue: 20
   - row: 0
+    column: 1
+    bonusType: 2
+    percentValue: 15
+  - row: 0
+    column: 4
+    bonusType: 1
+    percentValue: -15
+  - row: 1
+    column: 0
+    bonusType: 3
+    percentValue: -25
+  - row: 1
+    column: 5
+    bonusType: 2
+    percentValue: -20
+  - row: 2
     column: 2
     bonusType: 1
-    percentValue: -20
+    percentValue: 25
+  - row: 2
+    column: 4
+    bonusType: 3
+    percentValue: 30
 --- !u!4 &1377736184
 Transform:
   m_ObjectHideFlags: 0
