@@ -3525,6 +3525,18 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         spriteRenderer.color = currentColor;
     }
 
+    public void SetUnitColor(Color newColor)
+    {
+        if (spriteRenderer != null)
+            spriteRenderer.color = newColor;
+    }
+
+    public void ResetColor()
+    {
+        if (spriteRenderer != null)
+            spriteRenderer.color = Color.white;
+    }
+
     // ====================================================
     // FALLEN WEAPON (ANIMATED DROP, NO PHYSICS)
     // ====================================================
@@ -13968,10 +13980,12 @@ public class StatusEffectPoison : MonoBehaviour
     private float duration;
     private float timer;
 
-    private float tickInterval = 1f; 
+    private float tickInterval = 1f;
     private float tickTimer;
 
     private int damagePerTick;
+
+    [SerializeField] private Color poisonColor = new Color(0.87f, 0.64f, 0.96f);
 
     public void Apply(
         CharacterStats attacker,
@@ -13983,25 +13997,39 @@ public class StatusEffectPoison : MonoBehaviour
         source = attacker;
         target = targetStats;
 
+        // Refresh total effect duration
         duration = Mathf.Max(0.1f, durationSeconds);
         timer = duration;
 
+        // Recalculate damage based on attacker's current stats
         damagePerTick = Mathf.RoundToInt(
             Mathf.Max(0f, attacker.damage) * Mathf.Clamp01(percentPerSecond)
         );
 
-        tickTimer = 0f;
+        // Apply visual feedback
+        target.SetUnitColor(poisonColor);
+
+        /* 
+         * REMOVED: Destroy(this, durationSeconds);
+         * Logic: Using Destroy with a delay schedules a fixed destruction time. 
+         * We now let the Update loop handle destruction via the 'timer' variable 
+         * to allow refreshing the duration on multiple hits.
+         */
     }
 
     private void Update()
     {
+        // Safety check for target validity
         if (target == null || !target.IsAlive)
         {
             Destroy(this);
             return;
         }
 
+        // Handle total duration countdown
         timer -= Time.deltaTime;
+
+        // Handle periodic damage intervals
         tickTimer += Time.deltaTime;
 
         if (tickTimer >= tickInterval)
@@ -14010,6 +14038,7 @@ public class StatusEffectPoison : MonoBehaviour
             DoTick();
         }
 
+        // Destroy effect when duration expires
         if (timer <= 0f)
         {
             Destroy(this);
@@ -14020,11 +14049,20 @@ public class StatusEffectPoison : MonoBehaviour
     {
         if (damagePerTick <= 0) return;
 
+        // Apply damage through the core stats system with poison floating text
         target.ApplyStatusDamage(damagePerTick, source, FloatingNumberType.Poison);
-        Debug.Log($"Poison tick: {damagePerTick}");
+        Debug.Log($"Poison tick: {damagePerTick} damage dealt to {target.name}");
+    }
+
+    private void OnDestroy()
+    {
+        // Revert unit color to default when effect ends
+        if (target != null)
+        {
+            target.ResetColor();
+        }
     }
 }
-
 
 
 ========================
@@ -14037,7 +14075,7 @@ public class StatusEffectSlow : MonoBehaviour
 {
     private CharacterStats target;
 
-    private float slowPercent;   // 0.8 = 80%
+    private float slowPercent;   // Example: 0.8 = 80% speed reduction
     private float duration;
 
     private float baseMoveSpeed;
@@ -14045,32 +14083,50 @@ public class StatusEffectSlow : MonoBehaviour
 
     private bool initialized = false;
 
+    [SerializeField] private Color iceColor = new Color(0.4f, 0.7f, 1f);
+
     public void Apply(CharacterStats targetStats, float slowPercent, float duration)
     {
         target = targetStats;
         this.slowPercent = Mathf.Clamp01(slowPercent);
         this.duration = duration;
 
+        // Apply speed reduction only on the first hit to avoid compounding slows
         if (!initialized)
         {
             initialized = true;
 
+            // Store original speed to ensure accurate restoration later [1, 2]
             baseMoveSpeed = target.moveSpeed;
 
+            // Reduce target movement speed based on percentage [3]
             target.moveSpeed = baseMoveSpeed * (1f - this.slowPercent);
         }
 
+        // Refresh the duration timer to the full duration on every hit
         timer = this.duration;
+
+        // Apply the blue ice visual feedback [4]
+        target.SetUnitColor(iceColor);
+
+        /* 
+         * REMOVED: Destroy(this, duration);
+         * Logic: We no longer use delayed destruction here. 
+         * The Update loop now handles destruction via the 'timer' variable,
+         * allowing subsequent hits to "refresh" the effect duration.
+         */
     }
 
     private void Update()
     {
-        if (target == null)
+        // Safety check for target validity or death [5]
+        if (target == null || !target.IsAlive)
         {
             Destroy(this);
             return;
         }
 
+        // Countdown the refreshed timer
         timer -= Time.deltaTime;
         if (timer <= 0f)
         {
@@ -14080,7 +14136,8 @@ public class StatusEffectSlow : MonoBehaviour
 
     private void Remove()
     {
-        if (target != null)
+        // Explicitly restore original stats before component removal [6]
+        if (target != null && initialized)
         {
             target.moveSpeed = baseMoveSpeed;
         }
@@ -14090,13 +14147,17 @@ public class StatusEffectSlow : MonoBehaviour
 
     private void OnDestroy()
     {
+        // Final cleanup to ensure unit returns to normal state [6]
         if (target != null)
         {
-            target.moveSpeed = baseMoveSpeed;
+            if (initialized)
+            {
+                target.moveSpeed = baseMoveSpeed;
+            }
+            target.ResetColor();
         }
     }
 }
-
 
 
 ========================
