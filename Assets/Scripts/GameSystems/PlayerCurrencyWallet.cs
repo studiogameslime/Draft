@@ -59,7 +59,6 @@ public class PlayerCurrencyWallet : MonoBehaviour
     public void AddGold(int amount, RectTransform fromUI = null, Action onFinished = null)
     {
         if (amount <= 0) return;
-
         int startValue = Gold;
         int targetValue = Gold + amount;
 

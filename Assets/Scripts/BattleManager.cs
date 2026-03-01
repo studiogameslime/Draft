@@ -228,7 +228,7 @@ public class BattleManager : MonoBehaviour
         SetAllAIEnabled(false);
         gameOver = true;
 
-        EndGameUI.Instance.ShowLoseScreen(roundsGold,roundsXp);
+        EndGameUI.Instance.ShowLoseScreen(roundsGold, roundsXp);
 
         foreach (var unitClass in unitClassUsedThisBattle)
             MissionsManager.Instance.ReportAction(MissionAction.PlayWithUnitClass, 1, null, unitClass);
@@ -251,7 +251,11 @@ public class BattleManager : MonoBehaviour
 
         int levelGold = levelDefinition.goldOnLevelComplete;
         int roundsGold = levelDefinition.GetGoldFromRounds(roundsCompleted);
-        int totalBattleGold = levelGold + roundsGold;
+
+        // Calculate boosted amounts for UI and Wallet
+        int boostedLevelGold = MasteryBonusManager.Instance.GetBoostedGold(levelGold);
+        int boostedRoundsGold = MasteryBonusManager.Instance.GetBoostedGold(roundsGold);
+        int totalBattleGold = boostedLevelGold + boostedRoundsGold;
 
         int levelXp = levelDefinition.xpOnLevelComplete;
         int roundsXp = levelDefinition.GetXpFromRounds(roundsCompleted);
@@ -277,9 +281,9 @@ public class BattleManager : MonoBehaviour
             PlayerCurrencyWallet.Instance.AddGold(levelDefinition.goldOnLevelComplete + roundsGold);
 
             EndGameUI.Instance.ShowWinScreen(
-                levelGold,
-                roundsGold,
-                totalBattleGold,
+                boostedLevelGold,
+            boostedRoundsGold,
+            totalBattleGold,
                 levelXp,
                 roundsXp,
                 totalXp,

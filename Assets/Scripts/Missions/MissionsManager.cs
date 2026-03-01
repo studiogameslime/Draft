@@ -192,10 +192,18 @@ public class MissionsManager : MonoBehaviour
         if (mission == null || !mission.completed || mission.claimed)
             return;
 
+
         if (mission.definition.goldReward > 0)
         {
-            PlayerCurrencyWallet.Instance.AddGold(mission.definition.goldReward, from);
+            // Calculate final boosted amount to match UI display
+            int boostedGold = MasteryBonusManager.Instance != null
+                ? MasteryBonusManager.Instance.GetBoostedGold(mission.definition.goldReward)
+                : mission.definition.goldReward;
+
+            // Add gold to wallet, skipping internal mastery calculation to avoid double boosting
+            PlayerCurrencyWallet.Instance.AddGold(boostedGold, from);
         }
+
 
         if (mission.definition.gemsReward > 0)
         {
@@ -324,11 +332,18 @@ public class MissionsManager : MonoBehaviour
     {
         return activeWeeklyMissions.Count;
     }
-    
+
     private void GrantDailySetReward(RectTransform from)
     {
         if (dailyAllMissionsGoldReward > 0)
-            PlayerCurrencyWallet.Instance.AddGold(dailyAllMissionsGoldReward, from);
+        {
+            // Apply mastery bonus to the set reward
+            int finalGold = MasteryBonusManager.Instance != null
+                ? MasteryBonusManager.Instance.GetBoostedGold(dailyAllMissionsGoldReward)
+                : dailyAllMissionsGoldReward;
+
+            PlayerCurrencyWallet.Instance.AddGold(finalGold, from);
+        }
 
         if (dailyAllMissionsGemsReward > 0)
             PlayerCurrencyWallet.Instance.AddGems(dailyAllMissionsGemsReward, from);
@@ -345,7 +360,14 @@ public class MissionsManager : MonoBehaviour
     private void GrantWeeklySetReward(RectTransform from)
     {
         if (weeklyAllMissionsGoldReward > 0)
-            PlayerCurrencyWallet.Instance.AddGold(weeklyAllMissionsGoldReward, from);
+        {
+            // Apply mastery bonus to the weekly reward
+            int finalGold = MasteryBonusManager.Instance != null
+                ? MasteryBonusManager.Instance.GetBoostedGold(weeklyAllMissionsGoldReward)
+                : weeklyAllMissionsGoldReward;
+
+            PlayerCurrencyWallet.Instance.AddGold(finalGold, from);
+        }
 
         if (weeklyAllMissionsGemsReward > 0)
             PlayerCurrencyWallet.Instance.AddGems(weeklyAllMissionsGemsReward, from);

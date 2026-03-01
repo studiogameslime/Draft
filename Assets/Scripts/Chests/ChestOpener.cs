@@ -96,17 +96,18 @@ public class ChestOpener : MonoBehaviour
 
         if (reward.gold > 0)
         {
+            int boostedGold = MasteryBonusManager.Instance.GetBoostedGold(reward.gold);
             RectTransform from = rewardsSpawner != null ? rewardsSpawner.GetGoldFxFrom() : null;
             if (from == null) from = collectButtonFallback;
 
             if (from != null && RewardFlyFXManager.Instance != null)
             {
                 _pendingFxCount++;
-                PlayerCurrencyWallet.Instance.AddGold(reward.gold, from, OnSingleFxFinished);
+                PlayerCurrencyWallet.Instance.AddGold(boostedGold, from, OnSingleFxFinished);
             }
             else
             {
-                PlayerCurrencyWallet.Instance.AddGold(reward.gold, null);
+                PlayerCurrencyWallet.Instance.AddGold(boostedGold, null);
             }
         }
 

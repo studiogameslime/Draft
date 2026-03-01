@@ -14,15 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MasteryDatabase
   baseDrawCost: 1500
   costMultiplier: 1.2
+  commonChance: 70
+  rareChance: 25
+  epicChance: 5
   items:
   - {fileID: 11400000, guid: 6413a0fe42bc54541a2f09e6525a7f32, type: 2}
   - {fileID: 11400000, guid: dc3afc96c1e78774ab3d46eef67c682a, type: 2}
   - {fileID: 11400000, guid: dfde8259679708842b942423fe8e17f0, type: 2}
   - {fileID: 11400000, guid: 83b4debf83c815d4e8213f8f1d02669a, type: 2}
-  - {fileID: 11400000, guid: e51fbd031e060194984aee0f2122521f, type: 2}
   - {fileID: 11400000, guid: cdbfdebec30936d409360c1bb5eede59, type: 2}
   - {fileID: 11400000, guid: 57abe4db61d10d548ad31c5f57706bc8, type: 2}
-  - {fileID: 11400000, guid: 316659e35a44e5641b98dab1d2f8750c, type: 2}
-  - {fileID: 11400000, guid: 26a6ac8d0e797704483734ce34620d2d, type: 2}
-  - {fileID: 11400000, guid: 54d0a518ed3c738419a023c495b5fbb4, type: 2}
-  - {fileID: 11400000, guid: 68217e8ff20816c49baac0730515a380, type: 2}

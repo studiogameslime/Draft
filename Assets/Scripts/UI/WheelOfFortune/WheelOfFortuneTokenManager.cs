@@ -84,7 +84,10 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
         {
             case FortuneRewardType.Gold:
                 if (amount > 0)
-                    PlayerCurrencyWallet.Instance.AddGold(amount, fromRect);
+                {
+                    int boostedGold = MasteryBonusManager.Instance.GetBoostedGold(amount);
+                    PlayerCurrencyWallet.Instance.AddGold(boostedGold, fromRect);
+                }
                 break;
 
             case FortuneRewardType.Gems:

@@ -55,6 +55,13 @@ public class MasteryBonusManager : MonoBehaviour
         }
     }
 
+    public int GetBoostedGold(int baseGold)
+    {
+        float bonusPercent = GetPercent(MasteryStat.GoldGainPercent);
+        // English comment: Calculate final gold amount based on mastery level
+        return Mathf.FloorToInt(baseGold * (1f + bonusPercent));
+    }
+
     private static void AddTo(Dictionary<MasteryStat, float> dict, MasteryStat stat, float value)
     {
         dict.TryGetValue(stat, out float cur);

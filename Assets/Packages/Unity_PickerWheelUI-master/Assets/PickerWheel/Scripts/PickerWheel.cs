@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using GoogleMobileAds.Api;
 
 namespace EasyUI.PickerWheelUI
 {
@@ -100,8 +101,13 @@ namespace EasyUI.PickerWheelUI
                 WheelPiece p = new WheelPiece();
                 p.Icon = def != null ? def.icon : null;
                 p.Label = def != null ? def.displayName : "Slot";
+                
                 p.Amount = (def != null && def.reward != null) ? def.reward.amount : 0;
+                if(def != null && def.reward != null && def.reward.type == FortuneRewardType.Gold)
+                {
+                    p.Amount = MasteryBonusManager.Instance.GetBoostedGold(def.reward.amount);
 
+                }
                 // Chance is not used anymore (rarity is rolled from DB).
                 p.Chance = 100f;
 

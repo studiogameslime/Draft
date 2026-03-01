@@ -25,12 +25,19 @@ public class MissionContainer : MonoBehaviour
         this.mission = mission;
 
         descriptionText.text = mission.definition.description;
+
         if (mission.definition.goldReward > 0)
         {
-            rewardText.text = mission.definition.goldReward.ToString();
+            // Calculate the full amount including mastery bonus
+            int finalGold = MasteryBonusManager.Instance != null
+                ? MasteryBonusManager.Instance.GetBoostedGold(mission.definition.goldReward)
+                : mission.definition.goldReward;
+
+            // Display only the final boosted total
+            rewardText.text = finalGold.ToString();
             rewardIcon.sprite = StyleManager.instance.goldSprite;
-        }
-        if (mission.definition.gemsReward > 0)
+
+            if (mission.definition.gemsReward > 0)
         {
             rewardText.text = mission.definition.gemsReward.ToString();
             rewardIcon.sprite = StyleManager.instance.gemSprite;

@@ -61,7 +61,8 @@ public class ChestRewardsSpawner : MonoBehaviour
             spawnedAny = true;
             yield return StartCoroutine(SpawnSingleItem(ui =>
             {
-                ui.SetupGold(reward.gold);
+                int boostedGold = MasteryBonusManager.Instance.GetBoostedGold(reward.gold);
+                ui.SetupGold(boostedGold);
                 _goldItem = ui;
             }));
         }
