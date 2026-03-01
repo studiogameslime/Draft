@@ -23,7 +23,7 @@ public class PlayerSaveData
     public int wheelOfFortuneTokens;
 
 
-    // future currencies – you can add more later
+    // future currencies ï¿½ you can add more later
     // public int eventCoins;
     // public int someOtherCurrency;
 
@@ -43,7 +43,7 @@ public class PlayerSaveData
     // Units the player owns (by unitId)
     public List<UnitProgressData> ownedUnits = new List<UnitProgressData>();
 
-    // Current deck – list of unitIds (4 slots, 8)
+    // Current deck ï¿½ list of unitIds (4 slots, 8)
     public List<string> currentDeckUnitIds = new List<string>();
 
     // How many parts the player has per partId
@@ -143,6 +143,10 @@ public class PlayerSaveData
     public string masteryLastPickedId;          // anti-streak 
     public List<MasteryLevelData> masteryLevels = new List<MasteryLevelData>();
 
+    // ==============================
+    // WALL
+    // ==============================
+    public int wallLevel = 1;
 
 }
 
@@ -167,7 +171,7 @@ public class UnitProgressData
     // how many parts/shards for this unit
     public int partsOwned;
 
-    // for “NEW” tag in UI if you want
+    // for ï¿½NEWï¿½ tag in UI if you want
     public bool isNew;
 
     public int skillPoints;

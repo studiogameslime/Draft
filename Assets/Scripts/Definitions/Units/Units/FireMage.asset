@@ -47,3 +47,7 @@ MonoBehaviour:
   unlockNode: {fileID: 11400000, guid: 53dba96814fcd934bb17b34d304ac393, type: 2}
   nodes:
   - {fileID: 11400000, guid: 53dba96814fcd934bb17b34d304ac393, type: 2}
+  - {fileID: 11400000, guid: 11223344556677889900aabbccddeef0, type: 2}
+  - {fileID: 11400000, guid: 1ce1da21beac4e029900636bf3e0f49a, type: 2}
+  - {fileID: 11400000, guid: ee55ff66778899001122aabbccddeeff, type: 2}
+  - {fileID: 11400000, guid: a1256bd0b8694b10825cb16960e0b33b, type: 2}

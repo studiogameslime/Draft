@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 1-3
   m_EditorClassIdentifier: Assembly-CSharp::LevelDefinition
   rounds:
-  - souls: 5
+  - souls: 10
     goldOnRoundWin: 10
     enemyPhases:
     - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}

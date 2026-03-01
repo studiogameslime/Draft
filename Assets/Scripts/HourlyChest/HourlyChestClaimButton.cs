@@ -80,8 +80,12 @@ public class HourlyChestClaimButton : MonoBehaviour
             Debug.LogWarning("HourlyChest: chestReward/chestOpeningUI missing");
         }
 
-        // Set next available time: now + 3 hours
-        DateTime nextUtc = DateTime.UtcNow.AddHours(cooldownHours);
+        // Set next available time: base cooldown minus mastery reduction (min 120 min)
+        float reductionMinutes = MasteryBonusManager.Instance != null
+            ? MasteryBonusManager.Instance.GetFlat(MasteryStat.HourlyChestCooldownReduction)
+            : 0f;
+        float totalMinutes = Mathf.Max(cooldownHours * 60f - reductionMinutes, 120f);
+        DateTime nextUtc = DateTime.UtcNow.AddMinutes(totalMinutes);
         save.nextHourlyChestUtcTicks = nextUtc.Ticks;
         GameData.Instance.SaveNow();
 

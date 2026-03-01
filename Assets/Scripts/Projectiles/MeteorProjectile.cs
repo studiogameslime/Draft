@@ -8,7 +8,7 @@ public class MeteorProjectile : MonoBehaviour
 
     [Header("Splash Damage")]
     public float splashRadius = 1.5f;
-    [Range(0f, 1f)] public float splashDamageFraction = 0.5f;
+    [Range(0f, 1f)] public float splashDamageFraction = 0f;
     public LayerMask splashLayerMask;
 
     [Header("VFX")]
@@ -18,6 +18,8 @@ public class MeteorProjectile : MonoBehaviour
     private int damage;
     private CharacterStats attacker;
     private Team attackerTeam;
+
+    public ICombatTarget Target => target;
 
     /// <summary>
     /// Initializes this meteor with a target, damage and attacker (for correct damage attribution).
@@ -59,6 +61,12 @@ public class MeteorProjectile : MonoBehaviour
         if (target != null && target.IsAlive)
         {
             target.TakeDamage(damage, attacker);
+
+            if (attacker != null && target is CharacterStats hitStats)
+            {
+                var effects = attacker.GetComponents<IOnHitEffect>();
+                foreach (var e in effects) e.OnHit(attacker, hitStats);
+            }
         }
 
         Vector3 center = ComputeImpactCenter(hitPosition);

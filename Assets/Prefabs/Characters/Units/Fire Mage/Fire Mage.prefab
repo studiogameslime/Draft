@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 6854601202460801054}
   - component: {fileID: 3504355993341416739}
   - component: {fileID: -5741480685636111759}
-  - component: {fileID: 3918813009115691788}
+  - component: {fileID: -3480255372586763598}
   m_Layer: 3
   m_Name: Fire Mage
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   m_GameObject: {fileID: 153394670701094284}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 2.142, y: -0.784, z: 0}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 306d5c67533acfe49a9c25c929a5005d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HitFlash
---- !u!114 &3918813009115691788
+--- !u!114 &-3480255372586763598
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -283,11 +283,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 153394670701094284}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed5829206138ab24ea3ef62f606fa30f, type: 3}
+  m_Script: {fileID: 11500000, guid: 3679895e78f02094ba4409b476919724, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RangerAttack
+  m_EditorClassIdentifier: Assembly-CSharp::FireMageAttack
   projectilePrefab: {fileID: 6302113137028731400, guid: 1b9a073228e6e0a48829d2abb1fd29fa, type: 3}
   shootPoint: {fileID: 430569425540568769}
+  meteorPrefab: {fileID: 6839809033501333621, guid: c24fedf436c65574aadb3e7fd9100e59, type: 3}
+  spawnHeight: 5
+  horizontalRandomOffset: 0.5
 --- !u!1 &487820345301296132
 GameObject:
   m_ObjectHideFlags: 0

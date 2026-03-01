@@ -120,7 +120,13 @@ public enum FloatingNumberType
     Normal,
     Crit,
     Heal,
-    Poison
+    Poison,
+    Burn
+}
+
+public interface IMeteorSkill
+{
+    void OnMeteorSpawned(MeteorProjectile meteor);
 }
 
 public enum RangeLabel

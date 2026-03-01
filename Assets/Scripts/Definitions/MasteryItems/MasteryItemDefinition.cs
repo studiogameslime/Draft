@@ -16,7 +16,8 @@ public enum MasteryStat
     GoldPerKillFlat,
     GemsCostReduction,
     GoldCostReduction,
-    SoulsOverflow
+    SoulsOverflow,
+    HourlyChestCooldownReduction
 }
 
 [CreateAssetMenu(menuName = "Mastery/Mastery Item Definition", fileName = "MasteryItem_")]
@@ -30,7 +31,7 @@ public class MasteryItemDefinition : ScriptableObject
     [Header("Presentation")]
     public MasteryRarity rarity;
     public Sprite icon;
-    [Range(0.5f, 1.5f)] public float iconScale = 1f; // ôåúø ìê òðééï scale áéï àéé÷åðéí
+    [Range(0.5f, 1.5f)] public float iconScale = 1f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ scale ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     [Header("Effect")]
     public MasteryStat stat;

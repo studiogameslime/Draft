@@ -2,7 +2,11 @@ using UnityEngine;
 
 public class FireMageAttack : MonoBehaviour, IAttackStrategy
 {
-    [Header("Meteor settings")]
+    [Header("Projectile (base attack)")]
+    public GameObject projectilePrefab;
+    public Transform shootPoint;
+
+    [Header("Meteor (unlocked by skill)")]
     public GameObject meteorPrefab;
     public float spawnHeight = 5f;
     public float horizontalRandomOffset = 0.5f;
@@ -30,23 +34,19 @@ public class FireMageAttack : MonoBehaviour, IAttackStrategy
         }
     }
 
-    // Animation Event
-    public void SpawnMeteor()
+    public void StartProjectile()
     {
         if (currentTarget == null || !currentTarget.IsAlive) return;
-        if (meteorPrefab == null || stats == null) return;
+        if (projectilePrefab == null || shootPoint == null || stats == null) return;
 
-        Vector3 targetPos = currentTarget.TargetTransform.position;
+        GameObject proj = Instantiate(projectilePrefab, shootPoint.position, Quaternion.identity);
 
-        Vector3 spawnPos = targetPos + Vector3.up * spawnHeight;
-        spawnPos.x += Random.Range(-horizontalRandomOffset, horizontalRandomOffset);
+        var p = proj.GetComponent<Projectile>();
+        if (p != null)
+            p.Init(stats, currentTarget);
 
-        GameObject meteor = Instantiate(meteorPrefab, spawnPos, Quaternion.identity);
-
-        MeteorProjectile proj = meteor.GetComponent<MeteorProjectile>();
-        if (proj != null)
-        {
-            proj.Init(currentTarget, stats.damage, stats);
-        }
+        var spawnHooks = GetComponents<IOnProjectileSpawned>();
+        for (int i = 0; i < spawnHooks.Length; i++)
+            spawnHooks[i].OnProjectileSpawned(p);
     }
 }

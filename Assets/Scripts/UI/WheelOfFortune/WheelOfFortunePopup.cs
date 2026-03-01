@@ -36,6 +36,7 @@ public class WheelOfFortunePopup : MonoBehaviour
     public void Close()
     {
         if (popupAnimator == null) return;
+        if (pickerWheel != null && pickerWheel.IsSpinning) return;
         popupAnimator.Close();
     }
 

@@ -250,6 +250,9 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
             case FloatingNumberType.Poison:
                 tmp.color = new Color(0.6f, 0.1f, 0.8f);
                 break;
+            case FloatingNumberType.Burn:
+                tmp.color = new Color(1f, 0.5f, 0f);
+                break;
             case FloatingNumberType.Normal:
             default:
                 tmp.color = (team == Team.MyTeam)
