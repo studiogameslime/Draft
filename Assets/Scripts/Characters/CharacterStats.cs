@@ -385,6 +385,18 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         spriteRenderer.color = currentColor;
     }
 
+    public void SetUnitColor(Color newColor)
+    {
+        if (spriteRenderer != null)
+            spriteRenderer.color = newColor;
+    }
+
+    public void ResetColor()
+    {
+        if (spriteRenderer != null)
+            spriteRenderer.color = Color.white;
+    }
+
     // ====================================================
     // FALLEN WEAPON (ANIMATED DROP, NO PHYSICS)
     // ====================================================
