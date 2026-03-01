@@ -3491,13 +3491,27 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         if (definition == null) return;
         if (SoulOrbSpawner.instance == null) return;
 
-        float chance = Mathf.Clamp01(definition.soulDropChance);
-        if (chance <= 0f) return;
+        // Base chance is 0.25 (25%) from sources [3, 4]
+        float baseChance = Mathf.Clamp01(definition.soulDropChance);
 
-        if (Random.value <= chance)
+        // Mastery bonus is 0.01 per level (up to 0.20 at level 20)
+        float bonusPercent = MasteryBonusManager.Instance != null
+            ? MasteryBonusManager.Instance.GetPercent(MasteryStat.SoulsDropPercent)
+            : 0f;
+
+        // ADDITIVE CALCULATION: base 25% + mastery 10% = 35%
+        // We just add them together instead of multiplying
+        float finalChance = Mathf.Clamp01(baseChance + bonusPercent);
+
+        if (Random.value <= finalChance)
         {
             Vector3 pos = transform.position + Vector3.up * 0.3f;
             SoulOrbSpawner.instance.SpawnSoul(pos, 1);
+
+            if (bonusPercent > 0)
+            {
+                Debug.Log($"[Souls] Additive Mastery! Base: {baseChance * 100}%, Bonus: {bonusPercent * 100}%, Total: {finalChance * 100}%");
+            }
         }
     }
 
