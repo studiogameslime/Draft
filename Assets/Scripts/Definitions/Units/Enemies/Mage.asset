@@ -15,28 +15,30 @@ MonoBehaviour:
   id: unit_mage
   displayName: Mage
   description: 
-  rarity: 1
-  icon: {fileID: -3400982213634020427, guid: 2cca22e838a38c34e8c007e7a8d97af5, type: 3}
   prefab: {fileID: 3672369371563529809, guid: d8eeed233f99b564e863f0df4b26e646, type: 3}
-  iconScale: 0.5
+  rarity: 1
   unitTeam: 1
   unitClass: 4
   targetPriorityClass: 4
-  soulCost: 0
-  soulDropChance: 0.25
   maxHealth: 50
   damage: 10
   moveSpeed: 2
   attackRange: 4
   attackCooldown: 2
-  spawnTime: 5
   critChance: 0.2
   critMultiplier: 1.5
-  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  icon: {fileID: -3400982213634020427, guid: 2cca22e838a38c34e8c007e7a8d97af5, type: 3}
+  iconScale: 0.5
+  soulCost: 0
+  spawnTime: 5
   animatorController: {fileID: 0}
   maxTier: 3
   partSlots: []
   baseCapacity: 1
-  headPrefabForBattlePreview: {fileID: 0}
   unlockNode: {fileID: 0}
   nodes: []
+  disableReserveUnit: 0
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 0}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}

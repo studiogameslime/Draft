@@ -37,6 +37,7 @@ MonoBehaviour:
   baseCapacity: 1
   unlockNode: {fileID: 0}
   nodes: []
+  disableReserveUnit: 0
   soulDropChance: 0.25
   headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: 61a61d854adedcd438e6916aecbda2c2, type: 3}
   isBoss: 1

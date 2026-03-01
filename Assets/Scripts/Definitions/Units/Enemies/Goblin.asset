@@ -15,28 +15,30 @@ MonoBehaviour:
   id: unit_goblin
   displayName: Goblin
   description: 
-  rarity: 0
-  icon: {fileID: -5455630811309129204, guid: 9ac4b89c2bb99a0499d216eb33474cbd, type: 3}
   prefab: {fileID: 1962212957759589538, guid: 86654c0814329e347b269c8778cdb847, type: 3}
-  iconScale: 0.4
+  rarity: 0
   unitTeam: 1
   unitClass: 1
   targetPriorityClass: 0
-  soulCost: 0
-  soulDropChance: 1
   maxHealth: 40
   damage: 10
   moveSpeed: 0.6
   attackRange: 1
   attackCooldown: 1
-  spawnTime: 5
   critChance: 0.2
   critMultiplier: 1.5
-  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  icon: {fileID: -5455630811309129204, guid: 9ac4b89c2bb99a0499d216eb33474cbd, type: 3}
+  iconScale: 0.4
+  soulCost: 0
+  spawnTime: 5
   animatorController: {fileID: 0}
   maxTier: 3
   partSlots: []
   baseCapacity: 1
-  headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: d6fbab3502fa9d44f9eacf15387e9549, type: 3}
   unlockNode: {fileID: 0}
   nodes: []
+  disableReserveUnit: 0
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: d6fbab3502fa9d44f9eacf15387e9549, type: 3}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}

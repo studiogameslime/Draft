@@ -15,28 +15,30 @@ MonoBehaviour:
   id: unit_axe_thrower_golem
   displayName: Axe Thrower Golem
   description: 
-  rarity: 1
-  icon: {fileID: -5927858591751588972, guid: 5fcab3648aaa6f54bb393cdf81dd9b29, type: 3}
   prefab: {fileID: 8120014860710774337, guid: acc7de7bd49f62e4a86bb81a26ad4d5d, type: 3}
-  iconScale: 1
+  rarity: 1
   unitTeam: 1
   unitClass: 3
   targetPriorityClass: 0
-  soulCost: 0
-  soulDropChance: 0.25
   maxHealth: 80
   damage: 15
   moveSpeed: 0.3
   attackRange: 5
   attackCooldown: 1
-  spawnTime: 5
   critChance: 0.2
   critMultiplier: 1.5
-  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  icon: {fileID: -5927858591751588972, guid: 5fcab3648aaa6f54bb393cdf81dd9b29, type: 3}
+  iconScale: 1
+  soulCost: 0
+  spawnTime: 5
   animatorController: {fileID: 0}
   maxTier: 3
   partSlots: []
   baseCapacity: 1
-  headPrefabForBattlePreview: {fileID: 667374381617566049, guid: 01bc67b0612c7d14ba6244e991b0c3d0, type: 3}
   unlockNode: {fileID: 0}
   nodes: []
+  disableReserveUnit: 0
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 667374381617566049, guid: 01bc67b0612c7d14ba6244e991b0c3d0, type: 3}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}

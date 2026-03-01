@@ -15,28 +15,30 @@ MonoBehaviour:
   id: unit_giant_skeleton
   displayName: GiantSkeleton
   description: 
-  rarity: 2
-  icon: {fileID: 6976913724491762843, guid: b8d2a56a971c695448a2f3adb645d99a, type: 3}
   prefab: {fileID: 501027721989515594, guid: 9ef15c7d379a26248a985984bf0f6ced, type: 3}
-  iconScale: 0.3
+  rarity: 2
   unitTeam: 1
   unitClass: 1
   targetPriorityClass: 1
-  soulCost: 7
-  soulDropChance: 0.25
   maxHealth: 250
   damage: 10
   moveSpeed: 1
   attackRange: 0.8
   attackCooldown: 1.5
-  spawnTime: 5
   critChance: 0.2
   critMultiplier: 1.5
-  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  icon: {fileID: 6976913724491762843, guid: b8d2a56a971c695448a2f3adb645d99a, type: 3}
+  iconScale: 0.3
+  soulCost: 7
+  spawnTime: 5
   animatorController: {fileID: 0}
   maxTier: 3
   partSlots: []
   baseCapacity: 1
-  headPrefabForBattlePreview: {fileID: 0}
   unlockNode: {fileID: 0}
   nodes: []
+  disableReserveUnit: 0
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 0}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}
