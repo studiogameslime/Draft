@@ -36,13 +36,14 @@ public class MissionContainer : MonoBehaviour
             // Display only the final boosted total
             rewardText.text = finalGold.ToString();
             rewardIcon.sprite = StyleManager.instance.goldSprite;
+        }
 
-            if (mission.definition.gemsReward > 0)
+        if (mission.definition.gemsReward > 0)
         {
             rewardText.text = mission.definition.gemsReward.ToString();
             rewardIcon.sprite = StyleManager.instance.gemSprite;
         }
-        if (mission.definition.scrollsReward> 0)
+        if (mission.definition.scrollsReward > 0)
         {
             rewardText.text = mission.definition.scrollsReward.ToString();
             rewardIcon.sprite = StyleManager.instance.scrollSprite;
