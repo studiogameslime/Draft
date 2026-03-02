@@ -20,8 +20,11 @@ public class HomeCurrencyUI : MonoBehaviour
     [SerializeField] private Image playerXPFill;
 
     [Header("XP Fill Animation")]
-    [SerializeField] private float fillSmoothTime = 0.20f; 
+    [SerializeField] private float fillSmoothTime = 0.20f;
     [SerializeField] private bool animateOnFirstUpdate = false;
+
+    [Header("Currency Lerp")]
+    [SerializeField] private float currencyLerpDuration = 0.5f;
 
     private Coroutine _waitRoutine;
 
@@ -29,6 +32,15 @@ public class HomeCurrencyUI : MonoBehaviour
     private Coroutine _fillRoutine;
     private float _targetFill = 0f;
     private bool _hasInitialFill = false;
+
+    // currency lerp state
+    private Coroutine _goldLerpRoutine;
+    private Coroutine _gemsLerpRoutine;
+    private Coroutine _scrollsLerpRoutine;
+    private int _displayedGold;
+    private int _displayedGems;
+    private int _displayedScrolls;
+    private bool _currencyInitialized;
 
     private void OnEnable()
     {
@@ -48,6 +60,10 @@ public class HomeCurrencyUI : MonoBehaviour
             StopCoroutine(_fillRoutine);
             _fillRoutine = null;
         }
+
+        if (_goldLerpRoutine != null) { StopCoroutine(_goldLerpRoutine); _goldLerpRoutine = null; }
+        if (_gemsLerpRoutine != null) { StopCoroutine(_gemsLerpRoutine); _gemsLerpRoutine = null; }
+        if (_scrollsLerpRoutine != null) { StopCoroutine(_scrollsLerpRoutine); _scrollsLerpRoutine = null; }
 
         if (PlayerCurrencyWallet.Instance != null)
         {
@@ -82,6 +98,7 @@ public class HomeCurrencyUI : MonoBehaviour
         UpdateGold(wallet.Gold);
         UpdateGems(wallet.Gems);
         UpdateScrolls(wallet.Scrolls);
+        _currencyInitialized = true;
 
         goldIcon = StyleManager.instance.goldSprite;
         gemsIcon = StyleManager.instance.gemSprite;
@@ -104,20 +121,65 @@ public class HomeCurrencyUI : MonoBehaviour
 
     private void UpdateGold(int value)
     {
-        if (goldText != null)
+        if (goldText == null) return;
+
+        if (!_currencyInitialized)
+        {
+            _displayedGold = value;
             goldText.text = value.ToString();
+            return;
+        }
+
+        if (_goldLerpRoutine != null) StopCoroutine(_goldLerpRoutine);
+        _goldLerpRoutine = StartCoroutine(LerpCurrencyText(goldText, _displayedGold, value, v => _displayedGold = v));
     }
 
     private void UpdateGems(int value)
     {
-        if (gemsText != null)
+        if (gemsText == null) return;
+
+        if (!_currencyInitialized)
+        {
+            _displayedGems = value;
             gemsText.text = value.ToString();
+            return;
+        }
+
+        if (_gemsLerpRoutine != null) StopCoroutine(_gemsLerpRoutine);
+        _gemsLerpRoutine = StartCoroutine(LerpCurrencyText(gemsText, _displayedGems, value, v => _displayedGems = v));
     }
 
     private void UpdateScrolls(int value)
     {
-        if (scrollsText != null)
+        if (scrollsText == null) return;
+
+        if (!_currencyInitialized)
+        {
+            _displayedScrolls = value;
             scrollsText.text = value.ToString();
+            return;
+        }
+
+        if (_scrollsLerpRoutine != null) StopCoroutine(_scrollsLerpRoutine);
+        _scrollsLerpRoutine = StartCoroutine(LerpCurrencyText(scrollsText, _displayedScrolls, value, v => _displayedScrolls = v));
+    }
+
+    private IEnumerator LerpCurrencyText(TMP_Text text, int from, int to, System.Action<int> setDisplayed)
+    {
+        float elapsed = 0f;
+        while (elapsed < currencyLerpDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / currencyLerpDuration);
+            float smooth = t * t * (3f - 2f * t);
+            int current = Mathf.RoundToInt(Mathf.Lerp(from, to, smooth));
+            text.text = current.ToString();
+            setDisplayed(current);
+            yield return null;
+        }
+
+        text.text = to.ToString();
+        setDisplayed(to);
     }
 
     private void UpdatePlayerLevel(int level)
