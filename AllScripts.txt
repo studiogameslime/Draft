@@ -1,43 +1,4 @@
 ========================
-FILE: AutoCameraSize.cs
-PATH: D:\a\Draft\Draft\Assets\Scripts\AutoCameraSize.cs
-========================
-using UnityEngine;
-
-[RequireComponent(typeof(Camera))]
-public class AutoCameraSize : MonoBehaviour
-{
-    public float targetWidth = 9f;     // fixed world width
-    public float maxHeight = 16f;    // maximum allowed world height
-
-    private Camera cam;
-
-    void Start()
-    {
-        cam = GetComponent<Camera>();
-        UpdateSize();
-    }
-
-    void Update()
-    {
-        UpdateSize();
-    }
-
-    void UpdateSize()
-    {
-        float aspect = (float)Screen.width / Screen.height;
-
-        float desiredHeight = targetWidth / aspect;
-        float ortho = desiredHeight * 0.5f;
-        float maxOrtho = maxHeight * 0.5f;
-
-        cam.orthographicSize = Mathf.Min(ortho, maxOrtho);
-    }
-}
-
-
-
-========================
 FILE: AutoDestroyAfterSeconds.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\AutoDestroyAfterSeconds.cs
 ========================
@@ -556,56 +517,6 @@ public class DeckUIController : MonoBehaviour
         // IMPORTANT: Toggle the whole panel container.
         // This prevents "empty cards" visuals from staying visible.
         cardsParent.gameObject.SetActive(active);
-    }
-}
-
-
-
-========================
-FILE: DropZonesSpacePreview.cs
-PATH: D:\a\Draft\Draft\Assets\Scripts\DropZonesSpacePreview.cs
-========================
-using UnityEngine;
-
-public class DropZonesSpacePreview : MonoBehaviour
-{
-    public float holdDelay = 0.15f;
-
-    private bool _isShowing = false;
-    private float _holdTimer = 0f;
-
-    private void Update()
-    {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            _holdTimer += Time.deltaTime;
-
-            if (!_isShowing && _holdTimer >= holdDelay)
-            {
-                _isShowing = true;
-                DropZone.SetAllHighlights(true);
-            }
-        }
-        else 
-        {
-            _holdTimer = 0f ;
-
-            if (_isShowing)
-            {
-                _isShowing = false;
-                DropZone.SetAllHighlights(false);
-            }
-        }
-    }
-
-    private void OnDisable()
-    {
-        if (_isShowing)
-        {
-            _isShowing = false;
-            DropZone.SetAllHighlights(false);
-        }
-        _holdTimer = 0f;
     }
 }
 
@@ -5731,22 +5642,6 @@ public class UnitRarityWeights : ScriptableObject
 
 
 ========================
-FILE: UnitSkillEffectDefinition.cs
-PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Skills\UnitSkillEffectDefinition.cs
-========================
-using System.Collections.Generic;
-using UnityEngine;
-
-[CreateAssetMenu(menuName = "Game/Units/Upgrade Node", fileName = "UpgradeNode_")]
-
-public abstract class UnitSkillEffectDefinition : ScriptableObject
-{
-    public abstract UnitSkillBehaviour AddTo(GameObject host, CharacterStats stats);
-}
-
-
-
-========================
 FILE: StoreDatabase.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Store\StoreDatabase.cs
 ========================
@@ -8325,137 +8220,6 @@ public class MasteryLevelData
 
 
 
-
-
-
-========================
-FILE: SettingsManager.cs
-PATH: D:\a\Draft\Draft\Assets\Scripts\GameSystems\SettingsManager.cs
-========================
-using System;
-using System.Collections;
-using Firebase.Auth;
-using Firebase.Extensions;
-using UnityEngine;
-
-// Requires Google Sign-In for Unity package
-#if UNITY_ANDROID && !UNITY_EDITOR
-using Google;
-#endif
-
-public class SettingsManager : MonoBehaviour
-{
-    /*[Header("Google Sign-In (Android)")]
-    [Tooltip("OAuth 2.0 Client ID of type 'Web application' (from Google Cloud Console)")]
-    [SerializeField] private string webClientId = "";
-
-    private const string TAG = "[AuthGoogle]";
-
-    // This button should be attached to the button in settings panel
-    public void SignInWithGoogleButton()
-    {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        StartCoroutine(SignInWithGoogleRoutine());
-#else
-        Debug.LogWarning(TAG + " Google Sign-In is only supported on Android builds (not Editor).");
-#endif
-    }
-
-#if UNITY_ANDROID && !UNITY_EDITOR
-    private IEnumerator SignInWithGoogleRoutine()
-    {
-        // Wait until Firebase is ready (your Bootstrap flag)
-        while (!FirebaseBootstrap.FirebaseReady)
-            yield return null;
-
-        if (string.IsNullOrEmpty(webClientId))
-        {
-            Debug.LogError(TAG + " Missing webClientId. Set it in the inspector.");
-            yield break;
-        }
-
-        var auth = FirebaseAuth.DefaultInstance;
-
-        // Configure Google Sign-In
-        GoogleSignIn.Configuration = new GoogleSignInConfiguration
-        {
-            WebClientId = webClientId,
-            RequestIdToken = true,
-            RequestEmail = true,
-            RequestProfile = true
-        };
-
-        Debug.Log(TAG + " Starting Google Sign-In...");
-
-        var signInTask = GoogleSignIn.DefaultInstance.SignIn();
-
-        // Wait until Google Sign-In task completes
-        while (!signInTask.IsCompleted)
-            yield return null;
-
-        if (signInTask.IsCanceled)
-        {
-            Debug.LogWarning(TAG + " Google Sign-In canceled.");
-            yield break;
-        }
-
-        if (signInTask.IsFaulted)
-        {
-            Debug.LogError(TAG + " Google Sign-In failed: " + signInTask.Exception);
-            yield break;
-        }
-
-        var googleUser = signInTask.Result;
-        if (googleUser == null || string.IsNullOrEmpty(googleUser.IdToken))
-        {
-            Debug.LogError(TAG + " Google Sign-In returned no user or no IdToken.");
-            yield break;
-        }
-
-        // Create Firebase credential from Google tokens
-        Credential credential = GoogleAuthProvider.GetCredential(googleUser.IdToken, googleUser.AccessToken);
-
-        // If user is anonymous -> LINK (keeps the same UID, so your Firestore doc stays the same)
-        if (auth.CurrentUser != null && auth.CurrentUser.IsAnonymous)
-        {
-            Debug.Log(TAG + " Linking anonymous user with Google credential... uid=" + auth.CurrentUser.UserId);
-
-            var linkTask = auth.CurrentUser.LinkWithCredentialAsync(credential);
-            while (!linkTask.IsCompleted)
-                yield return null;
-
-            if (linkTask.IsCanceled || linkTask.IsFaulted)
-            {
-                Debug.LogError(TAG + " LinkWithCredentialAsync failed: " + linkTask.Exception);
-                yield break;
-            }
-
-            Debug.Log(TAG + " Link success. uid=" + auth.CurrentUser.UserId);
-        }
-        else
-        {
-            // Otherwise sign in normally
-            Debug.Log(TAG + " Signing in with Google credential...");
-
-            var firebaseTask = auth.SignInWithCredentialAsync(credential);
-            while (!firebaseTask.IsCompleted)
-                yield return null;
-
-            if (firebaseTask.IsCanceled || firebaseTask.IsFaulted)
-            {
-                Debug.LogError(TAG + " SignInWithCredentialAsync failed: " + firebaseTask.Exception);
-                yield break;
-            }
-
-            Debug.Log(TAG + " Sign-in success. uid=" + auth.CurrentUser.UserId);
-        }
-
-        // Optional: you can trigger a cloud reload here if you want, but only if your save logic expects it.
-        // Example:
-        // if (FirebaseSaveSync.Instance != null) FirebaseSaveSync.Instance.BeginDownload();
-    }
-#endif*/
-}
 
 
 
@@ -13540,93 +13304,6 @@ public class SkillBonusMaxHpPercent : UnitSkillBehaviour
 
 
 ========================
-FILE: SkillMultiShot.cs
-PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\skills\SkillMultiShot.cs
-========================
-using System.Collections;
-using UnityEngine;
-
-public class SkillMultiShot : UnitSkillBehaviour, IOnProjectileSpawned, IMeteorSkill
-{
-    private int extraShots;
-    private float delayBetweenShots = 0.15f;
-    private bool isSpawningExtra;
-
-    protected override void OnInit()
-    {
-        extraShots = node.skillIntValue > 0 ? node.skillIntValue : 1;
-    }
-
-    // --- Archer (Projectile) ---
-
-    public void OnProjectileSpawned(Projectile projectile)
-    {
-        if (isSpawningExtra || projectile == null) return;
-
-        var rangerAttack = GetComponent<RangerAttack>();
-        if (rangerAttack == null) return;
-
-        StartCoroutine(SpawnExtraProjectiles(rangerAttack));
-    }
-
-    private IEnumerator SpawnExtraProjectiles(RangerAttack rangerAttack)
-    {
-        isSpawningExtra = true;
-        for (int i = 0; i < extraShots; i++)
-        {
-            yield return new WaitForSeconds(delayBetweenShots);
-            rangerAttack.StartProjectile();
-        }
-        isSpawningExtra = false;
-    }
-
-    // --- Fire Mage (Meteor) ---
-
-    public void OnMeteorSpawned(MeteorProjectile meteor)
-    {
-        if (isSpawningExtra || meteor == null) return;
-
-        var fireAttack = GetComponent<FireMageAttack>();
-        if (fireAttack == null || fireAttack.meteorPrefab == null) return;
-
-        ICombatTarget target = meteor.Target;
-        if (target == null || !target.IsAlive) return;
-
-        StartCoroutine(SpawnExtraMeteors(fireAttack, target));
-    }
-
-    private IEnumerator SpawnExtraMeteors(FireMageAttack fireAttack, ICombatTarget target)
-    {
-        isSpawningExtra = true;
-        for (int i = 0; i < extraShots; i++)
-        {
-            yield return new WaitForSeconds(delayBetweenShots);
-
-            if (target is Object obj && obj == null) break;
-            if (!target.IsAlive) break;
-
-            Vector3 targetPos = target.TargetTransform.position;
-            Vector3 spawnPos = targetPos + Vector3.up * fireAttack.spawnHeight;
-            spawnPos.x += Random.Range(-fireAttack.horizontalRandomOffset, fireAttack.horizontalRandomOffset);
-
-            GameObject meteorObj = Instantiate(fireAttack.meteorPrefab, spawnPos, Quaternion.identity);
-            MeteorProjectile proj = meteorObj.GetComponent<MeteorProjectile>();
-            if (proj != null)
-            {
-                proj.Init(target, stats.damage, stats);
-
-                var meteorSkills = GetComponents<IMeteorSkill>();
-                foreach (var ms in meteorSkills)
-                    ms.OnMeteorSpawned(proj);
-            }
-        }
-        isSpawningExtra = false;
-    }
-}
-
-
-
-========================
 FILE: DailyResetUtil.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Store\DailyResetUtil.cs
 ========================
@@ -17958,17 +17635,6 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
 
 ========================
-FILE: serializableAttribute.cs
-PATH: D:\a\Draft\Draft\Assets\Scripts\UI\HomeScreen\serializableAttribute.cs
-========================
-using System;
-
-internal class serializableAttribute : Attribute
-{
-}
-
-
-========================
 FILE: UnitDetailsPopupController.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\HomeScreen\UnitDetailsPopupController.cs
 ========================
@@ -20375,28 +20041,6 @@ public static class GateRegistry
         }
 
         return best;
-    }
-}
-
-
-
-========================
-FILE: GateTrigger.cs
-PATH: D:\a\Draft\Draft\Assets\Scripts\Wall\GateTrigger.cs
-========================
-using UnityEngine;
-
-public class GateTrigger : MonoBehaviour
-{
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        var stats = other.GetComponent<CharacterStats>();
-        if (stats == null) return;
-
-        if (stats.team == Team.MyTeam)
-        {
-            stats.isUntargetable = false;
-        }
     }
 }
 
