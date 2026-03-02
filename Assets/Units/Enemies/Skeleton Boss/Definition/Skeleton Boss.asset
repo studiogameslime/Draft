@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: Skeleton Boss
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_skeleton_boss
+  displayName: Skeleton Boss
+  description: Skeleton Boss
+  prefab: {fileID: 501027721989515594, guid: 8fae0245977093147a1bc89ec82b2dcc, type: 3}
+  rarity: 0
+  unitTeam: 1
+  unitClass: 1
+  targetPriorityClass: 0
+  maxHealth: 1000
+  damage: 20
+  moveSpeed: 0.4
+  attackRange: 1.7
+  attackCooldown: 1.5
+  critChance: 0.1
+  critMultiplier: 1.5
+  icon: {fileID: -29869582272423069, guid: 246e5e5faf447574c991d6a3cc4cbda7, type: 3}
+  iconScale: 0.4
+  soulCost: 0
+  spawnTime: 5
+  animatorController: {fileID: 0}
+  maxTier: 3
+  partSlots: []
+  baseCapacity: 1
+  unlockNode: {fileID: 0}
+  nodes: []
+  disableReserveUnit: 0
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: 61a61d854adedcd438e6916aecbda2c2, type: 3}
+  isBoss: 1
+  HeadWithEyes: {fileID: 3667681588813468039, guid: ce8e913a30d98064ebbdd08362bbc1e5, type: 3}
