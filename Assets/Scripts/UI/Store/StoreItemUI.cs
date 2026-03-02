@@ -26,6 +26,24 @@ public class StoreItemUI : MonoBehaviour
     private StoreItemDefinition definition;
     [SerializeField] private TMP_Text timerText;
 
+    private void OnEnable()
+    {
+        if (StoreManager.Instance != null)
+            StoreManager.Instance.OnPurchaseCompleted += RefreshAffordability;
+    }
+
+    private void OnDisable()
+    {
+        if (StoreManager.Instance != null)
+            StoreManager.Instance.OnPurchaseCompleted -= RefreshAffordability;
+    }
+
+    private void RefreshAffordability()
+    {
+        if (definition == null || definition.isDailyFree) return;
+        priceText.color = CanAfford(definition) ? Color.white : Color.red;
+    }
+
     private void Update()
     {
         if (definition == null || !definition.isDailyFree)

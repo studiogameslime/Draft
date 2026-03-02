@@ -9,6 +9,7 @@ public class StoreManager : MonoBehaviour
     [SerializeField] private PlayerPartsInventory partsInventory;
 
     public event Action OnFreePackStateChanged;
+    public event Action OnPurchaseCompleted;
 
     private void Awake()
     {
@@ -113,6 +114,7 @@ public class StoreManager : MonoBehaviour
                 break;
         }
 
+        OnPurchaseCompleted?.Invoke();
     }
     private void GrantPartRewards(StoreItemDefinition item)
     {
