@@ -174,11 +174,16 @@ public class MasteryCollectionController : MonoBehaviour
     {
         int cost = MasterySystem.GetDrawCost(database);
 
-        if (drawCostText)
-            drawCostText.text = cost.ToString();
+        bool canAfford = PlayerCurrencyWallet.Instance != null && PlayerCurrencyWallet.Instance.Gold >= cost;
 
-        if (drawButton && PlayerCurrencyWallet.Instance != null && !_isRolling)
-            drawButton.interactable = PlayerCurrencyWallet.Instance.Gold >= cost && MasterySystem.HasAnyEligiblePick(database);
+        if (drawCostText)
+        {
+            drawCostText.text = cost.ToString();
+            drawCostText.color = canAfford ? Color.white : Color.red;
+        }
+
+        if (drawButton && !_isRolling)
+            drawButton.interactable = canAfford && MasterySystem.HasAnyEligiblePick(database);
     }
 
     private void BuildGrid()

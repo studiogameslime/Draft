@@ -117,6 +117,7 @@ public class StoreItemUI : MonoBehaviour
         }
 
         priceText.text = finalPrice.ToString();
+        priceText.color = CanAfford(def) ? Color.white : Color.red;
 
         buyButton.onClick.RemoveAllListeners();
         buyButton.onClick.AddListener(OnBuyClicked);
@@ -142,6 +143,18 @@ public class StoreItemUI : MonoBehaviour
         DateTime nextUtc = DailyResetUtil.GetNextDailyResetUtc(DateTime.UtcNow);
         TimeSpan left = nextUtc - DateTime.UtcNow;
         timerText.text = $"{left.Hours:D2}:{left.Minutes:D2}:{left.Seconds:D2}";
+    }
+
+    private bool CanAfford(StoreItemDefinition item)
+    {
+        var wallet = PlayerCurrencyWallet.Instance;
+        if (wallet == null) return false;
+
+        int price = item.GetFinalPrice();
+
+        return item.costType == CostType.Gems
+            ? wallet.Gems >= price
+            : wallet.Gold >= price;
     }
 
     private void NormalizeIconSize(Image image)

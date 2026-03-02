@@ -70,7 +70,7 @@ public class StoreItemPanelUI : MonoBehaviour
             RectTransform rt = priceText.rectTransform;
             rt.sizeDelta = new Vector2(100f, rt.sizeDelta.y);
             costIconImage.gameObject.SetActive(true);
-
+            priceText.color = CanAfford(item) ? Color.white : Color.red;
         }
 
         costIconImage.sprite = item.costType == CostType.Gems ? gemSprite : goldSprite;

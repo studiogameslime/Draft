@@ -80,7 +80,7 @@ public class StoreItemChestPanel : MonoBehaviour
             RectTransform rt = priceText.rectTransform;
             rt.sizeDelta = new Vector2(100f, rt.sizeDelta.y);
             costIconImage.gameObject.SetActive(true);
-
+            priceText.color = CanAfford(item) ? Color.white : Color.red;
         }
 
         var goldSprite = StyleManager.instance.goldSprite;
