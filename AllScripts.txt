@@ -11544,11 +11544,16 @@ public class MasteryCollectionController : MonoBehaviour
     {
         int cost = MasterySystem.GetDrawCost(database);
 
-        if (drawCostText)
-            drawCostText.text = cost.ToString();
+        bool canAfford = PlayerCurrencyWallet.Instance != null && PlayerCurrencyWallet.Instance.Gold >= cost;
 
-        if (drawButton && PlayerCurrencyWallet.Instance != null && !_isRolling)
-            drawButton.interactable = PlayerCurrencyWallet.Instance.Gold >= cost && MasterySystem.HasAnyEligiblePick(database);
+        if (drawCostText)
+        {
+            drawCostText.text = cost.ToString();
+            drawCostText.color = canAfford ? Color.white : Color.red;
+        }
+
+        if (drawButton && !_isRolling)
+            drawButton.interactable = canAfford && MasterySystem.HasAnyEligiblePick(database);
     }
 
     private void BuildGrid()
@@ -20959,7 +20964,7 @@ public class StoreItemChestPanel : MonoBehaviour
             RectTransform rt = priceText.rectTransform;
             rt.sizeDelta = new Vector2(100f, rt.sizeDelta.y);
             costIconImage.gameObject.SetActive(true);
-
+            priceText.color = CanAfford(item) ? Color.white : Color.red;
         }
 
         var goldSprite = StyleManager.instance.goldSprite;
@@ -21130,7 +21135,7 @@ public class StoreItemPanelUI : MonoBehaviour
             RectTransform rt = priceText.rectTransform;
             rt.sizeDelta = new Vector2(100f, rt.sizeDelta.y);
             costIconImage.gameObject.SetActive(true);
-
+            priceText.color = CanAfford(item) ? Color.white : Color.red;
         }
 
         costIconImage.sprite = item.costType == CostType.Gems ? gemSprite : goldSprite;
@@ -21337,6 +21342,7 @@ public class StoreItemUI : MonoBehaviour
         }
 
         priceText.text = finalPrice.ToString();
+        priceText.color = CanAfford(def) ? Color.white : Color.red;
 
         buyButton.onClick.RemoveAllListeners();
         buyButton.onClick.AddListener(OnBuyClicked);
@@ -21362,6 +21368,18 @@ public class StoreItemUI : MonoBehaviour
         DateTime nextUtc = DailyResetUtil.GetNextDailyResetUtc(DateTime.UtcNow);
         TimeSpan left = nextUtc - DateTime.UtcNow;
         timerText.text = $"{left.Hours:D2}:{left.Minutes:D2}:{left.Seconds:D2}";
+    }
+
+    private bool CanAfford(StoreItemDefinition item)
+    {
+        var wallet = PlayerCurrencyWallet.Instance;
+        if (wallet == null) return false;
+
+        int price = item.GetFinalPrice();
+
+        return item.costType == CostType.Gems
+            ? wallet.Gems >= price
+            : wallet.Gold >= price;
     }
 
     private void NormalizeIconSize(Image image)
