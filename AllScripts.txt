@@ -14941,14 +14941,18 @@ public class SkillMeteorRain : UnitSkillBehaviour
 
         GameObject meteor = Instantiate(fireAttack.meteorPrefab, spawnPos, Quaternion.identity);
         MeteorProjectile proj = meteor.GetComponent<MeteorProjectile>();
-        if (proj != null)
+        if (proj == null)
         {
-            proj.Init(target, stats.damage, stats);
-
-            var meteorSkills = GetComponents<IMeteorSkill>();
-            foreach (var ms in meteorSkills)
-                ms.OnMeteorSpawned(proj);
+            Debug.LogError("SkillMeteorRain: meteorPrefab has no MeteorProjectile component! Assign the correct prefab.");
+            Destroy(meteor);
+            return;
         }
+
+        proj.Init(target, stats.damage, stats);
+
+        var meteorSkills = GetComponents<IMeteorSkill>();
+        foreach (var ms in meteorSkills)
+            ms.OnMeteorSpawned(proj);
     }
 
     private CharacterStats FindClosestEnemy()
