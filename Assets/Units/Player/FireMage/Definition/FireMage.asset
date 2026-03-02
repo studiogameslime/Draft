@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
+  m_Name: FireMage
+  m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
+  id: unit_fire_mage
+  displayName: Fire Mage
+  description: "A fire mage who looks harmless \u2014 until everything starts burning."
+  prefab: {fileID: 153394670701094284, guid: 220b9052bb302b94094855251cf1e45c, type: 3}
+  rarity: 2
+  unitTeam: 0
+  unitClass: 4
+  targetPriorityClass: 0
+  maxHealth: 25
+  damage: 30
+  moveSpeed: 0.6
+  attackRange: 7
+  attackCooldown: 3
+  critChance: 0.2
+  critMultiplier: 1.5
+  icon: {fileID: 7674125699001298711, guid: 97352762abec38447a52057c2a5126a6, type: 3}
+  iconScale: 0.4
+  soulCost: 6
+  spawnTime: 2
+  animatorController: {fileID: 9100000, guid: 99d38f58891b08e4498441edc4b108f0, type: 2}
+  maxTier: 3
+  partSlots:
+  - slot: 0
+  - slot: 1
+  - slot: 2
+  - slot: 3
+  - slot: 4
+  - slot: 5
+  - slot: 6
+  baseCapacity: 1
+  unlockNode: {fileID: 11400000, guid: 53dba96814fcd934bb17b34d304ac393, type: 2}
+  nodes:
+  - {fileID: 11400000, guid: 53dba96814fcd934bb17b34d304ac393, type: 2}
+  - {fileID: 11400000, guid: 11223344556677889900aabbccddeef0, type: 2}
+  - {fileID: 11400000, guid: 1ce1da21beac4e029900636bf3e0f49a, type: 2}
+  - {fileID: 11400000, guid: ee55ff66778899001122aabbccddeeff, type: 2}
+  - {fileID: 11400000, guid: a1256bd0b8694b10825cb16960e0b33b, type: 2}
+  disableReserveUnit: 0
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 0}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}

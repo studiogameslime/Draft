@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(node:*)",
+      "Bash(grep:*)",
+      "Bash(done)",
+      "Bash(xargs:*)",
+      "Bash(read file:*)",
+      "Bash(mv:*)",
+      "Bash(do mv:*)",
+      "Bash(cmd.exe:*)",
+      "Bash(ls:*)"
+    ]
+  }
+}
