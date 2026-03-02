@@ -34,6 +34,7 @@ public class PlayerSaveData
     public long nextDailyFreeGoldUtcTicks;
     public long lastDailyLoginUtcTicks;
     public long nextHourlyChestUtcTicks;
+    public long nextFreeMasteryDrawUtcTicks;
 
 
     // ==============================

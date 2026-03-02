@@ -115,6 +115,25 @@ public static class MasterySystem
     }
 
     /// <summary>
+    /// Commit a free draw (ad reward): level up without spending gold or incrementing draw count.
+    /// </summary>
+    public static bool CommitFreeDraw(MasteryDatabase db, MasteryItemDefinition picked)
+    {
+        if (picked == null) return false;
+        if (!HasAnyEligiblePick(db)) return false;
+
+        int max = picked.maxLevel > 0 ? picked.maxLevel : 1;
+        int current = MasteryProgress.GetLevel(picked.id);
+        if (current >= max) return false;
+
+        MasteryProgress.SetLevelClamped(picked.id, current + 1, max);
+        // masteryDrawCount is NOT incremented — cost stays the same
+        GameData.Instance.Save.masteryLastPickedId = picked.id;
+        GameData.Instance.SaveNow();
+        return true;
+    }
+
+    /// <summary>
     /// Commit the draw: spend gold + add level (clamped to maxLevel) + save.
     /// Call ONLY after the roll animation ends.
     /// </summary>

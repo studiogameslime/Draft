@@ -278,16 +278,18 @@ public class BattleManager : MonoBehaviour
             MissionsManager.Instance.ReportAction(MissionAction.PlayBattles, 1);
 
             PlayerXPManager.Instance.AddXP(levelDefinition.xpOnLevelComplete + roundsXp);
-            PlayerCurrencyWallet.Instance.AddGold(levelDefinition.goldOnLevelComplete + roundsGold);
+            int rawTotalGold = levelDefinition.goldOnLevelComplete + roundsGold;
+            PlayerCurrencyWallet.Instance.AddGold(rawTotalGold);
 
             EndGameUI.Instance.ShowWinScreen(
                 boostedLevelGold,
-            boostedRoundsGold,
-            totalBattleGold,
+                boostedRoundsGold,
+                totalBattleGold,
                 levelXp,
                 roundsXp,
                 totalXp,
-                levelDefinition.name
+                levelDefinition.name,
+                rawTotalGold
             );
 
             // --- SAVE PROGRESS (stage complete) ---

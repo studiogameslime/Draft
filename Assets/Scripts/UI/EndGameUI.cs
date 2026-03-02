@@ -21,10 +21,16 @@ public class EndGameUI : MonoBehaviour
     [SerializeField] private Image totalGoldSprite;
     [SerializeField] private TMP_Text levelCompletedText;
 
+    [Header("Double Gold Ad")]
+    [SerializeField] private Button doubleGoldButton;
+
     private int pendingLevelGold;
     private int pendingRoundsGold;
     private int pendingTotalGold;
     private int pendingTotalXp;
+    private int rawGoldEarned;
+    private bool doubleGoldClaimed;
+    private bool _doubleGoldRewardGranted;
     [SerializeField] private float victoryPulseScale = 1.08f;
     [SerializeField] private float victoryPulseSpeed = 2.2f;
 
@@ -53,9 +59,13 @@ public class EndGameUI : MonoBehaviour
         int xpFromLevel,
         int xpFromRounds,
         int totalXp,
-        string levelName
+        string levelName,
+        int rawGold
         )
     {
+        rawGoldEarned = rawGold;
+        doubleGoldClaimed = false;
+        if (doubleGoldButton) doubleGoldButton.gameObject.SetActive(true);
 
         HideLevelUI();
 
@@ -108,6 +118,8 @@ public class EndGameUI : MonoBehaviour
 
     public void ShowLoseScreen(int goldEarnedFromRounds, int xpFromRounds)
     {
+        if (doubleGoldButton) doubleGoldButton.gameObject.SetActive(false);
+
         HideLevelUI();
 
         goldEarnedFromRoundsSprite.sprite = StyleManager.instance.goldSprite;
@@ -208,7 +220,44 @@ public class EndGameUI : MonoBehaviour
     public void BackToHome()
     {
         SceneManager.LoadScene("HomeScreen");
+    }
 
+    // ============================
+    // DOUBLE GOLD (Ad Reward)
+    // ============================
+
+    public void OnDoubleGoldClicked()
+    {
+        if (doubleGoldClaimed) return;
+
+        _doubleGoldRewardGranted = false;
+
+        bool started = AdsManager.Instance.ShowRewarded(
+            AdRewardType.DoubleGold,
+            onReward: () => { _doubleGoldRewardGranted = true; },
+            onClosed: () => { StartCoroutine(AfterDoubleGoldAdClosed()); });
+
+        if (!started)
+            return;
+
+        if (doubleGoldButton) doubleGoldButton.interactable = false;
+    }
+
+    private IEnumerator AfterDoubleGoldAdClosed()
+    {
+        yield return null;
+
+        if (_doubleGoldRewardGranted)
+        {
+            PlayerCurrencyWallet.Instance.AddGold(rawGoldEarned);
+            doubleGoldClaimed = true;
+        }
+        else
+        {
+            if (doubleGoldButton) doubleGoldButton.interactable = true;
+        }
+
+        BackToHome();
     }
 
     private void OnDisable()

@@ -24,6 +24,9 @@ public class MasteryCollectionController : MonoBehaviour
     [Header("Popup")]
     [SerializeField] private MasteryItemDetailsPopup detailsPopup;
 
+    [Header("Free Draw Ad")]
+    [SerializeField] private Button freeDrawButton;
+
     [Header("Locked UI")]
     [Tooltip("Sprite used for locked mastery (level 0).")]
     [SerializeField] private Sprite lockSprite;
@@ -40,6 +43,7 @@ public class MasteryCollectionController : MonoBehaviour
 
     private Action<int> _goldListener;
     private bool _isRolling;
+    private bool _freeDrawRewardGranted;
 
     private readonly List<MasteryItemView> _views = new List<MasteryItemView>();
     private readonly Dictionary<string, MasteryItemView> _viewById = new Dictionary<string, MasteryItemView>();
@@ -51,6 +55,9 @@ public class MasteryCollectionController : MonoBehaviour
         if (drawButton)
             drawButton.onClick.AddListener(OnDrawClicked);
 
+        if (freeDrawButton)
+            freeDrawButton.onClick.AddListener(OnFreeDrawClicked);
+
         yield return null;
 
         if (PlayerCurrencyWallet.Instance != null)
@@ -60,12 +67,14 @@ public class MasteryCollectionController : MonoBehaviour
         }
 
         RefreshDrawCost();
+        RefreshFreeDrawButton();
     }
 
     private void OnEnable()
     {
         BuildGrid();
         RefreshDrawCost();
+        RefreshFreeDrawButton();
     }
 
     private void OnDestroy()
@@ -168,6 +177,123 @@ public class MasteryCollectionController : MonoBehaviour
         finalView.SetHighlighted(true, highlightScale, dimAlpha);
         yield return new WaitForSecondsRealtime(0.20f);
         finalView.SetHighlighted(false, highlightScale, dimAlpha);
+    }
+
+    // ============================
+    // FREE DRAW (Ad Reward)
+    // ============================
+
+    private bool IsFreeMasteryDrawAvailable()
+    {
+        var save = GameData.Instance?.Save;
+        if (save == null) return false;
+        long nowTicks = System.DateTime.UtcNow.Ticks;
+        return nowTicks >= save.nextFreeMasteryDrawUtcTicks;
+    }
+
+    private void OnFreeDrawClicked()
+    {
+        if (_isRolling) return;
+        if (database == null) return;
+        if (!MasterySystem.HasAnyEligiblePick(database)) return;
+        if (!IsFreeMasteryDrawAvailable()) return;
+
+        _freeDrawRewardGranted = false;
+
+        bool started = AdsManager.Instance.ShowRewarded(
+            AdRewardType.FreeMasteryDraw,
+            onReward: () => { _freeDrawRewardGranted = true; },
+            onClosed: () => { StartCoroutine(AfterFreeDrawAdClosed()); });
+
+        if (!started)
+            return;
+
+        if (freeDrawButton) freeDrawButton.interactable = false;
+    }
+
+    private IEnumerator AfterFreeDrawAdClosed()
+    {
+        yield return null;
+
+        if (_freeDrawRewardGranted)
+        {
+            yield return FreeDrawRoutine();
+
+            // Set next available time to tomorrow midnight UTC
+            var tomorrow = System.DateTime.UtcNow.Date.AddDays(1);
+            GameData.Instance.Save.nextFreeMasteryDrawUtcTicks = tomorrow.Ticks;
+            GameData.Instance.SaveNow();
+        }
+
+        RefreshFreeDrawButton();
+    }
+
+    private IEnumerator FreeDrawRoutine()
+    {
+        _isRolling = true;
+
+        if (drawButton) drawButton.interactable = false;
+        if (freeDrawButton) freeDrawButton.interactable = false;
+
+        var picked = MasterySystem.PreviewPick(database);
+        if (picked == null || string.IsNullOrEmpty(picked.id))
+        {
+            _isRolling = false;
+            RefreshDrawCost();
+            RefreshFreeDrawButton();
+            yield break;
+        }
+
+        if (!_viewById.TryGetValue(picked.id, out var finalView) || finalView == null)
+        {
+            BuildGrid();
+            _viewById.TryGetValue(picked.id, out finalView);
+        }
+
+        if (finalView == null)
+        {
+            MasterySystem.CommitFreeDraw(database, picked);
+            BuildGrid();
+            _isRolling = false;
+            RefreshDrawCost();
+            RefreshFreeDrawButton();
+            yield break;
+        }
+
+        DimAll(true);
+
+        yield return PlayRollOnCards(finalView);
+
+        MasterySystem.CommitFreeDraw(database, picked);
+
+        finalView.SetHighlighted(true, highlightScale, dimAlpha);
+
+        if (openDetailsOnResult && detailsPopup != null)
+        {
+            int newLevel = MasteryProgress.GetLevel(picked.id);
+            detailsPopup.Open(picked, newLevel, finalView.transform as RectTransform);
+        }
+
+        yield return new WaitForSecondsRealtime(finalHoldTime);
+
+        finalView.SetHighlighted(false, highlightScale, dimAlpha);
+        DimAll(false);
+        ResetAllScales();
+
+        BuildGrid();
+        _isRolling = false;
+        RefreshDrawCost();
+        RefreshFreeDrawButton();
+    }
+
+    private void RefreshFreeDrawButton()
+    {
+        if (freeDrawButton == null) return;
+
+        bool available = IsFreeMasteryDrawAvailable() && MasterySystem.HasAnyEligiblePick(database);
+
+        if (!_isRolling)
+            freeDrawButton.interactable = available;
     }
 
     private void RefreshDrawCost()

@@ -74,7 +74,9 @@ public enum StoreCategory
 
 public enum AdRewardType
 {
-    FreeChest
+    FreeChest,
+    FreeMasteryDraw,
+    DoubleGold
 }
 
 public enum CellBonusType
