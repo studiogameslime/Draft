@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27b8b1859002eab41b443171d8efc618, type: 3}
+  m_Name: 2-2
+  m_EditorClassIdentifier: Assembly-CSharp::LevelDefinition
+  rounds:
+  - souls: 10
+    goldOnRoundWin: 15
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: adfd8c042245faa49b96a2c7ebfc1baa, type: 2}
+      count: 3
+      spawnInterval: 4
+    - unit: {fileID: 11400000, guid: 0613f25a4299fa1409255836974641cc, type: 2}
+      count: 3
+      spawnInterval: 3
+    - unit: {fileID: 11400000, guid: adfd8c042245faa49b96a2c7ebfc1baa, type: 2}
+      count: 3
+      spawnInterval: 3
+    enemyLevel: 1
+    xpOnRoundWin: 20
+  - souls: 12
+    goldOnRoundWin: 15
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: 67001f6089182b94cae98f392d9db070, type: 2}
+      count: 4
+      spawnInterval: 3
+    - unit: {fileID: 11400000, guid: adfd8c042245faa49b96a2c7ebfc1baa, type: 2}
+      count: 3
+      spawnInterval: 4
+    - unit: {fileID: 11400000, guid: 67001f6089182b94cae98f392d9db070, type: 2}
+      count: 3
+      spawnInterval: 2
+    enemyLevel: 1
+    xpOnRoundWin: 20
+  - souls: 12
+    goldOnRoundWin: 15
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: 0613f25a4299fa1409255836974641cc, type: 2}
+      count: 5
+      spawnInterval: 2
+    - unit: {fileID: 11400000, guid: 67001f6089182b94cae98f392d9db070, type: 2}
+      count: 3
+      spawnInterval: 3
+    - unit: {fileID: 11400000, guid: adfd8c042245faa49b96a2c7ebfc1baa, type: 2}
+      count: 4
+      spawnInterval: 2
+    enemyLevel: 2
+    xpOnRoundWin: 20
+  - souls: 14
+    goldOnRoundWin: 20
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: 0737b6b3644e5394b8c5f423fd98c4aa, type: 2}
+      count: 2
+      spawnInterval: 5
+    - unit: {fileID: 11400000, guid: 67001f6089182b94cae98f392d9db070, type: 2}
+      count: 4
+      spawnInterval: 2
+    - unit: {fileID: 11400000, guid: adfd8c042245faa49b96a2c7ebfc1baa, type: 2}
+      count: 5
+      spawnInterval: 2
+    enemyLevel: 2
+    xpOnRoundWin: 25
+  - souls: 14
+    goldOnRoundWin: 20
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: adfd8c042245faa49b96a2c7ebfc1baa, type: 2}
+      count: 8
+      spawnInterval: 1
+    - unit: {fileID: 11400000, guid: 0613f25a4299fa1409255836974641cc, type: 2}
+      count: 5
+      spawnInterval: 2
+    - unit: {fileID: 11400000, guid: 67001f6089182b94cae98f392d9db070, type: 2}
+      count: 5
+      spawnInterval: 2
+    - unit: {fileID: 11400000, guid: 0737b6b3644e5394b8c5f423fd98c4aa, type: 2}
+      count: 2
+      spawnInterval: 4
+    enemyLevel: 2
+    xpOnRoundWin: 25
+  xpOnLevelComplete: 75
+  goldOnLevelComplete: 125
+  alsoRewardGoldPerRound: 1
