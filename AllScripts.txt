@@ -296,16 +296,18 @@ public class BattleManager : MonoBehaviour
             MissionsManager.Instance.ReportAction(MissionAction.PlayBattles, 1);
 
             PlayerXPManager.Instance.AddXP(levelDefinition.xpOnLevelComplete + roundsXp);
-            PlayerCurrencyWallet.Instance.AddGold(levelDefinition.goldOnLevelComplete + roundsGold);
+            int rawTotalGold = levelDefinition.goldOnLevelComplete + roundsGold;
+            PlayerCurrencyWallet.Instance.AddGold(rawTotalGold);
 
             EndGameUI.Instance.ShowWinScreen(
                 boostedLevelGold,
-            boostedRoundsGold,
-            totalBattleGold,
+                boostedRoundsGold,
+                totalBattleGold,
                 levelXp,
                 roundsXp,
                 totalXp,
-                levelDefinition.name
+                levelDefinition.name,
+                rawTotalGold
             );
 
             // --- SAVE PROGRESS (stage complete) ---
@@ -2578,6 +2580,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     [HideInInspector] public MonsterType monsterType;
     [HideInInspector] public bool lockedIn;
     [HideInInspector] public UnitClass unitClass;
+    [HideInInspector] public UnitClass targetPriorityClass;
     [HideInInspector] public bool isUntargetable = false;
     private CharacterStats lastAttacker;
 
@@ -2625,6 +2628,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         definition = def;
         team = currentTeam;
         unitClass = def.unitClass;
+        targetPriorityClass = def.targetPriorityClass;
         this.level = Mathf.Max(1, level);
 
         // Apply base stats scaled by level
@@ -3096,7 +3100,9 @@ public enum StoreCategory
 
 public enum AdRewardType
 {
-    FreeChest
+    FreeChest,
+    FreeMasteryDraw,
+    DoubleGold
 }
 
 public enum CellBonusType
@@ -3404,7 +3410,7 @@ public class UnitAI : MonoBehaviour
 
             // CHANGED: Only search for nearby player units if our priority is NOT the Wall
             // This allows units like the Gnoll (Wall priority) to ignore blockers.
-            if (myStats.definition.targetPriorityClass != UnitClass.Wall)
+            if (myStats.targetPriorityClass != UnitClass.Wall)
             {
                 CharacterStats candidate = FindClosestTargetableEnemy();
 
@@ -3606,6 +3612,19 @@ public class UnitAI : MonoBehaviour
 
         if (enemies.Count == 0)
             return null;
+
+        // If we have a target priority class, prefer enemies of that class
+        UnitClass priority = myStats.targetPriorityClass;
+        if (priority != UnitClass.None && priority != UnitClass.Wall)
+        {
+            var priorityTargets = enemies
+                .Where(e => e.definition != null && e.definition.unitClass == priority)
+                .OrderBy(e => Vector3.Distance(transform.position, e.transform.position))
+                .ToList();
+
+            if (priorityTargets.Count > 0)
+                return priorityTargets.First();
+        }
 
         return enemies
             .OrderBy(e => Vector3.Distance(transform.position, e.transform.position))
@@ -8020,6 +8039,7 @@ public class PlayerSaveData
     public long nextDailyFreeGoldUtcTicks;
     public long lastDailyLoginUtcTicks;
     public long nextHourlyChestUtcTicks;
+    public long nextFreeMasteryDrawUtcTicks;
 
 
     // ==============================
@@ -10305,6 +10325,9 @@ public class MasteryCollectionController : MonoBehaviour
     [Header("Popup")]
     [SerializeField] private MasteryItemDetailsPopup detailsPopup;
 
+    [Header("Free Draw Ad")]
+    [SerializeField] private Button freeDrawButton;
+
     [Header("Locked UI")]
     [Tooltip("Sprite used for locked mastery (level 0).")]
     [SerializeField] private Sprite lockSprite;
@@ -10321,6 +10344,7 @@ public class MasteryCollectionController : MonoBehaviour
 
     private Action<int> _goldListener;
     private bool _isRolling;
+    private bool _freeDrawRewardGranted;
 
     private readonly List<MasteryItemView> _views = new List<MasteryItemView>();
     private readonly Dictionary<string, MasteryItemView> _viewById = new Dictionary<string, MasteryItemView>();
@@ -10332,6 +10356,9 @@ public class MasteryCollectionController : MonoBehaviour
         if (drawButton)
             drawButton.onClick.AddListener(OnDrawClicked);
 
+        if (freeDrawButton)
+            freeDrawButton.onClick.AddListener(OnFreeDrawClicked);
+
         yield return null;
 
         if (PlayerCurrencyWallet.Instance != null)
@@ -10341,12 +10368,14 @@ public class MasteryCollectionController : MonoBehaviour
         }
 
         RefreshDrawCost();
+        RefreshFreeDrawButton();
     }
 
     private void OnEnable()
     {
         BuildGrid();
         RefreshDrawCost();
+        RefreshFreeDrawButton();
     }
 
     private void OnDestroy()
@@ -10449,6 +10478,123 @@ public class MasteryCollectionController : MonoBehaviour
         finalView.SetHighlighted(true, highlightScale, dimAlpha);
         yield return new WaitForSecondsRealtime(0.20f);
         finalView.SetHighlighted(false, highlightScale, dimAlpha);
+    }
+
+    // ============================
+    // FREE DRAW (Ad Reward)
+    // ============================
+
+    private bool IsFreeMasteryDrawAvailable()
+    {
+        var save = GameData.Instance?.Save;
+        if (save == null) return false;
+        long nowTicks = System.DateTime.UtcNow.Ticks;
+        return nowTicks >= save.nextFreeMasteryDrawUtcTicks;
+    }
+
+    private void OnFreeDrawClicked()
+    {
+        if (_isRolling) return;
+        if (database == null) return;
+        if (!MasterySystem.HasAnyEligiblePick(database)) return;
+        if (!IsFreeMasteryDrawAvailable()) return;
+
+        _freeDrawRewardGranted = false;
+
+        bool started = AdsManager.Instance.ShowRewarded(
+            AdRewardType.FreeMasteryDraw,
+            onReward: () => { _freeDrawRewardGranted = true; },
+            onClosed: () => { StartCoroutine(AfterFreeDrawAdClosed()); });
+
+        if (!started)
+            return;
+
+        if (freeDrawButton) freeDrawButton.interactable = false;
+    }
+
+    private IEnumerator AfterFreeDrawAdClosed()
+    {
+        yield return null;
+
+        if (_freeDrawRewardGranted)
+        {
+            yield return FreeDrawRoutine();
+
+            // Set next available time to tomorrow midnight UTC
+            var tomorrow = System.DateTime.UtcNow.Date.AddDays(1);
+            GameData.Instance.Save.nextFreeMasteryDrawUtcTicks = tomorrow.Ticks;
+            GameData.Instance.SaveNow();
+        }
+
+        RefreshFreeDrawButton();
+    }
+
+    private IEnumerator FreeDrawRoutine()
+    {
+        _isRolling = true;
+
+        if (drawButton) drawButton.interactable = false;
+        if (freeDrawButton) freeDrawButton.interactable = false;
+
+        var picked = MasterySystem.PreviewPick(database);
+        if (picked == null || string.IsNullOrEmpty(picked.id))
+        {
+            _isRolling = false;
+            RefreshDrawCost();
+            RefreshFreeDrawButton();
+            yield break;
+        }
+
+        if (!_viewById.TryGetValue(picked.id, out var finalView) || finalView == null)
+        {
+            BuildGrid();
+            _viewById.TryGetValue(picked.id, out finalView);
+        }
+
+        if (finalView == null)
+        {
+            MasterySystem.CommitFreeDraw(database, picked);
+            BuildGrid();
+            _isRolling = false;
+            RefreshDrawCost();
+            RefreshFreeDrawButton();
+            yield break;
+        }
+
+        DimAll(true);
+
+        yield return PlayRollOnCards(finalView);
+
+        MasterySystem.CommitFreeDraw(database, picked);
+
+        finalView.SetHighlighted(true, highlightScale, dimAlpha);
+
+        if (openDetailsOnResult && detailsPopup != null)
+        {
+            int newLevel = MasteryProgress.GetLevel(picked.id);
+            detailsPopup.Open(picked, newLevel, finalView.transform as RectTransform);
+        }
+
+        yield return new WaitForSecondsRealtime(finalHoldTime);
+
+        finalView.SetHighlighted(false, highlightScale, dimAlpha);
+        DimAll(false);
+        ResetAllScales();
+
+        BuildGrid();
+        _isRolling = false;
+        RefreshDrawCost();
+        RefreshFreeDrawButton();
+    }
+
+    private void RefreshFreeDrawButton()
+    {
+        if (freeDrawButton == null) return;
+
+        bool available = IsFreeMasteryDrawAvailable() && MasterySystem.HasAnyEligiblePick(database);
+
+        if (!_isRolling)
+            freeDrawButton.interactable = available;
     }
 
     private void RefreshDrawCost()
@@ -10965,6 +11111,25 @@ public static class MasterySystem
         }
 
         return PickRandomFromPool(pool, lastId);
+    }
+
+    /// <summary>
+    /// Commit a free draw (ad reward): level up without spending gold or incrementing draw count.
+    /// </summary>
+    public static bool CommitFreeDraw(MasteryDatabase db, MasteryItemDefinition picked)
+    {
+        if (picked == null) return false;
+        if (!HasAnyEligiblePick(db)) return false;
+
+        int max = picked.maxLevel > 0 ? picked.maxLevel : 1;
+        int current = MasteryProgress.GetLevel(picked.id);
+        if (current >= max) return false;
+
+        MasteryProgress.SetLevelClamped(picked.id, current + 1, max);
+        // masteryDrawCount is NOT incremented — cost stays the same
+        GameData.Instance.Save.masteryLastPickedId = picked.id;
+        GameData.Instance.SaveNow();
+        return true;
     }
 
     /// <summary>
@@ -11717,7 +11882,7 @@ public class MissionsManager : MonoBehaviour
         }
         if (mission.definition.scrollsReward > 0)
         {
-            PlayerCurrencyWallet.Instance.AddScrolls(mission.definition.gemsReward, from);
+            PlayerCurrencyWallet.Instance.AddScrolls(mission.definition.scrollsReward, from);
         }
 
         if (mission.definition.chestReward != null && chestOpeningUI != null)
@@ -13793,10 +13958,16 @@ public class EndGameUI : MonoBehaviour
     [SerializeField] private Image totalGoldSprite;
     [SerializeField] private TMP_Text levelCompletedText;
 
+    [Header("Double Gold Ad")]
+    [SerializeField] private Button doubleGoldButton;
+
     private int pendingLevelGold;
     private int pendingRoundsGold;
     private int pendingTotalGold;
     private int pendingTotalXp;
+    private int rawGoldEarned;
+    private bool doubleGoldClaimed;
+    private bool _doubleGoldRewardGranted;
     [SerializeField] private float victoryPulseScale = 1.08f;
     [SerializeField] private float victoryPulseSpeed = 2.2f;
 
@@ -13825,9 +13996,13 @@ public class EndGameUI : MonoBehaviour
         int xpFromLevel,
         int xpFromRounds,
         int totalXp,
-        string levelName
+        string levelName,
+        int rawGold
         )
     {
+        rawGoldEarned = rawGold;
+        doubleGoldClaimed = false;
+        if (doubleGoldButton) doubleGoldButton.gameObject.SetActive(true);
 
         HideLevelUI();
 
@@ -13880,6 +14055,8 @@ public class EndGameUI : MonoBehaviour
 
     public void ShowLoseScreen(int goldEarnedFromRounds, int xpFromRounds)
     {
+        if (doubleGoldButton) doubleGoldButton.gameObject.SetActive(false);
+
         HideLevelUI();
 
         goldEarnedFromRoundsSprite.sprite = StyleManager.instance.goldSprite;
@@ -13980,7 +14157,44 @@ public class EndGameUI : MonoBehaviour
     public void BackToHome()
     {
         SceneManager.LoadScene("HomeScreen");
+    }
 
+    // ============================
+    // DOUBLE GOLD (Ad Reward)
+    // ============================
+
+    public void OnDoubleGoldClicked()
+    {
+        if (doubleGoldClaimed) return;
+
+        _doubleGoldRewardGranted = false;
+
+        bool started = AdsManager.Instance.ShowRewarded(
+            AdRewardType.DoubleGold,
+            onReward: () => { _doubleGoldRewardGranted = true; },
+            onClosed: () => { StartCoroutine(AfterDoubleGoldAdClosed()); });
+
+        if (!started)
+            return;
+
+        if (doubleGoldButton) doubleGoldButton.interactable = false;
+    }
+
+    private IEnumerator AfterDoubleGoldAdClosed()
+    {
+        yield return null;
+
+        if (_doubleGoldRewardGranted)
+        {
+            PlayerCurrencyWallet.Instance.AddGold(rawGoldEarned);
+            doubleGoldClaimed = true;
+        }
+        else
+        {
+            if (doubleGoldButton) doubleGoldButton.interactable = true;
+        }
+
+        BackToHome();
     }
 
     private void OnDisable()
