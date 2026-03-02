@@ -310,6 +310,13 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
+        if (wallHealth != null && MasteryBonusManager.Instance != null)
+        {
+            float healPercent = MasteryBonusManager.Instance.GetPercent(MasteryStat.WallHealPercent);
+            if (healPercent > 0f)
+                wallHealth.HealPercent(healPercent);
+        }
+
         SoulsManager.instance.AddRoundSouls();
 
         RoundUIManager.instance.ChangeRoundText(currentRoundIndex + 1, levelDefinition.RoundsCount);

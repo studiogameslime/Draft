@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MasteryDatabase
   m_EditorClassIdentifier: Assembly-CSharp::MasteryDatabase
   baseDrawCost: 1500
-  costMultiplier: 1.2
+  costMultiplier: 1.05
   commonChance: 70
   rareChance: 25
   epicChance: 5
@@ -25,3 +25,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: cdbfdebec30936d409360c1bb5eede59, type: 2}
   - {fileID: 11400000, guid: 57abe4db61d10d548ad31c5f57706bc8, type: 2}
   - {fileID: 11400000, guid: f6365573ac4b47c997d27a546509863c, type: 2}
+  - {fileID: 11400000, guid: aabb1122ccdd3344eeff5566778899a0, type: 2}
+  - {fileID: 11400000, guid: bbcc2233ddee4455ff667788990011ab, type: 2}

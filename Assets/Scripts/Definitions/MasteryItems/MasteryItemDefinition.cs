@@ -17,7 +17,9 @@ public enum MasteryStat
     GemsCostReduction,
     GoldCostReduction,
     SoulsOverflow,
-    HourlyChestCooldownReduction
+    HourlyChestCooldownReduction,
+    WallMaxHpPercent,
+    WallHealPercent
 }
 
 [CreateAssetMenu(menuName = "Mastery/Mastery Item Definition", fileName = "MasteryItem_")]
