@@ -288,7 +288,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FireMageAttack
   projectilePrefab: {fileID: 6302113137028731400, guid: 1b9a073228e6e0a48829d2abb1fd29fa, type: 3}
   shootPoint: {fileID: 430569425540568769}
-  meteorPrefab: {fileID: 6839809033501333621, guid: c24fedf436c65574aadb3e7fd9100e59, type: 3}
+  meteorPrefab: {fileID: 6302113137028731400, guid: a05be2d06ba7ffe42abf7a9a168fddef, type: 3}
   spawnHeight: 5
   horizontalRandomOffset: 0.5
 --- !u!1 &487820345301296132
