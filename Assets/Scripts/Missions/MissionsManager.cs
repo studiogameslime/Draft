@@ -211,7 +211,7 @@ public class MissionsManager : MonoBehaviour
         }
         if (mission.definition.scrollsReward > 0)
         {
-            PlayerCurrencyWallet.Instance.AddScrolls(mission.definition.gemsReward, from);
+            PlayerCurrencyWallet.Instance.AddScrolls(mission.definition.scrollsReward, from);
         }
 
         if (mission.definition.chestReward != null && chestOpeningUI != null)

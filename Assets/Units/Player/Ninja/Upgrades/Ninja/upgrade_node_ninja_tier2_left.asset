@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_ninja_tier2_left
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_ninja_tier2_left
+  tier: 2
+  lane: 1
+  title: Mage Hunter
+  description: The Ninja prioritizes Mage-class enemies, seeking them out on the
+    battlefield.
+  icon: {fileID: 0}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 1a2b3c4d5e6f7081920a1b2c3d4e5f60, type: 2}
+  skillEffect: {fileID: 8253140697240584945, guid: 0718293041526374f8091a2b3c4d5e67, type: 3}
+  skillPercentValue: 0
+  skillRadiusValue: 0
+  skillIntValue: 0
+  skillDuration: 0

@@ -1,0 +1,26 @@
+Pre-Release Checklist — Draft (Tower Defense)
+================================================
+
+CRITICAL (must-have before release)
+------------------------------------
+1. [ ] Audio system — No music, no sound effects. No attack sounds, UI clicks, victory/defeat music. Only 2 .ogg files exist (third-party wheel asset).
+2. [ ] Tutorial / Onboarding — No tutorial. New players dropped straight in with no explanation of grid placement, souls, units, upgrades.
+3. [ ] Settings menu — No settings screen. No volume control, no graphics options. Need at minimum a mute/volume toggle.
+
+HIGH PRIORITY
+------------------------------------
+4. [ ] Analytics bug — FirebaseAnalyticsManager.cs has inverted condition (if eventName != "" return) so no events are ever logged.
+5. [ ] Ads test mode — AdsManager.cs has useTestAdUnit = true. Must flip to false before release.
+6. [ ] World 2 content — Only 1 level (2-1) exists. 4 enemy types ready (Vampire, Skeleton Archer, Skull, Necromancer) but need more levels.
+
+MEDIUM PRIORITY
+------------------------------------
+7. [ ] More unit skills — Most units only have stat-boost upgrades (damage%, HP%). Ninja has 4 unique skills, Warrior has 2, Knight has 3. More variety needed.
+8. [ ] Real-money IAP — Store Specials category is a no-op. Needs implementation for revenue beyond ads.
+9. [ ] Localization — All text hardcoded in English. Not critical if targeting English-only initially.
+10. [x] Mission scroll reward bug — FIXED. ClaimMission() was giving gemsReward amount instead of scrollsReward for scroll rewards.
+
+NICE TO HAVE
+------------------------------------
+11. [ ] Screen shake — No camera shake on big hits/boss attacks.
+12. [ ] More worlds — Architecture supports unlimited worlds, only 2 exist.

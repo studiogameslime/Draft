@@ -48,6 +48,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
     [HideInInspector] public MonsterType monsterType;
     [HideInInspector] public bool lockedIn;
     [HideInInspector] public UnitClass unitClass;
+    [HideInInspector] public UnitClass targetPriorityClass;
     [HideInInspector] public bool isUntargetable = false;
     private CharacterStats lastAttacker;
 
@@ -95,6 +96,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         definition = def;
         team = currentTeam;
         unitClass = def.unitClass;
+        targetPriorityClass = def.targetPriorityClass;
         this.level = Mathf.Max(1, level);
 
         // Apply base stats scaled by level

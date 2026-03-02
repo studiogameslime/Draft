@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca40b5b3b40574e4b8f5f1820c2aa9c6, type: 3}
+  m_Name: upgrade_node_ninja_tier1_right
+  m_EditorClassIdentifier: Assembly-CSharp::UnitUpgradeNodeDefinition
+  nodeId: upgrade_node_ninja_tier1_right
+  tier: 1
+  lane: 2
+  title: Chain Assassin
+  description: On kill, the Ninja re-enters stealth and dashes to a new target.
+  icon: {fileID: 0}
+  skillPointCost: 1
+  soulsCost: 0
+  prerequisites:
+  - {fileID: 11400000, guid: 7e3f956c8b609d844a79bd7c350d06d7, type: 2}
+  skillEffect: {fileID: 7142039586129473834, guid: f607182930415263e7f8091a2b3c4d56, type: 3}
+  skillPercentValue: 0
+  skillRadiusValue: 0
+  skillIntValue: 0
+  skillDuration: 0

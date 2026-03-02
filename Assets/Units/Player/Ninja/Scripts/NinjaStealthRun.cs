@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -19,6 +20,9 @@ public class NinjaStealthRun : MonoBehaviour
 
     private bool didInitialStealthRun;
     private Vector3 originalScale;
+
+    /// Fired when a stealth run finishes (after reaching target or target dies).
+    public event Action OnStealthRunComplete;
 
     private void Awake()
     {
@@ -46,6 +50,12 @@ public class NinjaStealthRun : MonoBehaviour
 
         didInitialStealthRun = true;
         StartCoroutine(StealthRunToTargetRoutine(target));
+    }
+
+    /// Allows skills to reset the flag so DoInitialStealthRun can be called again.
+    public void ResetStealthRun()
+    {
+        didInitialStealthRun = false;
     }
 
     private IEnumerator StealthRunToTargetRoutine(ICombatTarget target)
@@ -86,5 +96,7 @@ public class NinjaStealthRun : MonoBehaviour
             transform.localScale = originalScale;
 
         ai.enabled = true;
+
+        OnStealthRunComplete?.Invoke();
     }
 }

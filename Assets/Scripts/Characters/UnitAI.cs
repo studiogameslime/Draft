@@ -159,7 +159,7 @@ public class UnitAI : MonoBehaviour
 
             // CHANGED: Only search for nearby player units if our priority is NOT the Wall
             // This allows units like the Gnoll (Wall priority) to ignore blockers.
-            if (myStats.definition.targetPriorityClass != UnitClass.Wall)
+            if (myStats.targetPriorityClass != UnitClass.Wall)
             {
                 CharacterStats candidate = FindClosestTargetableEnemy();
 
@@ -361,6 +361,19 @@ public class UnitAI : MonoBehaviour
 
         if (enemies.Count == 0)
             return null;
+
+        // If we have a target priority class, prefer enemies of that class
+        UnitClass priority = myStats.targetPriorityClass;
+        if (priority != UnitClass.None && priority != UnitClass.Wall)
+        {
+            var priorityTargets = enemies
+                .Where(e => e.definition != null && e.definition.unitClass == priority)
+                .OrderBy(e => Vector3.Distance(transform.position, e.transform.position))
+                .ToList();
+
+            if (priorityTargets.Count > 0)
+                return priorityTargets.First();
+        }
 
         return enemies
             .OrderBy(e => Vector3.Distance(transform.position, e.transform.position))
