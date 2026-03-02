@@ -1,0 +1,125 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27b8b1859002eab41b443171d8efc618, type: 3}
+  m_Name: 1-5
+  m_EditorClassIdentifier: Assembly-CSharp::LevelDefinition
+  rounds:
+  - souls: 12
+    goldOnRoundWin: 15
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
+      count: 10
+      spawnInterval: 1.2
+    - unit: {fileID: 11400000, guid: 46b2a7674bab87a418ff396c40ee8e35, type: 2}
+      count: 4
+      spawnInterval: 2.5
+    enemyLevel: 3
+    xpOnRoundWin: 30
+  - souls: 13
+    goldOnRoundWin: 15
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
+      count: 6
+      spawnInterval: 1.5
+    - unit: {fileID: 11400000, guid: 6fcd5901c08ca2343a3dcb0185bf4998, type: 2}
+      count: 3
+      spawnInterval: 3
+    - unit: {fileID: 11400000, guid: db630fc08371b3b4d99fcebb9bafe064, type: 2}
+      count: 3
+      spawnInterval: 3.5
+    enemyLevel: 3
+    xpOnRoundWin: 30
+  - souls: 14
+    goldOnRoundWin: 20
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
+      count: 12
+      spawnInterval: 1
+    - unit: {fileID: 11400000, guid: 46b2a7674bab87a418ff396c40ee8e35, type: 2}
+      count: 5
+      spawnInterval: 2
+    - unit: {fileID: 11400000, guid: 6fcd5901c08ca2343a3dcb0185bf4998, type: 2}
+      count: 2
+      spawnInterval: 3.5
+    enemyLevel: 3
+    xpOnRoundWin: 30
+  - souls: 15
+    goldOnRoundWin: 20
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
+      count: 8
+      spawnInterval: 1.2
+    - unit: {fileID: 11400000, guid: 46b2a7674bab87a418ff396c40ee8e35, type: 2}
+      count: 4
+      spawnInterval: 2.5
+    - unit: {fileID: 11400000, guid: 6fcd5901c08ca2343a3dcb0185bf4998, type: 2}
+      count: 3
+      spawnInterval: 3
+    - unit: {fileID: 11400000, guid: db630fc08371b3b4d99fcebb9bafe064, type: 2}
+      count: 3
+      spawnInterval: 3.5
+    enemyLevel: 3
+    xpOnRoundWin: 35
+  - souls: 16
+    goldOnRoundWin: 20
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
+      count: 14
+      spawnInterval: 1
+    - unit: {fileID: 11400000, guid: 6fcd5901c08ca2343a3dcb0185bf4998, type: 2}
+      count: 4
+      spawnInterval: 2.5
+    - unit: {fileID: 11400000, guid: db630fc08371b3b4d99fcebb9bafe064, type: 2}
+      count: 4
+      spawnInterval: 3
+    enemyLevel: 3
+    xpOnRoundWin: 35
+  - souls: 17
+    goldOnRoundWin: 25
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
+      count: 10
+      spawnInterval: 1
+    - unit: {fileID: 11400000, guid: 46b2a7674bab87a418ff396c40ee8e35, type: 2}
+      count: 5
+      spawnInterval: 2
+    - unit: {fileID: 11400000, guid: 6fcd5901c08ca2343a3dcb0185bf4998, type: 2}
+      count: 4
+      spawnInterval: 3
+    - unit: {fileID: 11400000, guid: db630fc08371b3b4d99fcebb9bafe064, type: 2}
+      count: 3
+      spawnInterval: 3.5
+    enemyLevel: 3
+    xpOnRoundWin: 40
+  - souls: 18
+    goldOnRoundWin: 30
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
+      count: 8
+      spawnInterval: 1.5
+    - unit: {fileID: 11400000, guid: 46b2a7674bab87a418ff396c40ee8e35, type: 2}
+      count: 3
+      spawnInterval: 3
+    - unit: {fileID: 11400000, guid: 6fcd5901c08ca2343a3dcb0185bf4998, type: 2}
+      count: 3
+      spawnInterval: 3.5
+    - unit: {fileID: 11400000, guid: db630fc08371b3b4d99fcebb9bafe064, type: 2}
+      count: 2
+      spawnInterval: 4
+    - unit: {fileID: 11400000, guid: 5546c6601084d8d4bb5ad2da3216a6ad, type: 2}
+      count: 1
+      spawnInterval: 8
+    enemyLevel: 3
+    xpOnRoundWin: 50
+  xpOnLevelComplete: 150
+  goldOnLevelComplete: 250
+  alsoRewardGoldPerRound: 1

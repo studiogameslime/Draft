@@ -25,7 +25,7 @@ MonoBehaviour:
   damage: 0
   moveSpeed: 0
   attackRange: 0
-  attackCooldown: 4
+  attackCooldown: 3.5
   critChance: 0
   critMultiplier: 0
   icon: {fileID: -5455630811309129204, guid: c7564c6ab9db34842bd94e080b5867f5, type: 3}

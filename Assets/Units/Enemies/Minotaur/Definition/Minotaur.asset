@@ -20,8 +20,8 @@ MonoBehaviour:
   unitTeam: 1
   unitClass: 1
   targetPriorityClass: 6
-  maxHealth: 50
-  damage: 10
+  maxHealth: 80
+  damage: 15
   moveSpeed: 1.5
   attackRange: 1
   attackCooldown: 1.5

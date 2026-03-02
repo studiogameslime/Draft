@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24e37ee3de52a5d40841dd04acd66ece, type: 3}
   m_Name: Cyclop
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
-  id: unit_goblin
+  id: unit_cyclop
   displayName: Cyclop
   description: 
   prefab: {fileID: 2783144815761969831, guid: 34c4869847519bc46b47518e44fc2ad3, type: 3}

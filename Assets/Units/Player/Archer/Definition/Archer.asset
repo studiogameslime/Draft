@@ -24,7 +24,7 @@ MonoBehaviour:
   targetPriorityClass: 1
   soulCost: 3
   soulDropChance: 0.25
-  maxHealth: 70
+  maxHealth: 80
   damage: 15
   moveSpeed: 1.1
   attackRange: 7

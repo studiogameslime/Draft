@@ -21,7 +21,7 @@ MonoBehaviour:
   unitClass: 4
   targetPriorityClass: 0
   maxHealth: 25
-  damage: 30
+  damage: 35
   moveSpeed: 0.6
   attackRange: 7
   attackCooldown: 3
@@ -29,7 +29,7 @@ MonoBehaviour:
   critMultiplier: 1.5
   icon: {fileID: 7674125699001298711, guid: 97352762abec38447a52057c2a5126a6, type: 3}
   iconScale: 0.4
-  soulCost: 6
+  soulCost: 5
   spawnTime: 2
   animatorController: {fileID: 9100000, guid: 99d38f58891b08e4498441edc4b108f0, type: 2}
   maxTier: 3

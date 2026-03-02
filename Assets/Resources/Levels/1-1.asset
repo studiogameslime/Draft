@@ -13,15 +13,59 @@ MonoBehaviour:
   m_Name: 1-1
   m_EditorClassIdentifier: Assembly-CSharp::LevelDefinition
   rounds:
-  - souls: 50
+  - souls: 5
+    goldOnRoundWin: 5
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
+      count: 3
+      spawnInterval: 4
+    enemyLevel: 1
+    xpOnRoundWin: 10
+  - souls: 6
+    goldOnRoundWin: 5
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
+      count: 5
+      spawnInterval: 3
+    enemyLevel: 1
+    xpOnRoundWin: 10
+  - souls: 7
     goldOnRoundWin: 10
     enemyPhases:
-    - unit: {fileID: 11400000, guid: 67001f6089182b94cae98f392d9db070, type: 2}
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
       count: 3
-      spawnInterval: 8
+      spawnInterval: 3
+    - unit: {fileID: 11400000, guid: 46b2a7674bab87a418ff396c40ee8e35, type: 2}
+      count: 2
+      spawnInterval: 5
+    enemyLevel: 1
+    xpOnRoundWin: 15
+  - souls: 8
+    goldOnRoundWin: 10
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
+      count: 4
+      spawnInterval: 2.5
+    - unit: {fileID: 11400000, guid: 46b2a7674bab87a418ff396c40ee8e35, type: 2}
+      count: 2
+      spawnInterval: 4
     - unit: {fileID: 11400000, guid: 6fcd5901c08ca2343a3dcb0185bf4998, type: 2}
       count: 1
       spawnInterval: 3
+    enemyLevel: 1
+    xpOnRoundWin: 15
+  - souls: 10
+    goldOnRoundWin: 15
+    enemyPhases:
+    - unit: {fileID: 11400000, guid: bc56365acda9d4c41a6d41a842c1edba, type: 2}
+      count: 6
+      spawnInterval: 2
+    - unit: {fileID: 11400000, guid: 46b2a7674bab87a418ff396c40ee8e35, type: 2}
+      count: 2
+      spawnInterval: 4
+    - unit: {fileID: 11400000, guid: 6fcd5901c08ca2343a3dcb0185bf4998, type: 2}
+      count: 2
+      spawnInterval: 5
     enemyLevel: 1
     xpOnRoundWin: 20
   xpOnLevelComplete: 50

@@ -22,7 +22,7 @@ MonoBehaviour:
   targetPriorityClass: 3
   maxHealth: 50
   damage: 10
-  moveSpeed: 2
+  moveSpeed: 0.5
   attackRange: 10
   attackCooldown: 1
   critChance: 0.2
