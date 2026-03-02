@@ -8,9 +8,9 @@ public static class MasterySystem
     {
         var save = GameData.Instance?.Save;
         int n = Mathf.Max(0, save != null ? save.masteryDrawCount : 0);
-        float baseCost = db != null ? db.baseDrawCost : 1500f;
-        float mult = db != null ? db.costMultiplier : 1.2f;
-        return Mathf.RoundToInt(baseCost * Mathf.Pow(mult, n));
+        int baseCost = db != null ? db.baseDrawCost : 1500;
+        int perDraw = db != null ? db.costPerDraw : 50;
+        return baseCost + perDraw * n;
     }
 
     // Can we draw right now? (valid DB + Save + enough gold + has eligible pick)

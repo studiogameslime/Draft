@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MasteryDatabase
   m_EditorClassIdentifier: Assembly-CSharp::MasteryDatabase
   baseDrawCost: 1500
-  costMultiplier: 1.05
+  costPerDraw: 50
   commonChance: 70
   rareChance: 25
   epicChance: 5

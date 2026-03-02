@@ -6,7 +6,7 @@ public class MasteryDatabase : ScriptableObject
 {
     [Header("Draw Cost Tuning")]
     public int baseDrawCost = 1000;      // first draw cost
-    public float costMultiplier = 1.20f; // growth per draw
+    public int costPerDraw = 50;         // linear gold increase per draw
 
     [Header("Rarity Chances (percent)")]
     [Tooltip("Example: Common=70, Rare=25, Epic=5")]
