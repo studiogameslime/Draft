@@ -4433,7 +4433,6 @@ using UnityEngine.UI;
 public class ChestOpenButton : MonoBehaviour
 {
     public ChestDefinition chestDefinition;
-    public ChestOpeningUI chestOpeningUI;
 
     private Button _button;
     private bool _rewardGranted;
@@ -4447,7 +4446,7 @@ public class ChestOpenButton : MonoBehaviour
 
     private void OnClick()
     {
-        if (!chestOpeningUI || chestDefinition == null) return;
+        if (chestDefinition == null || StoreItemChestPanel.Instance == null) return;
         if (AdsManager.Instance == null) return;
 
         _rewardGranted = false;
@@ -4473,10 +4472,9 @@ public class ChestOpenButton : MonoBehaviour
     {
         yield return null; // ����� ��� ���� ������ �������
 
-        if (_rewardGranted)
+        if (_rewardGranted && StoreItemChestPanel.Instance != null)
         {
-            chestOpeningUI.gameObject.SetActive(true);
-            chestOpeningUI.Show(chestDefinition);
+            StoreItemChestPanel.Instance.Show(chestDefinition);
         }
 
         if (_button) _button.interactable = true;
@@ -5889,8 +5887,11 @@ public class StoreManager : MonoBehaviour
                 break;
             case StoreCategory.BuyChestsWithGold:
                 wallet.SpendGold(finalPrice);
-                chestOpeningUI.gameObject.SetActive(true);
-                chestOpeningUI.Show(item.chestReward);
+                if (chestOpeningUI != null)
+                {
+                    chestOpeningUI.gameObject.SetActive(true);
+                    chestOpeningUI.Show(item.chestReward);
+                }
                 break;
             case StoreCategory.BuyPartWithGold:
                 wallet.SpendGold(finalPrice);
@@ -9391,7 +9392,6 @@ public class HourlyChestClaimButton : MonoBehaviour
 
     [Header("Reward")]
     [SerializeField] private ChestDefinition chestReward;
-    [SerializeField] private ChestOpeningUI chestOpeningUI; 
 
     private float _nextUiTick;
 
@@ -9446,15 +9446,13 @@ public class HourlyChestClaimButton : MonoBehaviour
             return;
 
         // Give reward (choose what your project uses)
-        if (chestReward != null && chestOpeningUI != null)
+        if (chestReward != null && StoreItemChestPanel.Instance != null)
         {
-            chestOpeningUI.gameObject.SetActive(true);
-            chestOpeningUI.Show(chestReward);
+            StoreItemChestPanel.Instance.Show(chestReward);
         }
         else
         {
-            // fallback example if you want direct grant instead of chest UI
-            Debug.LogWarning("HourlyChest: chestReward/chestOpeningUI missing");
+            Debug.LogWarning("HourlyChest: chestReward or StoreItemChestPanel missing");
         }
 
         // Set next available time: base cooldown minus mastery reduction (min 120 min)
@@ -9778,7 +9776,6 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
 {
     [Header("Config")]
     [SerializeField] private LevelRewardsDatabase rewardsDatabase;
-    [SerializeField] private ChestOpeningUI chestOpeningUI;
 
 
     // Cached claimed keys (loaded from GameData)
@@ -9935,13 +9932,8 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
 
     private void OpenChestImmediate(ChestDefinition chest)
     {
-        // This is a minimal implementation.
-        // If you already have a chest-opening system/UI, replace this method with a call to it.
-
-        // Example logic (adjust to your ChestDefinition fields):
-        chestOpeningUI.gameObject.SetActive(true);
-        chestOpeningUI.Show(chest);
-
+        if (StoreItemChestPanel.Instance != null)
+            StoreItemChestPanel.Instance.Show(chest);
     }
 
     // -----------------------
@@ -11772,8 +11764,6 @@ public class MissionsManager : MonoBehaviour
     [SerializeField] private List<MissionInstance> activeDailyMissions = new();
     [SerializeField] private List<MissionInstance> activeWeeklyMissions = new();
 
-    [Header("Reward UI")]
-    [SerializeField] private ChestOpeningUI chestOpeningUI;
 
     public event Action OnMissionsStateChanged;
 
@@ -11979,10 +11969,9 @@ public class MissionsManager : MonoBehaviour
             PlayerCurrencyWallet.Instance.AddScrolls(mission.definition.scrollsReward, from);
         }
 
-        if (mission.definition.chestReward != null && chestOpeningUI != null)
+        if (mission.definition.chestReward != null && StoreItemChestPanel.Instance != null)
         {
-            chestOpeningUI.gameObject.SetActive(true);
-            chestOpeningUI.Show(mission.definition.chestReward);
+            StoreItemChestPanel.Instance.Show(mission.definition.chestReward);
         }
 
         mission.claimed = true;
@@ -12113,10 +12102,9 @@ public class MissionsManager : MonoBehaviour
         if (dailyAllMissionsGemsReward > 0)
             PlayerCurrencyWallet.Instance.AddGems(dailyAllMissionsGemsReward, from);
 
-        if (dailyAllMissionsChestReward != null && chestOpeningUI != null)
+        if (dailyAllMissionsChestReward != null && StoreItemChestPanel.Instance != null)
         {
-            chestOpeningUI.gameObject.SetActive(true);
-            chestOpeningUI.Show(dailyAllMissionsChestReward);
+            StoreItemChestPanel.Instance.Show(dailyAllMissionsChestReward);
         }
 
         Debug.Log("Daily set completion reward granted.");
@@ -12137,10 +12125,9 @@ public class MissionsManager : MonoBehaviour
         if (weeklyAllMissionsGemsReward > 0)
             PlayerCurrencyWallet.Instance.AddGems(weeklyAllMissionsGemsReward, from);
 
-        if (weeklyAllMissionsChestReward != null && chestOpeningUI != null)
+        if (weeklyAllMissionsChestReward != null && StoreItemChestPanel.Instance != null)
         {
-            chestOpeningUI.gameObject.SetActive(true);
-            chestOpeningUI.Show(weeklyAllMissionsChestReward);
+            StoreItemChestPanel.Instance.Show(weeklyAllMissionsChestReward);
         }
 
         Debug.Log("Weekly set completion reward granted.");
@@ -19209,7 +19196,11 @@ public class StoreItemChestPanel : MonoBehaviour
     [SerializeField] private PopupAnimator popupAnimator;
     [SerializeField] private GameObject root;
 
+    [Header("Direct Chest Opening")]
+    [SerializeField] private ChestOpeningUI chestOpeningUI;
+
     private StoreItemDefinition definition;
+    private ChestDefinition _directChest;
 
     private void Awake()
     {
@@ -19223,6 +19214,10 @@ public class StoreItemChestPanel : MonoBehaviour
     public void Show(StoreItemDefinition item, RectTransform rect)
     {
         definition = item;
+        _directChest = null;
+
+        costIconImage.gameObject.SetActive(true);
+        priceText.gameObject.SetActive(true);
 
         titleText.text = item.title;
         iconImage.sprite = item.icon;
@@ -19276,6 +19271,29 @@ public class StoreItemChestPanel : MonoBehaviour
         popupAnimator.OpenFromRect(rect);
     }
 
+    public void Show(ChestDefinition chest)
+    {
+        _directChest = chest;
+        definition = null;
+
+        titleText.text = chest.displayName;
+        iconImage.sprite = chest.chestOpenScreenIcon;
+        NormalizeIconSize(iconImage);
+        goldRange.text = $"{chest.goldRange.min} - {chest.goldRange.max}";
+        gemsRange.text = $"{chest.diamondsRange.min} - {chest.diamondsRange.max}";
+        wofDropChanceText.text = $"{chest.wheelOfFortuneChance * 100}%";
+        BuildPartDropChances(chest);
+
+        costIconImage.gameObject.SetActive(false);
+        priceText.gameObject.SetActive(true);
+        priceText.text = "Open";
+        priceText.alignment = TextAlignmentOptions.Center;
+        priceText.color = Color.white;
+        confirmButton.interactable = true;
+
+        panelRoot.SetActive(true);
+    }
+
     private bool CanAfford(StoreItemDefinition item)
     {
         var wallet = PlayerCurrencyWallet.Instance;
@@ -19291,6 +19309,18 @@ public class StoreItemChestPanel : MonoBehaviour
 
     private void OnConfirm()
     {
+        if (_directChest != null)
+        {
+            var chest = _directChest;
+            Close();
+            if (chestOpeningUI != null)
+            {
+                chestOpeningUI.gameObject.SetActive(true);
+                chestOpeningUI.Show(chest);
+            }
+            return;
+        }
+
         if (definition == null) return;
 
         StoreManager.Instance.TryBuy(definition);
@@ -19303,6 +19333,7 @@ public class StoreItemChestPanel : MonoBehaviour
             return;
         panelRoot.SetActive(false);
         definition = null;
+        _directChest = null;
         popupAnimator.Close();
     }
 
@@ -19333,14 +19364,21 @@ public class StoreItemChestPanel : MonoBehaviour
 
     private void BuildPartDropChances(StoreItemDefinition item)
     {
-        if (item.chestReward == null ||
-            item.chestReward.partRarityWeights == null ||
+        if (item.chestReward == null)
+            return;
+        BuildPartDropChances(item.chestReward);
+    }
+
+    private void BuildPartDropChances(ChestDefinition chest)
+    {
+        if (chest == null ||
+            chest.partRarityWeights == null ||
             partDropChanceRowPrefab == null)
             return;
 
         ClearPartDropChances();
 
-        foreach (var entry in item.chestReward.partRarityWeights)
+        foreach (var entry in chest.partRarityWeights)
         {
             var row = Instantiate(partDropChanceRowPrefab, partDropChancesContainer);
             row.Bind(entry.rarity, entry.weight);
@@ -19797,9 +19835,6 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
     [SerializeField] private TMP_Text tokensText;
 
     [Header("Rewards - Optional references")]
-    [Tooltip("If you want to support Chest rewards now, assign the ChestOpener from your popup hierarchy.")]
-    [SerializeField] private ChestOpeningUI chestOpeningUI;
-
     [Tooltip("If you want to support Part rewards now, assign the PlayerPartsInventory asset.")]
     [SerializeField] private PlayerPartsInventory partsInventory;
 
@@ -19945,15 +19980,13 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
             return;
         }
 
-        if (chestOpeningUI == null)
+        if (StoreItemChestPanel.Instance == null)
         {
-            Debug.LogWarning("WheelOfFortuneTokensManager: chestOpeningUI is not assigned.");
+            Debug.LogWarning("WheelOfFortuneTokensManager: StoreItemChestPanel.Instance is missing.");
             return;
         }
 
-        // Open immediately (same flow as your ChestOpener design)
-        chestOpeningUI.gameObject.SetActive(true);
-        chestOpeningUI.Show(chestDef);
+        StoreItemChestPanel.Instance.Show(chestDef);
     }
 }
 
