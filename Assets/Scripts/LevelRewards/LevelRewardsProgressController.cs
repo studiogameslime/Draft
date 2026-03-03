@@ -26,7 +26,6 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
 {
     [Header("Config")]
     [SerializeField] private LevelRewardsDatabase rewardsDatabase;
-    [SerializeField] private ChestOpeningUI chestOpeningUI;
 
 
     // Cached claimed keys (loaded from GameData)
@@ -183,13 +182,8 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
 
     private void OpenChestImmediate(ChestDefinition chest)
     {
-        // This is a minimal implementation.
-        // If you already have a chest-opening system/UI, replace this method with a call to it.
-
-        // Example logic (adjust to your ChestDefinition fields):
-        chestOpeningUI.gameObject.SetActive(true);
-        chestOpeningUI.Show(chest);
-
+        if (StoreItemChestPanel.Instance != null)
+            StoreItemChestPanel.Instance.Show(chest);
     }
 
     // -----------------------

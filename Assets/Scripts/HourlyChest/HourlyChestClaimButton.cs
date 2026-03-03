@@ -14,7 +14,6 @@ public class HourlyChestClaimButton : MonoBehaviour
 
     [Header("Reward")]
     [SerializeField] private ChestDefinition chestReward;
-    [SerializeField] private ChestOpeningUI chestOpeningUI; 
 
     private float _nextUiTick;
 
@@ -69,15 +68,13 @@ public class HourlyChestClaimButton : MonoBehaviour
             return;
 
         // Give reward (choose what your project uses)
-        if (chestReward != null && chestOpeningUI != null)
+        if (chestReward != null && StoreItemChestPanel.Instance != null)
         {
-            chestOpeningUI.gameObject.SetActive(true);
-            chestOpeningUI.Show(chestReward);
+            StoreItemChestPanel.Instance.Show(chestReward);
         }
         else
         {
-            // fallback example if you want direct grant instead of chest UI
-            Debug.LogWarning("HourlyChest: chestReward/chestOpeningUI missing");
+            Debug.LogWarning("HourlyChest: chestReward or StoreItemChestPanel missing");
         }
 
         // Set next available time: base cooldown minus mastery reduction (min 120 min)

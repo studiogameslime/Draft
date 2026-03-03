@@ -95,8 +95,11 @@ public class StoreManager : MonoBehaviour
                 break;
             case StoreCategory.BuyChestsWithGold:
                 wallet.SpendGold(finalPrice);
-                chestOpeningUI.gameObject.SetActive(true);
-                chestOpeningUI.Show(item.chestReward);
+                if (chestOpeningUI != null)
+                {
+                    chestOpeningUI.gameObject.SetActive(true);
+                    chestOpeningUI.Show(item.chestReward);
+                }
                 break;
             case StoreCategory.BuyPartWithGold:
                 wallet.SpendGold(finalPrice);

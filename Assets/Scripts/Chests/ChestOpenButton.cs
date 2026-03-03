@@ -5,7 +5,6 @@ using UnityEngine.UI;
 public class ChestOpenButton : MonoBehaviour
 {
     public ChestDefinition chestDefinition;
-    public ChestOpeningUI chestOpeningUI;
 
     private Button _button;
     private bool _rewardGranted;
@@ -19,19 +18,19 @@ public class ChestOpenButton : MonoBehaviour
 
     private void OnClick()
     {
-        if (!chestOpeningUI || chestDefinition == null) return;
+        if (chestDefinition == null || StoreItemChestPanel.Instance == null) return;
         if (AdsManager.Instance == null) return;
 
         _rewardGranted = false;
         if (_button) _button.interactable = false;
 
-        // îöéâéí îåãòä
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
         bool started = AdsManager.Instance.ShowRewarded(
             AdRewardType.FreeChest,
-            onReward: () => { _rewardGranted = true; },   // ø÷ îñîðéí
+            onReward: () => { _rewardGranted = true; },   // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             onClosed: () =>
             {
-                // çåæøéí ìîùç÷ -> ôåúçéí ø÷ àçøé ñâéøä (åáôøééí äáà)
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½)
                 StartCoroutine(AfterAdClosedRoutine());
             });
 
@@ -43,12 +42,11 @@ public class ChestOpenButton : MonoBehaviour
 
     private IEnumerator AfterAdClosedRoutine()
     {
-        yield return null; // ôøééí àçã àçøé ùçæøðå îäîåãòä
+        yield return null; // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-        if (_rewardGranted)
+        if (_rewardGranted && StoreItemChestPanel.Instance != null)
         {
-            chestOpeningUI.gameObject.SetActive(true);
-            chestOpeningUI.Show(chestDefinition);
+            StoreItemChestPanel.Instance.Show(chestDefinition);
         }
 
         if (_button) _button.interactable = true;

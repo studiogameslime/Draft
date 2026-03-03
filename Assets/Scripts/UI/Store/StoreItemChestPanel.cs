@@ -31,7 +31,11 @@ public class StoreItemChestPanel : MonoBehaviour
     [SerializeField] private PopupAnimator popupAnimator;
     [SerializeField] private GameObject root;
 
+    [Header("Direct Chest Opening")]
+    [SerializeField] private ChestOpeningUI chestOpeningUI;
+
     private StoreItemDefinition definition;
+    private ChestDefinition _directChest;
 
     private void Awake()
     {
@@ -45,6 +49,10 @@ public class StoreItemChestPanel : MonoBehaviour
     public void Show(StoreItemDefinition item, RectTransform rect)
     {
         definition = item;
+        _directChest = null;
+
+        costIconImage.gameObject.SetActive(true);
+        priceText.gameObject.SetActive(true);
 
         titleText.text = item.title;
         iconImage.sprite = item.icon;
@@ -98,6 +106,29 @@ public class StoreItemChestPanel : MonoBehaviour
         popupAnimator.OpenFromRect(rect);
     }
 
+    public void Show(ChestDefinition chest)
+    {
+        _directChest = chest;
+        definition = null;
+
+        titleText.text = chest.displayName;
+        iconImage.sprite = chest.chestOpenScreenIcon;
+        NormalizeIconSize(iconImage);
+        goldRange.text = $"{chest.goldRange.min} - {chest.goldRange.max}";
+        gemsRange.text = $"{chest.diamondsRange.min} - {chest.diamondsRange.max}";
+        wofDropChanceText.text = $"{chest.wheelOfFortuneChance * 100}%";
+        BuildPartDropChances(chest);
+
+        costIconImage.gameObject.SetActive(false);
+        priceText.gameObject.SetActive(true);
+        priceText.text = "Open";
+        priceText.alignment = TextAlignmentOptions.Center;
+        priceText.color = Color.white;
+        confirmButton.interactable = true;
+
+        panelRoot.SetActive(true);
+    }
+
     private bool CanAfford(StoreItemDefinition item)
     {
         var wallet = PlayerCurrencyWallet.Instance;
@@ -113,6 +144,18 @@ public class StoreItemChestPanel : MonoBehaviour
 
     private void OnConfirm()
     {
+        if (_directChest != null)
+        {
+            var chest = _directChest;
+            Close();
+            if (chestOpeningUI != null)
+            {
+                chestOpeningUI.gameObject.SetActive(true);
+                chestOpeningUI.Show(chest);
+            }
+            return;
+        }
+
         if (definition == null) return;
 
         StoreManager.Instance.TryBuy(definition);
@@ -125,6 +168,7 @@ public class StoreItemChestPanel : MonoBehaviour
             return;
         panelRoot.SetActive(false);
         definition = null;
+        _directChest = null;
         popupAnimator.Close();
     }
 
@@ -155,14 +199,21 @@ public class StoreItemChestPanel : MonoBehaviour
 
     private void BuildPartDropChances(StoreItemDefinition item)
     {
-        if (item.chestReward == null ||
-            item.chestReward.partRarityWeights == null ||
+        if (item.chestReward == null)
+            return;
+        BuildPartDropChances(item.chestReward);
+    }
+
+    private void BuildPartDropChances(ChestDefinition chest)
+    {
+        if (chest == null ||
+            chest.partRarityWeights == null ||
             partDropChanceRowPrefab == null)
             return;
 
         ClearPartDropChances();
 
-        foreach (var entry in item.chestReward.partRarityWeights)
+        foreach (var entry in chest.partRarityWeights)
         {
             var row = Instantiate(partDropChanceRowPrefab, partDropChancesContainer);
             row.Bind(entry.rarity, entry.weight);

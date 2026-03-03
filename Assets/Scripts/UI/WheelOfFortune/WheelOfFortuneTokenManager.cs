@@ -7,9 +7,6 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
     [SerializeField] private TMP_Text tokensText;
 
     [Header("Rewards - Optional references")]
-    [Tooltip("If you want to support Chest rewards now, assign the ChestOpener from your popup hierarchy.")]
-    [SerializeField] private ChestOpeningUI chestOpeningUI;
-
     [Tooltip("If you want to support Part rewards now, assign the PlayerPartsInventory asset.")]
     [SerializeField] private PlayerPartsInventory partsInventory;
 
@@ -155,14 +152,12 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
             return;
         }
 
-        if (chestOpeningUI == null)
+        if (StoreItemChestPanel.Instance == null)
         {
-            Debug.LogWarning("WheelOfFortuneTokensManager: chestOpeningUI is not assigned.");
+            Debug.LogWarning("WheelOfFortuneTokensManager: StoreItemChestPanel.Instance is missing.");
             return;
         }
 
-        // Open immediately (same flow as your ChestOpener design)
-        chestOpeningUI.gameObject.SetActive(true);
-        chestOpeningUI.Show(chestDef);
+        StoreItemChestPanel.Instance.Show(chestDef);
     }
 }

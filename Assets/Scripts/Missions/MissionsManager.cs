@@ -16,8 +16,6 @@ public class MissionsManager : MonoBehaviour
     [SerializeField] private List<MissionInstance> activeDailyMissions = new();
     [SerializeField] private List<MissionInstance> activeWeeklyMissions = new();
 
-    [Header("Reward UI")]
-    [SerializeField] private ChestOpeningUI chestOpeningUI;
 
     public event Action OnMissionsStateChanged;
 
@@ -223,10 +221,9 @@ public class MissionsManager : MonoBehaviour
             PlayerCurrencyWallet.Instance.AddScrolls(mission.definition.scrollsReward, from);
         }
 
-        if (mission.definition.chestReward != null && chestOpeningUI != null)
+        if (mission.definition.chestReward != null && StoreItemChestPanel.Instance != null)
         {
-            chestOpeningUI.gameObject.SetActive(true);
-            chestOpeningUI.Show(mission.definition.chestReward);
+            StoreItemChestPanel.Instance.Show(mission.definition.chestReward);
         }
 
         mission.claimed = true;
@@ -357,10 +354,9 @@ public class MissionsManager : MonoBehaviour
         if (dailyAllMissionsGemsReward > 0)
             PlayerCurrencyWallet.Instance.AddGems(dailyAllMissionsGemsReward, from);
 
-        if (dailyAllMissionsChestReward != null && chestOpeningUI != null)
+        if (dailyAllMissionsChestReward != null && StoreItemChestPanel.Instance != null)
         {
-            chestOpeningUI.gameObject.SetActive(true);
-            chestOpeningUI.Show(dailyAllMissionsChestReward);
+            StoreItemChestPanel.Instance.Show(dailyAllMissionsChestReward);
         }
 
         Debug.Log("Daily set completion reward granted.");
@@ -381,10 +377,9 @@ public class MissionsManager : MonoBehaviour
         if (weeklyAllMissionsGemsReward > 0)
             PlayerCurrencyWallet.Instance.AddGems(weeklyAllMissionsGemsReward, from);
 
-        if (weeklyAllMissionsChestReward != null && chestOpeningUI != null)
+        if (weeklyAllMissionsChestReward != null && StoreItemChestPanel.Instance != null)
         {
-            chestOpeningUI.gameObject.SetActive(true);
-            chestOpeningUI.Show(weeklyAllMissionsChestReward);
+            StoreItemChestPanel.Instance.Show(weeklyAllMissionsChestReward);
         }
 
         Debug.Log("Weekly set completion reward granted.");
