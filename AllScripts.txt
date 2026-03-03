@@ -613,6 +613,8 @@ public class MeleeAttack : MonoBehaviour, IAttackStrategy, ICancelableAttack
     {
         if (currentTarget == null) return;
 
+        SoundManager.Instance?.PlaySFX(stats.definition.attackSound);
+
         // apply damage only at the hit frame
         currentTarget.TakeDamage(stats.damage, stats);
 
@@ -679,6 +681,8 @@ public class RangerAttack : MonoBehaviour, IAttackStrategy
     {
         if (currentTarget == null) return;
         if (projectilePrefab == null || shootPoint == null) return;
+
+        SoundManager.Instance?.PlaySFX(stats.definition.attackSound);
 
         GameObject proj = Instantiate(projectilePrefab, shootPoint.position, Quaternion.identity);
 
@@ -5957,6 +5961,9 @@ public class UnitDefinition : ScriptableObject
     [Range(0f, 1f)] public float critChance = 0.2f;
     public float critMultiplier = 2f;
 
+    [Header("Audio")]
+    public AudioClip attackSound;
+
     [Header("Fill this for our units only")]
     public Sprite icon;
     public float iconScale = 1f;
@@ -10592,8 +10599,9 @@ public class MasteryCollectionController : MonoBehaviour
         if (freeDrawButton == null) return;
 
         bool available = IsFreeMasteryDrawAvailable() && MasterySystem.HasAnyEligiblePick(database);
+        freeDrawButton.gameObject.SetActive(available);
 
-        if (!_isRolling)
+        if (freeDrawButton && !_isRolling)
             freeDrawButton.interactable = available;
     }
 
@@ -11785,12 +11793,21 @@ public class MissionsManager : MonoBehaviour
     {
         activeDailyMissions.Clear();
 
-        var selected = missionDatabase.dailyMissions
-            .Where(m => m != null)
-            .OrderBy(_ => UnityEngine.Random.value)
-            .Take(dailyMissionCount);
+        // Always include the Login mission first
+        var loginMission = missionDatabase.dailyMissions
+            .FirstOrDefault(m => m != null && m.action == MissionAction.Login);
 
-        foreach (var def in selected)
+        if (loginMission != null)
+            activeDailyMissions.Add(new MissionInstance(loginMission));
+
+        // Fill remaining slots randomly from non-Login missions
+        int remaining = dailyMissionCount - activeDailyMissions.Count;
+        var others = missionDatabase.dailyMissions
+            .Where(m => m != null && m.action != MissionAction.Login)
+            .OrderBy(_ => UnityEngine.Random.value)
+            .Take(remaining);
+
+        foreach (var def in others)
             activeDailyMissions.Add(new MissionInstance(def));
     }
 
@@ -12125,6 +12142,7 @@ FILE: MissionsScreen.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Missions\MissionsScreen.cs
 ========================
 using System;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -12253,7 +12271,11 @@ public class MissionsScreen : MonoBehaviour
     {
         Clear(dailyContent);
 
-        foreach (var mission in MissionsManager.Instance.ActiveDailyMissions)
+        var sorted = MissionsManager.Instance.ActiveDailyMissions
+            .OrderBy(m => m.definition.action == MissionAction.Login ? 0 : 1)
+            .ThenBy(m => (int)m.definition.action);
+
+        foreach (var mission in sorted)
         {
             var item = Instantiate(missionContainerPrefab, dailyContent);
             item.Setup(mission);
@@ -12264,7 +12286,11 @@ public class MissionsScreen : MonoBehaviour
     {
         Clear(weeklyContent);
 
-        foreach (var mission in MissionsManager.Instance.ActiveWeeklyMissions)
+        var sorted = MissionsManager.Instance.ActiveWeeklyMissions
+            .OrderBy(m => m.definition.action == MissionAction.Login ? 0 : 1)
+            .ThenBy(m => (int)m.definition.action);
+
+        foreach (var mission in sorted)
         {
             var item = Instantiate(missionContainerPrefab, weeklyContent);
             item.Setup(mission);
@@ -13469,6 +13495,71 @@ public class SkillBonusMaxHpPercent : UnitSkillBehaviour
 
 
 ========================
+FILE: ButtonClickSound.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Sound\ButtonClickSound.cs
+========================
+using UnityEngine;
+using UnityEngine.UI;
+
+[RequireComponent(typeof(Button))]
+public class ButtonClickSound : MonoBehaviour
+{
+    private void Start()
+    {
+        GetComponent<Button>().onClick.AddListener(OnClick);
+    }
+
+    private void OnClick()
+    {
+        SoundManager.Instance?.PlayButtonClick();
+    }
+}
+
+
+
+========================
+FILE: SoundManager.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Sound\SoundManager.cs
+========================
+using UnityEngine;
+
+[RequireComponent(typeof(AudioSource))]
+public class SoundManager : MonoBehaviour
+{
+    public static SoundManager Instance;
+
+    private AudioSource sfxSource;
+
+    [Header("UI Sounds")]
+    [SerializeField] private AudioClip buttonClickSound;
+    [SerializeField] private AudioClip pageSwipeSound;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        transform.SetParent(null);
+        DontDestroyOnLoad(gameObject);
+        sfxSource = GetComponent<AudioSource>();
+    }
+
+    public void PlaySFX(AudioClip clip)
+    {
+        if (clip != null && sfxSource != null)
+            sfxSource.PlayOneShot(clip);
+    }
+
+    public void PlayButtonClick() => PlaySFX(buttonClickSound);
+    public void PlayPageSwipe() => PlaySFX(pageSwipeSound);
+}
+
+
+
+========================
 FILE: DailyResetUtil.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Store\DailyResetUtil.cs
 ========================
@@ -13940,7 +14031,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
-using Unity.Android.Types;
+
 public class EndGameUI : MonoBehaviour
 {
     public static EndGameUI Instance;
@@ -17813,6 +17904,9 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     {
         index = Mathf.Clamp(index, 0, pageCount - 1);
 
+        if (index != currentPageIndex)
+            SoundManager.Instance?.PlayPageSwipe();
+
         float step = 1f / Mathf.Max(1, pageCount - 1);
         currentPageIndex = index;
         targetPos = index * step;
@@ -20297,6 +20391,7 @@ public class WallHealth : MonoBehaviour
 {
     [Header("Wall Stats")]
     public int maxHealth = 500;
+    [SerializeField] private AudioClip hitSound;
     public int currentHealth;
 
     public bool destroyed = false;
@@ -20321,6 +20416,7 @@ public class WallHealth : MonoBehaviour
 
         currentHealth -= amount;
         currentHealth = Mathf.Max(0, currentHealth);
+        SoundManager.Instance?.PlaySFX(hitSound);
         Notify();
 
         if (currentHealth <= 0)
