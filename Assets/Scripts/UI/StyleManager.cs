@@ -15,6 +15,7 @@ public static StyleManager instance;
     public Sprite commonUnitBackground;
     public Sprite rareUnitBackground;
     public Sprite epicUnitBackground;
+    public Sprite featureUnlockSprite;
 
     [Header("Colors")]
     public Color commonColor;

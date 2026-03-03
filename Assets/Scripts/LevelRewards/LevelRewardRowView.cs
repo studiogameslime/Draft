@@ -157,6 +157,13 @@ public class LevelRewardRowView : MonoBehaviour
                     icon.rectTransform.sizeDelta *= 0.2f;
                     break;
                 }
+            case RewardType.FeatureUnlock:
+                {
+                    icon.sprite = StyleManager.instance.featureUnlockSprite;
+                    icon.SetNativeSize();
+                    icon.rectTransform.sizeDelta *= 0.25f;
+                    break;
+                }
         }
 
         bool claimed = _progress.IsClaimed(_level, lane);

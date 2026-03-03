@@ -19,6 +19,9 @@ public class LevelRewardEntry
 
     [Header("UnitRarity")]
     public UnitRarity rarity;
+
+    [Header("Feature Unlock")]
+    public GameFeature featureId;
 }
 
 /// <summary>

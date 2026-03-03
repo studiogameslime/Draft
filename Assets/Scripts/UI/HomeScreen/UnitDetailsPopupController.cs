@@ -432,6 +432,13 @@ public class UnitDetailsPopupController : MonoBehaviour
 
     public void OpenUpgradesTab()
     {
+        if (!FeatureUnlockManager.IsUnlocked(GameFeature.Upgrades))
+        {
+            if (ToastManager.Instance != null)
+                ToastManager.Instance.Show("Unlock at Level 5!");
+            return;
+        }
+
         if (statsTab != null) statsTab.SetActive(false);
         if (partsTab != null) partsTab.SetActive(false);
         if (upgradesTab != null) upgradesTab.SetActive(true);

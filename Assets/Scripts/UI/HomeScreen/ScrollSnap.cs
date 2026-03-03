@@ -3,6 +3,14 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
+public enum HomeScreenPage
+{
+    Store = 0,
+    Collection = 1,
+    Battle = 2,
+    Mastery = 3
+}
+
 /// <summary>
 /// Horizontal scroll snapping between pages.
 /// Bottom buttons jump to pages.
@@ -127,6 +135,9 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     {
         index = Mathf.Clamp(index, 0, pageCount - 1);
 
+        if (!IsPageAllowed(index))
+            return;
+
         if (index != currentPageIndex)
             SoundManager.Instance?.PlayPageSwipe();
 
@@ -135,6 +146,25 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         targetPos = index * step;
 
         UpdateButtonsUI(index);
+    }
+
+    private bool IsPageAllowed(int index)
+    {
+        var page = (HomeScreenPage)index;
+
+        switch (page)
+        {
+            case HomeScreenPage.Mastery:
+                if (!FeatureUnlockManager.IsUnlocked(GameFeature.Mastery))
+                {
+                    if (ToastManager.Instance != null)
+                        ToastManager.Instance.Show("Unlock at Level 3!");
+                    return false;
+                }
+                break;
+        }
+
+        return true;
     }
 
     // Make only active background bigger (width and height)

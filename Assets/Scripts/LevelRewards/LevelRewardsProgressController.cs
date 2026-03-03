@@ -171,6 +171,10 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
                 }
                 break;
 
+            case RewardType.FeatureUnlock:
+                FeatureUnlockManager.Unlock(reward.featureId);
+                break;
+
             default:
                 Debug.LogError($"[LevelRewardsProgressController] Unsupported RewardType: {reward.type}");
                 break;

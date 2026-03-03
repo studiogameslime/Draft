@@ -94,7 +94,14 @@ public enum RewardType
     Chest,
     Part,
     DiscoverNewUnit,
-    Scrolls
+    Scrolls,
+    FeatureUnlock
+}
+
+public enum GameFeature
+{
+    Mastery = 0,
+    Upgrades = 1
 }
 
 public enum RewardLane

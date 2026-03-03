@@ -119,6 +119,11 @@ public class PlayerSaveData
     /// </summary>
     public List<string> claimedLevelRewards = new List<string>();
 
+    /// <summary>
+    /// Features unlocked via FeatureUnlock rewards (e.g. "Mastery", "Upgrades").
+    /// </summary>
+    public List<string> unlockedFeatures = new List<string>();
+
     // ==============================
     // BATTLES / SESSIONS
     // ==============================

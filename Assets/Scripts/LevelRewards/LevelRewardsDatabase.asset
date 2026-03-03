@@ -16,97 +16,260 @@ MonoBehaviour:
   rewards:
   - level: 1
     lane: 0
-    type: 2
-    amount: 0
-    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
-    rarity: 0
-  - level: 1
-    lane: 1
     type: 0
-    amount: 100
-    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+    amount: 200
+    chest: {fileID: 0}
     rarity: 0
+    featureId: 0
   - level: 2
     lane: 0
-    type: 2
-    amount: 0
-    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+    type: 5
+    amount: 10
+    chest: {fileID: 0}
     rarity: 0
+    featureId: 0
   - level: 3
     lane: 0
-    type: 2
-    amount: 0
-    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+    type: 0
+    amount: 300
+    chest: {fileID: 0}
     rarity: 0
+    featureId: 0
   - level: 3
+    lane: 1
+    type: 6
+    amount: 0
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 4
+    lane: 0
+    type: 1
+    amount: 20
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 4
     lane: 1
     type: 4
     amount: 0
-    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
-    rarity: 1
-  - level: 4
-    lane: 0
-    type: 2
-    amount: 0
-    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+    chest: {fileID: 0}
     rarity: 0
-  - level: 4
-    lane: 1
-    type: 1
-    amount: 50
-    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
-    rarity: 0
+    featureId: 0
   - level: 5
     lane: 0
     type: 2
     amount: 0
-    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+    chest: {fileID: 11400000, guid: 3dc7bbe10158e2f49a5c25def79a07f2, type: 2}
     rarity: 0
+    featureId: 0
   - level: 5
     lane: 1
-    type: 0
-    amount: 100
-    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+    type: 6
+    amount: 0
+    chest: {fileID: 0}
     rarity: 0
+    featureId: 1
   - level: 6
     lane: 0
-    type: 2
-    amount: 0
-    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
-    rarity: 0
-  - level: 7
-    lane: 0
-    type: 2
-    amount: 0
-    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
-    rarity: 0
-  - level: 7
-    lane: 1
     type: 0
-    amount: 0
-    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+    amount: 500
+    chest: {fileID: 0}
     rarity: 0
-  - level: 8
+    featureId: 0
+  - level: 7
     lane: 0
-    type: 2
-    amount: 0
-    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+    type: 5
+    amount: 20
+    chest: {fileID: 0}
     rarity: 0
-  - level: 8
+    featureId: 0
+  - level: 7
     lane: 1
-    type: 4
-    amount: 0
-    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
-    rarity: 2
-  - level: 9
-    lane: 0
     type: 4
     amount: 0
     chest: {fileID: 0}
     rarity: 1
+    featureId: 0
+  - level: 8
+    lane: 0
+    type: 1
+    amount: 30
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
   - level: 9
+    lane: 0
+    type: 0
+    amount: 700
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 10
+    lane: 0
+    type: 2
+    amount: 0
+    chest: {fileID: 11400000, guid: 3dc7bbe10158e2f49a5c25def79a07f2, type: 2}
+    rarity: 0
+    featureId: 0
+  - level: 10
+    lane: 1
+    type: 4
+    amount: 0
+    chest: {fileID: 0}
+    rarity: 1
+    featureId: 0
+  - level: 11
+    lane: 0
+    type: 5
+    amount: 30
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 12
+    lane: 0
+    type: 0
+    amount: 1000
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 13
+    lane: 0
+    type: 1
+    amount: 40
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 14
+    lane: 0
+    type: 0
+    amount: 1200
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 15
+    lane: 0
+    type: 2
+    amount: 0
+    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+    rarity: 0
+    featureId: 0
+  - level: 15
     lane: 1
     type: 4
     amount: 0
     chest: {fileID: 0}
     rarity: 2
+    featureId: 0
+  - level: 16
+    lane: 0
+    type: 5
+    amount: 40
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 17
+    lane: 0
+    type: 0
+    amount: 1500
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 18
+    lane: 0
+    type: 1
+    amount: 50
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 19
+    lane: 0
+    type: 0
+    amount: 1800
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 20
+    lane: 0
+    type: 2
+    amount: 0
+    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+    rarity: 0
+    featureId: 0
+  - level: 20
+    lane: 1
+    type: 4
+    amount: 0
+    chest: {fileID: 0}
+    rarity: 2
+    featureId: 0
+  - level: 21
+    lane: 0
+    type: 5
+    amount: 50
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 22
+    lane: 0
+    type: 0
+    amount: 2000
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 23
+    lane: 0
+    type: 1
+    amount: 60
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 24
+    lane: 0
+    type: 0
+    amount: 2500
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 25
+    lane: 0
+    type: 2
+    amount: 0
+    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+    rarity: 0
+    featureId: 0
+  - level: 26
+    lane: 0
+    type: 5
+    amount: 60
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 27
+    lane: 0
+    type: 0
+    amount: 3000
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 28
+    lane: 0
+    type: 1
+    amount: 80
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 29
+    lane: 0
+    type: 0
+    amount: 3500
+    chest: {fileID: 0}
+    rarity: 0
+    featureId: 0
+  - level: 30
+    lane: 0
+    type: 2
+    amount: 0
+    chest: {fileID: 11400000, guid: b0afd06b813e101489e4c81427813957, type: 2}
+    rarity: 0
+    featureId: 0
