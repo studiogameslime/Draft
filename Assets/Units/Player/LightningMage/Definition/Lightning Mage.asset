@@ -22,7 +22,7 @@ MonoBehaviour:
   unitTeam: 0
   unitClass: 4
   targetPriorityClass: 1
-  soulCost: 4
+  soulCost: 6
   soulDropChance: 0.25
   maxHealth: 80
   damage: 15

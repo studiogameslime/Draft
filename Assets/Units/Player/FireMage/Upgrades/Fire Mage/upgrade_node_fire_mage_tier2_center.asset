@@ -20,7 +20,7 @@ MonoBehaviour:
     damage per second for 3 seconds."
   icon: {fileID: 3667681588813468039, guid: adf3a03aa0f4f56428a2d12977188ee5, type: 3}
   skillPointCost: 1
-  soulsCost: 2
+  soulsCost: 4
   prerequisites:
   - {fileID: 11400000, guid: 11223344556677889900aabbccddeef0, type: 2}
   skillEffect: {fileID: 5001234567890123458, guid: cec894b69cf24b85ad89296ff7e02646, type: 3}

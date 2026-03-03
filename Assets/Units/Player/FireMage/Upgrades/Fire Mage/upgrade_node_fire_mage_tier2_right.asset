@@ -20,7 +20,7 @@ MonoBehaviour:
     5 seconds."
   icon: {fileID: 3667681588813468039, guid: adf3a03aa0f4f56428a2d12977188ee5, type: 3}
   skillPointCost: 1
-  soulsCost: 2
+  soulsCost: 4
   prerequisites:
   - {fileID: 11400000, guid: 1ce1da21beac4e029900636bf3e0f49a, type: 2}
   skillEffect: {fileID: 1101234567890123458, guid: dd44ee55ff66778899001122aabbccdd, type: 3}

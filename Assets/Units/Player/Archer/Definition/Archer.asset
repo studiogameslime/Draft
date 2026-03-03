@@ -30,7 +30,7 @@ MonoBehaviour:
   attackSound: {fileID: 8300000, guid: e0fb7ebb8c9d34c42b026feefd0ebd6c, type: 3}
   icon: {fileID: -5455630811309129204, guid: e67152362f4e84d4fad9e9d081e15b46, type: 3}
   iconScale: 0.4
-  soulCost: 3
+  soulCost: 4
   spawnTime: 5
   animatorController: {fileID: 9100000, guid: a291fea9f6cd97c4e93747da11c0ed46, type: 2}
   maxTier: 3

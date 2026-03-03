@@ -29,7 +29,7 @@ MonoBehaviour:
   critMultiplier: 1.5
   icon: {fileID: -5455630811309129204, guid: a095310ac1d203143bba40640717e1de, type: 3}
   iconScale: 0.4
-  soulCost: 3
+  soulCost: 4
   spawnTime: 4
   animatorController: {fileID: 9100000, guid: e39ed235862f38c41bcff07fdbad3b42, type: 2}
   maxTier: 3

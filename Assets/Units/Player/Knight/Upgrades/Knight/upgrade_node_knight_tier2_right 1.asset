@@ -20,7 +20,7 @@ MonoBehaviour:
     of the damage taken back to the attacker.
   icon: {fileID: 8820032543443808914, guid: ac5b5598b81645e43821b7c02ef33b1a, type: 3}
   skillPointCost: 1
-  soulsCost: 0
+  soulsCost: 4
   prerequisites:
   - {fileID: 11400000, guid: 2266dd873b706304ea0a9e4d21512c1e, type: 2}
   skillEffect: {fileID: -482331019784328973, guid: dc02e706dec912b4f9e3536ada286c73, type: 3}

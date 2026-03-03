@@ -20,7 +20,7 @@ MonoBehaviour:
     20%.
   icon: {fileID: 0}
   skillPointCost: 1
-  soulsCost: 0
+  soulsCost: 2
   prerequisites:
   - {fileID: 11400000, guid: 1acd49941bbb39546932b38ade13cdc9, type: 2}
   skillEffect: {fileID: 5166218331215481056, guid: 693f05ca1938d9849b032c1f6b0bfb84, type: 3}

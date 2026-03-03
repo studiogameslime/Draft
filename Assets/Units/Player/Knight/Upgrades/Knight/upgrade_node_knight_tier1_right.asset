@@ -20,7 +20,7 @@ MonoBehaviour:
     knocking them back and delaying their advance.
   icon: {fileID: -2519793373705320958, guid: 209ad22181d3ebf439a3410de91892ff, type: 3}
   skillPointCost: 1
-  soulsCost: 0
+  soulsCost: 2
   prerequisites:
   - {fileID: 11400000, guid: 1111962aa64f484438a43e113d6c6beb, type: 2}
   skillEffect: {fileID: 72017186988311630, guid: be6b4fe8088c8084d90f8bf21d8f686c, type: 3}

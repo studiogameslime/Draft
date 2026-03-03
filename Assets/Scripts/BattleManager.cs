@@ -274,12 +274,24 @@ public class BattleManager : MonoBehaviour
             foreach (var unitDef in unitsUsedThisBattle)
                 MissionsManager.Instance.ReportAction(MissionAction.PlayWithSpecificUnit, 1, unitDef);
 
+            // Report classes NOT used (for "Win without X" missions)
+            UnitClass[] trackableClasses = { UnitClass.Melee, UnitClass.Ranged, UnitClass.Mage, UnitClass.Support };
+            foreach (var cls in trackableClasses)
+            {
+                if (!unitClassUsedThisBattle.Contains(cls))
+                    MissionsManager.Instance.ReportAction(MissionAction.WinWithoutUnitClass, 1, null, cls);
+            }
+
             MissionsManager.Instance.ReportAction(MissionAction.WinBattles, 1);
             MissionsManager.Instance.ReportAction(MissionAction.PlayBattles, 1);
 
             PlayerXPManager.Instance.AddXP(levelDefinition.xpOnLevelComplete + roundsXp);
             int rawTotalGold = levelDefinition.goldOnLevelComplete + roundsGold;
             PlayerCurrencyWallet.Instance.AddGold(rawTotalGold);
+
+            int scrollsEarned = levelDefinition.scrollsOnLevelComplete;
+            if (scrollsEarned > 0)
+                PlayerCurrencyWallet.Instance.AddScrolls(scrollsEarned);
 
             EndGameUI.Instance.ShowWinScreen(
                 boostedLevelGold,
@@ -289,7 +301,8 @@ public class BattleManager : MonoBehaviour
                 roundsXp,
                 totalXp,
                 levelDefinition.name,
-                rawTotalGold
+                rawTotalGold,
+                scrollsEarned
             );
 
             // --- SAVE PROGRESS (stage complete) ---

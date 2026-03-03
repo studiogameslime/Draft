@@ -20,7 +20,7 @@ MonoBehaviour:
     Knight for 3 seconds.
   icon: {fileID: 8820032543443808914, guid: ac5b5598b81645e43821b7c02ef33b1a, type: 3}
   skillPointCost: 1
-  soulsCost: 0
+  soulsCost: 4
   prerequisites:
   - {fileID: 11400000, guid: e8e1f39cb1d871a49a54a1cba7e3b720, type: 2}
   skillEffect: {fileID: 5967831147706526372, guid: c36fe59413572f1419f14a8decb6df56, type: 3}

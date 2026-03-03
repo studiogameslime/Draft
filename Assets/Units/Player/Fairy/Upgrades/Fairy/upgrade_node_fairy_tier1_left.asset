@@ -20,7 +20,7 @@ MonoBehaviour:
     speed by 30% for 3 seconds.
   icon: {fileID: 0}
   skillPointCost: 1
-  soulsCost: 0
+  soulsCost: 2
   prerequisites:
   - {fileID: 11400000, guid: 1acd49941bbb39546932b38ade13cdc9, type: 2}
   skillEffect: {fileID: -7528814185405053176, guid: 669420102e31b714f9e536c279e4647a, type: 3}

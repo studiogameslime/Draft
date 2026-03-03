@@ -13,6 +13,9 @@ public class LevelDefinition : ScriptableObject
     [Header("XP")]
     public int xpOnLevelComplete = 50;
 
+    [Header("Scrolls")]
+    public int scrollsOnLevelComplete = 5;
+
     [Header("Gold Rewards")]
     [Tooltip("Gold awarded when the player completes the whole level (all rounds).")]
     public int goldOnLevelComplete = 100;

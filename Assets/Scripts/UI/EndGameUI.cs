@@ -20,6 +20,7 @@ public class EndGameUI : MonoBehaviour
     [SerializeField] private Image goldEarnedFromRoundsSprite;
     [SerializeField] private Image totalGoldSprite;
     [SerializeField] private TMP_Text levelCompletedText;
+    [SerializeField] private TMP_Text scrollsEarnedText;
 
     [Header("Double Gold Ad")]
     [SerializeField] private Button doubleGoldButton;
@@ -28,6 +29,7 @@ public class EndGameUI : MonoBehaviour
     private int pendingRoundsGold;
     private int pendingTotalGold;
     private int pendingTotalXp;
+    private int pendingScrolls;
     private int rawGoldEarned;
     private bool doubleGoldClaimed;
     private bool _doubleGoldRewardGranted;
@@ -60,7 +62,8 @@ public class EndGameUI : MonoBehaviour
         int xpFromRounds,
         int totalXp,
         string levelName,
-        int rawGold
+        int rawGold,
+        int scrollsEarned = 0
         )
     {
         rawGoldEarned = rawGold;
@@ -106,6 +109,10 @@ public class EndGameUI : MonoBehaviour
         pendingRoundsGold = goldEarnedFromRounds;
         pendingTotalGold = totalGold;
         pendingTotalXp = totalXp;
+        pendingScrolls = scrollsEarned;
+
+        if (scrollsEarnedText != null)
+            scrollsEarnedText.text = "0";
 
         if (victoryPulseRoutine != null)
             StopCoroutine(victoryPulseRoutine);
@@ -250,6 +257,8 @@ public class EndGameUI : MonoBehaviour
         if (_doubleGoldRewardGranted)
         {
             PlayerCurrencyWallet.Instance.AddGold(rawGoldEarned);
+            if (pendingScrolls > 0)
+                PlayerCurrencyWallet.Instance.AddScrolls(pendingScrolls);
             doubleGoldClaimed = true;
         }
         else
@@ -317,6 +326,10 @@ public class EndGameUI : MonoBehaviour
         // Total gold
         if (totalGoldText != null)
             yield return CountUpTMP(totalGoldText, pendingTotalGold);
+
+        // Scrolls
+        if (scrollsEarnedText != null && pendingScrolls > 0)
+            yield return CountUpTMP(scrollsEarnedText, pendingScrolls);
     }
 
     private IEnumerator VictoryPulse()

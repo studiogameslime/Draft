@@ -20,5 +20,6 @@ MonoBehaviour:
     lethal."
   icon: {fileID: 21300000, guid: 620bf9d80e782064d954a634d7957f3c, type: 3}
   skillPointCost: 1
+  soulsCost: 2
   prerequisites:
   - {fileID: 11400000, guid: 48de0110926b81d449b463f400dde0c6, type: 2}

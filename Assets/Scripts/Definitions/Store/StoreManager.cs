@@ -117,6 +117,9 @@ public class StoreManager : MonoBehaviour
                 break;
         }
 
+        if (MissionsManager.Instance != null)
+            MissionsManager.Instance.ReportAction(MissionAction.PurchaseFromStore);
+
         OnPurchaseCompleted?.Invoke();
     }
     private void GrantPartRewards(StoreItemDefinition item)

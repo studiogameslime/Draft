@@ -19,7 +19,7 @@ MonoBehaviour:
   description: On kill, the Ninja re-enters stealth and dashes to a new target.
   icon: {fileID: 0}
   skillPointCost: 1
-  soulsCost: 0
+  soulsCost: 2
   prerequisites:
   - {fileID: 11400000, guid: 7e3f956c8b609d844a79bd7c350d06d7, type: 2}
   skillEffect: {fileID: 7142039586129473834, guid: f607182930415263e7f8091a2b3c4d56, type: 3}

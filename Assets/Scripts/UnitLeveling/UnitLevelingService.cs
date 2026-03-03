@@ -6,8 +6,8 @@ public static class UnitLevelingService
     public const int MaxLevel = 10;
 
     // Tuning
-    public const int BaseUpgradeCost = 20;
-    private const float CostGrowth = 1.35f;
+    public const int BaseUpgradeCost = 10;
+    private const float CostGrowth = 1.25f;
 
     public const float HpDmgPerLevel = 0.10f;     // +10%
     public const float SpawnTimePerLevel = 0.03f; // -3%

@@ -20,7 +20,7 @@ MonoBehaviour:
     battlefield.
   icon: {fileID: 0}
   skillPointCost: 1
-  soulsCost: 0
+  soulsCost: 4
   prerequisites:
   - {fileID: 11400000, guid: 1a2b3c4d5e6f7081920a1b2c3d4e5f60, type: 2}
   skillEffect: {fileID: 8253140697240584945, guid: 0718293041526374f8091a2b3c4d5e67, type: 3}

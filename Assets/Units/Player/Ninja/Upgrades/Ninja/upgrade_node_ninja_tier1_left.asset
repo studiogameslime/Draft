@@ -20,7 +20,7 @@ MonoBehaviour:
     damage.
   icon: {fileID: 0}
   skillPointCost: 1
-  soulsCost: 0
+  soulsCost: 2
   prerequisites:
   - {fileID: 11400000, guid: 7e3f956c8b609d844a79bd7c350d06d7, type: 2}
   skillEffect: {fileID: 6031928475018362723, guid: e5f6071829304152d6e7f8091a2b3c45, type: 3}
