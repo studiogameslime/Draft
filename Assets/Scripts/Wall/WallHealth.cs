@@ -23,6 +23,12 @@ public class WallHealth : MonoBehaviour
 
         currentHealth = maxHealth;
         Notify();
+
+        foreach (var sr in GetComponentsInChildren<SpriteRenderer>())
+        {
+            if (sr.GetComponent<SpriteSortByY>() == null)
+                sr.gameObject.AddComponent<SpriteSortByY>();
+        }
     }
 
     public void TakeDamage(int amount)
@@ -32,6 +38,9 @@ public class WallHealth : MonoBehaviour
         currentHealth -= amount;
         currentHealth = Mathf.Max(0, currentHealth);
         SoundManager.Instance?.PlaySFX(hitSound);
+#if UNITY_ANDROID || UNITY_IOS
+        Handheld.Vibrate();
+#endif
         Notify();
 
         if (currentHealth <= 0)
