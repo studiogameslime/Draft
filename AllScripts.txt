@@ -292,12 +292,24 @@ public class BattleManager : MonoBehaviour
             foreach (var unitDef in unitsUsedThisBattle)
                 MissionsManager.Instance.ReportAction(MissionAction.PlayWithSpecificUnit, 1, unitDef);
 
+            // Report classes NOT used (for "Win without X" missions)
+            UnitClass[] trackableClasses = { UnitClass.Melee, UnitClass.Ranged, UnitClass.Mage, UnitClass.Support };
+            foreach (var cls in trackableClasses)
+            {
+                if (!unitClassUsedThisBattle.Contains(cls))
+                    MissionsManager.Instance.ReportAction(MissionAction.WinWithoutUnitClass, 1, null, cls);
+            }
+
             MissionsManager.Instance.ReportAction(MissionAction.WinBattles, 1);
             MissionsManager.Instance.ReportAction(MissionAction.PlayBattles, 1);
 
             PlayerXPManager.Instance.AddXP(levelDefinition.xpOnLevelComplete + roundsXp);
             int rawTotalGold = levelDefinition.goldOnLevelComplete + roundsGold;
             PlayerCurrencyWallet.Instance.AddGold(rawTotalGold);
+
+            int scrollsEarned = levelDefinition.scrollsOnLevelComplete;
+            if (scrollsEarned > 0)
+                PlayerCurrencyWallet.Instance.AddScrolls(scrollsEarned);
 
             EndGameUI.Instance.ShowWinScreen(
                 boostedLevelGold,
@@ -307,7 +319,8 @@ public class BattleManager : MonoBehaviour
                 roundsXp,
                 totalXp,
                 levelDefinition.name,
-                rawTotalGold
+                rawTotalGold,
+                scrollsEarned
             );
 
             // --- SAVE PROGRESS (stage complete) ---
@@ -5253,6 +5266,9 @@ public class LevelDefinition : ScriptableObject
     [Header("XP")]
     public int xpOnLevelComplete = 50;
 
+    [Header("Scrolls")]
+    public int scrollsOnLevelComplete = 5;
+
     [Header("Gold Rewards")]
     [Tooltip("Gold awarded when the player completes the whole level (all rounds).")]
     public int goldOnLevelComplete = 100;
@@ -5587,7 +5603,9 @@ public enum MissionAction
     SpinWheelOfFortune,
     KillSpecificEnemyUnit,
     WatchAds,
-    SpendScrolls //New
+    SpendScrolls,
+    WinWithoutUnitClass,
+    PurchaseFromStore
 }
 
 [CreateAssetMenu(menuName = "Missions/Mission Definition")]
@@ -5908,6 +5926,9 @@ public class StoreManager : MonoBehaviour
             default:
                 break;
         }
+
+        if (MissionsManager.Instance != null)
+            MissionsManager.Instance.ReportAction(MissionAction.PurchaseFromStore);
 
         OnPurchaseCompleted?.Invoke();
     }
@@ -14136,6 +14157,7 @@ public class EndGameUI : MonoBehaviour
     [SerializeField] private Image goldEarnedFromRoundsSprite;
     [SerializeField] private Image totalGoldSprite;
     [SerializeField] private TMP_Text levelCompletedText;
+    [SerializeField] private TMP_Text scrollsEarnedText;
 
     [Header("Double Gold Ad")]
     [SerializeField] private Button doubleGoldButton;
@@ -14144,6 +14166,7 @@ public class EndGameUI : MonoBehaviour
     private int pendingRoundsGold;
     private int pendingTotalGold;
     private int pendingTotalXp;
+    private int pendingScrolls;
     private int rawGoldEarned;
     private bool doubleGoldClaimed;
     private bool _doubleGoldRewardGranted;
@@ -14176,7 +14199,8 @@ public class EndGameUI : MonoBehaviour
         int xpFromRounds,
         int totalXp,
         string levelName,
-        int rawGold
+        int rawGold,
+        int scrollsEarned = 0
         )
     {
         rawGoldEarned = rawGold;
@@ -14222,6 +14246,10 @@ public class EndGameUI : MonoBehaviour
         pendingRoundsGold = goldEarnedFromRounds;
         pendingTotalGold = totalGold;
         pendingTotalXp = totalXp;
+        pendingScrolls = scrollsEarned;
+
+        if (scrollsEarnedText != null)
+            scrollsEarnedText.text = "0";
 
         if (victoryPulseRoutine != null)
             StopCoroutine(victoryPulseRoutine);
@@ -14366,6 +14394,8 @@ public class EndGameUI : MonoBehaviour
         if (_doubleGoldRewardGranted)
         {
             PlayerCurrencyWallet.Instance.AddGold(rawGoldEarned);
+            if (pendingScrolls > 0)
+                PlayerCurrencyWallet.Instance.AddScrolls(pendingScrolls);
             doubleGoldClaimed = true;
         }
         else
@@ -14433,6 +14463,10 @@ public class EndGameUI : MonoBehaviour
         // Total gold
         if (totalGoldText != null)
             yield return CountUpTMP(totalGoldText, pendingTotalGold);
+
+        // Scrolls
+        if (scrollsEarnedText != null && pendingScrolls > 0)
+            yield return CountUpTMP(scrollsEarnedText, pendingScrolls);
     }
 
     private IEnumerator VictoryPulse()
@@ -17249,6 +17283,85 @@ public class BackgroundWanderUI : MonoBehaviour
 
 
 ========================
+FILE: TurtleAdChest.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Environment\TurtleAdChest.cs
+========================
+using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
+
+/// <summary>
+/// Clickable turtle that rewards a chest after watching a rewarded ad.
+/// Appears every time the home screen loads. Disappears after claiming.
+/// </summary>
+public class TurtleAdChest : MonoBehaviour
+{
+    [Header("Reward")]
+    [SerializeField] private ChestDefinition chestReward;
+
+    [Header("Chest Icon (child visual)")]
+    [SerializeField] private GameObject chestIcon;
+
+    private Button _button;
+    private bool _rewardGranted;
+
+    private void Awake()
+    {
+        _button = GetComponent<Button>();
+        if (_button == null)
+            _button = gameObject.AddComponent<Button>();
+
+        _button.onClick.AddListener(OnTurtleClicked);
+    }
+
+    private void OnEnable()
+    {
+        // Every time the turtle activates (home screen load), make sure it's clickable
+        if (_button) _button.interactable = true;
+        if (chestIcon) chestIcon.SetActive(true);
+    }
+
+    private void OnTurtleClicked()
+    {
+        if (chestReward == null || AdsManager.Instance == null) return;
+
+        _rewardGranted = false;
+        if (_button) _button.interactable = false;
+
+        bool started = AdsManager.Instance.ShowRewarded(
+            AdRewardType.FreeChest,
+            onReward: () => { _rewardGranted = true; },
+            onClosed: () => { StartCoroutine(AfterAdClosed()); }
+        );
+
+        // Ad not ready / failed to start — let the player try again
+        if (!started)
+        {
+            if (_button) _button.interactable = true;
+        }
+    }
+
+    private IEnumerator AfterAdClosed()
+    {
+        yield return null; // let callbacks settle
+
+        if (_rewardGranted && StoreItemChestPanel.Instance != null)
+        {
+            StoreItemChestPanel.Instance.Show(chestReward);
+            // Hide the turtle after claiming the chest
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            // Player closed ad without watching — turtle stays
+            if (_button) _button.interactable = true;
+        }
+    }
+}
+
+
+
+========================
 FILE: ChapterPreviewController.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\HomeScreen\ChapterPreviewController.cs
 ========================
@@ -20006,8 +20119,8 @@ public static class UnitLevelingService
     public const int MaxLevel = 10;
 
     // Tuning
-    public const int BaseUpgradeCost = 20;
-    private const float CostGrowth = 1.35f;
+    public const int BaseUpgradeCost = 10;
+    private const float CostGrowth = 1.25f;
 
     public const float HpDmgPerLevel = 0.10f;     // +10%
     public const float SpawnTimePerLevel = 0.03f; // -3%
