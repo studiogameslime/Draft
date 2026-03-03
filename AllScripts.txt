@@ -2618,6 +2618,9 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
+        if (GetComponent<SpriteSortByY>() == null)
+            gameObject.AddComponent<SpriteSortByY>();
+
         if (floatingDamagePrefab == null && GameAssetsProvider.Instance != null && GameAssetsProvider.Instance.Assets != null)
         {
             floatingDamagePrefab = GameAssetsProvider.Instance.Assets.floatingDamagePrefab;
@@ -13077,6 +13080,30 @@ public class Projectile : MonoBehaviour
 
 
 ========================
+FILE: SpriteSortByY.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Rendering\SpriteSortByY.cs
+========================
+using UnityEngine;
+
+public class SpriteSortByY : MonoBehaviour
+{
+    private SpriteRenderer spriteRenderer;
+
+    private void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    private void LateUpdate()
+    {
+        if (spriteRenderer != null)
+            spriteRenderer.sortingOrder = Mathf.RoundToInt(-transform.position.y * 100);
+    }
+}
+
+
+
+========================
 FILE: UnitSkillBehaviour.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Skills-Upgrades\UnitSkillBehaviour.cs
 ========================
@@ -20408,6 +20435,12 @@ public class WallHealth : MonoBehaviour
 
         currentHealth = maxHealth;
         Notify();
+
+        foreach (var sr in GetComponentsInChildren<SpriteRenderer>())
+        {
+            if (sr.GetComponent<SpriteSortByY>() == null)
+                sr.gameObject.AddComponent<SpriteSortByY>();
+        }
     }
 
     public void TakeDamage(int amount)
@@ -20417,6 +20450,9 @@ public class WallHealth : MonoBehaviour
         currentHealth -= amount;
         currentHealth = Mathf.Max(0, currentHealth);
         SoundManager.Instance?.PlaySFX(hitSound);
+#if UNITY_ANDROID || UNITY_IOS
+        Handheld.Vibrate();
+#endif
         Notify();
 
         if (currentHealth <= 0)
