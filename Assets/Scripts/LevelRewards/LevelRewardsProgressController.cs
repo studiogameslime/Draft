@@ -145,6 +145,10 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
                 PlayerCurrencyWallet.Instance.AddGems(reward.amount, buttonTransform);
                 break;
 
+            case RewardType.Scrolls:
+                PlayerCurrencyWallet.Instance.AddScrolls(reward.amount, buttonTransform);
+                break;
+
             case RewardType.Chest:
                 // Spec: "open chest immediately"
                 if (reward.chest == null)

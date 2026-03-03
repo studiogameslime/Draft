@@ -150,6 +150,13 @@ public class LevelRewardRowView : MonoBehaviour
                     icon.rectTransform.sizeDelta = new Vector2(icon.rectTransform.sizeDelta.x * 0.6f, icon.rectTransform.sizeDelta.y * 0.6f);
                     break;
                 }
+            case RewardType.Scrolls:
+                {
+                    icon.sprite = StyleManager.instance.scrollSprite;
+                    icon.SetNativeSize();
+                    icon.rectTransform.sizeDelta *= 0.2f;
+                    break;
+                }
         }
 
         bool claimed = _progress.IsClaimed(_level, lane);
