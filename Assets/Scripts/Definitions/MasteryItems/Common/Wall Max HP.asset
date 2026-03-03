@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Wall Max HP
   description: Increases the wall's maximum health
   rarity: 0
-  icon: {fileID: -2104548799049882302, guid: 2117ec6a22c79524db2e3a42bd8ae824, type: 3}
+  icon: {fileID: 21300000, guid: 68edf436b2d5fa34e827b5e3147d057b, type: 3}
   iconScale: 1
   stat: 13
   valueKind: 0

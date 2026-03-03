@@ -21,6 +21,9 @@ public class UnitDefinition : ScriptableObject
     [Range(0f, 1f)] public float critChance = 0.2f;
     public float critMultiplier = 2f;
 
+    [Header("Audio")]
+    public AudioClip attackSound;
+
     [Header("Fill this for our units only")]
     public Sprite icon;
     public float iconScale = 1f;

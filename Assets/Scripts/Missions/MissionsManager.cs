@@ -114,12 +114,21 @@ public class MissionsManager : MonoBehaviour
     {
         activeDailyMissions.Clear();
 
-        var selected = missionDatabase.dailyMissions
-            .Where(m => m != null)
-            .OrderBy(_ => UnityEngine.Random.value)
-            .Take(dailyMissionCount);
+        // Always include the Login mission first
+        var loginMission = missionDatabase.dailyMissions
+            .FirstOrDefault(m => m != null && m.action == MissionAction.Login);
 
-        foreach (var def in selected)
+        if (loginMission != null)
+            activeDailyMissions.Add(new MissionInstance(loginMission));
+
+        // Fill remaining slots randomly from non-Login missions
+        int remaining = dailyMissionCount - activeDailyMissions.Count;
+        var others = missionDatabase.dailyMissions
+            .Where(m => m != null && m.action != MissionAction.Login)
+            .OrderBy(_ => UnityEngine.Random.value)
+            .Take(remaining);
+
+        foreach (var def in others)
             activeDailyMissions.Add(new MissionInstance(def));
     }
 

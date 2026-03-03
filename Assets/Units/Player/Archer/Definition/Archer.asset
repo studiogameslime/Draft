@@ -15,24 +15,23 @@ MonoBehaviour:
   id: unit_archer
   displayName: Archer
   description: A silent archer whose patience turns every shot into a deadly threat.
-  rarity: 0
-  icon: {fileID: -5455630811309129204, guid: e67152362f4e84d4fad9e9d081e15b46, type: 3}
   prefab: {fileID: 501027721989515594, guid: 4e6aca7962de6874ab96739414c075aa, type: 3}
-  iconScale: 0.4
+  rarity: 0
   unitTeam: 0
   unitClass: 3
   targetPriorityClass: 1
-  soulCost: 3
-  soulDropChance: 0.25
   maxHealth: 80
   damage: 15
   moveSpeed: 1.1
   attackRange: 7
   attackCooldown: 1.8
-  spawnTime: 5
   critChance: 0.2
   critMultiplier: 1.5
-  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  attackSound: {fileID: 8300000, guid: e0fb7ebb8c9d34c42b026feefd0ebd6c, type: 3}
+  icon: {fileID: -5455630811309129204, guid: e67152362f4e84d4fad9e9d081e15b46, type: 3}
+  iconScale: 0.4
+  soulCost: 3
+  spawnTime: 5
   animatorController: {fileID: 9100000, guid: a291fea9f6cd97c4e93747da11c0ed46, type: 2}
   maxTier: 3
   partSlots:
@@ -44,7 +43,6 @@ MonoBehaviour:
   - slot: 5
   - slot: 6
   baseCapacity: 2
-  headPrefabForBattlePreview: {fileID: 0}
   unlockNode: {fileID: 11400000, guid: 48de0110926b81d449b463f400dde0c6, type: 2}
   nodes:
   - {fileID: 11400000, guid: 48de0110926b81d449b463f400dde0c6, type: 2}
@@ -54,3 +52,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f5573a08fb126574b840a5447e4b0e26, type: 2}
   - {fileID: 11400000, guid: 0d12b2f0932cdf44abe162a7ad55e0d4, type: 2}
   - {fileID: 11400000, guid: a974629cf01e84f4c9410d7814e10111, type: 2}
+  disableReserveUnit: 0
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 0}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}

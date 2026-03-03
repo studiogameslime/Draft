@@ -6,6 +6,7 @@ public class WallHealth : MonoBehaviour
 {
     [Header("Wall Stats")]
     public int maxHealth = 500;
+    [SerializeField] private AudioClip hitSound;
     public int currentHealth;
 
     public bool destroyed = false;
@@ -30,6 +31,7 @@ public class WallHealth : MonoBehaviour
 
         currentHealth -= amount;
         currentHealth = Mathf.Max(0, currentHealth);
+        SoundManager.Instance?.PlaySFX(hitSound);
         Notify();
 
         if (currentHealth <= 0)

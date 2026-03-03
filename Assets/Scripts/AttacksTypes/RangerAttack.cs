@@ -41,6 +41,8 @@ public class RangerAttack : MonoBehaviour, IAttackStrategy
         if (currentTarget == null) return;
         if (projectilePrefab == null || shootPoint == null) return;
 
+        SoundManager.Instance?.PlaySFX(stats.definition.attackSound);
+
         GameObject proj = Instantiate(projectilePrefab, shootPoint.position, Quaternion.identity);
 
         var p = proj.GetComponent<Projectile>();

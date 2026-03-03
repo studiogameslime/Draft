@@ -291,8 +291,9 @@ public class MasteryCollectionController : MonoBehaviour
         if (freeDrawButton == null) return;
 
         bool available = IsFreeMasteryDrawAvailable() && MasterySystem.HasAnyEligiblePick(database);
+        freeDrawButton.gameObject.SetActive(available);
 
-        if (!_isRolling)
+        if (freeDrawButton && !_isRolling)
             freeDrawButton.interactable = available;
     }
 

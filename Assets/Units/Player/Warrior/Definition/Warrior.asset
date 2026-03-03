@@ -16,24 +16,23 @@ MonoBehaviour:
   displayName: Warrior
   description: A quick little fighter who skips heavy armor and wins with speed and
     charm.
-  rarity: 0
-  icon: {fileID: -5455630811309129204, guid: 290105db12d408342bc316647a1e35c5, type: 3}
   prefab: {fileID: 501027721989515594, guid: 037d4c6a00f2afe47b4a733f5e492d55, type: 3}
-  iconScale: 0.4
+  rarity: 0
   unitTeam: 0
   unitClass: 1
   targetPriorityClass: 0
-  soulCost: 2
-  soulDropChance: 0.25
   maxHealth: 120
   damage: 10
   moveSpeed: 0.9
   attackRange: 0.9
   attackCooldown: 1
-  spawnTime: 3
   critChance: 0.2
   critMultiplier: 1.5
-  critColor: {r: 1, g: 0.4, b: 0.4, a: 1}
+  attackSound: {fileID: 8300000, guid: d721a82cec076ae4fbc7bb5e035fa30a, type: 3}
+  icon: {fileID: -5455630811309129204, guid: 290105db12d408342bc316647a1e35c5, type: 3}
+  iconScale: 0.4
+  soulCost: 2
+  spawnTime: 3
   animatorController: {fileID: 9100000, guid: a70770eaf9533314a891db17faa90433, type: 2}
   maxTier: 3
   partSlots:
@@ -45,9 +44,13 @@ MonoBehaviour:
   - slot: 5
   - slot: 6
   baseCapacity: 1
-  headPrefabForBattlePreview: {fileID: 0}
   unlockNode: {fileID: 11400000, guid: 176ff0db089f7714bb2032c640997040, type: 2}
   nodes:
   - {fileID: 11400000, guid: c9ccd99131f22a84aba5336094a9cb5d, type: 2}
   - {fileID: 11400000, guid: 58fbb6e562898b147bd08a21fea7faaa, type: 2}
   - {fileID: 11400000, guid: 176ff0db089f7714bb2032c640997040, type: 2}
+  disableReserveUnit: 0
+  soulDropChance: 0.25
+  headPrefabForBattlePreview: {fileID: 0}
+  isBoss: 0
+  HeadWithEyes: {fileID: 0}

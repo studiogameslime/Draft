@@ -127,6 +127,9 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     {
         index = Mathf.Clamp(index, 0, pageCount - 1);
 
+        if (index != currentPageIndex)
+            SoundManager.Instance?.PlayPageSwipe();
+
         float step = 1f / Mathf.Max(1, pageCount - 1);
         currentPageIndex = index;
         targetPos = index * step;

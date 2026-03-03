@@ -30519,6 +30519,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallHealth
   maxHealth: 500
+  hitSound: {fileID: 8300000, guid: 56db36c98612c4e4387ddc03eefd2885, type: 3}
   currentHealth: 0
   destroyed: 0
 --- !u!4 &668965064

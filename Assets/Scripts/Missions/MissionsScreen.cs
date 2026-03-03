@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -127,7 +128,11 @@ public class MissionsScreen : MonoBehaviour
     {
         Clear(dailyContent);
 
-        foreach (var mission in MissionsManager.Instance.ActiveDailyMissions)
+        var sorted = MissionsManager.Instance.ActiveDailyMissions
+            .OrderBy(m => m.definition.action == MissionAction.Login ? 0 : 1)
+            .ThenBy(m => (int)m.definition.action);
+
+        foreach (var mission in sorted)
         {
             var item = Instantiate(missionContainerPrefab, dailyContent);
             item.Setup(mission);
@@ -138,7 +143,11 @@ public class MissionsScreen : MonoBehaviour
     {
         Clear(weeklyContent);
 
-        foreach (var mission in MissionsManager.Instance.ActiveWeeklyMissions)
+        var sorted = MissionsManager.Instance.ActiveWeeklyMissions
+            .OrderBy(m => m.definition.action == MissionAction.Login ? 0 : 1)
+            .ThenBy(m => (int)m.definition.action);
+
+        foreach (var mission in sorted)
         {
             var item = Instantiate(missionContainerPrefab, weeklyContent);
             item.Setup(mission);

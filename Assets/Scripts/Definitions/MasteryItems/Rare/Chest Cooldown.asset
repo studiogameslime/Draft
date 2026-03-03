@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Chest Cooldown
   description: Reduces free chest cooldown by 2 minutes per level
   rarity: 1
-  icon: {fileID: -1650023830213464031, guid: 79310628a0183f3469ccf507641e4f58, type: 3}
+  icon: {fileID: 21300000, guid: d963c5a221e1b0b4fa964f5d378e20e4, type: 3}
   iconScale: 1
   stat: 12
   valueKind: 1

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
-using Unity.Android.Types;
+
 public class EndGameUI : MonoBehaviour
 {
     public static EndGameUI Instance;

@@ -39,6 +39,6 @@ MonoBehaviour:
   nodes: []
   disableReserveUnit: 0
   soulDropChance: 0.25
-  headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: 61a61d854adedcd438e6916aecbda2c2, type: 3}
+  headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: 8e33fc0a1e14a9e4e99b6bd213fac103, type: 3}
   isBoss: 1
-  HeadWithEyes: {fileID: 3667681588813468039, guid: ce8e913a30d98064ebbdd08362bbc1e5, type: 3}
+  HeadWithEyes: {fileID: 3667681588813468039, guid: 3d80bcf8ba7108a44a40deb188bb0dd6, type: 3}

@@ -36,6 +36,8 @@ public class MeleeAttack : MonoBehaviour, IAttackStrategy, ICancelableAttack
     {
         if (currentTarget == null) return;
 
+        SoundManager.Instance?.PlaySFX(stats.definition.attackSound);
+
         // apply damage only at the hit frame
         currentTarget.TakeDamage(stats.damage, stats);
 
