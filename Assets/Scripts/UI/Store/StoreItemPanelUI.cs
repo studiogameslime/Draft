@@ -41,7 +41,9 @@ public class StoreItemPanelUI : MonoBehaviour
         titleText.text = item.title;
         iconImage.sprite = item.icon;
         NormalizeIconSize(iconImage);
-        amount.text = $"x{item.goldAmount.ToString()}";
+        amount.text = item.category == StoreCategory.BuyScrollsWithGold
+            ? $"x{item.scrollAmount}"
+            : $"x{item.goldAmount}";
 
         int price = item.costType == CostType.Gems
             ? item.priceInGems
