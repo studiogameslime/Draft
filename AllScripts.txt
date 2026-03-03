@@ -3127,7 +3127,14 @@ public enum RewardType
     Chest,
     Part,
     DiscoverNewUnit,
-    Scrolls
+    Scrolls,
+    FeatureUnlock
+}
+
+public enum GameFeature
+{
+    Mastery = 0,
+    Upgrades = 1
 }
 
 public enum RewardLane
@@ -6998,6 +7005,43 @@ public class DailyLoginManager : MonoBehaviour
 
 
 ========================
+FILE: FeatureUnlockManager.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\GameSystems\FeatureUnlockManager.cs
+========================
+using UnityEngine;
+
+public static class FeatureUnlockManager
+{
+    public static bool IsUnlocked(GameFeature feature)
+    {
+        var save = GameData.Instance?.Save;
+        if (save == null || save.unlockedFeatures == null)
+            return false;
+
+        return save.unlockedFeatures.Contains(feature.ToString());
+    }
+
+    public static void Unlock(GameFeature feature)
+    {
+        var save = GameData.Instance?.Save;
+        if (save == null) return;
+
+        if (save.unlockedFeatures == null)
+            save.unlockedFeatures = new System.Collections.Generic.List<string>();
+
+        string key = feature.ToString();
+        if (!save.unlockedFeatures.Contains(key))
+        {
+            save.unlockedFeatures.Add(key);
+            GameData.Instance.SaveNow();
+            Debug.Log($"[FeatureUnlockManager] Unlocked: {key}");
+        }
+    }
+}
+
+
+
+========================
 FILE: GameBootstrapper.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\GameSystems\GameBootstrapper.cs
 ========================
@@ -8133,6 +8177,11 @@ public class PlayerSaveData
     /// Keys of claimed rewards. Key format: LevelRewardsDatabase.MakeClaimKey(level, lane)
     /// </summary>
     public List<string> claimedLevelRewards = new List<string>();
+
+    /// <summary>
+    /// Features unlocked via FeatureUnlock rewards (e.g. "Mastery", "Upgrades").
+    /// </summary>
+    public List<string> unlockedFeatures = new List<string>();
 
     // ==============================
     // BATTLES / SESSIONS
@@ -9601,6 +9650,13 @@ public class LevelRewardRowView : MonoBehaviour
                     icon.rectTransform.sizeDelta *= 0.2f;
                     break;
                 }
+            case RewardType.FeatureUnlock:
+                {
+                    icon.sprite = StyleManager.instance.featureUnlockSprite;
+                    icon.SetNativeSize();
+                    icon.rectTransform.sizeDelta *= 0.25f;
+                    break;
+                }
         }
 
         bool claimed = _progress.IsClaimed(_level, lane);
@@ -9650,6 +9706,9 @@ public class LevelRewardEntry
 
     [Header("UnitRarity")]
     public UnitRarity rarity;
+
+    [Header("Feature Unlock")]
+    public GameFeature featureId;
 }
 
 /// <summary>
@@ -9862,6 +9921,10 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
                 {
                     Debug.Log("No undiscovered unit of this rarity");
                 }
+                break;
+
+            case RewardType.FeatureUnlock:
+                FeatureUnlockManager.Unlock(reward.featureId);
                 break;
 
             default:
@@ -15487,6 +15550,7 @@ public static StyleManager instance;
     public Sprite commonUnitBackground;
     public Sprite rareUnitBackground;
     public Sprite epicUnitBackground;
+    public Sprite featureUnlockSprite;
 
     [Header("Colors")]
     public Color commonColor;
@@ -17818,6 +17882,14 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 
+public enum HomeScreenPage
+{
+    Store = 0,
+    Collection = 1,
+    Battle = 2,
+    Mastery = 3
+}
+
 /// <summary>
 /// Horizontal scroll snapping between pages.
 /// Bottom buttons jump to pages.
@@ -17942,6 +18014,9 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     {
         index = Mathf.Clamp(index, 0, pageCount - 1);
 
+        if (!IsPageAllowed(index))
+            return;
+
         if (index != currentPageIndex)
             SoundManager.Instance?.PlayPageSwipe();
 
@@ -17950,6 +18025,25 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         targetPos = index * step;
 
         UpdateButtonsUI(index);
+    }
+
+    private bool IsPageAllowed(int index)
+    {
+        var page = (HomeScreenPage)index;
+
+        switch (page)
+        {
+            case HomeScreenPage.Mastery:
+                if (!FeatureUnlockManager.IsUnlocked(GameFeature.Mastery))
+                {
+                    if (ToastManager.Instance != null)
+                        ToastManager.Instance.Show("Unlock at Level 3!");
+                    return false;
+                }
+                break;
+        }
+
+        return true;
     }
 
     // Make only active background bigger (width and height)
@@ -18418,6 +18512,13 @@ public class UnitDetailsPopupController : MonoBehaviour
 
     public void OpenUpgradesTab()
     {
+        if (!FeatureUnlockManager.IsUnlocked(GameFeature.Upgrades))
+        {
+            if (ToastManager.Instance != null)
+                ToastManager.Instance.Show("Unlock at Level 5!");
+            return;
+        }
+
         if (statsTab != null) statsTab.SetActive(false);
         if (partsTab != null) partsTab.SetActive(false);
         if (upgradesTab != null) upgradesTab.SetActive(true);
