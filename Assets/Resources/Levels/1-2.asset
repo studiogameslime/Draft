@@ -95,5 +95,6 @@ MonoBehaviour:
     enemyLevel: 2
     xpOnRoundWin: 25
   xpOnLevelComplete: 75
+  scrollsOnLevelComplete: 5
   goldOnLevelComplete: 125
   alsoRewardGoldPerRound: 1

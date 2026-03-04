@@ -22634,14 +22634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f19493ce0a06a6145beda30d2382f2c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIRepeatingIconBackground
-  iconSprite: {fileID: 21300000, guid: dcfad041e376e3c45aa419ce70e06428, type: 3}
-  iconAlpha: 0.25
-  tilesPerAxis: 3
-  rowHeightMultiplier: 0.6
-  padding: 0
-  textureSize: 1024
-  speed: {x: 0.02, y: 0.03}
-  uvSize: {x: 1, y: 1}
+  iconSprite: {fileID: 21300000, guid: 9064c03d24558d84c83d6c9748503ecd, type: 3}
 --- !u!114 &1065436668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28500,13 +28493,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIRepeatingIconBackground
   iconSprite: {fileID: 21300000, guid: dcfad041e376e3c45aa419ce70e06428, type: 3}
-  iconAlpha: 0.25
-  tilesPerAxis: 3
-  rowHeightMultiplier: 0.6
-  padding: 0
-  textureSize: 1024
-  speed: {x: 0.02, y: 0.03}
-  uvSize: {x: 1, y: 1}
 --- !u!114 &1650594486
 MonoBehaviour:
   m_ObjectHideFlags: 0

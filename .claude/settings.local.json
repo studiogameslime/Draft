@@ -10,7 +10,13 @@
       "Bash(mv:*)",
       "Bash(do mv:*)",
       "Bash(cmd.exe:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(wmic logicaldisk:*)",
+      "Bash(echo $f: $result matches:*)",
+      "Bash(adb devices:*)",
+      "Bash(\"/c/Users/matan/AppData/Local/Android/Sdk/platform-tools/adb.exe\" devices:*)",
+      "Bash(uuidgen:*)",
+      "Bash(powershell:*)"
     ]
   }
 }

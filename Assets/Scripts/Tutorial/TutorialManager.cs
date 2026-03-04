@@ -418,23 +418,23 @@ public class TutorialManager : MonoBehaviour
     {
         switch (step)
         {
-            case TutorialStep.TapCell1: return "Tap this cell to place a unit!";
-            case TutorialStep.ExplainSouls: return "Each unit costs souls to deploy. Spend them wisely!";
-            case TutorialStep.TapUnit1: return "Now deploy the Warrior!";
-            case TutorialStep.TapCell2: return "Great! Tap another cell.";
-            case TutorialStep.TapUnit2: return "Deploy the Archer here!";
-            case TutorialStep.TapStartBattle: return "Tap to start the battle!";
-            case TutorialStep.ExplainCapacity: return "Each unit has its own capacity and spawn time. A reserve warrior waits to join after the current one falls!";
-            case TutorialStep.TapCell3: return "Place one more unit!";
-            case TutorialStep.TapUnit3: return "Deploy the Warrior!";
-            case TutorialStep.TapStartBattle2: return "Start the final battle!";
-            case TutorialStep.TapBackToHome: return "Great job! Tap to go home.";
-            case TutorialStep.TapMissions: return "Check your missions!";
-            case TutorialStep.CloseMissions: return "Close the missions.";
-            case TutorialStep.TapStoreTab: return "Visit the store!";
-            case TutorialStep.TapCollectionTab: return "View your collection!";
-            case TutorialStep.TapBattleTab: return "Go to battle!";
-            case TutorialStep.TapPlay: return "Tap Play to start!";
+            case TutorialStep.TapCell1: return "Welcome, Commander! Tap this cell to choose where your unit will stand.";
+            case TutorialStep.ExplainSouls: return "See those souls? Every unit costs souls to deploy. Use them wisely... or you'll run out!";
+            case TutorialStep.TapUnit1: return "Nice spot! Now pick the Warrior to hold the line.";
+            case TutorialStep.TapCell2: return "One unit won't be enough... Tap another cell!";
+            case TutorialStep.TapUnit2: return "Let's add some range! Deploy the Archer here.";
+            case TutorialStep.TapStartBattle: return "Your squad is ready. Hit the button and let the battle begin!";
+            case TutorialStep.ExplainCapacity: return "See that? Each unit has a reserve! When one falls, the next one steps up to fight.";
+            case TutorialStep.TapCell3: return "The enemy is getting stronger. Place one more unit!";
+            case TutorialStep.TapUnit3: return "Another Warrior should do the trick. Deploy!";
+            case TutorialStep.TapStartBattle2: return "This is the final wave. Show them what you've got!";
+            case TutorialStep.TapBackToHome: return "Victory! You're a natural. Collect your rewards!";
+            case TutorialStep.TapMissions: return "Check your missions here. Complete them to earn extra rewards!";
+            case TutorialStep.CloseMissions: return "Got it! Close this and let's keep exploring.";
+            case TutorialStep.TapStoreTab: return "Head to the Store! This is where you unlock new units and power-ups...";
+            case TutorialStep.TapCollectionTab: return "This is your Collection. See all the units you've gathered!";
+            case TutorialStep.TapBattleTab: return "Back to Battle! This is where you pick your next fight.";
+            case TutorialStep.TapPlay: return "You're all set, Commander. Tap Play and lead your army!";
             default: return null;
         }
     }
