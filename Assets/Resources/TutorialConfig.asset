@@ -11,5 +11,6 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f7f57b6eebe84fd89b155584f62c3ddb, type: 3}
   m_Name: TutorialConfig
-  m_EditorClassIdentifier:
-  handPrefab: {fileID: 0}
+  m_EditorClassIdentifier: 
+  handPrefab: {fileID: 138981340243112977, guid: 69151a9985073df4fae2ef42cc305858, type: 3}
+  kingSprite: {fileID: 21300000, guid: 1c019b6af51467c4a93e1f9c1f34cbef, type: 3}

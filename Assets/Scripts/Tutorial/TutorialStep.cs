@@ -2,10 +2,12 @@ public enum TutorialStep
 {
     // Battle phase – Round 1
     TapCell1,
+    ExplainSouls,
     TapUnit1,
     TapCell2,
     TapUnit2,
     TapStartBattle,
+    ExplainCapacity,
     WaitForRound1,
 
     // Battle phase – Round 2
@@ -37,5 +39,6 @@ public enum TutorialAction
     MissionsOpened,
     MissionsClosed,
     PageChanged,
-    PlayPressed
+    PlayPressed,
+    TapToContinue
 }

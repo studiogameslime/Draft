@@ -46,6 +46,7 @@ public class UnitSpawner : MonoBehaviour
     private Color defaultProgressColor; // Stores the original bar color [1]
     private bool spawnedStaticUnit = false;
 
+    public bool HasReserveWaiting => reserveReady && reserveStats != null;
 
     private void Awake()
     {

@@ -20,7 +20,7 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private int unit3DeckIndex = 1;
 
     [Header("Cell Highlight Size (world units)")]
-    [SerializeField] private Vector2 cellWorldSize = new Vector2(0.7f, 0.7f);
+    [SerializeField] private Vector2 cellWorldSize = new Vector2(0.5f, 0.5f);
 
     public bool IsTutorialActive => currentStep != TutorialStep.Complete && !tutorialComplete;
     public TutorialStep CurrentStep => currentStep;
@@ -29,6 +29,8 @@ public class TutorialManager : MonoBehaviour
     private bool tutorialComplete = true;
     private TutorialOverlay overlay;
     private GameObject handPrefab;
+    private Sprite kingSprite;
+    private TutorialKingBubble kingBubble;
 
     // Cached targets for IsActionAllowed checks
     private DropAreaCell targetCell;
@@ -73,7 +75,10 @@ public class TutorialManager : MonoBehaviour
     {
         var config = Resources.Load<TutorialConfig>("TutorialConfig");
         if (config != null)
+        {
             handPrefab = config.handPrefab;
+            kingSprite = config.kingSprite;
+        }
     }
 
     private IEnumerator WaitForGameDataAndInit()
@@ -143,6 +148,10 @@ public class TutorialManager : MonoBehaviour
                 }
                 break;
 
+            case TutorialStep.ExplainSouls:
+                if (action == TutorialAction.TapToContinue) advance = true;
+                break;
+
             case TutorialStep.TapUnit1:
             case TutorialStep.TapUnit2:
             case TutorialStep.TapUnit3:
@@ -155,6 +164,14 @@ public class TutorialManager : MonoBehaviour
             case TutorialStep.TapStartBattle:
             case TutorialStep.TapStartBattle2:
                 if (action == TutorialAction.BattleStarted) advance = true;
+                break;
+
+            case TutorialStep.ExplainCapacity:
+                if (action == TutorialAction.TapToContinue)
+                {
+                    Time.timeScale = 1f;
+                    advance = true;
+                }
                 break;
 
             case TutorialStep.WaitForRound1:
@@ -204,17 +221,41 @@ public class TutorialManager : MonoBehaviour
     public bool IsActionAllowed(DropAreaCell cell)
     {
         if (!IsTutorialActive) return true;
-        if (currentStep == TutorialStep.TapCell1 || currentStep == TutorialStep.TapCell2 || currentStep == TutorialStep.TapCell3)
-            return cell == targetCell;
-        return false;
+        switch (currentStep)
+        {
+            case TutorialStep.TapCell1:
+            case TutorialStep.TapCell2:
+            case TutorialStep.TapCell3:
+                return cell == targetCell;
+            case TutorialStep.TapUnit1:
+            case TutorialStep.TapUnit2:
+            case TutorialStep.TapUnit3:
+            case TutorialStep.ExplainSouls:
+            case TutorialStep.ExplainCapacity:
+                return false;
+            default:
+                return true;
+        }
     }
 
     public bool IsActionAllowed(UnitDefinition def)
     {
         if (!IsTutorialActive) return true;
-        if (currentStep == TutorialStep.TapUnit1 || currentStep == TutorialStep.TapUnit2 || currentStep == TutorialStep.TapUnit3)
-            return def == targetUnit;
-        return false;
+        switch (currentStep)
+        {
+            case TutorialStep.TapUnit1:
+            case TutorialStep.TapUnit2:
+            case TutorialStep.TapUnit3:
+                return def == targetUnit;
+            case TutorialStep.TapCell1:
+            case TutorialStep.TapCell2:
+            case TutorialStep.TapCell3:
+            case TutorialStep.ExplainSouls:
+            case TutorialStep.ExplainCapacity:
+                return false;
+            default:
+                return true;
+        }
     }
 
     public bool IsPageAllowed(int pageIndex)
@@ -242,9 +283,17 @@ public class TutorialManager : MonoBehaviour
     {
         currentStep++;
 
-        if (currentStep == TutorialStep.Complete)
+        // Skip home screen steps — end tutorial after collecting rewards
+        if (currentStep >= TutorialStep.TapMissions)
         {
             CompleteTutorial();
+            return;
+        }
+
+        // ExplainSouls: wait for cell selection UI to settle
+        if (currentStep == TutorialStep.ExplainSouls)
+        {
+            StartCoroutine(ShowStepDelayed(0.3f));
             return;
         }
 
@@ -262,12 +311,22 @@ public class TutorialManager : MonoBehaviour
             return;
         }
 
+        // ExplainCapacity: start monitoring coroutine instead of showing immediately
+        if (currentStep == TutorialStep.ExplainCapacity)
+        {
+            overlay.Hide();
+            if (kingBubble != null) kingBubble.Hide();
+            StartCoroutine(WaitForReserveReady());
+            return;
+        }
+
         ShowCurrentStep();
     }
 
     private IEnumerator ShowStepDelayed(float delay)
     {
         if (overlay != null) overlay.Hide();
+        if (kingBubble != null) kingBubble.Hide();
         yield return new WaitForSeconds(delay);
         ShowCurrentStep();
     }
@@ -283,6 +342,10 @@ public class TutorialManager : MonoBehaviour
         {
             case TutorialStep.TapCell1:
                 ShowCellStep(cell1Row, cell1Col);
+                break;
+
+            case TutorialStep.ExplainSouls:
+                ShowExplainSoulsStep();
                 break;
 
             case TutorialStep.TapUnit1:
@@ -320,7 +383,7 @@ public class TutorialManager : MonoBehaviour
                 break;
 
             case TutorialStep.TapMissions:
-                // Shown after scene load via OnSceneLoaded
+                ShowMissionsStep();
                 break;
 
             case TutorialStep.CloseMissions:
@@ -337,6 +400,53 @@ public class TutorialManager : MonoBehaviour
                 ShowPlayStep();
                 break;
         }
+
+        // Show/hide king bubble
+        string msg = GetStepMessage(currentStep);
+        if (msg != null)
+        {
+            EnsureKingBubble();
+            kingBubble.Show(msg);
+        }
+        else if (kingBubble != null)
+        {
+            kingBubble.Hide();
+        }
+    }
+
+    private string GetStepMessage(TutorialStep step)
+    {
+        switch (step)
+        {
+            case TutorialStep.TapCell1: return "Tap this cell to place a unit!";
+            case TutorialStep.ExplainSouls: return "Each unit costs souls to deploy. Spend them wisely!";
+            case TutorialStep.TapUnit1: return "Now deploy the Warrior!";
+            case TutorialStep.TapCell2: return "Great! Tap another cell.";
+            case TutorialStep.TapUnit2: return "Deploy the Archer here!";
+            case TutorialStep.TapStartBattle: return "Tap to start the battle!";
+            case TutorialStep.ExplainCapacity: return "Each unit has its own capacity and spawn time. A reserve warrior waits to join after the current one falls!";
+            case TutorialStep.TapCell3: return "Place one more unit!";
+            case TutorialStep.TapUnit3: return "Deploy the Warrior!";
+            case TutorialStep.TapStartBattle2: return "Start the final battle!";
+            case TutorialStep.TapBackToHome: return "Great job! Tap to go home.";
+            case TutorialStep.TapMissions: return "Check your missions!";
+            case TutorialStep.CloseMissions: return "Close the missions.";
+            case TutorialStep.TapStoreTab: return "Visit the store!";
+            case TutorialStep.TapCollectionTab: return "View your collection!";
+            case TutorialStep.TapBattleTab: return "Go to battle!";
+            case TutorialStep.TapPlay: return "Tap Play to start!";
+            default: return null;
+        }
+    }
+
+    private void EnsureKingBubble()
+    {
+        if (kingBubble != null) return;
+
+        var go = new GameObject("TutorialKingBubble");
+        DontDestroyOnLoad(go);
+        kingBubble = go.AddComponent<TutorialKingBubble>();
+        kingBubble.Init(kingSprite);
     }
 
     // ============================
@@ -393,27 +503,65 @@ public class TutorialManager : MonoBehaviour
 
         EnsureOverlay();
 
-        // Find the "Back to Home" button - it's usually a Button on EndGameUI
-        // We look for a child button that calls BackToHome
         if (EndGameUI.Instance != null)
         {
             var buttons = EndGameUI.Instance.GetComponentsInChildren<UnityEngine.UI.Button>(true);
             foreach (var btn in buttons)
             {
-                // Find button with "BackToHome" or "Home" in name
-                string name = btn.gameObject.name.ToLower();
-                if (name.Contains("home") || name.Contains("back"))
+                // Target the "CollectButton", not the "AdCollectButton" (X2)
+                string name = btn.gameObject.name;
+                if (name == "CollectButton")
                 {
                     overlay.SetTargetUI(btn.GetComponent<RectTransform>());
                     yield break;
                 }
             }
+        }
+    }
 
-            // Fallback: use the last button (often the home button)
-            if (buttons.Length > 0)
+    // ============================
+    // INFO STEP HELPERS
+    // ============================
+
+    private void ShowExplainSoulsStep()
+    {
+        if (SoulsManager.instance != null && SoulsManager.instance._currentSoulsText != null)
+        {
+            var parent = SoulsManager.instance._currentSoulsText.transform.parent;
+            var rt = parent != null ? parent.GetComponent<RectTransform>() : null;
+            if (rt != null)
+                overlay.SetTargetUI(rt);
+            else
+                overlay.ShowDarkPanelOnly();
+        }
+        else
+        {
+            overlay.ShowDarkPanelOnly();
+        }
+        overlay.EnableTapToContinue();
+    }
+
+    private IEnumerator WaitForReserveReady()
+    {
+        while (true)
+        {
+            var spawners = FindObjectsByType<UnitSpawner>(FindObjectsSortMode.None);
+            foreach (var s in spawners)
             {
-                overlay.SetTargetUI(buttons[buttons.Length - 1].GetComponent<RectTransform>());
+                if (s.HasReserveWaiting)
+                {
+                    // Found a reserve — pause and show info
+                    Time.timeScale = 0f;
+                    EnsureOverlay();
+                    overlay.SetTargetWorld(s.transform.position, cellWorldSize);
+                    overlay.EnableTapToContinue();
+
+                    EnsureKingBubble();
+                    kingBubble.Show(GetStepMessage(TutorialStep.ExplainCapacity));
+                    yield break;
+                }
             }
+            yield return null;
         }
     }
 
@@ -458,21 +606,7 @@ public class TutorialManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         EnsureOverlay();
-
-        switch (currentStep)
-        {
-            case TutorialStep.TapMissions:
-                ShowMissionsStep();
-                break;
-            case TutorialStep.TapStoreTab:
-            case TutorialStep.TapCollectionTab:
-            case TutorialStep.TapBattleTab:
-                ShowTabStep();
-                break;
-            case TutorialStep.TapPlay:
-                ShowPlayStep();
-                break;
-        }
+        ShowCurrentStep();
     }
 
     private void ShowMissionsStep()
@@ -574,6 +708,13 @@ public class TutorialManager : MonoBehaviour
             overlay.Hide();
             Destroy(overlay.gameObject);
             overlay = null;
+        }
+
+        if (kingBubble != null)
+        {
+            kingBubble.Hide();
+            Destroy(kingBubble.gameObject);
+            kingBubble = null;
         }
     }
 

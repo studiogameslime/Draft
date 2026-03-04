@@ -277,6 +277,10 @@ public class UnitAI : MonoBehaviour
 
             gateState = GateMoveState.ToEntry;
             gateEntryNotified = false;
+
+            // Open the gate immediately so the animation plays while the unit walks toward it
+            currentGate.NotifyUnitReachedEntry(transform);
+            gateEntryNotified = true;
         }
 
         if (currentGate == null || currentGateEntry == null || currentGateExit == null)
@@ -292,11 +296,6 @@ public class UnitAI : MonoBehaviour
 
             if (Vector3.Distance(transform.position, currentGateEntry.position) <= gateArriveDistance)
             {
-                if (!gateEntryNotified)
-                {
-                    currentGate.NotifyUnitReachedEntry(transform);
-                    gateEntryNotified = true;
-                }
                 gateState = GateMoveState.ToExit;
             }
             return true;

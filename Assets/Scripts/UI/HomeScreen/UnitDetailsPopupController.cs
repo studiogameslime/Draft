@@ -115,7 +115,9 @@ public class UnitDetailsPopupController : MonoBehaviour
         }
         
         _unit = unit;
-        unlockState = UnitUnlockState.Undiscovered;
+
+        var progress = UnitLevelingService.GetOrCreateProgress(unit.id);
+        unlockState = progress != null ? progress.unlockState : UnitUnlockState.Undiscovered;
 
         _lastOpenedCardRect = cardRect;
 

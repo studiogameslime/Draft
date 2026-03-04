@@ -8,7 +8,7 @@ public class TutorialOverlay : MonoBehaviour
 
     [Header("Cell Highlight")]
     [SerializeField] private Color highlightColor = new Color(1f, 1f, 1f, 0.12f);
-    [SerializeField] private float highlightPadding = 20f;
+    [SerializeField] private float highlightPadding = 5f;
 
     [Header("Hand")]
     [SerializeField] private Vector2 handOffset = new Vector2(40f, -40f);
@@ -28,6 +28,9 @@ public class TutorialOverlay : MonoBehaviour
     // Tracks elevated UI target for cleanup
     private Canvas addedCanvas;
     private GraphicRaycaster addedRaycaster;
+
+    // Tap-to-continue for info steps
+    private Button tapToContinueButton;
 
     private GameObject handPrefab;
 
@@ -95,10 +98,30 @@ public class TutorialOverlay : MonoBehaviour
     /// <summary>
     /// Highlight a UI element by elevating it above the overlay.
     /// </summary>
+    public void EnableTapToContinue()
+    {
+        if (darkPanel == null) return;
+        tapToContinueButton = darkPanel.gameObject.AddComponent<Button>();
+        tapToContinueButton.onClick.AddListener(() =>
+        {
+            TutorialManager.Instance?.NotifyAction(TutorialAction.TapToContinue);
+        });
+    }
+
+    public void DisableTapToContinue()
+    {
+        if (tapToContinueButton != null)
+        {
+            Destroy(tapToContinueButton);
+            tapToContinueButton = null;
+        }
+    }
+
     public void SetTargetUI(RectTransform target)
     {
         if (target == null) { Hide(); return; }
 
+        DisableTapToContinue();
         CleanupPreviousTarget();
         gameObject.SetActive(true);
         if (handCanvasGo != null) handCanvasGo.SetActive(true);
@@ -127,6 +150,7 @@ public class TutorialOverlay : MonoBehaviour
         var cam = Camera.main;
         if (cam == null) { Hide(); return; }
 
+        DisableTapToContinue();
         CleanupPreviousTarget();
         gameObject.SetActive(true);
         if (handCanvasGo != null) handCanvasGo.SetActive(true);
@@ -153,8 +177,18 @@ public class TutorialOverlay : MonoBehaviour
         PositionHand(new Vector2(screenCenter.x, screenCenter.y));
     }
 
+    public void ShowDarkPanelOnly()
+    {
+        CleanupPreviousTarget();
+        gameObject.SetActive(true);
+        cellHighlight.gameObject.SetActive(false);
+        if (handCanvasGo != null) handCanvasGo.SetActive(false);
+        if (handRect != null) handRect.gameObject.SetActive(false);
+    }
+
     public void Hide()
     {
+        DisableTapToContinue();
         CleanupPreviousTarget();
         gameObject.SetActive(false);
         if (handCanvasGo != null) handCanvasGo.SetActive(false);
