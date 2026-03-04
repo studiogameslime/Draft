@@ -4487,10 +4487,15 @@ public class ChestOpenButton : MonoBehaviour
 
         if (_rewardGranted && StoreItemChestPanel.Instance != null)
         {
-            StoreItemChestPanel.Instance.Show(chestDefinition);
+            StoreItemChestPanel.Instance.Show(chestDefinition, () =>
+            {
+                if (_button) _button.interactable = true;
+            });
         }
-
-        if (_button) _button.interactable = true;
+        else
+        {
+            if (_button) _button.interactable = true;
+        }
     }
 }
 
@@ -9579,17 +9584,24 @@ public class HourlyChestClaimButton : MonoBehaviour
         if (!IsReady(save.nextHourlyChestUtcTicks))
             return;
 
-        // Give reward (choose what your project uses)
         if (chestReward != null && StoreItemChestPanel.Instance != null)
         {
-            StoreItemChestPanel.Instance.Show(chestReward);
+            StoreItemChestPanel.Instance.Show(chestReward, () =>
+            {
+                ResetCooldown();
+            });
         }
         else
         {
             Debug.LogWarning("HourlyChest: chestReward or StoreItemChestPanel missing");
         }
+    }
 
-        // Set next available time: base cooldown minus mastery reduction (min 120 min)
+    private void ResetCooldown()
+    {
+        var save = GameData.Instance?.Save;
+        if (save == null) return;
+
         float reductionMinutes = MasteryBonusManager.Instance != null
             ? MasteryBonusManager.Instance.GetFlat(MasteryStat.HourlyChestCooldownReduction)
             : 0f;
@@ -9961,21 +9973,33 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
         if (!CanClaim(level, lane))
             return false;
 
-        string key = LevelRewardsDatabase.MakeClaimKey(level, lane);
-
         var reward = rewardsDatabase.GetReward(level, lane);
         if (reward == null)
             return false;
 
-        // Grant reward (gold/gems/chest...)
-        GrantReward(reward, button);
+        // For chest rewards, defer the claim until the player confirms inside the modal
+        if (reward.type == RewardType.Chest)
+        {
+            GrantReward(reward, button, () =>
+            {
+                FinalizeClaim(level, lane);
+            });
+        }
+        else
+        {
+            GrantReward(reward, button);
+            FinalizeClaim(level, lane);
+        }
 
-        // Mark claimed in memory + Save
+        return true;
+    }
+
+    private void FinalizeClaim(int level, RewardLane lane)
+    {
+        string key = LevelRewardsDatabase.MakeClaimKey(level, lane);
         _claimed.Add(key);
         SaveClaimedToGameData(_claimed);
-
         OnClaimed?.Invoke(level, lane);
-        return true;
     }
 
     // -----------------------
@@ -10008,7 +10032,7 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
     // -----------------------
     // Reward granting
     // -----------------------
-    private void GrantReward(LevelRewardEntry reward, Button button)
+    private void GrantReward(LevelRewardEntry reward, Button button, System.Action onConfirm = null)
     {
         var save = GameData.Instance.Save;
         if (save == null)
@@ -10033,13 +10057,12 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
                 break;
 
             case RewardType.Chest:
-                // Spec: "open chest immediately"
                 if (reward.chest == null)
                 {
                     Debug.LogError($"[LevelRewardsProgressController] Chest reward at level {reward.level} has no ChestDefinition assigned.");
                     return;
                 }
-                OpenChestImmediate(reward.chest);
+                OpenChestViaModal(reward.chest, onConfirm);
                 break;
             case RewardType.DiscoverNewUnit:
                 var unit = UnlockedUnitsManager.Instance.DiscoverRandomUnitByRarity(reward.rarity);
@@ -10064,10 +10087,10 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
         }
     }
 
-    private void OpenChestImmediate(ChestDefinition chest)
+    private void OpenChestViaModal(ChestDefinition chest, System.Action onConfirm = null)
     {
         if (StoreItemChestPanel.Instance != null)
-            StoreItemChestPanel.Instance.Show(chest);
+            StoreItemChestPanel.Instance.Show(chest, onConfirm);
     }
 
     // -----------------------
@@ -12082,40 +12105,46 @@ public class MissionsManager : MonoBehaviour
             return;
 
 
+        // If the mission has a chest reward, defer ALL claim logic until the player
+        // confirms inside the chest info modal.  Otherwise claim immediately.
+        if (mission.definition.chestReward != null && StoreItemChestPanel.Instance != null)
+        {
+            StoreItemChestPanel.Instance.Show(mission.definition.chestReward, () =>
+            {
+                GrantMissionRewards(mission, from);
+            });
+        }
+        else
+        {
+            GrantMissionRewards(mission, from);
+        }
+
+    }
+
+    private void GrantMissionRewards(MissionInstance mission, RectTransform from)
+    {
         if (mission.definition.goldReward > 0)
         {
-            // Calculate final boosted amount to match UI display
             int boostedGold = MasteryBonusManager.Instance != null
                 ? MasteryBonusManager.Instance.GetBoostedGold(mission.definition.goldReward)
                 : mission.definition.goldReward;
-
-            // Add gold to wallet, skipping internal mastery calculation to avoid double boosting
             PlayerCurrencyWallet.Instance.AddGold(boostedGold, from);
         }
 
-
         if (mission.definition.gemsReward > 0)
-        {
             PlayerCurrencyWallet.Instance.AddGems(mission.definition.gemsReward, from);
-        }
-        if (mission.definition.scrollsReward > 0)
-        {
-            PlayerCurrencyWallet.Instance.AddScrolls(mission.definition.scrollsReward, from);
-        }
 
-        if (mission.definition.chestReward != null && StoreItemChestPanel.Instance != null)
-        {
-            StoreItemChestPanel.Instance.Show(mission.definition.chestReward);
-        }
+        if (mission.definition.scrollsReward > 0)
+            PlayerCurrencyWallet.Instance.AddScrolls(mission.definition.scrollsReward, from);
 
         mission.claimed = true;
         mission.OnClaimed?.Invoke();
         OnMissionsStateChanged?.Invoke();
 
-
         SaveMissionsToGameData();
-        FirebaseAnalyticsManager.Instance.LogEvent("complete_mission", new Parameter("mission_type", mission.definition.missionType.ToString()), new Parameter("mission_name", mission.definition.name));
-
+        FirebaseAnalyticsManager.Instance.LogEvent("complete_mission",
+            new Parameter("mission_type", mission.definition.missionType.ToString()),
+            new Parameter("mission_name", mission.definition.name));
     }
 
     // ======================
@@ -12223,46 +12252,66 @@ public class MissionsManager : MonoBehaviour
 
     private void GrantDailySetReward(RectTransform from)
     {
+        if (dailyAllMissionsChestReward != null && StoreItemChestPanel.Instance != null)
+        {
+            StoreItemChestPanel.Instance.Show(dailyAllMissionsChestReward, () =>
+            {
+                GrantDailySetCurrencyRewards(from);
+                FinalizeDailySetClaim();
+            });
+        }
+        else
+        {
+            GrantDailySetCurrencyRewards(from);
+            FinalizeDailySetClaim();
+        }
+    }
+
+    private void GrantDailySetCurrencyRewards(RectTransform from)
+    {
         if (dailyAllMissionsGoldReward > 0)
         {
-            // Apply mastery bonus to the set reward
             int finalGold = MasteryBonusManager.Instance != null
                 ? MasteryBonusManager.Instance.GetBoostedGold(dailyAllMissionsGoldReward)
                 : dailyAllMissionsGoldReward;
-
             PlayerCurrencyWallet.Instance.AddGold(finalGold, from);
         }
 
         if (dailyAllMissionsGemsReward > 0)
             PlayerCurrencyWallet.Instance.AddGems(dailyAllMissionsGemsReward, from);
 
-        if (dailyAllMissionsChestReward != null && StoreItemChestPanel.Instance != null)
-        {
-            StoreItemChestPanel.Instance.Show(dailyAllMissionsChestReward);
-        }
-
         Debug.Log("Daily set completion reward granted.");
     }
 
     private void GrantWeeklySetReward(RectTransform from)
     {
+        if (weeklyAllMissionsChestReward != null && StoreItemChestPanel.Instance != null)
+        {
+            StoreItemChestPanel.Instance.Show(weeklyAllMissionsChestReward, () =>
+            {
+                GrantWeeklySetCurrencyRewards(from);
+                FinalizeWeeklySetClaim();
+            });
+        }
+        else
+        {
+            GrantWeeklySetCurrencyRewards(from);
+            FinalizeWeeklySetClaim();
+        }
+    }
+
+    private void GrantWeeklySetCurrencyRewards(RectTransform from)
+    {
         if (weeklyAllMissionsGoldReward > 0)
         {
-            // Apply mastery bonus to the weekly reward
             int finalGold = MasteryBonusManager.Instance != null
                 ? MasteryBonusManager.Instance.GetBoostedGold(weeklyAllMissionsGoldReward)
                 : weeklyAllMissionsGoldReward;
-
             PlayerCurrencyWallet.Instance.AddGold(finalGold, from);
         }
 
         if (weeklyAllMissionsGemsReward > 0)
             PlayerCurrencyWallet.Instance.AddGems(weeklyAllMissionsGemsReward, from);
-
-        if (weeklyAllMissionsChestReward != null && StoreItemChestPanel.Instance != null)
-        {
-            StoreItemChestPanel.Instance.Show(weeklyAllMissionsChestReward);
-        }
 
         Debug.Log("Weekly set completion reward granted.");
     }
@@ -12297,8 +12346,13 @@ public class MissionsManager : MonoBehaviour
         if (!CanClaimDailySetReward()) return;
 
         GrantDailySetReward(from);
-        save.dailySetRewardGranted = true;
+    }
 
+    private void FinalizeDailySetClaim()
+    {
+        var save = GameData.Instance.Save;
+        if (save == null) return;
+        save.dailySetRewardGranted = true;
         SaveMissionsToGameData();
         OnMissionsStateChanged?.Invoke();
         FirebaseAnalytics.LogEvent("daily_set_reward_claimed");
@@ -12311,8 +12365,13 @@ public class MissionsManager : MonoBehaviour
         if (!CanClaimWeeklySetReward()) return;
 
         GrantWeeklySetReward(from);
-        save.weeklySetRewardGranted = true;
+    }
 
+    private void FinalizeWeeklySetClaim()
+    {
+        var save = GameData.Instance.Save;
+        if (save == null) return;
+        save.weeklySetRewardGranted = true;
         SaveMissionsToGameData();
         OnMissionsStateChanged?.Invoke();
         FirebaseAnalytics.LogEvent("weekly_set_reward_claimed");
@@ -17436,6 +17495,7 @@ public class TurtleAdChest : MonoBehaviour
 
     private void OnTurtleClicked()
     {
+        Debug.Log($"[TurtleAdChest] Clicked. chestReward={chestReward != null}, AdsManager={AdsManager.Instance != null}");
         if (chestReward == null || AdsManager.Instance == null) return;
 
         _rewardGranted = false;
@@ -17460,9 +17520,12 @@ public class TurtleAdChest : MonoBehaviour
 
         if (_rewardGranted && StoreItemChestPanel.Instance != null)
         {
-            StoreItemChestPanel.Instance.Show(chestReward);
-            // Hide the turtle after claiming the chest
-            gameObject.SetActive(false);
+            if (_button) _button.interactable = true;
+            StoreItemChestPanel.Instance.Show(chestReward, () =>
+            {
+                // Hide the turtle only after confirming inside the modal
+                gameObject.SetActive(false);
+            });
         }
         else
         {
@@ -19389,6 +19452,7 @@ public class ShopButtonFreeIndicator : MonoBehaviour
 FILE: StoreItemChestPanel.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Store\StoreItemChestPanel.cs
 ========================
+using System;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -19427,6 +19491,7 @@ public class StoreItemChestPanel : MonoBehaviour
 
     private StoreItemDefinition definition;
     private ChestDefinition _directChest;
+    private Action _onConfirmCallback;
 
     private void Awake()
     {
@@ -19497,10 +19562,11 @@ public class StoreItemChestPanel : MonoBehaviour
         popupAnimator.OpenFromRect(rect);
     }
 
-    public void Show(ChestDefinition chest)
+    public void Show(ChestDefinition chest, Action onConfirm = null)
     {
         _directChest = chest;
         definition = null;
+        _onConfirmCallback = onConfirm;
 
         titleText.text = chest.displayName;
         iconImage.sprite = chest.chestOpenScreenIcon;
@@ -19538,7 +19604,9 @@ public class StoreItemChestPanel : MonoBehaviour
         if (_directChest != null)
         {
             var chest = _directChest;
+            var callback = _onConfirmCallback;
             Close();
+            callback?.Invoke();
             if (chestOpeningUI != null)
             {
                 chestOpeningUI.gameObject.SetActive(true);
@@ -19560,6 +19628,7 @@ public class StoreItemChestPanel : MonoBehaviour
         panelRoot.SetActive(false);
         definition = null;
         _directChest = null;
+        _onConfirmCallback = null;
         popupAnimator.Close();
     }
 
@@ -20154,8 +20223,8 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
                 break;
 
             case FortuneRewardType.Chest:
-                OpenChest(reward.chestDefinition);
-                break;
+                OpenChest(reward.chestDefinition, fromRect);
+                return; // defer granting until modal confirm
 
             case FortuneRewardType.GreenPart:
                 GrantPartReward();
@@ -20200,7 +20269,7 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
     // --------------------------
     // Chests
     // --------------------------
-    private void OpenChest(ChestDefinition chestDef)
+    private void OpenChest(ChestDefinition chestDef, RectTransform fromRect)
     {
         if (chestDef == null)
         {
@@ -20214,7 +20283,10 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
             return;
         }
 
-        StoreItemChestPanel.Instance.Show(chestDef);
+        StoreItemChestPanel.Instance.Show(chestDef, () =>
+        {
+            RefreshTokensUI();
+        });
     }
 }
 
