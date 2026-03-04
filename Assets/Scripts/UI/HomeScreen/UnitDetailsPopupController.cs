@@ -301,6 +301,9 @@ public class UnitDetailsPopupController : MonoBehaviour
 
         upgradeCostIcon.sprite = StyleManager.instance.scrollSprite;
 
+        if (upgradeCostText != null)
+            upgradeCostText.text = atMax ? "MAX" : UnitLevelingService.GetUpgradeCost(lvl).ToString();
+
     }
 
 
