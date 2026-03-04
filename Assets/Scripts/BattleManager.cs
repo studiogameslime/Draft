@@ -113,6 +113,7 @@ public class BattleManager : MonoBehaviour
 
         PlanningPhase();
 
+        TutorialManager.Instance?.OnBattleReady();
     }
 
 
@@ -289,10 +290,6 @@ public class BattleManager : MonoBehaviour
             int rawTotalGold = levelDefinition.goldOnLevelComplete + roundsGold;
             PlayerCurrencyWallet.Instance.AddGold(rawTotalGold);
 
-            int scrollsEarned = levelDefinition.scrollsOnLevelComplete;
-            if (scrollsEarned > 0)
-                PlayerCurrencyWallet.Instance.AddScrolls(scrollsEarned);
-
             EndGameUI.Instance.ShowWinScreen(
                 boostedLevelGold,
                 boostedRoundsGold,
@@ -301,9 +298,10 @@ public class BattleManager : MonoBehaviour
                 roundsXp,
                 totalXp,
                 levelDefinition.name,
-                rawTotalGold,
-                scrollsEarned
+                rawTotalGold
             );
+
+            TutorialManager.Instance?.NotifyAction(TutorialAction.LevelWon);
 
             // --- SAVE PROGRESS (stage complete) ---
             if (GameData.Instance != null && GameData.Instance.Save != null && LevelsDatabase.Instance != null)
@@ -333,6 +331,8 @@ public class BattleManager : MonoBehaviour
         }
 
         SoulsManager.instance.AddRoundSouls();
+
+        TutorialManager.Instance?.NotifyAction(TutorialAction.RoundWon);
 
         RoundUIManager.instance.ChangeRoundText(currentRoundIndex + 1, levelDefinition.RoundsCount);
 

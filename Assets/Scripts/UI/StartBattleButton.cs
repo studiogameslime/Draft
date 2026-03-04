@@ -26,6 +26,7 @@ public class StartBattleButton : MonoBehaviour
         // Start the battle from placed units
         BattleCellSelectionController.Instance.ClearSelection();
         BattleManager.instance.StartRound();
+        TutorialManager.Instance?.NotifyAction(TutorialAction.BattleStarted);
 
         // Optionally disable the button so it can't be pressed twice
         startButton.interactable = false;

@@ -34,6 +34,8 @@ public class PlayButton : MonoBehaviour
             GameData.Instance.SaveNow();
         }
 
+        TutorialManager.Instance?.NotifyAction(TutorialAction.PlayPressed);
+
         // 4) Start your existing flow (animation + load)
         ChapterPreviewController.Instance.PlayWinningAnimationAll();
         StartCoroutine(ChapterPreviewController.Instance.LoadSceneAfterWinning(stageId));

@@ -15,11 +15,13 @@ public class MissionsButton : MonoBehaviour
     public void OpenMissions()
     {
         missionsPanel.SetActive(true);
+        TutorialManager.Instance?.NotifyAction(TutorialAction.MissionsOpened);
     }
 
     public void CloseMissions()
     {
         missionsPanel.SetActive(false);
+        TutorialManager.Instance?.NotifyAction(TutorialAction.MissionsClosed);
     }
 }
 

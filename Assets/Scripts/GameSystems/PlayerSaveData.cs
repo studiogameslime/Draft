@@ -150,6 +150,11 @@ public class PlayerSaveData
     public List<MasteryLevelData> masteryLevels = new List<MasteryLevelData>();
 
     // ==============================
+    // TUTORIAL
+    // ==============================
+    public bool tutorialComplete;
+
+    // ==============================
     // WALL
     // ==============================
     public int wallLevel = 1;

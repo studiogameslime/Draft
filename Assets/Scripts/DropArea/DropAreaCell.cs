@@ -99,5 +99,6 @@ public class DropAreaCell : MonoBehaviour
             return;
 
         BattleCellSelectionController.Instance?.SelectCell(this);
+        TutorialManager.Instance?.NotifyAction(TutorialAction.CellSelected, this);
     }
 }

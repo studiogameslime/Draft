@@ -71,6 +71,10 @@ public class BattleCellSelectionController : MonoBehaviour
         if (cell == null)
             return;
 
+        if (TutorialManager.Instance != null && TutorialManager.Instance.IsTutorialActive
+            && !TutorialManager.Instance.IsActionAllowed(cell))
+            return;
+
         if (selectedCell == cell)
         {
             ClearSelection();
@@ -167,6 +171,7 @@ public class BattleCellSelectionController : MonoBehaviour
 
         spawner.SetCellBonusMultipliers(hpMul, dmgMul, spawnTimeMul);
         BattleManager.instance?.RefreshStartBattleButton();
+        TutorialManager.Instance?.NotifyAction(TutorialAction.UnitPlaced, def);
 
         // Per your flow: after placing, close the bottom deck and clear focus.
         ClearSelection();

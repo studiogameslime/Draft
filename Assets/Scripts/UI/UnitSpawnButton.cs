@@ -71,6 +71,10 @@ public class UnitSpawnButton : MonoBehaviour
         if (unitDefinition == null)
             return;
 
+        if (TutorialManager.Instance != null && TutorialManager.Instance.IsTutorialActive
+            && !TutorialManager.Instance.IsActionAllowed(unitDefinition))
+            return;
+
         // Forward selection to the placement controller.
         if (BattleCellSelectionController.Instance != null)
             BattleCellSelectionController.Instance.TryPlaceSpawner(unitDefinition);

@@ -196,6 +196,7 @@ public class MissionsScreen : MonoBehaviour
 
         //root.SetActive(false);
         popupAnimator.Close();
+        TutorialManager.Instance?.NotifyAction(TutorialAction.MissionsClosed);
     }
 
     private void SelectDailyTab()

@@ -114,6 +114,8 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     // Drag handlers
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (TutorialManager.Instance != null && TutorialManager.Instance.IsTutorialActive)
+            return;
         isDragging = true;
     }
 
@@ -146,10 +148,16 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         targetPos = index * step;
 
         UpdateButtonsUI(index);
+        TutorialManager.Instance?.NotifyAction(TutorialAction.PageChanged, index);
     }
 
     private bool IsPageAllowed(int index)
     {
+        // During tutorial, only allow the target page
+        if (TutorialManager.Instance != null && TutorialManager.Instance.IsTutorialActive
+            && !TutorialManager.Instance.IsPageAllowed(index))
+            return false;
+
         var page = (HomeScreenPage)index;
 
         switch (page)
@@ -165,6 +173,13 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         }
 
         return true;
+    }
+
+    public Button GetBottomButton(int index)
+    {
+        if (bottomButtons == null || index < 0 || index >= bottomButtons.Count)
+            return null;
+        return bottomButtons[index];
     }
 
     // Make only active background bigger (width and height)
