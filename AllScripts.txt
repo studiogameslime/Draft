@@ -1419,6 +1419,7 @@ public class UnitSpawner : MonoBehaviour
     private Color defaultProgressColor; // Stores the original bar color [1]
     private bool spawnedStaticUnit = false;
 
+    public bool HasReserveWaiting => reserveReady && reserveStats != null;
 
     private void Awake()
     {
@@ -3560,6 +3561,10 @@ public class UnitAI : MonoBehaviour
 
             gateState = GateMoveState.ToEntry;
             gateEntryNotified = false;
+
+            // Open the gate immediately so the animation plays while the unit walks toward it
+            currentGate.NotifyUnitReachedEntry(transform);
+            gateEntryNotified = true;
         }
 
         if (currentGate == null || currentGateEntry == null || currentGateExit == null)
@@ -3575,11 +3580,6 @@ public class UnitAI : MonoBehaviour
 
             if (Vector3.Distance(transform.position, currentGateEntry.position) <= gateArriveDistance)
             {
-                if (!gateEntryNotified)
-                {
-                    currentGate.NotifyUnitReachedEntry(transform);
-                    gateEntryNotified = true;
-                }
                 gateState = GateMoveState.ToExit;
             }
             return true;
@@ -14053,6 +14053,165 @@ public class TutorialConfig : ScriptableObject
     [Header("Hand Prefab")]
     [Tooltip("Drag the TutorialHand prefab here.")]
     public GameObject handPrefab;
+
+    [Header("King Bubble")]
+    [Tooltip("The king character sprite for the tutorial speech bubble.")]
+    public Sprite kingSprite;
+}
+
+
+
+========================
+FILE: TutorialKingBubble.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Tutorial\TutorialKingBubble.cs
+========================
+using System.Collections;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class TutorialKingBubble : MonoBehaviour
+{
+    private float typewriterSpeed = 30f;
+    private Vector2 kingSize = new Vector2(180f, 180f);
+    private float bubbleFontSize = 40f;
+    private float topOffset = -100f;
+
+    private TMP_Text bubbleText;
+    private Coroutine typewriterCo;
+
+    public void Init(Sprite kingSprite)
+    {
+        var canvas = gameObject.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 1002;
+
+        var scaler = gameObject.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1080, 1920);
+        scaler.matchWidthOrHeight = 0.5f;
+
+        BuildUI(kingSprite);
+        gameObject.SetActive(false);
+    }
+
+    private void BuildUI(Sprite kingSprite)
+    {
+        // Container: horizontal layout anchored to top
+        var containerGo = new GameObject("Container", typeof(RectTransform), typeof(HorizontalLayoutGroup), typeof(ContentSizeFitter));
+        containerGo.transform.SetParent(transform, false);
+        var containerRect = containerGo.GetComponent<RectTransform>();
+        containerRect.anchorMin = new Vector2(0f, 1f);
+        containerRect.anchorMax = new Vector2(1f, 1f);
+        containerRect.pivot = new Vector2(0.5f, 1f);
+        containerRect.anchoredPosition = new Vector2(0f, topOffset);
+        containerRect.sizeDelta = new Vector2(-40f, 0f);
+
+        var hlg = containerGo.GetComponent<HorizontalLayoutGroup>();
+        hlg.spacing = 15f;
+        hlg.childAlignment = TextAnchor.MiddleLeft;
+        hlg.childControlWidth = true;
+        hlg.childControlHeight = true;
+        hlg.childForceExpandWidth = false;
+        hlg.childForceExpandHeight = false;
+
+        var containerFitter = containerGo.GetComponent<ContentSizeFitter>();
+        containerFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+        containerFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        // King icon
+        var kingGo = new GameObject("KingIcon", typeof(RectTransform), typeof(Image), typeof(LayoutElement));
+        kingGo.transform.SetParent(containerGo.transform, false);
+        var kingImg = kingGo.GetComponent<Image>();
+        kingImg.sprite = kingSprite;
+        kingImg.preserveAspect = true;
+        kingImg.raycastTarget = false;
+        var kingLe = kingGo.GetComponent<LayoutElement>();
+        kingLe.minWidth = kingSize.x;
+        kingLe.preferredWidth = kingSize.x;
+        kingLe.minHeight = kingSize.y;
+        kingLe.preferredHeight = kingSize.y;
+        kingLe.flexibleWidth = 0;
+        kingLe.flexibleHeight = 0;
+
+        // Bubble background
+        var bubbleGo = new GameObject("Bubble", typeof(RectTransform), typeof(Image),
+            typeof(VerticalLayoutGroup), typeof(ContentSizeFitter), typeof(LayoutElement));
+        bubbleGo.transform.SetParent(containerGo.transform, false);
+        var bubbleBg = bubbleGo.GetComponent<Image>();
+        bubbleBg.color = new Color(1f, 1f, 1f, 0.95f);
+        bubbleBg.raycastTarget = false;
+        bubbleBg.type = Image.Type.Sliced;
+        var bgSprite = Resources.GetBuiltinResource<Sprite>("UI/Skin/Background.psd");
+        if (bgSprite != null) bubbleBg.sprite = bgSprite;
+
+        var bubbleVlg = bubbleGo.GetComponent<VerticalLayoutGroup>();
+        bubbleVlg.padding = new RectOffset(25, 25, 20, 20);
+        bubbleVlg.childAlignment = TextAnchor.MiddleLeft;
+        bubbleVlg.childControlWidth = true;
+        bubbleVlg.childControlHeight = true;
+        bubbleVlg.childForceExpandWidth = true;
+        bubbleVlg.childForceExpandHeight = false;
+
+        var bubbleFitter = bubbleGo.GetComponent<ContentSizeFitter>();
+        bubbleFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+        bubbleFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        var bubbleLe = bubbleGo.GetComponent<LayoutElement>();
+        bubbleLe.flexibleWidth = 1f;
+
+        // Text with TMP
+        var textGo = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
+        textGo.transform.SetParent(bubbleGo.transform, false);
+        bubbleText = textGo.GetComponent<TextMeshProUGUI>();
+        bubbleText.fontSize = bubbleFontSize;
+        bubbleText.color = new Color(0.15f, 0.15f, 0.15f, 1f);
+        bubbleText.enableWordWrapping = true;
+        bubbleText.raycastTarget = false;
+        bubbleText.maxVisibleCharacters = 0;
+    }
+
+    public void Show(string text)
+    {
+        if (bubbleText == null) return;
+
+        gameObject.SetActive(true);
+        bubbleText.text = text;
+        bubbleText.maxVisibleCharacters = 0;
+        bubbleText.ForceMeshUpdate();
+
+        if (typewriterCo != null) StopCoroutine(typewriterCo);
+        typewriterCo = StartCoroutine(TypewriterRoutine());
+    }
+
+    public void Hide()
+    {
+        if (typewriterCo != null)
+        {
+            StopCoroutine(typewriterCo);
+            typewriterCo = null;
+        }
+        gameObject.SetActive(false);
+    }
+
+    private IEnumerator TypewriterRoutine()
+    {
+        int total = bubbleText.textInfo.characterCount;
+        float delay = 1f / typewriterSpeed;
+
+        for (int i = 1; i <= total; i++)
+        {
+            bubbleText.maxVisibleCharacters = i;
+            yield return new WaitForSecondsRealtime(delay);
+        }
+        typewriterCo = null;
+    }
+
+    private void OnDestroy()
+    {
+        if (typewriterCo != null)
+            StopCoroutine(typewriterCo);
+    }
 }
 
 
@@ -14083,7 +14242,7 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private int unit3DeckIndex = 1;
 
     [Header("Cell Highlight Size (world units)")]
-    [SerializeField] private Vector2 cellWorldSize = new Vector2(0.7f, 0.7f);
+    [SerializeField] private Vector2 cellWorldSize = new Vector2(0.5f, 0.5f);
 
     public bool IsTutorialActive => currentStep != TutorialStep.Complete && !tutorialComplete;
     public TutorialStep CurrentStep => currentStep;
@@ -14092,6 +14251,8 @@ public class TutorialManager : MonoBehaviour
     private bool tutorialComplete = true;
     private TutorialOverlay overlay;
     private GameObject handPrefab;
+    private Sprite kingSprite;
+    private TutorialKingBubble kingBubble;
 
     // Cached targets for IsActionAllowed checks
     private DropAreaCell targetCell;
@@ -14136,7 +14297,10 @@ public class TutorialManager : MonoBehaviour
     {
         var config = Resources.Load<TutorialConfig>("TutorialConfig");
         if (config != null)
+        {
             handPrefab = config.handPrefab;
+            kingSprite = config.kingSprite;
+        }
     }
 
     private IEnumerator WaitForGameDataAndInit()
@@ -14206,6 +14370,10 @@ public class TutorialManager : MonoBehaviour
                 }
                 break;
 
+            case TutorialStep.ExplainSouls:
+                if (action == TutorialAction.TapToContinue) advance = true;
+                break;
+
             case TutorialStep.TapUnit1:
             case TutorialStep.TapUnit2:
             case TutorialStep.TapUnit3:
@@ -14218,6 +14386,14 @@ public class TutorialManager : MonoBehaviour
             case TutorialStep.TapStartBattle:
             case TutorialStep.TapStartBattle2:
                 if (action == TutorialAction.BattleStarted) advance = true;
+                break;
+
+            case TutorialStep.ExplainCapacity:
+                if (action == TutorialAction.TapToContinue)
+                {
+                    Time.timeScale = 1f;
+                    advance = true;
+                }
                 break;
 
             case TutorialStep.WaitForRound1:
@@ -14267,17 +14443,41 @@ public class TutorialManager : MonoBehaviour
     public bool IsActionAllowed(DropAreaCell cell)
     {
         if (!IsTutorialActive) return true;
-        if (currentStep == TutorialStep.TapCell1 || currentStep == TutorialStep.TapCell2 || currentStep == TutorialStep.TapCell3)
-            return cell == targetCell;
-        return false;
+        switch (currentStep)
+        {
+            case TutorialStep.TapCell1:
+            case TutorialStep.TapCell2:
+            case TutorialStep.TapCell3:
+                return cell == targetCell;
+            case TutorialStep.TapUnit1:
+            case TutorialStep.TapUnit2:
+            case TutorialStep.TapUnit3:
+            case TutorialStep.ExplainSouls:
+            case TutorialStep.ExplainCapacity:
+                return false;
+            default:
+                return true;
+        }
     }
 
     public bool IsActionAllowed(UnitDefinition def)
     {
         if (!IsTutorialActive) return true;
-        if (currentStep == TutorialStep.TapUnit1 || currentStep == TutorialStep.TapUnit2 || currentStep == TutorialStep.TapUnit3)
-            return def == targetUnit;
-        return false;
+        switch (currentStep)
+        {
+            case TutorialStep.TapUnit1:
+            case TutorialStep.TapUnit2:
+            case TutorialStep.TapUnit3:
+                return def == targetUnit;
+            case TutorialStep.TapCell1:
+            case TutorialStep.TapCell2:
+            case TutorialStep.TapCell3:
+            case TutorialStep.ExplainSouls:
+            case TutorialStep.ExplainCapacity:
+                return false;
+            default:
+                return true;
+        }
     }
 
     public bool IsPageAllowed(int pageIndex)
@@ -14305,9 +14505,17 @@ public class TutorialManager : MonoBehaviour
     {
         currentStep++;
 
-        if (currentStep == TutorialStep.Complete)
+        // Skip home screen steps — end tutorial after collecting rewards
+        if (currentStep >= TutorialStep.TapMissions)
         {
             CompleteTutorial();
+            return;
+        }
+
+        // ExplainSouls: wait for cell selection UI to settle
+        if (currentStep == TutorialStep.ExplainSouls)
+        {
+            StartCoroutine(ShowStepDelayed(0.3f));
             return;
         }
 
@@ -14325,12 +14533,22 @@ public class TutorialManager : MonoBehaviour
             return;
         }
 
+        // ExplainCapacity: start monitoring coroutine instead of showing immediately
+        if (currentStep == TutorialStep.ExplainCapacity)
+        {
+            overlay.Hide();
+            if (kingBubble != null) kingBubble.Hide();
+            StartCoroutine(WaitForReserveReady());
+            return;
+        }
+
         ShowCurrentStep();
     }
 
     private IEnumerator ShowStepDelayed(float delay)
     {
         if (overlay != null) overlay.Hide();
+        if (kingBubble != null) kingBubble.Hide();
         yield return new WaitForSeconds(delay);
         ShowCurrentStep();
     }
@@ -14346,6 +14564,10 @@ public class TutorialManager : MonoBehaviour
         {
             case TutorialStep.TapCell1:
                 ShowCellStep(cell1Row, cell1Col);
+                break;
+
+            case TutorialStep.ExplainSouls:
+                ShowExplainSoulsStep();
                 break;
 
             case TutorialStep.TapUnit1:
@@ -14383,7 +14605,7 @@ public class TutorialManager : MonoBehaviour
                 break;
 
             case TutorialStep.TapMissions:
-                // Shown after scene load via OnSceneLoaded
+                ShowMissionsStep();
                 break;
 
             case TutorialStep.CloseMissions:
@@ -14400,6 +14622,53 @@ public class TutorialManager : MonoBehaviour
                 ShowPlayStep();
                 break;
         }
+
+        // Show/hide king bubble
+        string msg = GetStepMessage(currentStep);
+        if (msg != null)
+        {
+            EnsureKingBubble();
+            kingBubble.Show(msg);
+        }
+        else if (kingBubble != null)
+        {
+            kingBubble.Hide();
+        }
+    }
+
+    private string GetStepMessage(TutorialStep step)
+    {
+        switch (step)
+        {
+            case TutorialStep.TapCell1: return "Tap this cell to place a unit!";
+            case TutorialStep.ExplainSouls: return "Each unit costs souls to deploy. Spend them wisely!";
+            case TutorialStep.TapUnit1: return "Now deploy the Warrior!";
+            case TutorialStep.TapCell2: return "Great! Tap another cell.";
+            case TutorialStep.TapUnit2: return "Deploy the Archer here!";
+            case TutorialStep.TapStartBattle: return "Tap to start the battle!";
+            case TutorialStep.ExplainCapacity: return "Each unit has its own capacity and spawn time. A reserve warrior waits to join after the current one falls!";
+            case TutorialStep.TapCell3: return "Place one more unit!";
+            case TutorialStep.TapUnit3: return "Deploy the Warrior!";
+            case TutorialStep.TapStartBattle2: return "Start the final battle!";
+            case TutorialStep.TapBackToHome: return "Great job! Tap to go home.";
+            case TutorialStep.TapMissions: return "Check your missions!";
+            case TutorialStep.CloseMissions: return "Close the missions.";
+            case TutorialStep.TapStoreTab: return "Visit the store!";
+            case TutorialStep.TapCollectionTab: return "View your collection!";
+            case TutorialStep.TapBattleTab: return "Go to battle!";
+            case TutorialStep.TapPlay: return "Tap Play to start!";
+            default: return null;
+        }
+    }
+
+    private void EnsureKingBubble()
+    {
+        if (kingBubble != null) return;
+
+        var go = new GameObject("TutorialKingBubble");
+        DontDestroyOnLoad(go);
+        kingBubble = go.AddComponent<TutorialKingBubble>();
+        kingBubble.Init(kingSprite);
     }
 
     // ============================
@@ -14456,27 +14725,65 @@ public class TutorialManager : MonoBehaviour
 
         EnsureOverlay();
 
-        // Find the "Back to Home" button - it's usually a Button on EndGameUI
-        // We look for a child button that calls BackToHome
         if (EndGameUI.Instance != null)
         {
             var buttons = EndGameUI.Instance.GetComponentsInChildren<UnityEngine.UI.Button>(true);
             foreach (var btn in buttons)
             {
-                // Find button with "BackToHome" or "Home" in name
-                string name = btn.gameObject.name.ToLower();
-                if (name.Contains("home") || name.Contains("back"))
+                // Target the "CollectButton", not the "AdCollectButton" (X2)
+                string name = btn.gameObject.name;
+                if (name == "CollectButton")
                 {
                     overlay.SetTargetUI(btn.GetComponent<RectTransform>());
                     yield break;
                 }
             }
+        }
+    }
 
-            // Fallback: use the last button (often the home button)
-            if (buttons.Length > 0)
+    // ============================
+    // INFO STEP HELPERS
+    // ============================
+
+    private void ShowExplainSoulsStep()
+    {
+        if (SoulsManager.instance != null && SoulsManager.instance._currentSoulsText != null)
+        {
+            var parent = SoulsManager.instance._currentSoulsText.transform.parent;
+            var rt = parent != null ? parent.GetComponent<RectTransform>() : null;
+            if (rt != null)
+                overlay.SetTargetUI(rt);
+            else
+                overlay.ShowDarkPanelOnly();
+        }
+        else
+        {
+            overlay.ShowDarkPanelOnly();
+        }
+        overlay.EnableTapToContinue();
+    }
+
+    private IEnumerator WaitForReserveReady()
+    {
+        while (true)
+        {
+            var spawners = FindObjectsByType<UnitSpawner>(FindObjectsSortMode.None);
+            foreach (var s in spawners)
             {
-                overlay.SetTargetUI(buttons[buttons.Length - 1].GetComponent<RectTransform>());
+                if (s.HasReserveWaiting)
+                {
+                    // Found a reserve — pause and show info
+                    Time.timeScale = 0f;
+                    EnsureOverlay();
+                    overlay.SetTargetWorld(s.transform.position, cellWorldSize);
+                    overlay.EnableTapToContinue();
+
+                    EnsureKingBubble();
+                    kingBubble.Show(GetStepMessage(TutorialStep.ExplainCapacity));
+                    yield break;
+                }
             }
+            yield return null;
         }
     }
 
@@ -14521,21 +14828,7 @@ public class TutorialManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         EnsureOverlay();
-
-        switch (currentStep)
-        {
-            case TutorialStep.TapMissions:
-                ShowMissionsStep();
-                break;
-            case TutorialStep.TapStoreTab:
-            case TutorialStep.TapCollectionTab:
-            case TutorialStep.TapBattleTab:
-                ShowTabStep();
-                break;
-            case TutorialStep.TapPlay:
-                ShowPlayStep();
-                break;
-        }
+        ShowCurrentStep();
     }
 
     private void ShowMissionsStep()
@@ -14638,6 +14931,13 @@ public class TutorialManager : MonoBehaviour
             Destroy(overlay.gameObject);
             overlay = null;
         }
+
+        if (kingBubble != null)
+        {
+            kingBubble.Hide();
+            Destroy(kingBubble.gameObject);
+            kingBubble = null;
+        }
     }
 
     // ============================
@@ -14672,7 +14972,7 @@ public class TutorialOverlay : MonoBehaviour
 
     [Header("Cell Highlight")]
     [SerializeField] private Color highlightColor = new Color(1f, 1f, 1f, 0.12f);
-    [SerializeField] private float highlightPadding = 20f;
+    [SerializeField] private float highlightPadding = 5f;
 
     [Header("Hand")]
     [SerializeField] private Vector2 handOffset = new Vector2(40f, -40f);
@@ -14692,6 +14992,9 @@ public class TutorialOverlay : MonoBehaviour
     // Tracks elevated UI target for cleanup
     private Canvas addedCanvas;
     private GraphicRaycaster addedRaycaster;
+
+    // Tap-to-continue for info steps
+    private Button tapToContinueButton;
 
     private GameObject handPrefab;
 
@@ -14759,10 +15062,30 @@ public class TutorialOverlay : MonoBehaviour
     /// <summary>
     /// Highlight a UI element by elevating it above the overlay.
     /// </summary>
+    public void EnableTapToContinue()
+    {
+        if (darkPanel == null) return;
+        tapToContinueButton = darkPanel.gameObject.AddComponent<Button>();
+        tapToContinueButton.onClick.AddListener(() =>
+        {
+            TutorialManager.Instance?.NotifyAction(TutorialAction.TapToContinue);
+        });
+    }
+
+    public void DisableTapToContinue()
+    {
+        if (tapToContinueButton != null)
+        {
+            Destroy(tapToContinueButton);
+            tapToContinueButton = null;
+        }
+    }
+
     public void SetTargetUI(RectTransform target)
     {
         if (target == null) { Hide(); return; }
 
+        DisableTapToContinue();
         CleanupPreviousTarget();
         gameObject.SetActive(true);
         if (handCanvasGo != null) handCanvasGo.SetActive(true);
@@ -14791,6 +15114,7 @@ public class TutorialOverlay : MonoBehaviour
         var cam = Camera.main;
         if (cam == null) { Hide(); return; }
 
+        DisableTapToContinue();
         CleanupPreviousTarget();
         gameObject.SetActive(true);
         if (handCanvasGo != null) handCanvasGo.SetActive(true);
@@ -14817,8 +15141,18 @@ public class TutorialOverlay : MonoBehaviour
         PositionHand(new Vector2(screenCenter.x, screenCenter.y));
     }
 
+    public void ShowDarkPanelOnly()
+    {
+        CleanupPreviousTarget();
+        gameObject.SetActive(true);
+        cellHighlight.gameObject.SetActive(false);
+        if (handCanvasGo != null) handCanvasGo.SetActive(false);
+        if (handRect != null) handRect.gameObject.SetActive(false);
+    }
+
     public void Hide()
     {
+        DisableTapToContinue();
         CleanupPreviousTarget();
         gameObject.SetActive(false);
         if (handCanvasGo != null) handCanvasGo.SetActive(false);
@@ -14884,10 +15218,12 @@ public enum TutorialStep
 {
     // Battle phase – Round 1
     TapCell1,
+    ExplainSouls,
     TapUnit1,
     TapCell2,
     TapUnit2,
     TapStartBattle,
+    ExplainCapacity,
     WaitForRound1,
 
     // Battle phase – Round 2
@@ -14919,7 +15255,8 @@ public enum TutorialAction
     MissionsOpened,
     MissionsClosed,
     PageChanged,
-    PlayPressed
+    PlayPressed,
+    TapToContinue
 }
 
 
@@ -19343,7 +19680,9 @@ public class UnitDetailsPopupController : MonoBehaviour
         }
         
         _unit = unit;
-        unlockState = UnitUnlockState.Undiscovered;
+
+        var progress = UnitLevelingService.GetOrCreateProgress(unit.id);
+        unlockState = progress != null ? progress.unlockState : UnitUnlockState.Undiscovered;
 
         _lastOpenedCardRect = cardRect;
 
