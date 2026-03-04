@@ -4439,7 +4439,6 @@ public class UpgradeTreeUIController : MonoBehaviour
 FILE: ChestOpenButton.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Chests\ChestOpenButton.cs
 ========================
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -4448,7 +4447,6 @@ public class ChestOpenButton : MonoBehaviour
     public ChestDefinition chestDefinition;
 
     private Button _button;
-    private bool _rewardGranted;
 
     private void Awake()
     {
@@ -4460,42 +4458,11 @@ public class ChestOpenButton : MonoBehaviour
     private void OnClick()
     {
         if (chestDefinition == null || StoreItemChestPanel.Instance == null) return;
-        if (AdsManager.Instance == null) return;
 
-        _rewardGranted = false;
-        if (_button) _button.interactable = false;
-
-        // ������ �����
-        bool started = AdsManager.Instance.ShowRewarded(
-            AdRewardType.FreeChest,
-            onReward: () => { _rewardGranted = true; },   // �� ������
-            onClosed: () =>
-            {
-                // ������ ����� -> ������ �� ���� ����� (������� ���)
-                StartCoroutine(AfterAdClosedRoutine());
-            });
-
-        if (!started)
+        StoreItemChestPanel.Instance.ShowWithAd(chestDefinition, () =>
         {
             if (_button) _button.interactable = true;
-        }
-    }
-
-    private IEnumerator AfterAdClosedRoutine()
-    {
-        yield return null; // ����� ��� ���� ������ �������
-
-        if (_rewardGranted && StoreItemChestPanel.Instance != null)
-        {
-            StoreItemChestPanel.Instance.Show(chestDefinition, () =>
-            {
-                if (_button) _button.interactable = true;
-            });
-        }
-        else
-        {
-            if (_button) _button.interactable = true;
-        }
+        });
     }
 }
 
@@ -7704,6 +7671,7 @@ FILE: LocalNotificationManager.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\GameSystems\LocalNotificationManager.cs
 ========================
 using System;
+using System.IO;
 using UnityEngine;
 #if UNITY_ANDROID
 using Unity.Notifications.Android;
@@ -7712,6 +7680,7 @@ using Unity.Notifications.Android;
 public class LocalNotificationManager : MonoBehaviour
 {
     private const string ChannelId = "game_reminders";
+    private const string LogFileName = "notification_log.txt";
 
     private static LocalNotificationManager instance;
 
@@ -7740,10 +7709,17 @@ public class LocalNotificationManager : MonoBehaviour
             Id = ChannelId,
             Name = "Game Reminders",
             Description = "Daily missions, weekly missions, and comeback reminders",
-            Importance = Importance.Default
+            Importance = Importance.High
         };
         AndroidNotificationCenter.RegisterNotificationChannel(channel);
+        Log("Channel registered.");
 #endif
+    }
+
+    private void Start()
+    {
+        // Schedule immediately on launch so notifications survive swipe-kill.
+        ScheduleAll();
     }
 
     private void OnApplicationPause(bool paused)
@@ -7754,37 +7730,39 @@ public class LocalNotificationManager : MonoBehaviour
             CancelAll();
     }
 
-    private void OnApplicationQuit()
-    {
-        ScheduleAll();
-    }
-
     private void ScheduleAll()
     {
 #if UNITY_ANDROID
-        AndroidNotificationCenter.CancelAllScheduledNotifications();
+        try
+        {
+            var permStatus = AndroidNotificationCenter.UserPermissionToPost;
+            Log($"Permission status: {permStatus}");
 
-        DateTime now = DateTime.UtcNow;
+            AndroidNotificationCenter.CancelAllScheduledNotifications();
 
-        // Daily missions refresh
-        DateTime nextDaily = DailyResetUtil.GetNextDailyResetUtc(now);
-        SendNotification(
-            "Daily Missions Ready!",
-            "Your new daily missions are waiting. Come claim your rewards!",
-            nextDaily);
+            DateTime now = DateTime.UtcNow;
+            Log($"Scheduling at UTC: {now}");
 
-        // Weekly missions refresh
-        DateTime nextWeekly = DailyResetUtil.GetNextWeeklyResetUtc(now);
-        SendNotification(
-            "Weekly Missions Refreshed!",
-            "New weekly missions with big rewards are here!",
-            nextWeekly);
+            DateTime nextDaily = DailyResetUtil.GetNextDailyResetUtc(now);
+            ScheduleOne("Daily Missions Ready!",
+                "Your new daily missions are waiting. Come claim your rewards!",
+                nextDaily);
 
-        // Inactivity reminder (24h)
-        SendNotification(
-            "We Miss You!",
-            "Your units are waiting for battle. Come back and fight!",
-            now.AddHours(24));
+            DateTime nextWeekly = DailyResetUtil.GetNextWeeklyResetUtc(now);
+            ScheduleOne("Weekly Missions Refreshed!",
+                "New weekly missions with big rewards are here!",
+                nextWeekly);
+
+            ScheduleOne("We Miss You!",
+                "Your units are waiting for battle. Come back and fight!",
+                now.AddHours(24));
+
+            Log("All notifications scheduled successfully.");
+        }
+        catch (Exception e)
+        {
+            Log($"ERROR in ScheduleAll: {e}");
+        }
 #endif
     }
 
@@ -7796,17 +7774,37 @@ public class LocalNotificationManager : MonoBehaviour
 #endif
     }
 
-    private void SendNotification(string title, string text, DateTime fireTimeUtc)
-    {
 #if UNITY_ANDROID
+    private void ScheduleOne(string title, string text, DateTime fireTimeUtc)
+    {
+        var localTime = fireTimeUtc.ToLocalTime();
         var notification = new AndroidNotification
         {
             Title = title,
             Text = text,
-            FireTime = fireTimeUtc.ToLocalTime()
+            FireTime = localTime,
+            SmallIcon = "icon_small",
+            LargeIcon = "icon_large",
+            ShouldAutoCancel = true
         };
-        AndroidNotificationCenter.SendNotification(notification, ChannelId);
+
+        int id = AndroidNotificationCenter.SendNotification(notification, ChannelId);
+        var status = AndroidNotificationCenter.CheckScheduledNotificationStatus(id);
+        Log($"Scheduled '{title}' -> id={id}, status={status}, fireAt={localTime}");
+    }
 #endif
+
+    private void Log(string msg)
+    {
+        string line = $"[{DateTime.Now:HH:mm:ss}] {msg}";
+        Debug.Log($"[Notifications] {msg}");
+
+        try
+        {
+            string path = Path.Combine(Application.persistentDataPath, LogFileName);
+            File.AppendAllText(path, line + "\n");
+        }
+        catch { }
     }
 }
 
@@ -17458,7 +17456,6 @@ public class BackgroundWanderUI : MonoBehaviour
 FILE: TurtleAdChest.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Environment\TurtleAdChest.cs
 ========================
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17475,7 +17472,6 @@ public class TurtleAdChest : MonoBehaviour
     [SerializeField] private GameObject chestIcon;
 
     private Button _button;
-    private bool _rewardGranted;
 
     private void Awake()
     {
@@ -17488,50 +17484,18 @@ public class TurtleAdChest : MonoBehaviour
 
     private void OnEnable()
     {
-        // Every time the turtle activates (home screen load), make sure it's clickable
         if (_button) _button.interactable = true;
         if (chestIcon) chestIcon.SetActive(true);
     }
 
     private void OnTurtleClicked()
     {
-        Debug.Log($"[TurtleAdChest] Clicked. chestReward={chestReward != null}, AdsManager={AdsManager.Instance != null}");
-        if (chestReward == null || AdsManager.Instance == null) return;
+        if (chestReward == null || StoreItemChestPanel.Instance == null) return;
 
-        _rewardGranted = false;
-        if (_button) _button.interactable = false;
-
-        bool started = AdsManager.Instance.ShowRewarded(
-            AdRewardType.FreeChest,
-            onReward: () => { _rewardGranted = true; },
-            onClosed: () => { StartCoroutine(AfterAdClosed()); }
-        );
-
-        // Ad not ready / failed to start — let the player try again
-        if (!started)
+        StoreItemChestPanel.Instance.ShowWithAd(chestReward, () =>
         {
-            if (_button) _button.interactable = true;
-        }
-    }
-
-    private IEnumerator AfterAdClosed()
-    {
-        yield return null; // let callbacks settle
-
-        if (_rewardGranted && StoreItemChestPanel.Instance != null)
-        {
-            if (_button) _button.interactable = true;
-            StoreItemChestPanel.Instance.Show(chestReward, () =>
-            {
-                // Hide the turtle only after confirming inside the modal
-                gameObject.SetActive(false);
-            });
-        }
-        else
-        {
-            // Player closed ad without watching — turtle stays
-            if (_button) _button.interactable = true;
-        }
+            gameObject.SetActive(false);
+        });
     }
 }
 
@@ -19492,6 +19456,7 @@ public class StoreItemChestPanel : MonoBehaviour
     private StoreItemDefinition definition;
     private ChestDefinition _directChest;
     private Action _onConfirmCallback;
+    private bool _requiresAd;
 
     private void Awake()
     {
@@ -19564,9 +19529,20 @@ public class StoreItemChestPanel : MonoBehaviour
 
     public void Show(ChestDefinition chest, Action onConfirm = null)
     {
+        ShowInternal(chest, onConfirm, requiresAd: false);
+    }
+
+    public void ShowWithAd(ChestDefinition chest, Action onConfirm = null)
+    {
+        ShowInternal(chest, onConfirm, requiresAd: true);
+    }
+
+    private void ShowInternal(ChestDefinition chest, Action onConfirm, bool requiresAd)
+    {
         _directChest = chest;
         definition = null;
         _onConfirmCallback = onConfirm;
+        _requiresAd = requiresAd;
 
         titleText.text = chest.displayName;
         iconImage.sprite = chest.chestOpenScreenIcon;
@@ -19578,7 +19554,7 @@ public class StoreItemChestPanel : MonoBehaviour
 
         costIconImage.gameObject.SetActive(false);
         priceText.gameObject.SetActive(true);
-        priceText.text = "Open";
+        priceText.text = requiresAd ? "Watch Ad" : "Open";
         priceText.alignment = TextAlignmentOptions.Center;
         priceText.color = Color.white;
         confirmButton.interactable = true;
@@ -19603,15 +19579,13 @@ public class StoreItemChestPanel : MonoBehaviour
     {
         if (_directChest != null)
         {
-            var chest = _directChest;
-            var callback = _onConfirmCallback;
-            Close();
-            callback?.Invoke();
-            if (chestOpeningUI != null)
+            if (_requiresAd)
             {
-                chestOpeningUI.gameObject.SetActive(true);
-                chestOpeningUI.Show(chest);
+                HandleAdConfirm();
+                return;
             }
+
+            OpenDirectChest();
             return;
         }
 
@@ -19619,6 +19593,43 @@ public class StoreItemChestPanel : MonoBehaviour
 
         StoreManager.Instance.TryBuy(definition);
         Close();
+    }
+
+    private void OpenDirectChest()
+    {
+        var chest = _directChest;
+        var callback = _onConfirmCallback;
+        Close();
+        callback?.Invoke();
+        if (chestOpeningUI != null)
+        {
+            chestOpeningUI.gameObject.SetActive(true);
+            chestOpeningUI.Show(chest);
+        }
+    }
+
+    private void HandleAdConfirm()
+    {
+        if (AdsManager.Instance == null)
+        {
+            Debug.LogWarning("StoreItemChestPanel: AdsManager not available.");
+            return;
+        }
+
+        confirmButton.interactable = false;
+        bool started = AdsManager.Instance.ShowRewarded(
+            AdRewardType.FreeChest,
+            onReward: () => { },
+            onClosed: () =>
+            {
+                confirmButton.interactable = true;
+                OpenDirectChest();
+            });
+
+        if (!started)
+        {
+            confirmButton.interactable = true;
+        }
     }
 
     public void Close()
@@ -19629,6 +19640,7 @@ public class StoreItemChestPanel : MonoBehaviour
         definition = null;
         _directChest = null;
         _onConfirmCallback = null;
+        _requiresAd = false;
         popupAnimator.Close();
     }
 
