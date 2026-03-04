@@ -13,6 +13,9 @@ public class EnemySpawner : MonoBehaviour
     [Tooltip("Optional. If assigned, this Y will be used as the spawn Y. If not, spawner's Y is used.")]
     [SerializeField] private Transform spawnYAnchor;
 
+    [Tooltip("Random Y offset range so enemies don't overlap vertically.")]
+    [SerializeField] private float spawnYRandomRange = 0.3f;
+
     [Header("Fallback")]
     public Transform spawnPoint;
 
@@ -81,6 +84,7 @@ public class EnemySpawner : MonoBehaviour
     private Vector3 GetSpawnPosition()
     {
         float y = (spawnYAnchor != null) ? spawnYAnchor.position.y : transform.position.y;
+        y += Random.Range(-spawnYRandomRange, spawnYRandomRange);
 
         if (leftBound != null && rightBound != null)
         {
@@ -90,7 +94,7 @@ public class EnemySpawner : MonoBehaviour
             return new Vector3(x, y, 0f);
         }
 
-        return new Vector3(spawnPoint.position.x, spawnPoint.position.y, spawnPoint.position.z);
+        return new Vector3(spawnPoint.position.x, y, spawnPoint.position.z);
     }
 
     // CHANGED: Helpers for fade

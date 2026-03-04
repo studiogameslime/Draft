@@ -47,6 +47,10 @@ public class UnitAI : MonoBehaviour
 
     private bool wallLocked = false;
 
+    private const float separationRadius = 0.8f;
+    private const float separationSpeed = 3f;
+    private static readonly Collider2D[] sepBuffer = new Collider2D[16];
+
     [Header("Gate Routing")]
     [SerializeField] private float wallLineYOffset = 0f;
     [SerializeField] private float gateArriveDistance = 0.12f;
@@ -86,6 +90,12 @@ public class UnitAI : MonoBehaviour
         lastAttackTime = 0f;
     }
 
+    private void LateUpdate()
+    {
+        if (myStats != null && myStats.currentHealth > 0 && !isKnockbacked)
+            ApplySeparation();
+    }
+
     // CHANGED: important so we do not keep gate open if unit is disabled or destroyed
     private void OnDisable()
     {
@@ -122,6 +132,7 @@ public class UnitAI : MonoBehaviour
                 isInterrupted = false;
 
             animator?.SetBool("isMoving", false);
+
             return;
         }
 
@@ -130,6 +141,7 @@ public class UnitAI : MonoBehaviour
         if (activeTaunter != null && activeTaunter.IsAlive && Time.time < tauntEndTime)
         {
             HandleUnitTargetMovementAndAttack();
+
             return;
         }
 
@@ -149,6 +161,7 @@ public class UnitAI : MonoBehaviour
                 StopMoving();
                 AttackWallIfInRange();
             }
+
             return;
         }
 
@@ -171,6 +184,7 @@ public class UnitAI : MonoBehaviour
                     {
                         SetUnitTarget(candidate);
                         HandleUnitTargetMovementAndAttack();
+            
                         return;
                     }
                 }
@@ -189,6 +203,7 @@ public class UnitAI : MonoBehaviour
                 StopMoving();
                 AttackWallIfInRange();
             }
+
             return;
         }
 
@@ -199,6 +214,7 @@ public class UnitAI : MonoBehaviour
             if (targetStats == null)
             {
                 StopMoving();
+    
                 return;
             }
 
@@ -435,6 +451,43 @@ public class UnitAI : MonoBehaviour
     private void StopMoving()
     {
         animator?.SetBool("isMoving", false);
+    }
+
+    private void ApplySeparation()
+    {
+        if (separationRadius <= 0f) return;
+
+        int count = Physics2D.OverlapCircleNonAlloc(transform.position, separationRadius, sepBuffer);
+        Vector2 push = Vector2.zero;
+        int neighbours = 0;
+
+        for (int i = 0; i < count; i++)
+        {
+            if (sepBuffer[i].transform == transform) continue;
+
+            CharacterStats other = sepBuffer[i].GetComponent<CharacterStats>();
+            if (other == null || other.currentHealth <= 0 || other.isUntargetable) continue;
+
+            Vector2 diff = (Vector2)transform.position - (Vector2)other.transform.position;
+            float dist = diff.magnitude;
+
+            if (dist < 0.001f)
+            {
+                // Deterministic nudge direction when exactly overlapping
+                float angle = ((uint)GetInstanceID() * 2654435761u % 628) * 0.01f;
+                diff = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                dist = 0.001f;
+            }
+
+            push += (diff / dist) * (1f - dist / separationRadius);
+            neighbours++;
+        }
+
+        if (neighbours > 0)
+        {
+            push /= neighbours;
+            transform.position += (Vector3)(push * separationSpeed * Time.deltaTime);
+        }
     }
 
     private void AttackCurrentTarget()
