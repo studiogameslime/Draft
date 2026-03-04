@@ -35,6 +35,7 @@ public class TurtleAdChest : MonoBehaviour
 
     private void OnTurtleClicked()
     {
+        Debug.Log($"[TurtleAdChest] Clicked. chestReward={chestReward != null}, AdsManager={AdsManager.Instance != null}");
         if (chestReward == null || AdsManager.Instance == null) return;
 
         _rewardGranted = false;
@@ -59,9 +60,12 @@ public class TurtleAdChest : MonoBehaviour
 
         if (_rewardGranted && StoreItemChestPanel.Instance != null)
         {
-            StoreItemChestPanel.Instance.Show(chestReward);
-            // Hide the turtle after claiming the chest
-            gameObject.SetActive(false);
+            if (_button) _button.interactable = true;
+            StoreItemChestPanel.Instance.Show(chestReward, () =>
+            {
+                // Hide the turtle only after confirming inside the modal
+                gameObject.SetActive(false);
+            });
         }
         else
         {

@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -36,6 +37,7 @@ public class StoreItemChestPanel : MonoBehaviour
 
     private StoreItemDefinition definition;
     private ChestDefinition _directChest;
+    private Action _onConfirmCallback;
 
     private void Awake()
     {
@@ -106,10 +108,11 @@ public class StoreItemChestPanel : MonoBehaviour
         popupAnimator.OpenFromRect(rect);
     }
 
-    public void Show(ChestDefinition chest)
+    public void Show(ChestDefinition chest, Action onConfirm = null)
     {
         _directChest = chest;
         definition = null;
+        _onConfirmCallback = onConfirm;
 
         titleText.text = chest.displayName;
         iconImage.sprite = chest.chestOpenScreenIcon;
@@ -147,7 +150,9 @@ public class StoreItemChestPanel : MonoBehaviour
         if (_directChest != null)
         {
             var chest = _directChest;
+            var callback = _onConfirmCallback;
             Close();
+            callback?.Invoke();
             if (chestOpeningUI != null)
             {
                 chestOpeningUI.gameObject.SetActive(true);
@@ -169,6 +174,7 @@ public class StoreItemChestPanel : MonoBehaviour
         panelRoot.SetActive(false);
         definition = null;
         _directChest = null;
+        _onConfirmCallback = null;
         popupAnimator.Close();
     }
 

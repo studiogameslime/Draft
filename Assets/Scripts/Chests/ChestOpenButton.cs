@@ -46,9 +46,14 @@ public class ChestOpenButton : MonoBehaviour
 
         if (_rewardGranted && StoreItemChestPanel.Instance != null)
         {
-            StoreItemChestPanel.Instance.Show(chestDefinition);
+            StoreItemChestPanel.Instance.Show(chestDefinition, () =>
+            {
+                if (_button) _button.interactable = true;
+            });
         }
-
-        if (_button) _button.interactable = true;
+        else
+        {
+            if (_button) _button.interactable = true;
+        }
     }
 }

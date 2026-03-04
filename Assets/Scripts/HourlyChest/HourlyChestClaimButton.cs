@@ -67,17 +67,24 @@ public class HourlyChestClaimButton : MonoBehaviour
         if (!IsReady(save.nextHourlyChestUtcTicks))
             return;
 
-        // Give reward (choose what your project uses)
         if (chestReward != null && StoreItemChestPanel.Instance != null)
         {
-            StoreItemChestPanel.Instance.Show(chestReward);
+            StoreItemChestPanel.Instance.Show(chestReward, () =>
+            {
+                ResetCooldown();
+            });
         }
         else
         {
             Debug.LogWarning("HourlyChest: chestReward or StoreItemChestPanel missing");
         }
+    }
 
-        // Set next available time: base cooldown minus mastery reduction (min 120 min)
+    private void ResetCooldown()
+    {
+        var save = GameData.Instance?.Save;
+        if (save == null) return;
+
         float reductionMinutes = MasteryBonusManager.Instance != null
             ? MasteryBonusManager.Instance.GetFlat(MasteryStat.HourlyChestCooldownReduction)
             : 0f;

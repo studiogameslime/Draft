@@ -77,21 +77,33 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
         if (!CanClaim(level, lane))
             return false;
 
-        string key = LevelRewardsDatabase.MakeClaimKey(level, lane);
-
         var reward = rewardsDatabase.GetReward(level, lane);
         if (reward == null)
             return false;
 
-        // Grant reward (gold/gems/chest...)
-        GrantReward(reward, button);
+        // For chest rewards, defer the claim until the player confirms inside the modal
+        if (reward.type == RewardType.Chest)
+        {
+            GrantReward(reward, button, () =>
+            {
+                FinalizeClaim(level, lane);
+            });
+        }
+        else
+        {
+            GrantReward(reward, button);
+            FinalizeClaim(level, lane);
+        }
 
-        // Mark claimed in memory + Save
+        return true;
+    }
+
+    private void FinalizeClaim(int level, RewardLane lane)
+    {
+        string key = LevelRewardsDatabase.MakeClaimKey(level, lane);
         _claimed.Add(key);
         SaveClaimedToGameData(_claimed);
-
         OnClaimed?.Invoke(level, lane);
-        return true;
     }
 
     // -----------------------
@@ -124,7 +136,7 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
     // -----------------------
     // Reward granting
     // -----------------------
-    private void GrantReward(LevelRewardEntry reward, Button button)
+    private void GrantReward(LevelRewardEntry reward, Button button, System.Action onConfirm = null)
     {
         var save = GameData.Instance.Save;
         if (save == null)
@@ -149,13 +161,12 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
                 break;
 
             case RewardType.Chest:
-                // Spec: "open chest immediately"
                 if (reward.chest == null)
                 {
                     Debug.LogError($"[LevelRewardsProgressController] Chest reward at level {reward.level} has no ChestDefinition assigned.");
                     return;
                 }
-                OpenChestImmediate(reward.chest);
+                OpenChestViaModal(reward.chest, onConfirm);
                 break;
             case RewardType.DiscoverNewUnit:
                 var unit = UnlockedUnitsManager.Instance.DiscoverRandomUnitByRarity(reward.rarity);
@@ -180,10 +191,10 @@ public class LevelRewardsProgressController : MonoBehaviour, ILevelRewardsProgre
         }
     }
 
-    private void OpenChestImmediate(ChestDefinition chest)
+    private void OpenChestViaModal(ChestDefinition chest, System.Action onConfirm = null)
     {
         if (StoreItemChestPanel.Instance != null)
-            StoreItemChestPanel.Instance.Show(chest);
+            StoreItemChestPanel.Instance.Show(chest, onConfirm);
     }
 
     // -----------------------

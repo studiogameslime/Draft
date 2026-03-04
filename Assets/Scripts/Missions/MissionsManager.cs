@@ -200,40 +200,46 @@ public class MissionsManager : MonoBehaviour
             return;
 
 
+        // If the mission has a chest reward, defer ALL claim logic until the player
+        // confirms inside the chest info modal.  Otherwise claim immediately.
+        if (mission.definition.chestReward != null && StoreItemChestPanel.Instance != null)
+        {
+            StoreItemChestPanel.Instance.Show(mission.definition.chestReward, () =>
+            {
+                GrantMissionRewards(mission, from);
+            });
+        }
+        else
+        {
+            GrantMissionRewards(mission, from);
+        }
+
+    }
+
+    private void GrantMissionRewards(MissionInstance mission, RectTransform from)
+    {
         if (mission.definition.goldReward > 0)
         {
-            // Calculate final boosted amount to match UI display
             int boostedGold = MasteryBonusManager.Instance != null
                 ? MasteryBonusManager.Instance.GetBoostedGold(mission.definition.goldReward)
                 : mission.definition.goldReward;
-
-            // Add gold to wallet, skipping internal mastery calculation to avoid double boosting
             PlayerCurrencyWallet.Instance.AddGold(boostedGold, from);
         }
 
-
         if (mission.definition.gemsReward > 0)
-        {
             PlayerCurrencyWallet.Instance.AddGems(mission.definition.gemsReward, from);
-        }
-        if (mission.definition.scrollsReward > 0)
-        {
-            PlayerCurrencyWallet.Instance.AddScrolls(mission.definition.scrollsReward, from);
-        }
 
-        if (mission.definition.chestReward != null && StoreItemChestPanel.Instance != null)
-        {
-            StoreItemChestPanel.Instance.Show(mission.definition.chestReward);
-        }
+        if (mission.definition.scrollsReward > 0)
+            PlayerCurrencyWallet.Instance.AddScrolls(mission.definition.scrollsReward, from);
 
         mission.claimed = true;
         mission.OnClaimed?.Invoke();
         OnMissionsStateChanged?.Invoke();
 
-
         SaveMissionsToGameData();
-        FirebaseAnalyticsManager.Instance.LogEvent("complete_mission", new Parameter("mission_type", mission.definition.missionType.ToString()), new Parameter("mission_name", mission.definition.name));
-
+        FirebaseAnalyticsManager.Instance.LogEvent("complete_mission",
+            new Parameter("mission_type", mission.definition.missionType.ToString()),
+            new Parameter("mission_name", mission.definition.name));
     }
 
     // ======================
@@ -341,46 +347,66 @@ public class MissionsManager : MonoBehaviour
 
     private void GrantDailySetReward(RectTransform from)
     {
+        if (dailyAllMissionsChestReward != null && StoreItemChestPanel.Instance != null)
+        {
+            StoreItemChestPanel.Instance.Show(dailyAllMissionsChestReward, () =>
+            {
+                GrantDailySetCurrencyRewards(from);
+                FinalizeDailySetClaim();
+            });
+        }
+        else
+        {
+            GrantDailySetCurrencyRewards(from);
+            FinalizeDailySetClaim();
+        }
+    }
+
+    private void GrantDailySetCurrencyRewards(RectTransform from)
+    {
         if (dailyAllMissionsGoldReward > 0)
         {
-            // Apply mastery bonus to the set reward
             int finalGold = MasteryBonusManager.Instance != null
                 ? MasteryBonusManager.Instance.GetBoostedGold(dailyAllMissionsGoldReward)
                 : dailyAllMissionsGoldReward;
-
             PlayerCurrencyWallet.Instance.AddGold(finalGold, from);
         }
 
         if (dailyAllMissionsGemsReward > 0)
             PlayerCurrencyWallet.Instance.AddGems(dailyAllMissionsGemsReward, from);
 
-        if (dailyAllMissionsChestReward != null && StoreItemChestPanel.Instance != null)
-        {
-            StoreItemChestPanel.Instance.Show(dailyAllMissionsChestReward);
-        }
-
         Debug.Log("Daily set completion reward granted.");
     }
 
     private void GrantWeeklySetReward(RectTransform from)
     {
+        if (weeklyAllMissionsChestReward != null && StoreItemChestPanel.Instance != null)
+        {
+            StoreItemChestPanel.Instance.Show(weeklyAllMissionsChestReward, () =>
+            {
+                GrantWeeklySetCurrencyRewards(from);
+                FinalizeWeeklySetClaim();
+            });
+        }
+        else
+        {
+            GrantWeeklySetCurrencyRewards(from);
+            FinalizeWeeklySetClaim();
+        }
+    }
+
+    private void GrantWeeklySetCurrencyRewards(RectTransform from)
+    {
         if (weeklyAllMissionsGoldReward > 0)
         {
-            // Apply mastery bonus to the weekly reward
             int finalGold = MasteryBonusManager.Instance != null
                 ? MasteryBonusManager.Instance.GetBoostedGold(weeklyAllMissionsGoldReward)
                 : weeklyAllMissionsGoldReward;
-
             PlayerCurrencyWallet.Instance.AddGold(finalGold, from);
         }
 
         if (weeklyAllMissionsGemsReward > 0)
             PlayerCurrencyWallet.Instance.AddGems(weeklyAllMissionsGemsReward, from);
-
-        if (weeklyAllMissionsChestReward != null && StoreItemChestPanel.Instance != null)
-        {
-            StoreItemChestPanel.Instance.Show(weeklyAllMissionsChestReward);
-        }
 
         Debug.Log("Weekly set completion reward granted.");
     }
@@ -415,8 +441,13 @@ public class MissionsManager : MonoBehaviour
         if (!CanClaimDailySetReward()) return;
 
         GrantDailySetReward(from);
-        save.dailySetRewardGranted = true;
+    }
 
+    private void FinalizeDailySetClaim()
+    {
+        var save = GameData.Instance.Save;
+        if (save == null) return;
+        save.dailySetRewardGranted = true;
         SaveMissionsToGameData();
         OnMissionsStateChanged?.Invoke();
         FirebaseAnalytics.LogEvent("daily_set_reward_claimed");
@@ -429,8 +460,13 @@ public class MissionsManager : MonoBehaviour
         if (!CanClaimWeeklySetReward()) return;
 
         GrantWeeklySetReward(from);
-        save.weeklySetRewardGranted = true;
+    }
 
+    private void FinalizeWeeklySetClaim()
+    {
+        var save = GameData.Instance.Save;
+        if (save == null) return;
+        save.weeklySetRewardGranted = true;
         SaveMissionsToGameData();
         OnMissionsStateChanged?.Invoke();
         FirebaseAnalytics.LogEvent("weekly_set_reward_claimed");

@@ -98,8 +98,8 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
                 break;
 
             case FortuneRewardType.Chest:
-                OpenChest(reward.chestDefinition);
-                break;
+                OpenChest(reward.chestDefinition, fromRect);
+                return; // defer granting until modal confirm
 
             case FortuneRewardType.GreenPart:
                 GrantPartReward();
@@ -144,7 +144,7 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
     // --------------------------
     // Chests
     // --------------------------
-    private void OpenChest(ChestDefinition chestDef)
+    private void OpenChest(ChestDefinition chestDef, RectTransform fromRect)
     {
         if (chestDef == null)
         {
@@ -158,6 +158,9 @@ public class WheelOfFortuneTokensManager : MonoBehaviour
             return;
         }
 
-        StoreItemChestPanel.Instance.Show(chestDef);
+        StoreItemChestPanel.Instance.Show(chestDef, () =>
+        {
+            RefreshTokensUI();
+        });
     }
 }
