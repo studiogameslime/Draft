@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -31,6 +32,10 @@ public class TutorialManager : MonoBehaviour
     private GameObject handPrefab;
     private Sprite kingSprite;
     private TutorialKingBubble kingBubble;
+
+    // Audio
+    private AudioSource audioSource;
+    private Dictionary<TutorialStep, AudioClip> voiceClips;
 
     // Cached targets for IsActionAllowed checks
     private DropAreaCell targetCell;
@@ -79,6 +84,42 @@ public class TutorialManager : MonoBehaviour
             handPrefab = config.handPrefab;
             kingSprite = config.kingSprite;
         }
+
+        LoadVoiceClips();
+    }
+
+    private void LoadVoiceClips()
+    {
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+
+        voiceClips = new Dictionary<TutorialStep, AudioClip>();
+
+        TutorialStep[] battleSteps = {
+            TutorialStep.TapCell1, TutorialStep.ExplainSouls, TutorialStep.TapUnit1,
+            TutorialStep.TapCell2, TutorialStep.TapUnit2, TutorialStep.TapStartBattle,
+            TutorialStep.ExplainCapacity, TutorialStep.TapCell3, TutorialStep.TapUnit3,
+            TutorialStep.TapStartBattle2, TutorialStep.TapBackToHome
+        };
+
+        foreach (var step in battleSteps)
+        {
+            var clip = Resources.Load<AudioClip>("Sounds/Tutorial/" + step);
+            if (clip != null)
+                voiceClips[step] = clip;
+            else
+                Debug.LogWarning($"[Tutorial] Missing voice clip for {step}");
+        }
+    }
+
+    private void PlayVoice(TutorialStep step)
+    {
+        if (audioSource == null || voiceClips == null) return;
+
+        audioSource.Stop();
+
+        if (voiceClips.TryGetValue(step, out var clip))
+            audioSource.PlayOneShot(clip);
     }
 
     private IEnumerator WaitForGameDataAndInit()
@@ -401,12 +442,13 @@ public class TutorialManager : MonoBehaviour
                 break;
         }
 
-        // Show/hide king bubble
+        // Show/hide king bubble + play voice
         string msg = GetStepMessage(currentStep);
         if (msg != null)
         {
             EnsureKingBubble();
             kingBubble.Show(msg);
+            PlayVoice(currentStep);
         }
         else if (kingBubble != null)
         {
@@ -558,6 +600,7 @@ public class TutorialManager : MonoBehaviour
 
                     EnsureKingBubble();
                     kingBubble.Show(GetStepMessage(TutorialStep.ExplainCapacity));
+                    PlayVoice(TutorialStep.ExplainCapacity);
                     yield break;
                 }
             }
@@ -696,6 +739,8 @@ public class TutorialManager : MonoBehaviour
     {
         tutorialComplete = true;
         currentStep = TutorialStep.Complete;
+
+        if (audioSource != null) audioSource.Stop();
 
         if (GameData.Instance != null && GameData.Instance.Save != null)
         {

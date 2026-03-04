@@ -8,7 +8,7 @@ public class TutorialKingBubble : MonoBehaviour
     private float typewriterSpeed = 30f;
     private Vector2 kingSize = new Vector2(180f, 180f);
     private float bubbleFontSize = 40f;
-    private float topOffset = -100f;
+    private float topOffset = -500f;
 
     private TMP_Text bubbleText;
     private Coroutine typewriterCo;
