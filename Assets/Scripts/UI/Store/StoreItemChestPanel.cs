@@ -38,6 +38,7 @@ public class StoreItemChestPanel : MonoBehaviour
     private StoreItemDefinition definition;
     private ChestDefinition _directChest;
     private Action _onConfirmCallback;
+    private bool _requiresAd;
 
     private void Awake()
     {
@@ -110,9 +111,20 @@ public class StoreItemChestPanel : MonoBehaviour
 
     public void Show(ChestDefinition chest, Action onConfirm = null)
     {
+        ShowInternal(chest, onConfirm, requiresAd: false);
+    }
+
+    public void ShowWithAd(ChestDefinition chest, Action onConfirm = null)
+    {
+        ShowInternal(chest, onConfirm, requiresAd: true);
+    }
+
+    private void ShowInternal(ChestDefinition chest, Action onConfirm, bool requiresAd)
+    {
         _directChest = chest;
         definition = null;
         _onConfirmCallback = onConfirm;
+        _requiresAd = requiresAd;
 
         titleText.text = chest.displayName;
         iconImage.sprite = chest.chestOpenScreenIcon;
@@ -124,7 +136,7 @@ public class StoreItemChestPanel : MonoBehaviour
 
         costIconImage.gameObject.SetActive(false);
         priceText.gameObject.SetActive(true);
-        priceText.text = "Open";
+        priceText.text = requiresAd ? "Watch Ad" : "Open";
         priceText.alignment = TextAlignmentOptions.Center;
         priceText.color = Color.white;
         confirmButton.interactable = true;
@@ -149,15 +161,13 @@ public class StoreItemChestPanel : MonoBehaviour
     {
         if (_directChest != null)
         {
-            var chest = _directChest;
-            var callback = _onConfirmCallback;
-            Close();
-            callback?.Invoke();
-            if (chestOpeningUI != null)
+            if (_requiresAd)
             {
-                chestOpeningUI.gameObject.SetActive(true);
-                chestOpeningUI.Show(chest);
+                HandleAdConfirm();
+                return;
             }
+
+            OpenDirectChest();
             return;
         }
 
@@ -165,6 +175,43 @@ public class StoreItemChestPanel : MonoBehaviour
 
         StoreManager.Instance.TryBuy(definition);
         Close();
+    }
+
+    private void OpenDirectChest()
+    {
+        var chest = _directChest;
+        var callback = _onConfirmCallback;
+        Close();
+        callback?.Invoke();
+        if (chestOpeningUI != null)
+        {
+            chestOpeningUI.gameObject.SetActive(true);
+            chestOpeningUI.Show(chest);
+        }
+    }
+
+    private void HandleAdConfirm()
+    {
+        if (AdsManager.Instance == null)
+        {
+            Debug.LogWarning("StoreItemChestPanel: AdsManager not available.");
+            return;
+        }
+
+        confirmButton.interactable = false;
+        bool started = AdsManager.Instance.ShowRewarded(
+            AdRewardType.FreeChest,
+            onReward: () => { },
+            onClosed: () =>
+            {
+                confirmButton.interactable = true;
+                OpenDirectChest();
+            });
+
+        if (!started)
+        {
+            confirmButton.interactable = true;
+        }
     }
 
     public void Close()
@@ -175,6 +222,7 @@ public class StoreItemChestPanel : MonoBehaviour
         definition = null;
         _directChest = null;
         _onConfirmCallback = null;
+        _requiresAd = false;
         popupAnimator.Close();
     }
 

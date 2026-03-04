@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,7 +14,6 @@ public class TurtleAdChest : MonoBehaviour
     [SerializeField] private GameObject chestIcon;
 
     private Button _button;
-    private bool _rewardGranted;
 
     private void Awake()
     {
@@ -28,49 +26,17 @@ public class TurtleAdChest : MonoBehaviour
 
     private void OnEnable()
     {
-        // Every time the turtle activates (home screen load), make sure it's clickable
         if (_button) _button.interactable = true;
         if (chestIcon) chestIcon.SetActive(true);
     }
 
     private void OnTurtleClicked()
     {
-        Debug.Log($"[TurtleAdChest] Clicked. chestReward={chestReward != null}, AdsManager={AdsManager.Instance != null}");
-        if (chestReward == null || AdsManager.Instance == null) return;
+        if (chestReward == null || StoreItemChestPanel.Instance == null) return;
 
-        _rewardGranted = false;
-        if (_button) _button.interactable = false;
-
-        bool started = AdsManager.Instance.ShowRewarded(
-            AdRewardType.FreeChest,
-            onReward: () => { _rewardGranted = true; },
-            onClosed: () => { StartCoroutine(AfterAdClosed()); }
-        );
-
-        // Ad not ready / failed to start — let the player try again
-        if (!started)
+        StoreItemChestPanel.Instance.ShowWithAd(chestReward, () =>
         {
-            if (_button) _button.interactable = true;
-        }
-    }
-
-    private IEnumerator AfterAdClosed()
-    {
-        yield return null; // let callbacks settle
-
-        if (_rewardGranted && StoreItemChestPanel.Instance != null)
-        {
-            if (_button) _button.interactable = true;
-            StoreItemChestPanel.Instance.Show(chestReward, () =>
-            {
-                // Hide the turtle only after confirming inside the modal
-                gameObject.SetActive(false);
-            });
-        }
-        else
-        {
-            // Player closed ad without watching — turtle stays
-            if (_button) _button.interactable = true;
-        }
+            gameObject.SetActive(false);
+        });
     }
 }
