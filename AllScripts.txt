@@ -17087,29 +17087,16 @@ using UnityEngine.UI;
 [RequireComponent(typeof(RawImage))]
 public class UIRepeatingIconBackground : MonoBehaviour
 {
-    [Header("Icon Source")]
     public Sprite iconSprite;
 
-    [Header("Pattern Look")]
-    [Range(0.01f, 1f)] public float iconAlpha = 0.08f;
-
-    [Tooltip("���� = ����� ���� ������ (��� ����� �� ���� ����)")]
-    [Range(1, 16)] public int tilesPerAxis = 5;
-
-    [Tooltip("Vertical spacing multiplier between rows (1 = original, lower = denser)")]
-    [Range(0.4f, 1f)] public float rowHeightMultiplier = 0.8f;
-
-    [Tooltip("����� ���� ��� (�������) ���� ����. ��� = ���� ����")]
-    [Range(0, 64)] public int padding = 0;
-
-    [Tooltip("���� �������� ������. ���� �� 2 �����")]
-    public int textureSize = 1024;
-
-    [Header("Scroll")]
-    public Vector2 speed = new Vector2(0.006f, 0.003f);
-
-    [Tooltip("��� ��� ���� '������' � ����� 1,1")]
-    public Vector2 uvSize = new Vector2(1f, 1f);
+    private const float IconAlpha = 0.25f;
+    private const int TilesPerAxis = 6;
+    private const float IconScale = 0.45f;
+    private const float ScaleVariation = 0.25f;
+    private const float AlphaVariation = 0.3f;
+    private const int TextureSize = 1024;
+    private static readonly Vector2 ScrollSpeed = new Vector2(0.006f, 0.003f);
+    private static readonly Vector2 UvSize = new Vector2(1f, 1f);
 
     private RawImage img;
     private Rect uv;
@@ -17121,7 +17108,7 @@ public class UIRepeatingIconBackground : MonoBehaviour
         img.raycastTarget = false;
 
         uv = img.uvRect;
-        uv.size = uvSize;
+        uv.size = UvSize;
         img.uvRect = uv;
 
         Rebuild();
@@ -17129,7 +17116,7 @@ public class UIRepeatingIconBackground : MonoBehaviour
 
     void Update()
     {
-        uv.position += speed * Time.unscaledDeltaTime;
+        uv.position += ScrollSpeed * Time.unscaledDeltaTime;
         img.uvRect = uv;
     }
 
@@ -17146,17 +17133,17 @@ public class UIRepeatingIconBackground : MonoBehaviour
 
         if (generated != null) Destroy(generated);
 
-        generated = new Texture2D(textureSize, textureSize, TextureFormat.RGBA32, false);
+        generated = new Texture2D(TextureSize, TextureSize, TextureFormat.RGBA32, false);
         generated.wrapMode = TextureWrapMode.Repeat;
         generated.filterMode = FilterMode.Bilinear;
 
         // clear
         var clear = new Color32(0, 0, 0, 0);
-        var pixels = new Color32[textureSize * textureSize];
+        var pixels = new Color32[TextureSize * TextureSize];
         for (int i = 0; i < pixels.Length; i++) pixels[i] = clear;
         generated.SetPixels32(pixels);
 
-        // sprite pixels (Read/Write enabled on source texture)
+        // sprite pixels
         var sprTex = iconSprite.texture;
         var r = iconSprite.textureRect;
         int w = (int)r.width;
@@ -17168,43 +17155,56 @@ public class UIRepeatingIconBackground : MonoBehaviour
             w, h
         );
 
-        // cell size (controls spacing between icons)
-        float cell = (float)textureSize / tilesPerAxis;
+        // cell size — uniform grid
+        float cell = (float)TextureSize / TilesPerAxis;
 
-        int drawW = Mathf.Min(w, Mathf.FloorToInt(cell) - padding * 2);
-        int drawH = Mathf.Min(h, Mathf.FloorToInt(cell) - padding * 2);
-
-        int row = 0;
-        float y = 0f;
-
-        while (y < textureSize)
+        // fit icon inside cell while preserving aspect ratio
+        int maxDraw = Mathf.RoundToInt(cell * IconScale);
+        float aspect = (float)w / h;
+        int drawW, drawH;
+        if (aspect >= 1f)
         {
-            bool isOffsetRow = (row % 2 == 1);
-            int rowOffsetX = isOffsetRow ? Mathf.RoundToInt(cell * 0.5f) : 0;
-
-            for (int tx = 0; tx < tilesPerAxis; tx++)
-            {
-                int startX = Mathf.RoundToInt(tx * cell) + rowOffsetX + padding;
-                int startY = Mathf.RoundToInt(y) + padding;
-
-                BlitScaledWrapped(
-                    sprPixels,
-                    w,
-                    h,
-                    generated,
-                    startX,
-                    startY,
-                    drawW,
-                    drawH,
-                    iconAlpha
-                );
-            }
-
-            y += cell * rowHeightMultiplier;
-            row++;
+            drawW = Mathf.Min(w, maxDraw);
+            drawH = Mathf.RoundToInt(drawW / aspect);
+        }
+        else
+        {
+            drawH = Mathf.Min(h, maxDraw);
+            drawW = Mathf.RoundToInt(drawH * aspect);
         }
 
+        // chess-like grid: uniform rows, odd rows offset by half a cell
+        for (int row = 0; row * cell < TextureSize; row++)
+        {
+            int rowOffsetX = (row % 2 == 1) ? Mathf.RoundToInt(cell * 0.5f) : 0;
 
+            for (int col = 0; col < TilesPerAxis + 1; col++)
+            {
+                // seeded random per icon for stable variation
+                int seed = row * 7919 + col * 6271 + 1031;
+                System.Random rng = new System.Random(seed);
+
+                float scaleMul = 1f - ScaleVariation * (float)rng.NextDouble() * 0.5f;
+                float alphaMul = 1f - AlphaVariation * (float)rng.NextDouble() * 0.6f;
+
+                int iconW = Mathf.RoundToInt(drawW * scaleMul);
+                int iconH = Mathf.RoundToInt(drawH * scaleMul);
+
+                // center icon within its cell
+                int cellX = Mathf.RoundToInt(col * cell) + rowOffsetX;
+                int cellY = Mathf.RoundToInt(row * cell);
+                int startX = cellX + Mathf.RoundToInt((cell - iconW) * 0.5f);
+                int startY = cellY + Mathf.RoundToInt((cell - iconH) * 0.5f);
+
+                BlitScaledWrapped(
+                    sprPixels, w, h,
+                    generated,
+                    startX, startY,
+                    iconW, iconH,
+                    IconAlpha * alphaMul
+                );
+            }
+        }
 
         generated.Apply(false);
 
@@ -17231,7 +17231,6 @@ public class UIRepeatingIconBackground : MonoBehaviour
                 int px = dstX + x;
                 int py = dstY + y;
 
-                // wrap to avoid any seam between repeated tiles
                 px %= tw; if (px < 0) px += tw;
                 py %= th; if (py < 0) py += th;
 
