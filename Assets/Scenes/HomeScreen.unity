@@ -30954,6 +30954,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1848159772}
   m_CullTransparentMesh: 1
+--- !u!1 &1852874493 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6323317744905232414, guid: 3076e79bc9bcf14468ef0ce0036d7f10, type: 3}
+  m_PrefabInstance: {fileID: 3283510848357214485}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1858710390
 GameObject:
   m_ObjectHideFlags: 0
@@ -31699,6 +31704,20 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3804346901352380244, guid: 3076e79bc9bcf14468ef0ce0036d7f10, type: 3}
   m_PrefabInstance: {fileID: 3283510848357214485}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1909052245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1852874493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7de8f11c5f4e578499773af24512ffca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TurtleAdChest
+  chestReward: {fileID: 11400000, guid: 3dc7bbe10158e2f49a5c25def79a07f2, type: 2}
+  chestIcon: {fileID: 0}
 --- !u!1 &1910709534
 GameObject:
   m_ObjectHideFlags: 0
@@ -40600,7 +40619,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6323317744905232414, guid: 3076e79bc9bcf14468ef0ce0036d7f10, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1909052245}
   m_SourcePrefab: {fileID: 100100000, guid: 3076e79bc9bcf14468ef0ce0036d7f10, type: 3}
 --- !u!224 &3306262620640856509
 RectTransform:
