@@ -18,6 +18,10 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip battleMusic;
     [SerializeField] private float musicVolume = 0.5f;
 
+    public bool SoundEnabled { get; private set; } = true;
+    public bool MusicEnabled { get; private set; } = true;
+    public bool VibrationEnabled { get; private set; } = true;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -35,10 +39,10 @@ public class SoundManager : MonoBehaviour
         musicSource.playOnAwake = false;
         musicSource.volume = musicVolume;
 
+        LoadSettings();
+
         SceneManager.sceneLoaded += OnSceneLoaded;
 
-        // Play home music immediately — sceneLoaded already fired before we subscribed
-        Debug.Log($"[SoundManager] Awake: homeMusic={homeMusic != null}, battleMusic={battleMusic != null}, musicSource={musicSource != null}");
         PlayMusic(homeMusic);
     }
 
@@ -47,24 +51,85 @@ public class SoundManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    private void LoadSettings()
+    {
+        if (GameData.Instance != null && GameData.Instance.Save != null)
+        {
+            SoundEnabled = GameData.Instance.Save.soundEnabled;
+            MusicEnabled = GameData.Instance.Save.musicEnabled;
+            VibrationEnabled = GameData.Instance.Save.vibrationEnabled;
+        }
+
+        ApplySoundSetting();
+        ApplyMusicSetting();
+    }
+
+    public void SetSoundEnabled(bool enabled)
+    {
+        SoundEnabled = enabled;
+        ApplySoundSetting();
+        SaveSettings();
+    }
+
+    public void SetMusicEnabled(bool enabled)
+    {
+        MusicEnabled = enabled;
+        ApplyMusicSetting();
+        SaveSettings();
+    }
+
+    public void SetVibrationEnabled(bool enabled)
+    {
+        VibrationEnabled = enabled;
+        SaveSettings();
+    }
+
+    private void ApplySoundSetting()
+    {
+        if (sfxSource != null)
+            sfxSource.mute = !SoundEnabled;
+    }
+
+    private void ApplyMusicSetting()
+    {
+        if (musicSource != null)
+        {
+            musicSource.mute = !MusicEnabled;
+        }
+    }
+
+    private void SaveSettings()
+    {
+        if (GameData.Instance == null || GameData.Instance.Save == null) return;
+        GameData.Instance.Save.soundEnabled = SoundEnabled;
+        GameData.Instance.Save.musicEnabled = MusicEnabled;
+        GameData.Instance.Save.vibrationEnabled = VibrationEnabled;
+        GameData.Instance.SaveNow();
+    }
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log($"[SoundManager] OnSceneLoaded: {scene.name}, mode={mode}");
+        // Reload settings in case save data wasn't ready on first Awake
+        if (!settingsLoaded && GameData.Instance != null && GameData.Instance.Save != null)
+        {
+            LoadSettings();
+            settingsLoaded = true;
+        }
+
         if (scene.name == "HomeScreen")
             PlayMusic(homeMusic);
         else if (scene.name != "LoadingScreen")
             PlayMusic(battleMusic);
     }
+    private bool settingsLoaded;
 
     private void PlayMusic(AudioClip clip)
     {
-        Debug.Log($"[SoundManager] PlayMusic: clip={clip?.name ?? "NULL"}, musicSource={musicSource != null}, isPlaying={musicSource?.isPlaying}");
         if (clip == null) return;
         if (musicSource.clip == clip && musicSource.isPlaying) return;
 
         musicSource.clip = clip;
         musicSource.Play();
-        Debug.Log($"[SoundManager] Started playing: {clip.name}, isPlaying={musicSource.isPlaying}");
     }
 
     public void PlaySFX(AudioClip clip)
@@ -75,4 +140,12 @@ public class SoundManager : MonoBehaviour
 
     public void PlayButtonClick() => PlaySFX(buttonClickSound);
     public void PlayPageSwipe() => PlaySFX(pageSwipeSound);
+
+    public static void Vibrate()
+    {
+        if (Instance != null && !Instance.VibrationEnabled) return;
+#if UNITY_ANDROID || UNITY_IOS
+        Handheld.Vibrate();
+#endif
+    }
 }

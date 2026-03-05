@@ -38,9 +38,7 @@ public class WallHealth : MonoBehaviour
         currentHealth -= amount;
         currentHealth = Mathf.Max(0, currentHealth);
         SoundManager.Instance?.PlaySFX(hitSound);
-#if UNITY_ANDROID || UNITY_IOS
-        Handheld.Vibrate();
-#endif
+        SoundManager.Vibrate();
         Notify();
 
         if (currentHealth <= 0)

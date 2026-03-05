@@ -19,7 +19,7 @@ public class PlayerSaveData
 
     public int gold;
     public int gems;
-    public int scrolls;
+    public int scrolls = 10;
     public int wheelOfFortuneTokens;
 
 
@@ -158,6 +158,13 @@ public class PlayerSaveData
     // WALL
     // ==============================
     public int wallLevel = 1;
+
+    // ==============================
+    // SETTINGS
+    // ==============================
+    public bool soundEnabled = true;
+    public bool musicEnabled = true;
+    public bool vibrationEnabled = true;
 
 }
 
