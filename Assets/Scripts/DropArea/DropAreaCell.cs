@@ -98,7 +98,14 @@ public class DropAreaCell : MonoBehaviour
         if (!Application.isPlaying)
             return;
 
+        if (TutorialManager.Instance != null && TutorialManager.Instance.IsTutorialActive
+            && !TutorialManager.Instance.IsActionAllowed(this))
+            return;
+
         BattleCellSelectionController.Instance?.SelectCell(this);
         TutorialManager.Instance?.NotifyAction(TutorialAction.CellSelected, this);
+
+        if (IsSpecial)
+            TutorialManager.Instance?.NotifyAction(TutorialAction.BonusCellSelected, this);
     }
 }

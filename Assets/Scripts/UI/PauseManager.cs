@@ -30,6 +30,10 @@ public class PauseManager : MonoBehaviour
         if (isPaused)
             return;
 
+        if (TutorialManager.Instance != null && TutorialManager.Instance.IsTutorialActive
+            && TutorialManager.Instance.CurrentStep != TutorialStep.FreePlay)
+            return;
+
         isPaused = true;
         Time.timeScale = 0f;
         pauseRoot.SetActive(true);

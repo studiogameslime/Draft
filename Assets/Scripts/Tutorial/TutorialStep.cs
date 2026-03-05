@@ -14,16 +14,22 @@ public enum TutorialStep
     TapCell3,
     TapUnit3,
     TapStartBattle2,
+    WaitForRound2,
+    FreePlay,
     WaitForVictory,
     TapBackToHome,
 
     // Home screen phase
-    TapMissions,
-    CloseMissions,
-    TapStoreTab,
     TapCollectionTab,
+    TapUnitCard,
+    TapDetailsButton,
+    TapUpgrade,
+    CloseUnitInfo,
     TapBattleTab,
     TapPlay,
+
+    // Battle 1-2 phase
+    TapBonusCell,
 
     Complete
 }
@@ -40,5 +46,10 @@ public enum TutorialAction
     MissionsClosed,
     PageChanged,
     PlayPressed,
-    TapToContinue
+    TapToContinue,
+    UnitCardClicked,
+    DetailsOpened,
+    UnitUpgraded,
+    UnitInfoClosed,
+    BonusCellSelected
 }

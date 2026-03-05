@@ -12,6 +12,10 @@ public class BattleFooterAnimation : MonoBehaviour
     }
 
 
+    public bool IsAnimating =>
+        animator != null && (animator.IsInTransition(0) ||
+        animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f);
+
     public void EnterGridMode()
     {
         animator.SetTrigger("moveUp");

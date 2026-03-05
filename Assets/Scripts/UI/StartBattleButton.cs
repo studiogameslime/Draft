@@ -23,6 +23,11 @@ public class StartBattleButton : MonoBehaviour
     {
         if (BattleManager.instance == null)
             return;
+
+        if (TutorialManager.Instance != null && TutorialManager.Instance.IsTutorialActive
+            && !TutorialManager.Instance.IsStartBattleAllowed())
+            return;
+
         // Start the battle from placed units
         BattleCellSelectionController.Instance.ClearSelection();
         BattleManager.instance.StartRound();

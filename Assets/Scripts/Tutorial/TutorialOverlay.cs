@@ -117,14 +117,14 @@ public class TutorialOverlay : MonoBehaviour
         }
     }
 
-    public void SetTargetUI(RectTransform target)
+    public void SetTargetUI(RectTransform target, bool showHand = true)
     {
         if (target == null) { Hide(); return; }
 
         DisableTapToContinue();
         CleanupPreviousTarget();
         gameObject.SetActive(true);
-        if (handCanvasGo != null) handCanvasGo.SetActive(true);
+        if (handCanvasGo != null) handCanvasGo.SetActive(showHand);
         cellHighlight.gameObject.SetActive(false);
 
         // Elevate the target above the overlay (sortingOrder 1000 > 999)
@@ -133,12 +133,19 @@ public class TutorialOverlay : MonoBehaviour
         addedCanvas.sortingOrder = 1000;
         addedRaycaster = target.gameObject.AddComponent<GraphicRaycaster>();
 
-        // Position hand near the target's center
-        Vector3[] corners = new Vector3[4];
-        target.GetWorldCorners(corners);
-        Vector2 screenCenter = (RectTransformUtility.WorldToScreenPoint(null, corners[0]) +
-                                RectTransformUtility.WorldToScreenPoint(null, corners[2])) * 0.5f;
-        PositionHand(screenCenter);
+        if (showHand)
+        {
+            // Position hand near the target's center
+            Vector3[] corners = new Vector3[4];
+            target.GetWorldCorners(corners);
+            Vector2 screenCenter = (RectTransformUtility.WorldToScreenPoint(null, corners[0]) +
+                                    RectTransformUtility.WorldToScreenPoint(null, corners[2])) * 0.5f;
+            PositionHand(screenCenter);
+        }
+        else if (handRect != null)
+        {
+            handRect.gameObject.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -179,6 +186,7 @@ public class TutorialOverlay : MonoBehaviour
 
     public void ShowDarkPanelOnly()
     {
+        DisableTapToContinue();
         CleanupPreviousTarget();
         gameObject.SetActive(true);
         cellHighlight.gameObject.SetActive(false);
