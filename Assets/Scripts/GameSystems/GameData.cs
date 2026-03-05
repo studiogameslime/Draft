@@ -19,11 +19,15 @@ public class GameData : MonoBehaviour
         IsReady = false;
         pendingCloudUpload = false;
 
+        Debug.Log("[GAMEDATA] Awake() start");
 #if UNITY_ANDROID && !UNITY_EDITOR
+        Debug.Log("[GAMEDATA] Android path -> LoadCloudThenFallback");
         StartCoroutine(LoadCloudThenFallback());
 #else
+        Debug.Log("[GAMEDATA] Editor/non-Android path -> LoadOrCreateLocal");
         LoadOrCreateLocal();
         IsReady = true;
+        Debug.Log($"[GAMEDATA] IsReady=true, tutorialComplete={Save.tutorialComplete}");
 #endif
     }
 

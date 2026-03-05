@@ -34,7 +34,6 @@ public class HomeBootstrapper : MonoBehaviour
 
     private IEnumerator Start()
     {
-        // מחכים פריים שכל ה-Awake ירוצו
         yield return null;
 
         // ---- Ads ----
@@ -46,7 +45,6 @@ public class HomeBootstrapper : MonoBehaviour
         }
 
         IsReady = true;
-        Debug.Log("HomeBootstrapper: all managers + ads ready");
     }
 
     private bool IsManagerAlive(GameObject prefab)

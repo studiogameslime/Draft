@@ -44,17 +44,21 @@ public class TutorialManager : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoCreate()
     {
+        Debug.Log($"[TUTORIAL] AutoCreate() called, Instance={Instance != null}, scene={SceneManager.GetActiveScene().name}");
         if (Instance != null) return;
 
         var go = new GameObject("TutorialManager");
         Instance = go.AddComponent<TutorialManager>();
         DontDestroyOnLoad(go);
+        Debug.Log("[TUTORIAL] AutoCreate() -> created new TutorialManager");
     }
 
     private void Awake()
     {
+        Debug.Log($"[TUTORIAL] Awake(), Instance={Instance != null}, scene={SceneManager.GetActiveScene().name}");
         if (Instance != null && Instance != this)
         {
+            Debug.Log("[TUTORIAL] Duplicate -> destroying");
             Destroy(gameObject);
             return;
         }
@@ -124,26 +128,22 @@ public class TutorialManager : MonoBehaviour
 
     private IEnumerator WaitForGameDataAndInit()
     {
+        Debug.Log($"[TUTORIAL] WaitForGameDataAndInit() start, scene={SceneManager.GetActiveScene().name}");
         while (GameData.Instance == null || !GameData.Instance.IsReady)
             yield return null;
 
         tutorialComplete = GameData.Instance.Save.tutorialComplete;
-        Debug.Log($"[Tutorial] tutorialComplete = {tutorialComplete}");
+        Debug.Log($"[TUTORIAL] GameData ready, tutorialComplete={tutorialComplete}, scene={SceneManager.GetActiveScene().name}");
 
         if (tutorialComplete)
         {
             currentStep = TutorialStep.Complete;
+            Debug.Log("[TUTORIAL] Tutorial already complete, step=Complete");
         }
         else
         {
             currentStep = TutorialStep.TapCell1;
-
-            // If we're already on HomeScreen, redirect to 1-1
-            if (SceneManager.GetActiveScene().name == "HomeScreen")
-            {
-                yield return new WaitForSeconds(0.3f);
-                SceneManager.LoadScene("1-1");
-            }
+            Debug.Log("[TUTORIAL] Tutorial NOT complete, step=TapCell1");
         }
     }
 
@@ -614,33 +614,13 @@ public class TutorialManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        Debug.Log($"[TUTORIAL] OnSceneLoaded({scene.name}), IsTutorialActive={IsTutorialActive}, currentStep={currentStep}");
         if (!IsTutorialActive) return;
 
-        if (scene.name == "HomeScreen")
+        if (scene.name == "HomeScreen" && currentStep >= TutorialStep.TapMissions)
         {
-            if (currentStep < TutorialStep.TapMissions)
-            {
-                // Battle phase: redirect fresh player to 1-1
-                StartCoroutine(RedirectToBattle());
-            }
-            else
-            {
-                StartCoroutine(ShowHomeStep());
-            }
+            StartCoroutine(ShowHomeStep());
         }
-    }
-
-    private IEnumerator RedirectToBattle()
-    {
-        // Wait for GameData to be ready
-        while (GameData.Instance == null || !GameData.Instance.IsReady)
-            yield return null;
-
-        // Small delay for HomeScreen to settle before redirecting
-        yield return new WaitForSeconds(0.3f);
-
-        currentStep = TutorialStep.TapCell1;
-        SceneManager.LoadScene("1-1");
     }
 
     private IEnumerator ShowHomeStep()

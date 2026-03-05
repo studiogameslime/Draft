@@ -30,13 +30,29 @@ public class StoreItemUI : MonoBehaviour
     {
         if (StoreManager.Instance != null)
             StoreManager.Instance.OnPurchaseCompleted += RefreshAffordability;
+
+        var wallet = PlayerCurrencyWallet.Instance;
+        if (wallet != null)
+        {
+            wallet.OnGoldChanged += OnCurrencyChanged;
+            wallet.OnGemsChanged += OnCurrencyChanged;
+        }
     }
 
     private void OnDisable()
     {
         if (StoreManager.Instance != null)
             StoreManager.Instance.OnPurchaseCompleted -= RefreshAffordability;
+
+        var wallet = PlayerCurrencyWallet.Instance;
+        if (wallet != null)
+        {
+            wallet.OnGoldChanged -= OnCurrencyChanged;
+            wallet.OnGemsChanged -= OnCurrencyChanged;
+        }
     }
+
+    private void OnCurrencyChanged(int _) => RefreshAffordability();
 
     private void RefreshAffordability()
     {
