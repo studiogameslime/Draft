@@ -34,6 +34,11 @@ public class FairyAI : MonoBehaviour
         animator = GetComponent<Animator>();
         myStats = GetComponent<CharacterStats>();
         healStrategy = GetComponent<IAttackStrategy>(); // FairyHealAttack
+
+        // Render above walls
+        var sortByY = GetComponent<SpriteSortByY>();
+        if (sortByY == null) sortByY = gameObject.AddComponent<SpriteSortByY>();
+        sortByY.sortingOrderOffset = 1000;
     }
 
     private void OnEnable()

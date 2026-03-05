@@ -2292,6 +2292,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
   buttonClickSound: {fileID: 8300000, guid: 8ab9f96308f525a49a7ac7a50256d6ed, type: 3}
   pageSwipeSound: {fileID: 0}
+  homeMusic: {fileID: 8300000, guid: c4163abc51121b9459aeea434c750f89, type: 3}
+  battleMusic: {fileID: 8300000, guid: 57c5d19fd9fa4da4ba771609bfb14468, type: 3}
+  musicVolume: 0.5
 --- !u!1 &198848627
 GameObject:
   m_ObjectHideFlags: 0
