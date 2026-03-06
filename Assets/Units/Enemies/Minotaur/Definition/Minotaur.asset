@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_minotaur
   displayName: Minotaur
-  description: 
+  description: A raging bull-headed beast that charges at incredible speed.
   prefab: {fileID: 501027721989515594, guid: b1e329d9cfe163c44b90cda605922125, type: 3}
   rarity: 0
   unitTeam: 1
@@ -42,3 +42,7 @@ MonoBehaviour:
   headPrefabForBattlePreview: {fileID: 5051906023280408227, guid: 7fbd6b32681f3274d890de53914f2dae, type: 3}
   isBoss: 0
   HeadWithEyes: {fileID: 0}
+  enemyMissions:
+  - {fileID: 11400000, guid: a5ec051460190a663d43efa0419b9e2f, type: 2}
+  - {fileID: 11400000, guid: 241444a4a26709b6eb748da75377137a, type: 2}
+  - {fileID: 11400000, guid: 1e8e1c95d1981088ad9da19f2420efa6, type: 2}

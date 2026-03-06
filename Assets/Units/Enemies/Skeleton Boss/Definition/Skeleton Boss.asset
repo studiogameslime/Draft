@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_skeleton_boss
   displayName: Skeleton Boss
-  description: Skeleton Boss
+  description: The undead king risen from his grave. A colossal skeleton lord with devastating power.
   prefab: {fileID: 501027721989515594, guid: 8fae0245977093147a1bc89ec82b2dcc, type: 3}
   rarity: 0
   unitTeam: 1
@@ -42,3 +42,7 @@ MonoBehaviour:
   headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: 8e33fc0a1e14a9e4e99b6bd213fac103, type: 3}
   isBoss: 1
   HeadWithEyes: {fileID: 3667681588813468039, guid: 3d80bcf8ba7108a44a40deb188bb0dd6, type: 3}
+  enemyMissions:
+  - {fileID: 11400000, guid: c0a50a9817d4829163137d78b02a6aae, type: 2}
+  - {fileID: 11400000, guid: 17aeb6bc73f5205783efa7a4448007d3, type: 2}
+  - {fileID: 11400000, guid: 8efa8244b4b11451dfd9635001dd5c09, type: 2}

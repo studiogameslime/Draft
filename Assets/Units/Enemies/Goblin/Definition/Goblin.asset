@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_goblin
   displayName: Goblin
-  description: 
+  description: A small but cunning forest creature. Weak alone, but dangerous in numbers.
   prefab: {fileID: 1962212957759589538, guid: 86654c0814329e347b269c8778cdb847, type: 3}
   rarity: 0
   unitTeam: 1
@@ -42,3 +42,7 @@ MonoBehaviour:
   headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: d6fbab3502fa9d44f9eacf15387e9549, type: 3}
   isBoss: 0
   HeadWithEyes: {fileID: 0}
+  enemyMissions:
+  - {fileID: 11400000, guid: 93e1cfda53e2cbd51814e71a6b58b8c7, type: 2}
+  - {fileID: 11400000, guid: c81e8dad663310f49b2cec7b86d86d49, type: 2}
+  - {fileID: 11400000, guid: f0a110084d50af2d820ace863e4cca1b, type: 2}

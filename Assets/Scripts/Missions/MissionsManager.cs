@@ -155,10 +155,10 @@ public class MissionsManager : MonoBehaviour
     {
         UpdateMissions(activeDailyMissions, action, amount, unitDef, unitClass);
         UpdateMissions(activeWeeklyMissions, action, amount, unitDef, unitClass);
+        UpdateEnemyMissions(action, amount, unitDef, unitClass);
 
         SaveMissionsToGameData();
         OnMissionsStateChanged?.Invoke();
-
     }
 
     private void UpdateMissions(
@@ -484,5 +484,69 @@ public class MissionsManager : MonoBehaviour
         return save != null && save.weeklySetRewardGranted;
     }
 
+    // ======================
+    // ENEMY MISSIONS
+    // ======================
+    private void UpdateEnemyMissions(
+        MissionAction action,
+        int amount,
+        UnitDefinition unitDef,
+        UnitClass unitClass)
+    {
+        var save = GameData.Instance.Save;
+        var allLevels = Resources.LoadAll<LevelDefinition>("Levels");
 
+        // Collect all unique enemies from levels
+        var enemies = new HashSet<string>();
+        foreach (var level in allLevels)
+        {
+            if (level.rounds == null) continue;
+            foreach (var round in level.rounds)
+            {
+                if (round.enemyPhases == null) continue;
+                foreach (var phase in round.enemyPhases)
+                {
+                    if (phase.unit != null && phase.unit.unitTeam == Team.EnemyTeam
+                        && phase.unit.enemyMissions != null)
+                    {
+                        foreach (var missionDef in phase.unit.enemyMissions)
+                        {
+                            if (missionDef == null || missionDef.action != action)
+                                continue;
+
+                            if (missionDef.requiredUnitClass != UnitClass.None &&
+                                missionDef.requiredUnitClass != unitClass)
+                                continue;
+
+                            if (missionDef.requiredUnit != null &&
+                                missionDef.requiredUnit != unitDef)
+                                continue;
+
+                            if (!enemies.Add(missionDef.id))
+                                continue;
+
+                            var savedData = save.enemyMissionProgress
+                                .FirstOrDefault(d => d.missionId == missionDef.id);
+
+                            if (savedData == null)
+                            {
+                                savedData = new MissionSaveData { missionId = missionDef.id };
+                                save.enemyMissionProgress.Add(savedData);
+                            }
+
+                            if (savedData.claimed || savedData.completed)
+                                continue;
+
+                            savedData.currentProgress += amount;
+                            if (savedData.currentProgress >= missionDef.targetAmount)
+                            {
+                                savedData.currentProgress = missionDef.targetAmount;
+                                savedData.completed = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

@@ -114,6 +114,9 @@ public class PlayerSaveData
     // enemy challenge progress
     public List<EnemyChallengeProgressData> enemyChallengeProgress = new List<EnemyChallengeProgressData>();
 
+    // enemy mission progress (per-enemy missions configured on UnitDefinition)
+    public List<MissionSaveData> enemyMissionProgress = new List<MissionSaveData>();
+
     // ==============================
     // LEVEL REWARDS (Progression UI)
     // ==============================

@@ -67,7 +67,7 @@ public class EnemyCardView : MonoBehaviour, IPointerClickHandler
         // Icon
         if (iconImage != null)
         {
-            iconImage.sprite = def.HeadWithEyes != null ? def.HeadWithEyes : def.icon;
+            iconImage.sprite = def.icon;
             iconImage.preserveAspect = true;
             iconImage.color = discovered ? Color.white : Color.black;
         }

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_skull
   displayName: Skull
-  description: 
+  description: A giant floating skull filled with dark energy. Extremely tough and hits hard.
   prefab: {fileID: 501027721989515594, guid: c4cc72bbf7ff2e744beaebf59a5ed9b0, type: 3}
   rarity: 1
   unitTeam: 1
@@ -42,3 +42,7 @@ MonoBehaviour:
   headPrefabForBattlePreview: {fileID: 0}
   isBoss: 0
   HeadWithEyes: {fileID: 0}
+  enemyMissions:
+  - {fileID: 11400000, guid: 67eccff260f86b99722e307fab89d6c3, type: 2}
+  - {fileID: 11400000, guid: f8d7c034c5efa65949c214748622e471, type: 2}
+  - {fileID: 11400000, guid: 2b2cd4f981d8c20c7081cad130fbf63b, type: 2}

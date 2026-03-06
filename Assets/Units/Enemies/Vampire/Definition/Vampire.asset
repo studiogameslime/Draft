@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_vampire
   displayName: Vampire
-  description: 
+  description: A swift undead predator that strikes fast and drains the life from its victims.
   prefab: {fileID: 3185964181808462246, guid: 06aaddcca3de2444783ae5ba882c3708, type: 3}
   rarity: 0
   unitTeam: 1
@@ -42,3 +42,7 @@ MonoBehaviour:
   headPrefabForBattlePreview: {fileID: 1621325389262948559, guid: c904cf7f5f1a2be4c9fa7eb8bb8cb1fb, type: 3}
   isBoss: 0
   HeadWithEyes: {fileID: 0}
+  enemyMissions:
+  - {fileID: 11400000, guid: 865b0eff2dc8783d849be079c82d4cc9, type: 2}
+  - {fileID: 11400000, guid: cf9975d2e329cd38ded90039a82114da, type: 2}
+  - {fileID: 11400000, guid: 389eab8b0a2296e8046ec68e0d5fa3e2, type: 2}

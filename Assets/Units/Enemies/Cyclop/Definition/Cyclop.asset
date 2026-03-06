@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_cyclop
   displayName: Cyclop
-  description: 
+  description: A one-eyed brute with thick skin. Absorbs heavy punishment before going down.
   prefab: {fileID: 2783144815761969831, guid: 34c4869847519bc46b47518e44fc2ad3, type: 3}
   rarity: 0
   unitTeam: 1
@@ -42,3 +42,7 @@ MonoBehaviour:
   headPrefabForBattlePreview: {fileID: 4806593250366934745, guid: 2737a12d8290474439c8313ffdd224c9, type: 3}
   isBoss: 0
   HeadWithEyes: {fileID: 0}
+  enemyMissions:
+  - {fileID: 11400000, guid: ebbd99dd3f68115cc46ab3e1ebf28db1, type: 2}
+  - {fileID: 11400000, guid: 703fc805ab35d20fa7775dc469bbbe94, type: 2}
+  - {fileID: 11400000, guid: eabd4664072e4424abf6a5abfe5e8a42, type: 2}

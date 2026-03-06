@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_ent
   displayName: Ent
-  description: EntEnt
+  description: An ancient tree spirit and guardian of the forest. Massive health and crushing blows.
   prefab: {fileID: 501027721989515594, guid: da010a7283696af48b36645cf2a2a23d, type: 3}
   rarity: 0
   unitTeam: 1
@@ -42,3 +42,7 @@ MonoBehaviour:
   headPrefabForBattlePreview: {fileID: 5803654117645954838, guid: 61a61d854adedcd438e6916aecbda2c2, type: 3}
   isBoss: 1
   HeadWithEyes: {fileID: 3667681588813468039, guid: ce8e913a30d98064ebbdd08362bbc1e5, type: 3}
+  enemyMissions:
+  - {fileID: 11400000, guid: d9b91f90f466d3a8b6456e5a3342d13f, type: 2}
+  - {fileID: 11400000, guid: f0d95cef92c12c1018cd972d9d3635a7, type: 2}
+  - {fileID: 11400000, guid: d41b22e174e62739087debb6607becdf, type: 2}

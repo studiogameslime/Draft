@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_skeleton_archer
   displayName: Skeleton Archer
-  description: 
+  description: A reanimated marksman that picks off defenders from a safe distance.
   prefab: {fileID: 501027721989515594, guid: bb1cae93fa8bb3046b7b5b04d85ec182, type: 3}
   rarity: 0
   unitTeam: 1
@@ -42,3 +42,7 @@ MonoBehaviour:
   headPrefabForBattlePreview: {fileID: 0}
   isBoss: 0
   HeadWithEyes: {fileID: 0}
+  enemyMissions:
+  - {fileID: 11400000, guid: 92b6e0a671695eb79fdd2f12985814e1, type: 2}
+  - {fileID: 11400000, guid: 4214a86281c92cd4db109245151ed298, type: 2}
+  - {fileID: 11400000, guid: 772b2335f62ccb83d8e913a6ae3d5935, type: 2}

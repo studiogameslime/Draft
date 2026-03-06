@@ -42,6 +42,7 @@ public class UnitDefinition : ScriptableObject
     public GameObject headPrefabForBattlePreview;
     public bool isBoss = false;
     public Sprite HeadWithEyes;
+    public List<MissionDefinition> enemyMissions = new();
 
 
 

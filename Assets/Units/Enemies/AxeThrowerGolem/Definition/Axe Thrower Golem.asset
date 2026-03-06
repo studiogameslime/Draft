@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_axe_thrower_golem
   displayName: Axe Thrower Golem
-  description: 
+  description: A stone guardian that hurls enchanted axes from afar. Slow but deadly at range.
   prefab: {fileID: 8120014860710774337, guid: acc7de7bd49f62e4a86bb81a26ad4d5d, type: 3}
   rarity: 1
   unitTeam: 1
@@ -42,3 +42,7 @@ MonoBehaviour:
   headPrefabForBattlePreview: {fileID: 667374381617566049, guid: 01bc67b0612c7d14ba6244e991b0c3d0, type: 3}
   isBoss: 0
   HeadWithEyes: {fileID: 0}
+  enemyMissions:
+  - {fileID: 11400000, guid: 72e63272d335d22c21155641c930ba33, type: 2}
+  - {fileID: 11400000, guid: dfc260c04761dfc3a7d2f3384231c251, type: 2}
+  - {fileID: 11400000, guid: ba139cac7c379b83f2db1ddcdbba45a2, type: 2}

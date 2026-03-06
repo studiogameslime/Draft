@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_skeleton
   displayName: Skeleton
-  description: 
+  description: A basic undead foot soldier. Fragile but fast, often appearing in large hordes.
   prefab: {fileID: 501027721989515594, guid: c5d687e618389294e850de7fbb128154, type: 3}
   rarity: 0
   unitTeam: 1
@@ -42,3 +42,7 @@ MonoBehaviour:
   headPrefabForBattlePreview: {fileID: 0}
   isBoss: 0
   HeadWithEyes: {fileID: 0}
+  enemyMissions:
+  - {fileID: 11400000, guid: 2129e22b755ff70cf1463cad38b58bd8, type: 2}
+  - {fileID: 11400000, guid: e3f0dda6df5181cf37845762c23282e1, type: 2}
+  - {fileID: 11400000, guid: f91bde89267dd44621b3b26b3e2d485b, type: 2}

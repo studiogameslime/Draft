@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_giant_skeleton
   displayName: GiantSkeleton
-  description: 
+  description: A towering skeletal warrior with heavy bones. Fast and resilient.
   prefab: {fileID: 501027721989515594, guid: 9ef15c7d379a26248a985984bf0f6ced, type: 3}
   rarity: 2
   unitTeam: 1
@@ -42,3 +42,7 @@ MonoBehaviour:
   headPrefabForBattlePreview: {fileID: 0}
   isBoss: 0
   HeadWithEyes: {fileID: 0}
+  enemyMissions:
+  - {fileID: 11400000, guid: d229e17253bc829629c1c42c21094f8e, type: 2}
+  - {fileID: 11400000, guid: c4f9591c34fd780001a7b3236895616f, type: 2}
+  - {fileID: 11400000, guid: 6faae1ac29394128d7539ec73330005e, type: 2}
