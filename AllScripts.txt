@@ -6161,6 +6161,7 @@ public class UnitDefinition : ScriptableObject
     public GameObject headPrefabForBattlePreview;
     public bool isBoss = false;
     public Sprite HeadWithEyes;
+    public List<MissionDefinition> enemyMissions = new();
 
 
 
@@ -9488,6 +9489,9 @@ public class PlayerSaveData
 
     // enemy challenge progress
     public List<EnemyChallengeProgressData> enemyChallengeProgress = new List<EnemyChallengeProgressData>();
+
+    // enemy mission progress (per-enemy missions configured on UnitDefinition)
+    public List<MissionSaveData> enemyMissionProgress = new List<MissionSaveData>();
 
     // ==============================
     // LEVEL REWARDS (Progression UI)
@@ -13260,10 +13264,10 @@ public class MissionsManager : MonoBehaviour
     {
         UpdateMissions(activeDailyMissions, action, amount, unitDef, unitClass);
         UpdateMissions(activeWeeklyMissions, action, amount, unitDef, unitClass);
+        UpdateEnemyMissions(action, amount, unitDef, unitClass);
 
         SaveMissionsToGameData();
         OnMissionsStateChanged?.Invoke();
-
     }
 
     private void UpdateMissions(
@@ -13589,7 +13593,71 @@ public class MissionsManager : MonoBehaviour
         return save != null && save.weeklySetRewardGranted;
     }
 
+    // ======================
+    // ENEMY MISSIONS
+    // ======================
+    private void UpdateEnemyMissions(
+        MissionAction action,
+        int amount,
+        UnitDefinition unitDef,
+        UnitClass unitClass)
+    {
+        var save = GameData.Instance.Save;
+        var allLevels = Resources.LoadAll<LevelDefinition>("Levels");
 
+        // Collect all unique enemies from levels
+        var enemies = new HashSet<string>();
+        foreach (var level in allLevels)
+        {
+            if (level.rounds == null) continue;
+            foreach (var round in level.rounds)
+            {
+                if (round.enemyPhases == null) continue;
+                foreach (var phase in round.enemyPhases)
+                {
+                    if (phase.unit != null && phase.unit.unitTeam == Team.EnemyTeam
+                        && phase.unit.enemyMissions != null)
+                    {
+                        foreach (var missionDef in phase.unit.enemyMissions)
+                        {
+                            if (missionDef == null || missionDef.action != action)
+                                continue;
+
+                            if (missionDef.requiredUnitClass != UnitClass.None &&
+                                missionDef.requiredUnitClass != unitClass)
+                                continue;
+
+                            if (missionDef.requiredUnit != null &&
+                                missionDef.requiredUnit != unitDef)
+                                continue;
+
+                            if (!enemies.Add(missionDef.id))
+                                continue;
+
+                            var savedData = save.enemyMissionProgress
+                                .FirstOrDefault(d => d.missionId == missionDef.id);
+
+                            if (savedData == null)
+                            {
+                                savedData = new MissionSaveData { missionId = missionDef.id };
+                                save.enemyMissionProgress.Add(savedData);
+                            }
+
+                            if (savedData.claimed || savedData.completed)
+                                continue;
+
+                            savedData.currentProgress += amount;
+                            if (savedData.currentProgress >= missionDef.targetAmount)
+                            {
+                                savedData.currentProgress = missionDef.targetAmount;
+                                savedData.completed = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 
@@ -19070,7 +19138,7 @@ public class EnemyCardView : MonoBehaviour, IPointerClickHandler
         // Icon
         if (iconImage != null)
         {
-            iconImage.sprite = def.HeadWithEyes != null ? def.HeadWithEyes : def.icon;
+            iconImage.sprite = def.icon;
             iconImage.preserveAspect = true;
             iconImage.color = discovered ? Color.white : Color.black;
         }
@@ -19286,6 +19354,7 @@ public class EnemyChallengeTracker : MonoBehaviour
 FILE: EnemyDetailsPopupController.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Bestiary\EnemyDetailsPopupController.cs
 ========================
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -19293,34 +19362,35 @@ using UnityEngine.UI;
 
 public class EnemyDetailsPopupController : MonoBehaviour
 {
-    [Header("Root")]
+    [Header("Root & Close")]
     [SerializeField] private GameObject root;
     [SerializeField] private Button closeButton;
     [SerializeField] private Button backgroundCloseButton;
-
-    [Header("Animator")]
     [SerializeField] private PopupAnimator popupAnimator;
 
-    [Header("Enemy UI")]
+    [Header("Enemy Info")]
     [SerializeField] private Image icon;
     [SerializeField] private Animator iconAnimator;
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text descriptionText;
+    [SerializeField] private GameObject bossTag;
+
+    [Header("Stats")]
     [SerializeField] private TMP_Text hpText;
     [SerializeField] private TMP_Text dmgText;
     [SerializeField] private TMP_Text atkSpeedText;
     [SerializeField] private TMP_Text rangeText;
     [SerializeField] private TMP_Text speedText;
     [SerializeField] private TMP_Text killCountText;
-    [SerializeField] private GameObject bossTag;
 
-    [Header("Challenges")]
-    [SerializeField] private EnemyChallengeSet[] allChallengeSets;
-    [SerializeField] private EnemyChallengeRowView challengeRowPrefab;
-    [SerializeField] private Transform challengesContent;
+    [Header("Missions Section")]
+    [SerializeField] private Transform missionsContent;
+    [SerializeField] private EnemyMissionContainer missionRowPrefab;
+    [SerializeField] private GameObject noMissionsText;
 
     private UnitDefinition _enemy;
     private RectTransform _lastFromRect;
+    private readonly List<MissionInstance> _activeMissionInstances = new();
 
     private void Awake()
     {
@@ -19329,9 +19399,6 @@ public class EnemyDetailsPopupController : MonoBehaviour
 
         if (backgroundCloseButton != null)
             backgroundCloseButton.onClick.AddListener(Close);
-
-        if (root != null)
-            root.SetActive(false);
     }
 
     public void Open(UnitDefinition enemy, RectTransform fromRect)
@@ -19344,8 +19411,8 @@ public class EnemyDetailsPopupController : MonoBehaviour
         if (root != null)
             root.SetActive(true);
 
-        FillData();
-        FillChallenges();
+        FillStats();
+        FillMissions();
 
         if (popupAnimator != null && fromRect != null)
             popupAnimator.OpenFromRect(fromRect, hideButton: false);
@@ -19356,17 +19423,43 @@ public class EnemyDetailsPopupController : MonoBehaviour
         if (root == null || !root.activeSelf)
             return;
 
+        // Unsubscribe from mission events
+        foreach (var m in _activeMissionInstances)
+        {
+            m.OnClaimed -= SaveEnemyMissions;
+            m.OnProgressChanged -= SaveEnemyMissions;
+        }
+        _activeMissionInstances.Clear();
+
         if (popupAnimator != null && _lastFromRect != null && _lastFromRect.gameObject.activeInHierarchy)
             popupAnimator.Close();
         else if (root != null)
             root.SetActive(false);
     }
 
-    private void FillData()
+    private void FillStats()
     {
         if (_enemy == null) return;
 
-        FillIconImageOrAnimator();
+        if (iconAnimator != null)
+        {
+            if (_enemy.animatorController != null)
+            {
+                iconAnimator.enabled = true;
+                iconAnimator.runtimeAnimatorController = _enemy.animatorController;
+            }
+            else
+            {
+                iconAnimator.enabled = false;
+                iconAnimator.runtimeAnimatorController = null;
+            }
+        }
+
+        if (icon != null)
+        {
+            icon.sprite = _enemy.icon;
+            icon.preserveAspect = true;
+        }
 
         if (nameText != null) nameText.text = _enemy.displayName;
         if (descriptionText != null) descriptionText.text = _enemy.description;
@@ -19396,64 +19489,249 @@ public class EnemyDetailsPopupController : MonoBehaviour
         }
     }
 
-    private void FillIconImageOrAnimator()
+    private void FillMissions()
     {
-        if (icon == null || _enemy == null) return;
-
-        icon.sprite = _enemy.HeadWithEyes != null ? _enemy.HeadWithEyes : _enemy.icon;
-
-        if (iconAnimator != null)
+        // Cleanup previous
+        foreach (var m in _activeMissionInstances)
         {
-            if (_enemy.animatorController != null)
-            {
-                iconAnimator.enabled = true;
-                iconAnimator.runtimeAnimatorController = _enemy.animatorController;
-            }
-            else
-            {
-                iconAnimator.enabled = false;
-                iconAnimator.runtimeAnimatorController = null;
-            }
+            m.OnClaimed -= SaveEnemyMissions;
+            m.OnProgressChanged -= SaveEnemyMissions;
         }
-    }
+        _activeMissionInstances.Clear();
 
-    private void FillChallenges()
-    {
-        // Clear old rows
-        for (int i = challengesContent.childCount - 1; i >= 0; i--)
-            Destroy(challengesContent.GetChild(i).gameObject);
+        if (missionsContent == null) return;
 
-        if (allChallengeSets == null || challengeRowPrefab == null)
+        for (int i = missionsContent.childCount - 1; i >= 0; i--)
+            Destroy(missionsContent.GetChild(i).gameObject);
+
+        if (_enemy.enemyMissions == null || _enemy.enemyMissions.Count == 0 || missionRowPrefab == null)
+        {
+            if (noMissionsText != null) noMissionsText.SetActive(true);
             return;
+        }
 
-        var set = allChallengeSets.FirstOrDefault(s => s != null && s.enemy != null && s.enemy.id == _enemy.id);
-        if (set == null || set.challenges == null)
-            return;
+        if (noMissionsText != null) noMissionsText.SetActive(false);
 
         var save = GameData.Instance.Save;
 
-        foreach (var challenge in set.challenges)
+        foreach (var missionDef in _enemy.enemyMissions)
         {
-            if (challenge == null) continue;
+            if (missionDef == null) continue;
 
-            int progress = GetChallengeProgress(save, challenge.challengeId);
-            bool claimed = IsChallengeComplete(save, challenge.challengeId);
+            var savedData = save.enemyMissionProgress
+                .FirstOrDefault(d => d.missionId == missionDef.id);
 
-            var row = Instantiate(challengeRowPrefab, challengesContent);
-            row.Setup(challenge, progress, claimed);
+            var instance = new MissionInstance(missionDef);
+            if (savedData != null)
+            {
+                instance.currentProgress = savedData.currentProgress;
+                instance.completed = savedData.completed;
+                instance.claimed = savedData.claimed;
+            }
+
+            instance.OnClaimed += SaveEnemyMissions;
+            instance.OnProgressChanged += SaveEnemyMissions;
+            _activeMissionInstances.Add(instance);
+
+            var row = Instantiate(missionRowPrefab, missionsContent);
+            row.Setup(instance);
         }
     }
 
-    private int GetChallengeProgress(PlayerSaveData save, string challengeId)
+    private void SaveEnemyMissions()
     {
-        var data = save.enemyChallengeProgress.FirstOrDefault(c => c.challengeId == challengeId);
-        return data?.progress ?? 0;
+        var save = GameData.Instance.Save;
+
+        foreach (var instance in _activeMissionInstances)
+        {
+            var existing = save.enemyMissionProgress
+                .FirstOrDefault(d => d.missionId == instance.definition.id);
+
+            if (existing != null)
+            {
+                existing.currentProgress = instance.currentProgress;
+                existing.completed = instance.completed;
+                existing.claimed = instance.claimed;
+            }
+            else
+            {
+                save.enemyMissionProgress.Add(new MissionSaveData
+                {
+                    missionId = instance.definition.id,
+                    currentProgress = instance.currentProgress,
+                    completed = instance.completed,
+                    claimed = instance.claimed
+                });
+            }
+        }
+
+        GameData.Instance.SaveNow();
+    }
+}
+
+
+
+========================
+FILE: EnemyMissionContainer.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Bestiary\EnemyMissionContainer.cs
+========================
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class EnemyMissionContainer : MonoBehaviour
+{
+    [SerializeField] private TMP_Text descriptionText;
+    [SerializeField] private TMP_Text progressText;
+    [SerializeField] private TMP_Text rewardText;
+    [SerializeField] private Image progressFill;
+    [SerializeField] private Button claimButton;
+    [SerializeField] private TMP_Text claimButtonText;
+    [SerializeField] private Image rewardIcon;
+    [SerializeField] private Image completedMissionMark;
+    [SerializeField] private Sprite activeButtonSprite;
+    [SerializeField] private Sprite inactiveButtonSprite;
+
+    private MissionInstance mission;
+
+    public void Setup(MissionInstance mission)
+    {
+        this.mission = mission;
+
+        descriptionText.text = mission.definition.description;
+
+        if (mission.definition.goldReward > 0)
+        {
+            int finalGold = MasteryBonusManager.Instance != null
+                ? MasteryBonusManager.Instance.GetBoostedGold(mission.definition.goldReward)
+                : mission.definition.goldReward;
+
+            rewardText.text = finalGold.ToString();
+            rewardIcon.sprite = StyleManager.instance.goldSprite;
+        }
+
+        if (mission.definition.gemsReward > 0)
+        {
+            rewardText.text = mission.definition.gemsReward.ToString();
+            rewardIcon.sprite = StyleManager.instance.gemSprite;
+        }
+        if (mission.definition.scrollsReward > 0)
+        {
+            rewardText.text = mission.definition.scrollsReward.ToString();
+            rewardIcon.sprite = StyleManager.instance.scrollSprite;
+        }
+        if (mission.definition.chestReward != null)
+        {
+            RectTransform rt = rewardIcon.GetComponent<RectTransform>();
+
+            rt.anchorMin = new Vector2(0.5f, 0.5f);
+            rt.anchorMax = new Vector2(0.5f, 0.5f);
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition = new Vector2(0f, 0f);
+            rt.sizeDelta = new Vector2(80f, 80f);
+
+            rewardText.gameObject.SetActive(false);
+            rewardIcon.sprite = mission.definition.chestReward.buttonIcon;
+        }
+
+        claimButton.onClick.RemoveAllListeners();
+        claimButton.onClick.AddListener(OnClaimPressed);
+
+        mission.OnProgressChanged += Refresh;
+        mission.OnClaimed += Refresh;
+
+        Refresh();
     }
 
-    private bool IsChallengeComplete(PlayerSaveData save, string challengeId)
+    private void OnDestroy()
     {
-        var data = save.enemyChallengeProgress.FirstOrDefault(c => c.challengeId == challengeId);
-        return data?.claimed ?? false;
+        if (mission != null)
+        {
+            mission.OnProgressChanged -= Refresh;
+            mission.OnClaimed -= Refresh;
+        }
+    }
+
+    void Refresh()
+    {
+        progressText.text =
+            $"{mission.currentProgress}/{mission.definition.targetAmount}";
+
+        progressFill.fillAmount =
+            (float)mission.currentProgress / mission.definition.targetAmount;
+
+        if (mission.claimed)
+        {
+            claimButton.interactable = false;
+            SetButtonInactive();
+            if (claimButtonText != null)
+                claimButtonText.text = "Claimed";
+            claimButton.image.color = Color.white;
+        }
+        else if (mission.completed)
+        {
+            claimButton.interactable = true;
+            SetButtonActive();
+            if (claimButtonText != null)
+                claimButtonText.text = "Claim";
+            claimButton.image.color = UnityEngine.ColorUtility.TryParseHtmlString("#40FF00", out var c) ? c : Color.white;
+        }
+        else
+        {
+            claimButton.interactable = false;
+            SetButtonInactive();
+            if (claimButtonText != null)
+                claimButtonText.text = "Claim";
+            claimButton.image.color = Color.white;
+        }
+    }
+
+    void OnClaimPressed()
+    {
+        if (mission == null || !mission.completed || mission.claimed)
+            return;
+
+        if (mission.definition.chestReward != null && StoreItemChestPanel.Instance != null)
+        {
+            StoreItemChestPanel.Instance.Show(mission.definition.chestReward, () =>
+            {
+                GrantRewards();
+            });
+        }
+        else
+        {
+            GrantRewards();
+        }
+    }
+
+    private void GrantRewards()
+    {
+        if (mission.definition.goldReward > 0)
+        {
+            int boostedGold = MasteryBonusManager.Instance != null
+                ? MasteryBonusManager.Instance.GetBoostedGold(mission.definition.goldReward)
+                : mission.definition.goldReward;
+            PlayerCurrencyWallet.Instance.AddGold(boostedGold, rewardIcon.rectTransform);
+        }
+
+        if (mission.definition.gemsReward > 0)
+            PlayerCurrencyWallet.Instance.AddGems(mission.definition.gemsReward, rewardIcon.rectTransform);
+
+        if (mission.definition.scrollsReward > 0)
+            PlayerCurrencyWallet.Instance.AddScrolls(mission.definition.scrollsReward, rewardIcon.rectTransform);
+
+        mission.claimed = true;
+        mission.OnClaimed?.Invoke();
+    }
+
+    private void SetButtonInactive()
+    {
+        claimButton.image.sprite = inactiveButtonSprite;
+    }
+
+    private void SetButtonActive()
+    {
+        claimButton.image.sprite = activeButtonSprite;
     }
 }
 
