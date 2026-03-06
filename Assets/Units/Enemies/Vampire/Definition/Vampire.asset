@@ -31,7 +31,7 @@ MonoBehaviour:
   iconScale: 0.4
   soulCost: 0
   spawnTime: 0
-  animatorController: {fileID: 0}
+  animatorController: {fileID: 9100000, guid: 1877cd00dc7efd1e26eb277803da8c62, type: 2}
   maxTier: 3
   partSlots: []
   baseCapacity: 1
