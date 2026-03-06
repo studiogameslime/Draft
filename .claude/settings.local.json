@@ -17,7 +17,11 @@
       "Bash(\"/c/Users/matan/AppData/Local/Android/Sdk/platform-tools/adb.exe\" devices:*)",
       "Bash(uuidgen:*)",
       "Bash(powershell:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(for f in Assets/Units/Enemies/*/Definition/*.asset)",
+      "Bash(do echo \"=== $f ===\")",
+      "Read(//c/Unity/Projects/Draft/**)",
+      "Bash(sed:*)"
     ]
   }
 }
