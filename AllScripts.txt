@@ -1273,6 +1273,14 @@ public class EnemyWaveSpawner : MonoBehaviour
 
         var spawner = spawners[Random.Range(0, spawners.Count)];
         spawner.Spawn(def, level, enemiesContainer);
+
+        // Discover enemy in bestiary on first encounter
+        var save = GameData.Instance?.Save;
+        if (save != null && !string.IsNullOrEmpty(def.id) && !save.discoveredEnemyIds.Contains(def.id))
+        {
+            save.discoveredEnemyIds.Add(def.id);
+            GameData.Instance.SaveNow();
+        }
     }
 }
 
@@ -2903,6 +2911,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         DisableAllCombatScripts();
 
         TrySpawnSoulOnDeath();
+        TryTrackEnemyKill();
 
         if (deathFadeRoutine != null) StopCoroutine(deathFadeRoutine);
         deathFadeRoutine = StartCoroutine(FadeOutAfterDeath());
@@ -2936,6 +2945,32 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
                 Debug.Log($"[Souls] Additive Mastery! Base: {baseChance * 100}%, Bonus: {bonusPercent * 100}%, Total: {finalChance * 100}%");
             }
         }
+    }
+
+    private void TryTrackEnemyKill()
+    {
+        if (team != Team.EnemyTeam) return;
+        if (definition == null) return;
+
+        // Track kill stats in save data
+        var save = GameData.Instance?.Save;
+        if (save != null)
+        {
+            var stat = save.enemyKillStats.Find(s => s.enemyId == definition.id);
+            if (stat == null)
+            {
+                stat = new EnemyKillStatData { enemyId = definition.id, kills = 0 };
+                save.enemyKillStats.Add(stat);
+            }
+            stat.kills++;
+
+            // Discover enemy
+            if (!save.discoveredEnemyIds.Contains(definition.id))
+                save.discoveredEnemyIds.Add(definition.id);
+        }
+
+        // Track challenge progress
+        EnemyChallengeTracker.Instance?.ReportEnemyKill(definition.id);
     }
 
     private void DisableAllCombatScripts()
@@ -5282,6 +5317,84 @@ public struct RarityWeight
 
 
 ========================
+FILE: EnemyChallengeDefinition.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Enemies\EnemyChallengeDefinition.cs
+========================
+using UnityEngine;
+
+[CreateAssetMenu(menuName = "Game/Enemy Challenge Definition")]
+public class EnemyChallengeDefinition : ScriptableObject
+{
+    public string challengeId;
+    public string enemyId;
+    public EnemyChallengeType challengeType;
+    public int targetCount;
+
+    [Header("Rewards")]
+    public int goldReward;
+    public int gemsReward;
+    public int xpReward;
+
+    public string GetDescription()
+    {
+        string action = challengeType switch
+        {
+            EnemyChallengeType.Kill => "Kill",
+            EnemyChallengeType.KillWithPoison => "Poison",
+            EnemyChallengeType.KillWithBurn => "Burn",
+            EnemyChallengeType.KillWithCrit => "Crit kill",
+            EnemyChallengeType.KillWithMelee => "Melee kill",
+            EnemyChallengeType.KillWithRanged => "Ranged kill",
+            EnemyChallengeType.KillWithMage => "Mage kill",
+            _ => "Defeat"
+        };
+        return $"{action} {targetCount}";
+    }
+}
+
+public enum EnemyChallengeType
+{
+    Kill,
+    KillWithPoison,
+    KillWithBurn,
+    KillWithCrit,
+    KillWithMelee,
+    KillWithRanged,
+    KillWithMage
+}
+
+
+
+========================
+FILE: EnemyChallengeSet.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Enemies\EnemyChallengeSet.cs
+========================
+using UnityEngine;
+
+[CreateAssetMenu(menuName = "Game/Enemy Challenge Set")]
+public class EnemyChallengeSet : ScriptableObject
+{
+    public UnitDefinition enemy;
+    public EnemyChallengeDefinition[] challenges;
+}
+
+
+
+========================
+FILE: EnemyDatabase.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Enemies\EnemyDatabase.cs
+========================
+using UnityEngine;
+
+[CreateAssetMenu(menuName = "Game/Enemy Database")]
+public class EnemyDatabase : ScriptableObject
+{
+    public UnitDefinition[] allEnemies;
+}
+
+
+
+========================
 FILE: LevelDefinition.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Definitions\Levels\LevelDefinition.cs
 ========================
@@ -6852,6 +6965,903 @@ public class DropAreaGrid : MonoBehaviour
 
 
 ========================
+FILE: BestiarySetupTool.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Editor\BestiarySetupTool.cs
+========================
+using UnityEngine;
+using UnityEditor;
+using UnityEditor.Events;
+using UnityEngine.UI;
+using TMPro;
+
+/// <summary>
+/// One-time editor tool to create Bestiary prefabs and assets.
+/// Run from menu: Tools > Bestiary > Setup All
+/// </summary>
+public static class BestiarySetupTool
+{
+    private const string PrefabFolder = "Assets/Prefabs/UI/Bestiary";
+    private const string AssetFolder = "Assets/ScriptableObjects/Enemies";
+
+    [MenuItem("Tools/Bestiary/Setup All")]
+    public static void SetupAll()
+    {
+        EnsureFolder(PrefabFolder);
+        EnsureFolder(AssetFolder);
+
+        CreateEnemyDatabase();
+        CreateEnemyCardPrefab();
+        CreateChallengeRowPrefab();
+        CreateEnemyDetailsPopupPrefab();
+        CreateEnemyBestiaryScreenPrefab();
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        Debug.Log("Bestiary setup complete! Check:\n" +
+                  $"  Prefabs: {PrefabFolder}/\n" +
+                  $"  Assets:  {AssetFolder}/\n" +
+                  "Next steps:\n" +
+                  "  1. Assign enemy UnitDefinitions to the EnemyDatabase asset\n" +
+                  "  2. Drag EnemyBestiaryScreen prefab into your HomeScreen scene\n" +
+                  "  3. Add a button and wire OnClick -> EnemyBestiaryScreen.OpenFromButton()");
+    }
+
+    // ============================================================
+    // ENEMY DATABASE ASSET
+    // ============================================================
+    [MenuItem("Tools/Bestiary/Create Enemy Database Asset")]
+    public static void CreateEnemyDatabase()
+    {
+        string path = $"{AssetFolder}/EnemyDatabase.asset";
+        if (AssetDatabase.LoadAssetAtPath<EnemyDatabase>(path) != null)
+        {
+            Debug.Log("EnemyDatabase already exists at " + path);
+            return;
+        }
+
+        var db = ScriptableObject.CreateInstance<EnemyDatabase>();
+
+        // Auto-find all enemy UnitDefinitions
+        var guids = AssetDatabase.FindAssets("t:UnitDefinition");
+        var enemies = new System.Collections.Generic.List<UnitDefinition>();
+        foreach (var guid in guids)
+        {
+            var assetPath = AssetDatabase.GUIDToAssetPath(guid);
+            var def = AssetDatabase.LoadAssetAtPath<UnitDefinition>(assetPath);
+            if (def != null && def.unitTeam == Team.EnemyTeam)
+                enemies.Add(def);
+        }
+        db.allEnemies = enemies.ToArray();
+
+        AssetDatabase.CreateAsset(db, path);
+        Debug.Log($"Created EnemyDatabase at {path} with {enemies.Count} enemies");
+    }
+
+    // ============================================================
+    // ENEMY CARD PREFAB
+    // ============================================================
+    [MenuItem("Tools/Bestiary/Create Enemy Card Prefab")]
+    public static void CreateEnemyCardPrefab()
+    {
+        string path = $"{PrefabFolder}/EnemyCard.prefab";
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(path) != null)
+        {
+            Debug.Log("EnemyCard prefab already exists at " + path);
+            return;
+        }
+
+        // Root
+        var root = CreateUIObject("EnemyCard", 200, 250);
+        var rootImage = root.AddComponent<Image>();
+        rootImage.color = new Color(0.2f, 0.2f, 0.25f, 1f);
+        var cardView = root.AddComponent<EnemyCardView>();
+
+        // Icon
+        var iconGo = CreateUIChild(root, "Icon", stretch: false);
+        var iconRT = iconGo.GetComponent<RectTransform>();
+        iconRT.anchorMin = new Vector2(0.1f, 0.35f);
+        iconRT.anchorMax = new Vector2(0.9f, 0.95f);
+        iconRT.offsetMin = Vector2.zero;
+        iconRT.offsetMax = Vector2.zero;
+        var iconImage = iconGo.AddComponent<Image>();
+        iconImage.preserveAspect = true;
+        var iconAnimator = iconGo.AddComponent<Animator>();
+
+        // Name
+        var nameGo = CreateUIChild(root, "Name", stretch: false);
+        var nameRT = nameGo.GetComponent<RectTransform>();
+        nameRT.anchorMin = new Vector2(0f, 0.15f);
+        nameRT.anchorMax = new Vector2(1f, 0.35f);
+        nameRT.offsetMin = Vector2.zero;
+        nameRT.offsetMax = Vector2.zero;
+        var nameText = nameGo.AddComponent<TextMeshProUGUI>();
+        nameText.text = "Enemy Name";
+        nameText.alignment = TextAlignmentOptions.Center;
+        nameText.fontSize = 18;
+
+        // Kill Count
+        var killGo = CreateUIChild(root, "KillCount", stretch: false);
+        var killRT = killGo.GetComponent<RectTransform>();
+        killRT.anchorMin = new Vector2(0f, 0f);
+        killRT.anchorMax = new Vector2(1f, 0.15f);
+        killRT.offsetMin = Vector2.zero;
+        killRT.offsetMax = Vector2.zero;
+        var killText = killGo.AddComponent<TextMeshProUGUI>();
+        killText.text = "0";
+        killText.alignment = TextAlignmentOptions.Center;
+        killText.fontSize = 14;
+        killText.color = new Color(0.7f, 0.7f, 0.7f);
+
+        // Boss Icon
+        var bossGo = CreateUIChild(root, "BossIcon", stretch: false);
+        var bossRT = bossGo.GetComponent<RectTransform>();
+        bossRT.anchorMin = new Vector2(0.75f, 0.85f);
+        bossRT.anchorMax = new Vector2(0.95f, 0.98f);
+        bossRT.offsetMin = Vector2.zero;
+        bossRT.offsetMax = Vector2.zero;
+        var bossImage = bossGo.AddComponent<Image>();
+        bossImage.color = Color.red;
+        bossGo.SetActive(false);
+
+        // Undiscovered Overlay
+        var overlayGo = CreateUIChild(root, "UndiscoveredOverlay", stretch: true);
+        var overlayImage = overlayGo.AddComponent<Image>();
+        overlayImage.color = new Color(0, 0, 0, 0.7f);
+        var questionGo = CreateUIChild(overlayGo, "QuestionMark", stretch: false);
+        var qRT = questionGo.GetComponent<RectTransform>();
+        qRT.anchorMin = new Vector2(0.25f, 0.3f);
+        qRT.anchorMax = new Vector2(0.75f, 0.7f);
+        qRT.offsetMin = Vector2.zero;
+        qRT.offsetMax = Vector2.zero;
+        var questionText = questionGo.AddComponent<TextMeshProUGUI>();
+        questionText.text = "?";
+        questionText.alignment = TextAlignmentOptions.Center;
+        questionText.fontSize = 48;
+
+        // Wire serialized fields
+        var so = new SerializedObject(cardView);
+        so.FindProperty("iconImage").objectReferenceValue = iconImage;
+        so.FindProperty("iconAnimator").objectReferenceValue = iconAnimator;
+        so.FindProperty("nameText").objectReferenceValue = nameText;
+        so.FindProperty("killCountText").objectReferenceValue = killText;
+        so.FindProperty("bossIcon").objectReferenceValue = bossGo;
+        so.FindProperty("undiscoveredOverlay").objectReferenceValue = overlayGo;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        PrefabUtility.SaveAsPrefabAsset(root, path);
+        Object.DestroyImmediate(root);
+        Debug.Log("Created EnemyCard prefab at " + path);
+    }
+
+    // ============================================================
+    // CHALLENGE ROW PREFAB
+    // ============================================================
+    [MenuItem("Tools/Bestiary/Create Challenge Row Prefab")]
+    public static void CreateChallengeRowPrefab()
+    {
+        string path = $"{PrefabFolder}/EnemyChallengeRow.prefab";
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(path) != null)
+        {
+            Debug.Log("EnemyChallengeRow prefab already exists at " + path);
+            return;
+        }
+
+        var root = CreateUIObject("EnemyChallengeRow", 0, 70);
+        var rootRT = root.GetComponent<RectTransform>();
+        // Stretch horizontal
+        rootRT.anchorMin = new Vector2(0, 0);
+        rootRT.anchorMax = new Vector2(1, 0);
+        rootRT.pivot = new Vector2(0.5f, 0);
+        var rootImage = root.AddComponent<Image>();
+        rootImage.color = new Color(0.15f, 0.15f, 0.2f, 0.8f);
+        var rowView = root.AddComponent<EnemyChallengeRowView>();
+        var layout = root.AddComponent<HorizontalLayoutGroup>();
+        layout.spacing = 10;
+        layout.padding = new RectOffset(10, 10, 5, 5);
+        layout.childAlignment = TextAnchor.MiddleLeft;
+        layout.childForceExpandWidth = false;
+        layout.childForceExpandHeight = true;
+
+        // Description
+        var descGo = CreateUIChild(root, "Description", stretch: false);
+        var descLE = descGo.AddComponent<LayoutElement>();
+        descLE.preferredWidth = 200;
+        descLE.flexibleWidth = 1;
+        var descText = descGo.AddComponent<TextMeshProUGUI>();
+        descText.text = "Kill 10";
+        descText.fontSize = 16;
+        descText.alignment = TextAlignmentOptions.MidlineLeft;
+
+        // Progress bar container
+        var barContainer = CreateUIChild(root, "ProgressBarContainer", stretch: false);
+        var barLE = barContainer.AddComponent<LayoutElement>();
+        barLE.preferredWidth = 120;
+        barLE.preferredHeight = 20;
+
+        // Progress bar (Slider)
+        var sliderGo = CreateUIChild(barContainer, "ProgressBar", stretch: true);
+        var slider = sliderGo.AddComponent<Slider>();
+        slider.interactable = false;
+        slider.maxValue = 10;
+        slider.value = 3;
+
+        // Slider background
+        var bgGo = CreateUIChild(sliderGo, "Background", stretch: true);
+        var bgImg = bgGo.AddComponent<Image>();
+        bgImg.color = new Color(0.1f, 0.1f, 0.1f);
+
+        // Slider fill area
+        var fillAreaGo = CreateUIChild(sliderGo, "Fill Area", stretch: true);
+        var fillGo = CreateUIChild(fillAreaGo, "Fill", stretch: true);
+        var fillImg = fillGo.AddComponent<Image>();
+        fillImg.color = new Color(0.2f, 0.8f, 0.2f);
+        slider.fillRect = fillGo.GetComponent<RectTransform>();
+
+        // Progress text
+        var progGo = CreateUIChild(barContainer, "ProgressText", stretch: true);
+        var progText = progGo.AddComponent<TextMeshProUGUI>();
+        progText.text = "3/10";
+        progText.fontSize = 14;
+        progText.alignment = TextAlignmentOptions.Center;
+
+        // Reward text
+        var rewardGo = CreateUIChild(root, "Reward", stretch: false);
+        var rewardLE = rewardGo.AddComponent<LayoutElement>();
+        rewardLE.preferredWidth = 60;
+        var rewardText = rewardGo.AddComponent<TextMeshProUGUI>();
+        rewardText.text = "100";
+        rewardText.fontSize = 16;
+        rewardText.alignment = TextAlignmentOptions.Center;
+        rewardText.color = Color.yellow;
+
+        // Claim button
+        var claimGo = CreateUIChild(root, "ClaimButton", stretch: false);
+        var claimLE = claimGo.AddComponent<LayoutElement>();
+        claimLE.preferredWidth = 70;
+        claimLE.preferredHeight = 40;
+        var claimImg = claimGo.AddComponent<Image>();
+        claimImg.color = new Color(0.2f, 0.7f, 0.2f);
+        var claimBtn = claimGo.AddComponent<Button>();
+        var claimTextGo = CreateUIChild(claimGo, "Text", stretch: true);
+        var claimText = claimTextGo.AddComponent<TextMeshProUGUI>();
+        claimText.text = "Claim";
+        claimText.fontSize = 14;
+        claimText.alignment = TextAlignmentOptions.Center;
+        claimGo.SetActive(false);
+
+        // Completed checkmark
+        var checkGo = CreateUIChild(root, "Checkmark", stretch: false);
+        var checkLE = checkGo.AddComponent<LayoutElement>();
+        checkLE.preferredWidth = 30;
+        var checkText = checkGo.AddComponent<TextMeshProUGUI>();
+        checkText.text = "\u2713";
+        checkText.fontSize = 24;
+        checkText.color = Color.green;
+        checkText.alignment = TextAlignmentOptions.Center;
+        checkGo.SetActive(false);
+
+        // Wire serialized fields
+        var so = new SerializedObject(rowView);
+        so.FindProperty("descriptionText").objectReferenceValue = descText;
+        so.FindProperty("progressText").objectReferenceValue = progText;
+        so.FindProperty("progressBar").objectReferenceValue = slider;
+        so.FindProperty("completedCheckmark").objectReferenceValue = checkGo;
+        so.FindProperty("rewardText").objectReferenceValue = rewardText;
+        so.FindProperty("claimButton").objectReferenceValue = claimBtn;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        PrefabUtility.SaveAsPrefabAsset(root, path);
+        Object.DestroyImmediate(root);
+        Debug.Log("Created EnemyChallengeRow prefab at " + path);
+    }
+
+    // ============================================================
+    // ENEMY DETAILS POPUP PREFAB
+    // ============================================================
+    [MenuItem("Tools/Bestiary/Create Enemy Details Popup Prefab")]
+    public static void CreateEnemyDetailsPopupPrefab()
+    {
+        string path = $"{PrefabFolder}/EnemyDetailsPopup.prefab";
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(path) != null)
+        {
+            Debug.Log("EnemyDetailsPopup prefab already exists at " + path);
+            return;
+        }
+
+        // Root (full screen overlay)
+        var root = CreateUIObject("EnemyDetailsPopup", 0, 0);
+        var rootRT = root.GetComponent<RectTransform>();
+        rootRT.anchorMin = Vector2.zero;
+        rootRT.anchorMax = Vector2.one;
+        rootRT.offsetMin = Vector2.zero;
+        rootRT.offsetMax = Vector2.zero;
+
+        // Overlay background (clickable to close)
+        var overlayGo = CreateUIChild(root, "Overlay", stretch: true);
+        var overlayImg = overlayGo.AddComponent<Image>();
+        overlayImg.color = new Color(0, 0, 0, 0.6f);
+        var overlayCanvasGroup = overlayGo.AddComponent<CanvasGroup>();
+        var bgCloseBtn = overlayGo.AddComponent<Button>();
+        bgCloseBtn.transition = Selectable.Transition.None;
+
+        // Window panel
+        var windowGo = CreateUIChild(root, "Window", stretch: false);
+        var windowRT = windowGo.GetComponent<RectTransform>();
+        windowRT.anchorMin = new Vector2(0.05f, 0.05f);
+        windowRT.anchorMax = new Vector2(0.95f, 0.95f);
+        windowRT.offsetMin = Vector2.zero;
+        windowRT.offsetMax = Vector2.zero;
+        var windowImg = windowGo.AddComponent<Image>();
+        windowImg.color = new Color(0.12f, 0.12f, 0.18f, 1f);
+
+        // Close button
+        var closeGo = CreateUIChild(windowGo, "CloseButton", stretch: false);
+        var closeRT = closeGo.GetComponent<RectTransform>();
+        closeRT.anchorMin = new Vector2(0.9f, 0.93f);
+        closeRT.anchorMax = new Vector2(0.98f, 0.99f);
+        closeRT.offsetMin = Vector2.zero;
+        closeRT.offsetMax = Vector2.zero;
+        var closeImg = closeGo.AddComponent<Image>();
+        closeImg.color = new Color(0.8f, 0.2f, 0.2f);
+        var closeBtn = closeGo.AddComponent<Button>();
+        var closeTextGo = CreateUIChild(closeGo, "X", stretch: true);
+        var closeText = closeTextGo.AddComponent<TextMeshProUGUI>();
+        closeText.text = "X";
+        closeText.alignment = TextAlignmentOptions.Center;
+        closeText.fontSize = 20;
+
+        // Icon
+        var iconGo = CreateUIChild(windowGo, "Icon", stretch: false);
+        var iconRT = iconGo.GetComponent<RectTransform>();
+        iconRT.anchorMin = new Vector2(0.05f, 0.65f);
+        iconRT.anchorMax = new Vector2(0.35f, 0.92f);
+        iconRT.offsetMin = Vector2.zero;
+        iconRT.offsetMax = Vector2.zero;
+        var iconImage = iconGo.AddComponent<Image>();
+        iconImage.preserveAspect = true;
+        var iconAnimator = iconGo.AddComponent<Animator>();
+
+        // Name
+        var nameGo = CreateUIChild(windowGo, "Name", stretch: false);
+        var nameRT = nameGo.GetComponent<RectTransform>();
+        nameRT.anchorMin = new Vector2(0.38f, 0.85f);
+        nameRT.anchorMax = new Vector2(0.88f, 0.93f);
+        nameRT.offsetMin = Vector2.zero;
+        nameRT.offsetMax = Vector2.zero;
+        var nameText = nameGo.AddComponent<TextMeshProUGUI>();
+        nameText.text = "Enemy Name";
+        nameText.fontSize = 26;
+        nameText.fontStyle = FontStyles.Bold;
+
+        // Description
+        var descGo = CreateUIChild(windowGo, "Description", stretch: false);
+        var descRT = descGo.GetComponent<RectTransform>();
+        descRT.anchorMin = new Vector2(0.38f, 0.78f);
+        descRT.anchorMax = new Vector2(0.88f, 0.85f);
+        descRT.offsetMin = Vector2.zero;
+        descRT.offsetMax = Vector2.zero;
+        var descText = descGo.AddComponent<TextMeshProUGUI>();
+        descText.text = "Description";
+        descText.fontSize = 14;
+        descText.color = new Color(0.7f, 0.7f, 0.7f);
+
+        // Boss tag
+        var bossGo = CreateUIChild(windowGo, "BossTag", stretch: false);
+        var bossRT = bossGo.GetComponent<RectTransform>();
+        bossRT.anchorMin = new Vector2(0.38f, 0.73f);
+        bossRT.anchorMax = new Vector2(0.55f, 0.78f);
+        bossRT.offsetMin = Vector2.zero;
+        bossRT.offsetMax = Vector2.zero;
+        var bossImg = bossGo.AddComponent<Image>();
+        bossImg.color = new Color(0.8f, 0.2f, 0.2f, 0.8f);
+        var bossTextGo = CreateUIChild(bossGo, "Text", stretch: true);
+        var bossText = bossTextGo.AddComponent<TextMeshProUGUI>();
+        bossText.text = "BOSS";
+        bossText.alignment = TextAlignmentOptions.Center;
+        bossText.fontSize = 14;
+        bossGo.SetActive(false);
+
+        // Stats area
+        var statsGo = CreateUIChild(windowGo, "Stats", stretch: false);
+        var statsRT = statsGo.GetComponent<RectTransform>();
+        statsRT.anchorMin = new Vector2(0.05f, 0.45f);
+        statsRT.anchorMax = new Vector2(0.95f, 0.65f);
+        statsRT.offsetMin = Vector2.zero;
+        statsRT.offsetMax = Vector2.zero;
+        var statsLayout = statsGo.AddComponent<GridLayoutGroup>();
+        statsLayout.cellSize = new Vector2(140, 35);
+        statsLayout.spacing = new Vector2(10, 5);
+        statsLayout.childAlignment = TextAnchor.UpperLeft;
+
+        TMP_Text hpText = CreateStatRow(statsGo, "HP", "100");
+        TMP_Text dmgText = CreateStatRow(statsGo, "Damage", "10");
+        TMP_Text atkSpdText = CreateStatRow(statsGo, "Hit Speed", "1.0");
+        TMP_Text rangeTextComp = CreateStatRow(statsGo, "Range", "Short");
+        TMP_Text speedTextComp = CreateStatRow(statsGo, "Speed", "Normal");
+        TMP_Text killCountText = CreateStatRow(statsGo, "Kills", "0");
+
+        // Challenges header
+        var headerGo = CreateUIChild(windowGo, "ChallengesHeader", stretch: false);
+        var headerRT = headerGo.GetComponent<RectTransform>();
+        headerRT.anchorMin = new Vector2(0.05f, 0.38f);
+        headerRT.anchorMax = new Vector2(0.95f, 0.44f);
+        headerRT.offsetMin = Vector2.zero;
+        headerRT.offsetMax = Vector2.zero;
+        var headerText = headerGo.AddComponent<TextMeshProUGUI>();
+        headerText.text = "Challenges";
+        headerText.fontSize = 20;
+        headerText.fontStyle = FontStyles.Bold;
+
+        // Challenges scroll area
+        var scrollGo = CreateUIChild(windowGo, "ChallengesScroll", stretch: false);
+        var scrollRT = scrollGo.GetComponent<RectTransform>();
+        scrollRT.anchorMin = new Vector2(0.03f, 0.03f);
+        scrollRT.anchorMax = new Vector2(0.97f, 0.38f);
+        scrollRT.offsetMin = Vector2.zero;
+        scrollRT.offsetMax = Vector2.zero;
+        var scrollRect = scrollGo.AddComponent<ScrollRect>();
+        scrollRect.horizontal = false;
+        var scrollImg = scrollGo.AddComponent<Image>();
+        scrollImg.color = new Color(0, 0, 0, 0.2f);
+        var scrollMask = scrollGo.AddComponent<Mask>();
+        scrollMask.showMaskGraphic = true;
+
+        // Scroll content
+        var contentGo = CreateUIChild(scrollGo, "Content", stretch: false);
+        var contentRT = contentGo.GetComponent<RectTransform>();
+        contentRT.anchorMin = new Vector2(0, 1);
+        contentRT.anchorMax = new Vector2(1, 1);
+        contentRT.pivot = new Vector2(0.5f, 1);
+        contentRT.offsetMin = Vector2.zero;
+        contentRT.offsetMax = Vector2.zero;
+        var vertLayout = contentGo.AddComponent<VerticalLayoutGroup>();
+        vertLayout.spacing = 8;
+        vertLayout.padding = new RectOffset(5, 5, 5, 5);
+        vertLayout.childForceExpandWidth = true;
+        vertLayout.childForceExpandHeight = false;
+        var contentSizeFitter = contentGo.AddComponent<ContentSizeFitter>();
+        contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        scrollRect.content = contentRT;
+
+        // PopupAnimator
+        var popupAnim = root.AddComponent<PopupAnimator>();
+        var paSo = new SerializedObject(popupAnim);
+        paSo.FindProperty("root").objectReferenceValue = root;
+        paSo.FindProperty("windowRect").objectReferenceValue = windowRT;
+        paSo.FindProperty("overlayCanvasGroup").objectReferenceValue = overlayCanvasGroup;
+        paSo.ApplyModifiedPropertiesWithoutUndo();
+
+        // EnemyDetailsPopupController
+        var controller = root.AddComponent<EnemyDetailsPopupController>();
+        var cSo = new SerializedObject(controller);
+        cSo.FindProperty("root").objectReferenceValue = root;
+        cSo.FindProperty("closeButton").objectReferenceValue = closeBtn;
+        cSo.FindProperty("backgroundCloseButton").objectReferenceValue = bgCloseBtn;
+        cSo.FindProperty("popupAnimator").objectReferenceValue = popupAnim;
+        cSo.FindProperty("icon").objectReferenceValue = iconImage;
+        cSo.FindProperty("iconAnimator").objectReferenceValue = iconAnimator;
+        cSo.FindProperty("nameText").objectReferenceValue = nameText;
+        cSo.FindProperty("descriptionText").objectReferenceValue = descText;
+        cSo.FindProperty("hpText").objectReferenceValue = hpText;
+        cSo.FindProperty("dmgText").objectReferenceValue = dmgText;
+        cSo.FindProperty("atkSpeedText").objectReferenceValue = atkSpdText;
+        cSo.FindProperty("rangeText").objectReferenceValue = rangeTextComp;
+        cSo.FindProperty("speedText").objectReferenceValue = speedTextComp;
+        cSo.FindProperty("killCountText").objectReferenceValue = killCountText;
+        cSo.FindProperty("bossTag").objectReferenceValue = bossGo;
+        cSo.FindProperty("challengesContent").objectReferenceValue = contentGo.transform;
+        cSo.ApplyModifiedPropertiesWithoutUndo();
+
+        PrefabUtility.SaveAsPrefabAsset(root, path);
+        Object.DestroyImmediate(root);
+        Debug.Log("Created EnemyDetailsPopup prefab at " + path);
+    }
+
+    // ============================================================
+    // ENEMY BESTIARY SCREEN PREFAB
+    // ============================================================
+    [MenuItem("Tools/Bestiary/Create Bestiary Screen Prefab")]
+    public static void CreateEnemyBestiaryScreenPrefab()
+    {
+        string path = $"{PrefabFolder}/EnemyBestiaryScreen.prefab";
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(path) != null)
+        {
+            Debug.Log("EnemyBestiaryScreen prefab already exists at " + path);
+            return;
+        }
+
+        // Load dependencies
+        var cardPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/EnemyCard.prefab");
+        var challengeRowPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/EnemyChallengeRow.prefab");
+        var detailsPrefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/EnemyDetailsPopup.prefab");
+        var enemyDb = AssetDatabase.LoadAssetAtPath<EnemyDatabase>($"{AssetFolder}/EnemyDatabase.asset");
+
+        // Root (full screen)
+        var root = CreateUIObject("EnemyBestiaryScreen", 0, 0);
+        var rootRT = root.GetComponent<RectTransform>();
+        rootRT.anchorMin = Vector2.zero;
+        rootRT.anchorMax = Vector2.one;
+        rootRT.offsetMin = Vector2.zero;
+        rootRT.offsetMax = Vector2.zero;
+
+        // Overlay background
+        var overlayGo = CreateUIChild(root, "Overlay", stretch: true);
+        var overlayImg = overlayGo.AddComponent<Image>();
+        overlayImg.color = new Color(0, 0, 0, 0.6f);
+        var overlayCanvasGroup = overlayGo.AddComponent<CanvasGroup>();
+
+        // Window panel
+        var windowGo = CreateUIChild(root, "Window", stretch: false);
+        var windowRT = windowGo.GetComponent<RectTransform>();
+        windowRT.anchorMin = new Vector2(0.02f, 0.02f);
+        windowRT.anchorMax = new Vector2(0.98f, 0.98f);
+        windowRT.offsetMin = Vector2.zero;
+        windowRT.offsetMax = Vector2.zero;
+        var windowImg = windowGo.AddComponent<Image>();
+        windowImg.color = new Color(0.1f, 0.1f, 0.15f, 1f);
+
+        // Title
+        var titleGo = CreateUIChild(windowGo, "Title", stretch: false);
+        var titleRT = titleGo.GetComponent<RectTransform>();
+        titleRT.anchorMin = new Vector2(0.05f, 0.92f);
+        titleRT.anchorMax = new Vector2(0.7f, 0.98f);
+        titleRT.offsetMin = Vector2.zero;
+        titleRT.offsetMax = Vector2.zero;
+        var titleText = titleGo.AddComponent<TextMeshProUGUI>();
+        titleText.text = "Bestiary";
+        titleText.fontSize = 28;
+        titleText.fontStyle = FontStyles.Bold;
+
+        // Close button
+        var closeGo = CreateUIChild(windowGo, "CloseButton", stretch: false);
+        var closeRT = closeGo.GetComponent<RectTransform>();
+        closeRT.anchorMin = new Vector2(0.88f, 0.92f);
+        closeRT.anchorMax = new Vector2(0.97f, 0.98f);
+        closeRT.offsetMin = Vector2.zero;
+        closeRT.offsetMax = Vector2.zero;
+        var closeImg = closeGo.AddComponent<Image>();
+        closeImg.color = new Color(0.8f, 0.2f, 0.2f);
+        var closeBtn = closeGo.AddComponent<Button>();
+        var closeTextGo = CreateUIChild(closeGo, "X", stretch: true);
+        var closeText = closeTextGo.AddComponent<TextMeshProUGUI>();
+        closeText.text = "X";
+        closeText.alignment = TextAlignmentOptions.Center;
+        closeText.fontSize = 22;
+
+        // Grid scroll area
+        var scrollGo = CreateUIChild(windowGo, "GridScroll", stretch: false);
+        var scrollRT = scrollGo.GetComponent<RectTransform>();
+        scrollRT.anchorMin = new Vector2(0.02f, 0.02f);
+        scrollRT.anchorMax = new Vector2(0.98f, 0.91f);
+        scrollRT.offsetMin = Vector2.zero;
+        scrollRT.offsetMax = Vector2.zero;
+        var scrollRect = scrollGo.AddComponent<ScrollRect>();
+        scrollRect.horizontal = false;
+        var scrollMaskImg = scrollGo.AddComponent<Image>();
+        scrollMaskImg.color = new Color(0, 0, 0, 0.01f);
+        var scrollMask = scrollGo.AddComponent<Mask>();
+        scrollMask.showMaskGraphic = false;
+
+        // Grid content
+        var gridGo = CreateUIChild(scrollGo, "GridContent", stretch: false);
+        var gridRT = gridGo.GetComponent<RectTransform>();
+        gridRT.anchorMin = new Vector2(0, 1);
+        gridRT.anchorMax = new Vector2(1, 1);
+        gridRT.pivot = new Vector2(0.5f, 1);
+        gridRT.offsetMin = Vector2.zero;
+        gridRT.offsetMax = Vector2.zero;
+        var gridLayout = gridGo.AddComponent<GridLayoutGroup>();
+        gridLayout.cellSize = new Vector2(200, 250);
+        gridLayout.spacing = new Vector2(15, 15);
+        gridLayout.childAlignment = TextAnchor.UpperCenter;
+        gridLayout.constraint = GridLayoutGroup.Constraint.Flexible;
+        var gridFitter = gridGo.AddComponent<ContentSizeFitter>();
+        gridFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        scrollRect.content = gridRT;
+
+        // Details popup instance (nested)
+        GameObject detailsInstance = null;
+        EnemyDetailsPopupController detailsController = null;
+        if (detailsPrefab != null)
+        {
+            detailsInstance = (GameObject)PrefabUtility.InstantiatePrefab(detailsPrefab);
+            detailsInstance.transform.SetParent(root.transform, false);
+            detailsController = detailsInstance.GetComponent<EnemyDetailsPopupController>();
+
+            // Wire the challenge row prefab
+            if (challengeRowPrefab != null && detailsController != null)
+            {
+                var detailsSo = new SerializedObject(detailsController);
+                var rowPrefabComp = challengeRowPrefab.GetComponent<EnemyChallengeRowView>();
+                detailsSo.FindProperty("challengeRowPrefab").objectReferenceValue = rowPrefabComp;
+                detailsSo.ApplyModifiedPropertiesWithoutUndo();
+            }
+        }
+
+        // PopupAnimator for the screen itself
+        var popupAnim = root.AddComponent<PopupAnimator>();
+        var paSo = new SerializedObject(popupAnim);
+        paSo.FindProperty("root").objectReferenceValue = root;
+        paSo.FindProperty("windowRect").objectReferenceValue = windowRT;
+        paSo.FindProperty("overlayCanvasGroup").objectReferenceValue = overlayCanvasGroup;
+        paSo.ApplyModifiedPropertiesWithoutUndo();
+
+        // EnemyBestiaryScreen controller
+        var screen = root.AddComponent<EnemyBestiaryScreen>();
+        var sSo = new SerializedObject(screen);
+        sSo.FindProperty("popupAnimator").objectReferenceValue = popupAnim;
+        sSo.FindProperty("root").objectReferenceValue = root;
+        sSo.FindProperty("gridContent").objectReferenceValue = gridGo.transform;
+        if (enemyDb != null)
+            sSo.FindProperty("enemyDatabase").objectReferenceValue = enemyDb;
+        if (cardPrefab != null)
+            sSo.FindProperty("cardPrefab").objectReferenceValue = cardPrefab.GetComponent<EnemyCardView>();
+        if (detailsController != null)
+            sSo.FindProperty("detailsPopup").objectReferenceValue = detailsController;
+        sSo.ApplyModifiedPropertiesWithoutUndo();
+
+        // Wire close button to screen's Close method
+        UnityEditor.Events.UnityEventTools.AddPersistentListener(closeBtn.onClick, screen.Close);
+
+        PrefabUtility.SaveAsPrefabAsset(root, path);
+        Object.DestroyImmediate(root);
+        Debug.Log("Created EnemyBestiaryScreen prefab at " + path);
+    }
+
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    private static GameObject CreateUIObject(string name, float width, float height)
+    {
+        var go = new GameObject(name, typeof(RectTransform));
+        go.layer = LayerMask.NameToLayer("UI");
+        var rt = go.GetComponent<RectTransform>();
+        rt.sizeDelta = new Vector2(width, height);
+        return go;
+    }
+
+    private static GameObject CreateUIChild(GameObject parent, string name, bool stretch)
+    {
+        var go = new GameObject(name, typeof(RectTransform));
+        go.layer = LayerMask.NameToLayer("UI");
+        go.transform.SetParent(parent.transform, false);
+
+        if (stretch)
+        {
+            var rt = go.GetComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+        }
+
+        return go;
+    }
+
+    private static TMP_Text CreateStatRow(GameObject parent, string label, string value)
+    {
+        var rowGo = CreateUIChild(parent, $"Stat_{label}", stretch: false);
+
+        var labelGo = CreateUIChild(rowGo, "Label", stretch: false);
+        var labelRT = labelGo.GetComponent<RectTransform>();
+        labelRT.anchorMin = Vector2.zero;
+        labelRT.anchorMax = new Vector2(0.5f, 1);
+        labelRT.offsetMin = Vector2.zero;
+        labelRT.offsetMax = Vector2.zero;
+        var labelText = labelGo.AddComponent<TextMeshProUGUI>();
+        labelText.text = $"{label}:";
+        labelText.fontSize = 16;
+        labelText.color = new Color(0.6f, 0.6f, 0.6f);
+        labelText.alignment = TextAlignmentOptions.MidlineLeft;
+
+        var valueGo = CreateUIChild(rowGo, "Value", stretch: false);
+        var valueRT = valueGo.GetComponent<RectTransform>();
+        valueRT.anchorMin = new Vector2(0.5f, 0);
+        valueRT.anchorMax = Vector2.one;
+        valueRT.offsetMin = Vector2.zero;
+        valueRT.offsetMax = Vector2.zero;
+        var valueText = valueGo.AddComponent<TextMeshProUGUI>();
+        valueText.text = value;
+        valueText.fontSize = 16;
+        valueText.alignment = TextAlignmentOptions.MidlineLeft;
+
+        return valueText;
+    }
+
+    private static void EnsureFolder(string path)
+    {
+        string[] parts = path.Split('/');
+        string current = parts[0];
+        for (int i = 1; i < parts.Length; i++)
+        {
+            string next = current + "/" + parts[i];
+            if (!AssetDatabase.IsValidFolder(next))
+                AssetDatabase.CreateFolder(current, parts[i]);
+            current = next;
+        }
+    }
+}
+
+
+
+========================
+FILE: BestiaryWiringTool.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\Editor\BestiaryWiringTool.cs
+========================
+using UnityEngine;
+using UnityEditor;
+using UnityEngine.UI;
+
+/// <summary>
+/// Wires the EnemyBestiaryScreen to existing scene objects.
+/// Run from: Tools > Bestiary > Wire Scene Objects
+///
+/// Prerequisites (already done by user):
+///   - "EnemiesCollectionWindow" panel exists in scene
+///   - "EnemiesCollection" child with GridLayoutGroup exists
+///   - "EnemiesButton" button exists in scene
+///   - EnemyCard prefab exists at Assets/Prefabs/UI/EnemyCard.prefab
+/// </summary>
+public static class BestiaryWiringTool
+{
+    [MenuItem("Tools/Bestiary/Wire Scene Objects")]
+    public static void WireSceneObjects()
+    {
+        // Find scene objects
+        var windowGo = GameObject.Find("EnemiesCollectionWindow");
+        if (windowGo == null)
+        {
+            Debug.LogError("Could not find 'EnemiesCollectionWindow' in scene!");
+            return;
+        }
+
+        var gridGo = GameObject.Find("EnemiesCollection");
+        if (gridGo == null)
+        {
+            Debug.LogError("Could not find 'EnemiesCollection' in scene!");
+            return;
+        }
+
+        var buttonGo = GameObject.Find("EnemiesButton");
+        if (buttonGo == null)
+        {
+            Debug.LogError("Could not find 'EnemiesButton' in scene!");
+            return;
+        }
+
+        // Load prefab & database
+        var cardPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/EnemyCard.prefab");
+        if (cardPrefab == null)
+        {
+            Debug.LogError("Could not find EnemyCard prefab at Assets/Prefabs/UI/EnemyCard.prefab!");
+            return;
+        }
+
+        // Create or find EnemyDatabase
+        string dbPath = "Assets/ScriptableObjects/Enemies/EnemyDatabase.asset";
+        var enemyDb = AssetDatabase.LoadAssetAtPath<EnemyDatabase>(dbPath);
+        if (enemyDb == null)
+        {
+            // Create folder if needed
+            if (!AssetDatabase.IsValidFolder("Assets/ScriptableObjects"))
+                AssetDatabase.CreateFolder("Assets", "ScriptableObjects");
+            if (!AssetDatabase.IsValidFolder("Assets/ScriptableObjects/Enemies"))
+                AssetDatabase.CreateFolder("Assets/ScriptableObjects", "Enemies");
+
+            enemyDb = ScriptableObject.CreateInstance<EnemyDatabase>();
+
+            // Auto-find all enemy UnitDefinitions
+            var guids = AssetDatabase.FindAssets("t:UnitDefinition");
+            var enemies = new System.Collections.Generic.List<UnitDefinition>();
+            foreach (var guid in guids)
+            {
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                var def = AssetDatabase.LoadAssetAtPath<UnitDefinition>(path);
+                if (def != null && def.unitTeam == Team.EnemyTeam)
+                    enemies.Add(def);
+            }
+            enemyDb.allEnemies = enemies.ToArray();
+            AssetDatabase.CreateAsset(enemyDb, dbPath);
+            Debug.Log($"Created EnemyDatabase with {enemies.Count} enemies");
+        }
+
+        // ---- Clean up old components from duplication ----
+        var oldLRP = windowGo.GetComponent<LevelRewardsProgressController>();
+        if (oldLRP != null) Undo.DestroyObjectImmediate(oldLRP);
+
+        var oldLRW = windowGo.GetComponent<LevelRewardWindowController>();
+        if (oldLRW != null) Undo.DestroyObjectImmediate(oldLRW);
+
+        // ---- Setup PopupAnimator on window ----
+        var popupAnimator = windowGo.GetComponent<PopupAnimator>();
+        if (popupAnimator == null)
+            popupAnimator = Undo.AddComponent<PopupAnimator>(windowGo);
+
+        // Find the root Canvas
+        var rootCanvas = windowGo.GetComponentInParent<Canvas>();
+
+        // The window's RectTransform is the "windowRect" for PopupAnimator
+        var windowRT = windowGo.GetComponent<RectTransform>();
+
+        // Try to find or create an overlay CanvasGroup
+        // Check if there's already a child that could be an overlay
+        CanvasGroup overlayGroup = null;
+        var existingOverlay = windowGo.transform.Find("Overlay");
+        if (existingOverlay != null)
+        {
+            overlayGroup = existingOverlay.GetComponent<CanvasGroup>();
+            if (overlayGroup == null)
+                overlayGroup = Undo.AddComponent<CanvasGroup>(existingOverlay.gameObject);
+        }
+
+        // Wire PopupAnimator via SerializedObject
+        var paSO = new SerializedObject(popupAnimator);
+        paSO.FindProperty("root").objectReferenceValue = windowGo;
+        paSO.FindProperty("windowRect").objectReferenceValue = windowRT;
+        if (overlayGroup != null)
+            paSO.FindProperty("overlayCanvasGroup").objectReferenceValue = overlayGroup;
+        if (rootCanvas != null)
+            paSO.FindProperty("rootCanvas").objectReferenceValue = rootCanvas;
+        paSO.ApplyModifiedProperties();
+
+        // ---- Setup EnemyBestiaryScreen ----
+        var screen = windowGo.GetComponent<EnemyBestiaryScreen>();
+        if (screen == null)
+            screen = Undo.AddComponent<EnemyBestiaryScreen>(windowGo);
+
+        var cardView = cardPrefab.GetComponent<EnemyCardView>();
+
+        var screenSO = new SerializedObject(screen);
+        screenSO.FindProperty("enemyDatabase").objectReferenceValue = enemyDb;
+        screenSO.FindProperty("cardPrefab").objectReferenceValue = cardView;
+        screenSO.FindProperty("gridContent").objectReferenceValue = gridGo.transform;
+        screenSO.FindProperty("popupAnimator").objectReferenceValue = popupAnimator;
+        screenSO.FindProperty("root").objectReferenceValue = windowGo;
+        screenSO.ApplyModifiedProperties();
+
+        // ---- Wire button ----
+        var button = buttonGo.GetComponent<Button>();
+        if (button != null)
+        {
+            // Clear existing onClick listeners
+            UnityEditor.Events.UnityEventTools.RemovePersistentListener(button.onClick, 0);
+
+            // Add new listener: EnemyBestiaryScreen.OpenFromButton(buttonRect)
+            var buttonRT = buttonGo.GetComponent<RectTransform>();
+
+            // We need a small helper since OpenFromButton takes RectTransform parameter
+            // Use a wrapper component on the button
+            var opener = buttonGo.GetComponent<BestiaryButtonOpener>();
+            if (opener == null)
+                opener = Undo.AddComponent<BestiaryButtonOpener>(buttonGo);
+
+            var openerSO = new SerializedObject(opener);
+            openerSO.FindProperty("bestiaryScreen").objectReferenceValue = screen;
+            openerSO.ApplyModifiedProperties();
+
+            // Wire button onClick to opener.Open()
+            UnityEditor.Events.UnityEventTools.AddVoidPersistentListener(button.onClick, opener.Open);
+        }
+
+        // Start with window hidden
+        windowGo.SetActive(false);
+
+        Undo.RecordObject(windowGo, "Wire Bestiary");
+        EditorUtility.SetDirty(windowGo);
+
+        Debug.Log("Bestiary wiring complete! Objects wired:\n" +
+                  "  - EnemiesCollectionWindow: PopupAnimator + EnemyBestiaryScreen\n" +
+                  "  - EnemiesCollection: assigned as grid content\n" +
+                  "  - EnemiesButton: wired to open bestiary\n" +
+                  "  - EnemyDatabase: created with auto-found enemies\n" +
+                  "\nDon't forget to save the scene (Ctrl+S)!");
+    }
+}
+
+
+
+========================
 FILE: HitFlash.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\Effects\HitFlash.cs
 ========================
@@ -7695,21 +8705,33 @@ public class LoadingSceneController : MonoBehaviour
 
         Debug.Log("[LOADING] HomeScreen loaded additively, managers initialized, roots disabled");
 
-        // --- Step 2: Check if tutorial needed ---
-        bool needsTutorial = GameData.Instance != null
-                          && GameData.Instance.IsReady
-                          && !GameData.Instance.Save.tutorialComplete;
+        // Wait for TutorialManager to finish reading save data
+        while (TutorialManager.Instance != null
+            && TutorialManager.Instance.CurrentStep == TutorialStep.Complete
+            && GameData.Instance != null
+            && GameData.Instance.IsReady
+            && !GameData.Instance.Save.tutorialComplete)
+        {
+            yield return null;
+        }
+
+        // --- Step 2: Check if tutorial needs battle scene ---
+        bool needsBattle = GameData.Instance != null
+                        && GameData.Instance.IsReady
+                        && !GameData.Instance.Save.tutorialComplete
+                        && TutorialManager.Instance != null
+                        && TutorialManager.Instance.CurrentStep < TutorialStep.TapCollectionTab;
 
         string finalScene;
-        if (needsTutorial)
+        if (needsBattle)
         {
             finalScene = "1-1";
-            Debug.Log("[LOADING] Tutorial not complete -> final scene is 1-1");
+            Debug.Log("[LOADING] Tutorial battle phase -> final scene is 1-1");
         }
         else
         {
             finalScene = null;
-            Debug.Log("[LOADING] Tutorial complete -> final scene is HomeScreen (already loaded)");
+            Debug.Log("[LOADING] HomeScreen is the final scene");
         }
 
         // --- Step 3: If tutorial, load 1-1 while loading screen is still visible ---
@@ -7779,6 +8801,14 @@ public class LoadingSceneController : MonoBehaviour
                 SceneManager.SetActiveScene(homeScene);
             }
             Debug.Log("[LOADING] HomeScreen activated");
+
+            // Notify tutorial if home steps are pending
+            if (TutorialManager.Instance != null
+                && TutorialManager.Instance.IsTutorialActive
+                && TutorialManager.Instance.CurrentStep >= TutorialStep.TapCollectionTab)
+            {
+                TutorialManager.Instance.StartHomeTutorial();
+            }
         }
 
         // Unload the loading scene and destroy this object
@@ -8456,6 +9486,9 @@ public class PlayerSaveData
     // kills per enemy type
     public List<EnemyKillStatData> enemyKillStats = new List<EnemyKillStatData>();
 
+    // enemy challenge progress
+    public List<EnemyChallengeProgressData> enemyChallengeProgress = new List<EnemyChallengeProgressData>();
+
     // ==============================
     // LEVEL REWARDS (Progression UI)
     // ==============================
@@ -8574,6 +9607,15 @@ public class EnemyKillStatData
 {
     public string enemyId;
     public int kills;
+}
+
+// enemy challenge progress
+[Serializable]
+public class EnemyChallengeProgressData
+{
+    public string challengeId;
+    public int progress;
+    public bool claimed;
 }
 
 [Serializable]
@@ -17799,6 +18841,625 @@ public class WaveMessageUI : MonoBehaviour
 
 
 ========================
+FILE: BestiaryButtonOpener.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Bestiary\BestiaryButtonOpener.cs
+========================
+using UnityEngine;
+
+public class BestiaryButtonOpener : MonoBehaviour
+{
+    [SerializeField] private EnemyBestiaryScreen bestiaryScreen;
+
+    public void Open()
+    {
+        if (bestiaryScreen != null)
+            bestiaryScreen.OpenFromButton(GetComponent<RectTransform>());
+    }
+}
+
+
+
+========================
+FILE: EnemyBestiaryScreen.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Bestiary\EnemyBestiaryScreen.cs
+========================
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+public class EnemyBestiaryScreen : MonoBehaviour
+{
+    [Header("Grid")]
+    [SerializeField] private EnemyCardView cardPrefab;
+    [SerializeField] private Transform gridContent;
+
+    [Header("Popup Animation")]
+    [SerializeField] private PopupAnimator popupAnimator;
+    [SerializeField] private GameObject root;
+
+    [Header("Details Popup")]
+    [SerializeField] private EnemyDetailsPopupController detailsPopup;
+
+    private readonly List<EnemyCardView> _cards = new();
+    private List<EnemyEntry> _sortedEnemies;
+
+    private struct EnemyEntry
+    {
+        public UnitDefinition def;
+        public int world;
+    }
+
+    private void Awake()
+    {
+        _sortedEnemies = BuildSortedEnemyList();
+    }
+
+    public void OpenFromButton(RectTransform buttonRect)
+    {
+        if (popupAnimator == null)
+            return;
+
+        BuildGrid();
+        root.SetActive(true);
+        popupAnimator.OpenFromRect(buttonRect);
+    }
+
+    public void Close()
+    {
+        if (popupAnimator == null)
+            return;
+
+        popupAnimator.Close();
+    }
+
+    private static List<EnemyEntry> BuildSortedEnemyList()
+    {
+        var allLevels = Resources.LoadAll<LevelDefinition>("Levels");
+        var enemyWorld = new Dictionary<string, EnemyEntry>();
+
+        foreach (var level in allLevels)
+        {
+            if (level.rounds == null) continue;
+
+            // Parse world number from level name (e.g. "1-3" → 1)
+            int world = 0;
+            string levelName = level.name;
+            int dashIdx = levelName.IndexOf('-');
+            if (dashIdx > 0)
+                int.TryParse(levelName.Substring(0, dashIdx), out world);
+
+            foreach (var round in level.rounds)
+            {
+                if (round.enemyPhases == null) continue;
+                foreach (var phase in round.enemyPhases)
+                {
+                    if (phase.unit != null && phase.unit.unitTeam == Team.EnemyTeam
+                        && !string.IsNullOrEmpty(phase.unit.id)
+                        && !enemyWorld.ContainsKey(phase.unit.id))
+                    {
+                        enemyWorld[phase.unit.id] = new EnemyEntry
+                        {
+                            def = phase.unit,
+                            world = world
+                        };
+                    }
+                }
+            }
+        }
+
+        return enemyWorld.Values
+            .OrderBy(e => e.world)
+            .ThenBy(e => e.def.isBoss ? 1 : 0)
+            .ThenBy(e => e.def.displayName)
+            .ToList();
+    }
+
+    private void BuildGrid()
+    {
+        foreach (var card in _cards)
+        {
+            if (card != null)
+                Destroy(card.gameObject);
+        }
+        _cards.Clear();
+
+        if (_sortedEnemies == null || _sortedEnemies.Count == 0)
+            return;
+
+        var save = GameData.Instance.Save;
+
+        foreach (var entry in _sortedEnemies)
+        {
+            bool discovered = save.discoveredEnemyIds.Contains(entry.def.id);
+            int kills = GetKillCount(save, entry.def.id);
+
+            var card = Instantiate(cardPrefab, gridContent);
+            card.Setup(entry.def, discovered, kills, this);
+            _cards.Add(card);
+        }
+    }
+
+    public void OnCardClicked(EnemyCardView card)
+    {
+        if (card.Definition == null || !card.IsDiscovered)
+            return;
+
+        if (detailsPopup != null)
+            detailsPopup.Open(card.Definition, card.RectTransform);
+    }
+
+    private int GetKillCount(PlayerSaveData save, string enemyId)
+    {
+        var stat = save.enemyKillStats.FirstOrDefault(s => s.enemyId == enemyId);
+        return stat?.kills ?? 0;
+    }
+}
+
+
+
+========================
+FILE: EnemyCardView.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Bestiary\EnemyCardView.cs
+========================
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using UnityEngine.EventSystems;
+
+public class EnemyCardView : MonoBehaviour, IPointerClickHandler
+{
+    [Header("UI")]
+    [SerializeField] private Image iconImage;
+    [SerializeField] private Animator iconAnimator;
+    [SerializeField] private TMP_Text nameText;
+    [SerializeField] private GameObject emptySlotVisual;
+
+    [Header("Quick Actions (inside card)")]
+    [SerializeField] private GameObject quickActionsPanel;
+    [SerializeField] private Button upgradeButton;
+    [SerializeField] private Button equipButton;
+
+    [Header("Rarity Colors")]
+    [SerializeField] private Color CommonRarityColor = Color.white;
+    [SerializeField] private Color RareRarityColor = Color.white;
+    [SerializeField] private Color EpicRarityColor = Color.white;
+    [SerializeField] private Color LegendaryRarityColor = Color.white;
+
+    [Header("Lock State")]
+    [SerializeField] private Color lockedColor = Color.gray;
+
+    [SerializeField] private GameObject inDeckCheckmark;
+
+    [Header("Enemy Extras")]
+    [SerializeField] private TMP_Text killCountText;
+
+    private UnitDefinition _definition;
+    private bool _discovered;
+    private EnemyBestiaryScreen _screen;
+    private Image _cardImage;
+
+    public UnitDefinition Definition => _definition;
+    public bool IsDiscovered => _discovered;
+    public RectTransform RectTransform { get; private set; }
+
+    private void Awake()
+    {
+        _cardImage = GetComponent<Image>();
+        RectTransform = GetComponent<RectTransform>();
+    }
+
+    public void Setup(UnitDefinition def, bool discovered, int kills, EnemyBestiaryScreen screen)
+    {
+        _definition = def;
+        _discovered = discovered;
+        _screen = screen;
+
+        // Hide unit-specific elements
+        if (emptySlotVisual != null) emptySlotVisual.SetActive(false);
+        if (quickActionsPanel != null) quickActionsPanel.SetActive(false);
+        if (upgradeButton != null) upgradeButton.gameObject.SetActive(false);
+        if (equipButton != null) equipButton.gameObject.SetActive(false);
+        if (inDeckCheckmark != null) inDeckCheckmark.SetActive(false);
+
+        if (def == null) return;
+
+        // Name
+        if (nameText != null)
+            nameText.text = discovered ? def.displayName : "???";
+
+        // Icon
+        if (iconImage != null)
+        {
+            iconImage.sprite = def.HeadWithEyes != null ? def.HeadWithEyes : def.icon;
+            iconImage.preserveAspect = true;
+            iconImage.color = discovered ? Color.white : Color.black;
+        }
+
+        // Animator
+        if (iconAnimator != null)
+        {
+            if (discovered && def.animatorController != null)
+            {
+                iconAnimator.enabled = true;
+                iconAnimator.runtimeAnimatorController = def.animatorController;
+            }
+            else
+            {
+                iconAnimator.enabled = false;
+                iconAnimator.runtimeAnimatorController = null;
+            }
+        }
+
+        // Kill count (reuse nameText area below or add a separate text — for now show in quick actions area)
+        if (killCountText != null)
+            killCountText.text = discovered ? $"Kills: {kills}" : "";
+
+        // Card background color
+        if (_cardImage != null)
+            _cardImage.color = discovered ? Color.white : lockedColor;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (_screen != null)
+            _screen.OnCardClicked(this);
+    }
+}
+
+
+
+========================
+FILE: EnemyChallengeRowView.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Bestiary\EnemyChallengeRowView.cs
+========================
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class EnemyChallengeRowView : MonoBehaviour
+{
+    [SerializeField] private TMP_Text descriptionText;
+    [SerializeField] private TMP_Text progressText;
+    [SerializeField] private Slider progressBar;
+    [SerializeField] private GameObject completedCheckmark;
+    [SerializeField] private TMP_Text rewardText;
+    [SerializeField] private Button claimButton;
+
+    private EnemyChallengeDefinition _challenge;
+
+    public void Setup(EnemyChallengeDefinition challenge, int progress, bool claimed)
+    {
+        _challenge = challenge;
+
+        int clamped = Mathf.Min(progress, challenge.targetCount);
+
+        if (descriptionText != null)
+            descriptionText.text = challenge.GetDescription();
+
+        if (progressText != null)
+            progressText.text = $"{clamped}/{challenge.targetCount}";
+
+        if (progressBar != null)
+        {
+            progressBar.maxValue = challenge.targetCount;
+            progressBar.value = clamped;
+        }
+
+        bool isComplete = clamped >= challenge.targetCount;
+
+        if (completedCheckmark != null)
+            completedCheckmark.SetActive(claimed);
+
+        if (rewardText != null)
+        {
+            if (challenge.goldReward > 0)
+                rewardText.text = $"{challenge.goldReward}";
+            else if (challenge.gemsReward > 0)
+                rewardText.text = $"{challenge.gemsReward}";
+            else
+                rewardText.text = $"{challenge.xpReward} XP";
+        }
+
+        if (claimButton != null)
+        {
+            claimButton.gameObject.SetActive(isComplete && !claimed);
+            claimButton.onClick.RemoveAllListeners();
+            claimButton.onClick.AddListener(OnClaimClicked);
+        }
+    }
+
+    private void OnClaimClicked()
+    {
+        if (_challenge == null) return;
+
+        EnemyChallengeTracker.ClaimReward(_challenge);
+
+        if (completedCheckmark != null)
+            completedCheckmark.SetActive(true);
+
+        if (claimButton != null)
+            claimButton.gameObject.SetActive(false);
+    }
+}
+
+
+
+========================
+FILE: EnemyChallengeTracker.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Bestiary\EnemyChallengeTracker.cs
+========================
+using System.Linq;
+using UnityEngine;
+
+public class EnemyChallengeTracker : MonoBehaviour
+{
+    public static EnemyChallengeTracker Instance { get; private set; }
+
+    [SerializeField] private EnemyChallengeSet[] allChallengeSets;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
+    /// <summary>
+    /// Call this when an enemy dies. Pass the killer's info for challenge type matching.
+    /// </summary>
+    public void ReportEnemyKill(string enemyId, EnemyChallengeType killType = EnemyChallengeType.Kill)
+    {
+        if (string.IsNullOrEmpty(enemyId)) return;
+
+        var save = GameData.Instance.Save;
+
+        // Always increment generic Kill challenges
+        IncrementMatching(save, enemyId, EnemyChallengeType.Kill);
+
+        // Also increment specific kill type if different from generic
+        if (killType != EnemyChallengeType.Kill)
+            IncrementMatching(save, enemyId, killType);
+
+        GameData.Instance.SaveNow();
+    }
+
+    private void IncrementMatching(PlayerSaveData save, string enemyId, EnemyChallengeType type)
+    {
+        if (allChallengeSets == null) return;
+
+        var set = allChallengeSets.FirstOrDefault(s => s != null && s.enemy != null && s.enemy.id == enemyId);
+        if (set == null || set.challenges == null) return;
+
+        foreach (var challenge in set.challenges)
+        {
+            if (challenge == null || challenge.challengeType != type) continue;
+
+            var progress = GetOrCreateProgress(save, challenge.challengeId);
+            if (!progress.claimed)
+                progress.progress++;
+        }
+    }
+
+    public static void ClaimReward(EnemyChallengeDefinition challenge)
+    {
+        if (challenge == null) return;
+
+        var save = GameData.Instance.Save;
+        var progress = GetOrCreateProgress(save, challenge.challengeId);
+
+        if (progress.claimed || progress.progress < challenge.targetCount)
+            return;
+
+        progress.claimed = true;
+
+        if (challenge.goldReward > 0 && PlayerCurrencyWallet.Instance != null)
+            PlayerCurrencyWallet.Instance.AddGold(challenge.goldReward);
+
+        if (challenge.gemsReward > 0 && PlayerCurrencyWallet.Instance != null)
+            PlayerCurrencyWallet.Instance.AddGems(challenge.gemsReward);
+
+        GameData.Instance.SaveNow();
+    }
+
+    private static EnemyChallengeProgressData GetOrCreateProgress(PlayerSaveData save, string challengeId)
+    {
+        var existing = save.enemyChallengeProgress.FirstOrDefault(c => c.challengeId == challengeId);
+        if (existing != null) return existing;
+
+        var newData = new EnemyChallengeProgressData { challengeId = challengeId };
+        save.enemyChallengeProgress.Add(newData);
+        return newData;
+    }
+}
+
+
+
+========================
+FILE: EnemyDetailsPopupController.cs
+PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Bestiary\EnemyDetailsPopupController.cs
+========================
+using System.Linq;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class EnemyDetailsPopupController : MonoBehaviour
+{
+    [Header("Root")]
+    [SerializeField] private GameObject root;
+    [SerializeField] private Button closeButton;
+    [SerializeField] private Button backgroundCloseButton;
+
+    [Header("Animator")]
+    [SerializeField] private PopupAnimator popupAnimator;
+
+    [Header("Enemy UI")]
+    [SerializeField] private Image icon;
+    [SerializeField] private Animator iconAnimator;
+    [SerializeField] private TMP_Text nameText;
+    [SerializeField] private TMP_Text descriptionText;
+    [SerializeField] private TMP_Text hpText;
+    [SerializeField] private TMP_Text dmgText;
+    [SerializeField] private TMP_Text atkSpeedText;
+    [SerializeField] private TMP_Text rangeText;
+    [SerializeField] private TMP_Text speedText;
+    [SerializeField] private TMP_Text killCountText;
+    [SerializeField] private GameObject bossTag;
+
+    [Header("Challenges")]
+    [SerializeField] private EnemyChallengeSet[] allChallengeSets;
+    [SerializeField] private EnemyChallengeRowView challengeRowPrefab;
+    [SerializeField] private Transform challengesContent;
+
+    private UnitDefinition _enemy;
+    private RectTransform _lastFromRect;
+
+    private void Awake()
+    {
+        if (closeButton != null)
+            closeButton.onClick.AddListener(Close);
+
+        if (backgroundCloseButton != null)
+            backgroundCloseButton.onClick.AddListener(Close);
+
+        if (root != null)
+            root.SetActive(false);
+    }
+
+    public void Open(UnitDefinition enemy, RectTransform fromRect)
+    {
+        if (enemy == null) return;
+
+        _enemy = enemy;
+        _lastFromRect = fromRect;
+
+        if (root != null)
+            root.SetActive(true);
+
+        FillData();
+        FillChallenges();
+
+        if (popupAnimator != null && fromRect != null)
+            popupAnimator.OpenFromRect(fromRect, hideButton: false);
+    }
+
+    public void Close()
+    {
+        if (root == null || !root.activeSelf)
+            return;
+
+        if (popupAnimator != null && _lastFromRect != null && _lastFromRect.gameObject.activeInHierarchy)
+            popupAnimator.Close();
+        else if (root != null)
+            root.SetActive(false);
+    }
+
+    private void FillData()
+    {
+        if (_enemy == null) return;
+
+        FillIconImageOrAnimator();
+
+        if (nameText != null) nameText.text = _enemy.displayName;
+        if (descriptionText != null) descriptionText.text = _enemy.description;
+        if (hpText != null) hpText.text = _enemy.maxHealth.ToString();
+        if (dmgText != null) dmgText.text = _enemy.damage.ToString();
+        if (atkSpeedText != null) atkSpeedText.text = _enemy.attackCooldown.ToString("F1");
+
+        if (rangeText != null)
+        {
+            var label = UILabels.GetRangeLabel(_enemy.attackRange);
+            rangeText.text = UILabels.RangeToDisplay(label);
+        }
+
+        if (speedText != null)
+        {
+            var cat = UILabels.GetSpeedLabel(_enemy.moveSpeed);
+            speedText.text = UILabels.SpeedToDisplay(cat);
+        }
+
+        if (bossTag != null) bossTag.SetActive(_enemy.isBoss);
+
+        if (killCountText != null)
+        {
+            var stat = GameData.Instance.Save.enemyKillStats
+                .FirstOrDefault(s => s.enemyId == _enemy.id);
+            killCountText.text = (stat?.kills ?? 0).ToString();
+        }
+    }
+
+    private void FillIconImageOrAnimator()
+    {
+        if (icon == null || _enemy == null) return;
+
+        icon.sprite = _enemy.HeadWithEyes != null ? _enemy.HeadWithEyes : _enemy.icon;
+
+        if (iconAnimator != null)
+        {
+            if (_enemy.animatorController != null)
+            {
+                iconAnimator.enabled = true;
+                iconAnimator.runtimeAnimatorController = _enemy.animatorController;
+            }
+            else
+            {
+                iconAnimator.enabled = false;
+                iconAnimator.runtimeAnimatorController = null;
+            }
+        }
+    }
+
+    private void FillChallenges()
+    {
+        // Clear old rows
+        for (int i = challengesContent.childCount - 1; i >= 0; i--)
+            Destroy(challengesContent.GetChild(i).gameObject);
+
+        if (allChallengeSets == null || challengeRowPrefab == null)
+            return;
+
+        var set = allChallengeSets.FirstOrDefault(s => s != null && s.enemy != null && s.enemy.id == _enemy.id);
+        if (set == null || set.challenges == null)
+            return;
+
+        var save = GameData.Instance.Save;
+
+        foreach (var challenge in set.challenges)
+        {
+            if (challenge == null) continue;
+
+            int progress = GetChallengeProgress(save, challenge.challengeId);
+            bool claimed = IsChallengeComplete(save, challenge.challengeId);
+
+            var row = Instantiate(challengeRowPrefab, challengesContent);
+            row.Setup(challenge, progress, claimed);
+        }
+    }
+
+    private int GetChallengeProgress(PlayerSaveData save, string challengeId)
+    {
+        var data = save.enemyChallengeProgress.FirstOrDefault(c => c.challengeId == challengeId);
+        return data?.progress ?? 0;
+    }
+
+    private bool IsChallengeComplete(PlayerSaveData save, string challengeId)
+    {
+        var data = save.enemyChallengeProgress.FirstOrDefault(c => c.challengeId == challengeId);
+        return data?.claimed ?? false;
+    }
+}
+
+
+
+========================
 FILE: ChestOpeningUI.cs
 PATH: D:\a\Draft\Draft\Assets\Scripts\UI\Chest\ChestOpeningUI.cs
 ========================
@@ -18029,6 +19690,7 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
 
     private UnitDefinition _definition;
     private UnitsDeckManager _deckManager;
+    public bool IsDeckSlot => _isDeckSlot;
     private bool _isDeckSlot;
     private bool _isLocked;
 
@@ -18239,6 +19901,7 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
         if (UnitsGridController.Instance != null)
         {
             UnitsGridController.Instance.OnCardClicked(this);
+            TutorialManager.Instance?.NotifyAction(TutorialAction.UnitCardClicked, this);
         }
     }
 
@@ -18270,6 +19933,8 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
             deckManager: _deckManager,
             GetComponent<RectTransform>()
         );
+
+        TutorialManager.Instance?.NotifyAction(TutorialAction.DetailsOpened);
     }
 
     private void OnEquipButtonPressed()
@@ -20329,7 +21994,7 @@ public class UnitDetailsPopupController : MonoBehaviour
 
     [Header("Leveling UI")]
     [SerializeField] private TMP_Text levelText;
-    [SerializeField] private Button upgradeButton;
+    [SerializeField] public Button upgradeButton;
     [SerializeField] private TMP_Text upgradeCostText;
     [SerializeField] private Image upgradeCostIcon;
 
@@ -20449,6 +22114,8 @@ public class UnitDetailsPopupController : MonoBehaviour
             // Fallback: instant close
             root.SetActive(false);
         }
+
+        TutorialManager.Instance?.NotifyAction(TutorialAction.UnitInfoClosed);
     }
 
     // =========================
@@ -20636,6 +22303,8 @@ public class UnitDetailsPopupController : MonoBehaviour
         if (!ok) return;
 
         FillData();
+
+        TutorialManager.Instance?.NotifyAction(TutorialAction.UnitUpgraded);
 
         int unitLvl = UnitLevelingService.GetUnitLevel(_unit.id);
         PlayerXPManager.Instance.AddXP(unitLvl * 10);
