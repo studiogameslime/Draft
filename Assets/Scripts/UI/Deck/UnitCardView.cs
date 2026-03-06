@@ -28,6 +28,7 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
 
     private UnitDefinition _definition;
     private UnitsDeckManager _deckManager;
+    public bool IsDeckSlot => _isDeckSlot;
     private bool _isDeckSlot;
     private bool _isLocked;
 
@@ -238,6 +239,7 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
         if (UnitsGridController.Instance != null)
         {
             UnitsGridController.Instance.OnCardClicked(this);
+            TutorialManager.Instance?.NotifyAction(TutorialAction.UnitCardClicked, this);
         }
     }
 
@@ -269,6 +271,8 @@ public class UnitCardView : MonoBehaviour, IPointerClickHandler
             deckManager: _deckManager,
             GetComponent<RectTransform>()
         );
+
+        TutorialManager.Instance?.NotifyAction(TutorialAction.DetailsOpened);
     }
 
     private void OnEquipButtonPressed()

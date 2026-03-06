@@ -60,21 +60,33 @@ public class LoadingSceneController : MonoBehaviour
 
         Debug.Log("[LOADING] HomeScreen loaded additively, managers initialized, roots disabled");
 
-        // --- Step 2: Check if tutorial needed ---
-        bool needsTutorial = GameData.Instance != null
-                          && GameData.Instance.IsReady
-                          && !GameData.Instance.Save.tutorialComplete;
+        // Wait for TutorialManager to finish reading save data
+        while (TutorialManager.Instance != null
+            && TutorialManager.Instance.CurrentStep == TutorialStep.Complete
+            && GameData.Instance != null
+            && GameData.Instance.IsReady
+            && !GameData.Instance.Save.tutorialComplete)
+        {
+            yield return null;
+        }
+
+        // --- Step 2: Check if tutorial needs battle scene ---
+        bool needsBattle = GameData.Instance != null
+                        && GameData.Instance.IsReady
+                        && !GameData.Instance.Save.tutorialComplete
+                        && TutorialManager.Instance != null
+                        && TutorialManager.Instance.CurrentStep < TutorialStep.TapCollectionTab;
 
         string finalScene;
-        if (needsTutorial)
+        if (needsBattle)
         {
             finalScene = "1-1";
-            Debug.Log("[LOADING] Tutorial not complete -> final scene is 1-1");
+            Debug.Log("[LOADING] Tutorial battle phase -> final scene is 1-1");
         }
         else
         {
             finalScene = null;
-            Debug.Log("[LOADING] Tutorial complete -> final scene is HomeScreen (already loaded)");
+            Debug.Log("[LOADING] HomeScreen is the final scene");
         }
 
         // --- Step 3: If tutorial, load 1-1 while loading screen is still visible ---
@@ -144,6 +156,14 @@ public class LoadingSceneController : MonoBehaviour
                 SceneManager.SetActiveScene(homeScene);
             }
             Debug.Log("[LOADING] HomeScreen activated");
+
+            // Notify tutorial if home steps are pending
+            if (TutorialManager.Instance != null
+                && TutorialManager.Instance.IsTutorialActive
+                && TutorialManager.Instance.CurrentStep >= TutorialStep.TapCollectionTab)
+            {
+                TutorialManager.Instance.StartHomeTutorial();
+            }
         }
 
         // Unload the loading scene and destroy this object

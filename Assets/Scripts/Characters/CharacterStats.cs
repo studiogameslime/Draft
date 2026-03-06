@@ -344,6 +344,7 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
         DisableAllCombatScripts();
 
         TrySpawnSoulOnDeath();
+        TryTrackEnemyKill();
 
         if (deathFadeRoutine != null) StopCoroutine(deathFadeRoutine);
         deathFadeRoutine = StartCoroutine(FadeOutAfterDeath());
@@ -377,6 +378,32 @@ public class CharacterStats : MonoBehaviour, ICombatTarget
                 Debug.Log($"[Souls] Additive Mastery! Base: {baseChance * 100}%, Bonus: {bonusPercent * 100}%, Total: {finalChance * 100}%");
             }
         }
+    }
+
+    private void TryTrackEnemyKill()
+    {
+        if (team != Team.EnemyTeam) return;
+        if (definition == null) return;
+
+        // Track kill stats in save data
+        var save = GameData.Instance?.Save;
+        if (save != null)
+        {
+            var stat = save.enemyKillStats.Find(s => s.enemyId == definition.id);
+            if (stat == null)
+            {
+                stat = new EnemyKillStatData { enemyId = definition.id, kills = 0 };
+                save.enemyKillStats.Add(stat);
+            }
+            stat.kills++;
+
+            // Discover enemy
+            if (!save.discoveredEnemyIds.Contains(definition.id))
+                save.discoveredEnemyIds.Add(definition.id);
+        }
+
+        // Track challenge progress
+        EnemyChallengeTracker.Instance?.ReportEnemyKill(definition.id);
     }
 
     private void DisableAllCombatScripts()

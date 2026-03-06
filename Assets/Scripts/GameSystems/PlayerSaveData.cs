@@ -111,6 +111,9 @@ public class PlayerSaveData
     // kills per enemy type
     public List<EnemyKillStatData> enemyKillStats = new List<EnemyKillStatData>();
 
+    // enemy challenge progress
+    public List<EnemyChallengeProgressData> enemyChallengeProgress = new List<EnemyChallengeProgressData>();
+
     // ==============================
     // LEVEL REWARDS (Progression UI)
     // ==============================
@@ -229,6 +232,15 @@ public class EnemyKillStatData
 {
     public string enemyId;
     public int kills;
+}
+
+// enemy challenge progress
+[Serializable]
+public class EnemyChallengeProgressData
+{
+    public string challengeId;
+    public int progress;
+    public bool claimed;
 }
 
 [Serializable]

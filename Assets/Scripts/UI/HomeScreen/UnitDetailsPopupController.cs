@@ -43,7 +43,7 @@ public class UnitDetailsPopupController : MonoBehaviour
 
     [Header("Leveling UI")]
     [SerializeField] private TMP_Text levelText;
-    [SerializeField] private Button upgradeButton;
+    [SerializeField] public Button upgradeButton;
     [SerializeField] private TMP_Text upgradeCostText;
     [SerializeField] private Image upgradeCostIcon;
 
@@ -163,6 +163,8 @@ public class UnitDetailsPopupController : MonoBehaviour
             // Fallback: instant close
             root.SetActive(false);
         }
+
+        TutorialManager.Instance?.NotifyAction(TutorialAction.UnitInfoClosed);
     }
 
     // =========================
@@ -350,6 +352,8 @@ public class UnitDetailsPopupController : MonoBehaviour
         if (!ok) return;
 
         FillData();
+
+        TutorialManager.Instance?.NotifyAction(TutorialAction.UnitUpgraded);
 
         int unitLvl = UnitLevelingService.GetUnitLevel(_unit.id);
         PlayerXPManager.Instance.AddXP(unitLvl * 10);

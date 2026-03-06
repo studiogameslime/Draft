@@ -96,5 +96,13 @@ public class EnemyWaveSpawner : MonoBehaviour
 
         var spawner = spawners[Random.Range(0, spawners.Count)];
         spawner.Spawn(def, level, enemiesContainer);
+
+        // Discover enemy in bestiary on first encounter
+        var save = GameData.Instance?.Save;
+        if (save != null && !string.IsNullOrEmpty(def.id) && !save.discoveredEnemyIds.Contains(def.id))
+        {
+            save.discoveredEnemyIds.Add(def.id);
+            GameData.Instance.SaveNow();
+        }
     }
 }
