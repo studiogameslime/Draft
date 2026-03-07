@@ -1338,6 +1338,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GoblinAI
       objectReference: {fileID: 0}
+    - target: {fileID: 1029226425758784574, guid: 05f4e93983499494d8819a91ed980ff1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4987510362227527879, guid: 05f4e93983499494d8819a91ed980ff1, type: 3}
       propertyPath: topRight
       value: 
@@ -13939,6 +13943,7 @@ GameObject:
   - component: {fileID: 603733009}
   - component: {fileID: 603733010}
   - component: {fileID: 603733011}
+  - component: {fileID: 603733012}
   m_Layer: 5
   m_Name: ChapterPreview
   m_TagString: Untagged
@@ -13988,7 +13993,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 603733008}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 5d09afe9c05eea843bc95d652f70c2ee, type: 2}
   m_CullingMode: 0
@@ -14002,6 +14007,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &603733012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603733008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2487b16fcc5704784f9c7356d33fe5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChapterDisplayController
+  chapterImage: {fileID: 1420235115}
+  chapterText: {fileID: 978935858}
 --- !u!1 &605425654
 GameObject:
   m_ObjectHideFlags: 0
@@ -28918,7 +28937,6 @@ MonoBehaviour:
   - {fileID: 1719974653}
   - {fileID: 1264448910}
   buttonBackgrounds: []
-  activeExtraHeight: 50
   tabLabels:
   - Shop
   - Units
@@ -28926,10 +28944,9 @@ MonoBehaviour:
   - Mastery
   - Events
   labelFont: {fileID: 11400000, guid: 4ac20c3ce38cd8d439682cfabb6bc2fc, type: 2}
-  activeIconScale: 0.75
   activeIconYOffset: 20
-  labelFontSize: 24
   labelYOffset: 30
+  activeTabExtraWidth: 40
 --- !u!1 &1313081409
 GameObject:
   m_ObjectHideFlags: 0
@@ -29392,6 +29409,10 @@ PrefabInstance:
     - target: {fileID: 8150846183445213828, guid: 17de625249d157846b622f4f1ce985c3, type: 3}
       propertyPath: m_Name
       value: AxeThrowerGolemAI
+      objectReference: {fileID: 0}
+    - target: {fileID: 8150846183445213828, guid: 17de625249d157846b622f4f1ce985c3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8781111381004054948, guid: 17de625249d157846b622f4f1ce985c3, type: 3}
       propertyPath: m_Pivot.x
@@ -30302,7 +30323,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 5363433446413585694, guid: 67a063472afcb6c4bb2c6ce5875fed95, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 67a063472afcb6c4bb2c6ce5875fed95, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
