@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_shadow_ninja
   displayName: Shadow Ninja
-  description: Moves unseen across the battlefield, reaching the backline before
+  description: A stealthy assassin who slips past enemies to strike high-value targets.
     anyone can react.
   rarity: 1
   icon: {fileID: -5455630811309129204, guid: ea70bf2e746c9fd4ba1f5b7704074b7c, type: 3}

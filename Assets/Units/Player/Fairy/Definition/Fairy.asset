@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_fairy
   displayName: Fairy
-  description: What fairy poop smell? like confettus!
+  description: A magical healer who floats above walls and keeps allies in the fight.
   prefab: {fileID: 501027721989515594, guid: 295d93ebc543e8d4da81861aac3150fc, type: 3}
   rarity: 1
   unitTeam: 0

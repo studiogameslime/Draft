@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_fire_mage
   displayName: Fire Mage
-  description: "A fire mage who looks harmless \u2014 until everything starts burning."
+  description: Hurls fireballs that scorch groups of enemies in a blazing inferno.
   prefab: {fileID: 153394670701094284, guid: 220b9052bb302b94094855251cf1e45c, type: 3}
   rarity: 2
   unitTeam: 0

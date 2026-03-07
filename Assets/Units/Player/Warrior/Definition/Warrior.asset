@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_warrior
   displayName: Warrior
-  description: A quick little fighter who skips heavy armor and wins with speed and
+  description: A nimble fighter who trades armor for speed. Strikes fast and never backs down.
     charm.
   prefab: {fileID: 501027721989515594, guid: 037d4c6a00f2afe47b4a733f5e492d55, type: 3}
   rarity: 0

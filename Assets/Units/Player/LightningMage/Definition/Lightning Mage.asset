@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_lightning_mage
   displayName: Lightning Mage
-  description: A calm mage whose lightning strikes faster than anyone can react.
+  description: Channels raw lightning to zap enemies with devastating chain strikes.
   rarity: 2
   icon: {fileID: -5455630811309129204, guid: ee9c8600264c12f4c92cd4c1185c54a5, type: 3}
   prefab: {fileID: 501027721989515594, guid: 8cec8200b45e28b48bcd611ea8a31893, type: 3}

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_miner
   displayName: Miner
-  description: A dedicated miner. Generates 1 Soul every 15 seconds. Protected behind
+  description: A sturdy digger who mines Souls over time to fuel your army.
     the wall. Timer resets each round.
   prefab: {fileID: 501027721989515594, guid: e39d0c43c505f8c4c85584442b8989d8, type: 3}
   rarity: 2

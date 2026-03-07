@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitDefinition
   id: unit_archer
   displayName: Archer
-  description: A silent archer whose patience turns every shot into a deadly threat.
+  description: A sharp-eyed marksman who picks off foes from a safe distance.
   prefab: {fileID: 501027721989515594, guid: 4e6aca7962de6874ab96739414c075aa, type: 3}
   rarity: 0
   unitTeam: 0
