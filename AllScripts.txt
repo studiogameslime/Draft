@@ -22106,16 +22106,12 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     [Tooltip("Background rects that will change size. Same order as bottomButtons.")]
     [SerializeField] private List<RectTransform> buttonBackgrounds;
 
-    [Tooltip("Extra height in pixels for the active button background.")]
-    [SerializeField] private float activeExtraHeight = 20f;
-
     [Header("Active Tab Label")]
     [SerializeField] private string[] tabLabels = { "Shop", "Units", "Battle", "Mastery", "Events" };
     [SerializeField] private TMP_FontAsset labelFont;
-    [SerializeField] private float activeIconScale = 0.75f;
-    [SerializeField] private float activeIconYOffset = 20f;
-    [SerializeField] private float labelFontSize = 24f;
-    [SerializeField] private float labelYOffset = 30f;
+    [SerializeField] private float activeIconYOffset = 15f;
+    [SerializeField] private float labelYOffset = 8f;
+    [SerializeField] private float activeTabExtraWidth = 40f;
 
     private int pageCount = 0;
     private bool isDragging = false;
@@ -22130,6 +22126,9 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     private Vector2[] iconBasePos;
     private Vector2[] iconBaseSize;
     private TMP_Text[] tabLabelTexts;
+
+    // tab container LayoutElements for active width control
+    private LayoutElement[] tabLayoutElements;
 
     private void Awake()
     {
@@ -22182,6 +22181,7 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         iconBasePos = new Vector2[pageCount];
         iconBaseSize = new Vector2[pageCount];
         tabLabelTexts = new TMP_Text[pageCount];
+        tabLayoutElements = new LayoutElement[pageCount];
 
         // Register button listeners and cache base sizes
         for (int i = 0; i < pageCount; i++)
@@ -22195,7 +22195,24 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
             {
                 baseSize[i] = rect.sizeDelta;
 
-                // Find the icon: first Image child inside the background that isn't the background itself
+                // Stretch background to fill its parent tab container (remove gaps)
+                rect.anchorMin = Vector2.zero;
+                rect.anchorMax = Vector2.one;
+                rect.offsetMin = Vector2.zero;
+                rect.offsetMax = Vector2.zero;
+
+                // Add LayoutElement to the tab container (parent) for width control
+                var tabContainer = rect.parent;
+                if (tabContainer != null)
+                {
+                    var le = tabContainer.GetComponent<LayoutElement>();
+                    if (le == null)
+                        le = tabContainer.gameObject.AddComponent<LayoutElement>();
+                    le.flexibleWidth = 1f;
+                    tabLayoutElements[i] = le;
+                }
+
+                // Find the icon: first child inside the background
                 var iconImg = rect.childCount > 0 ? rect.GetChild(0).GetComponent<RectTransform>() : null;
                 if (iconImg != null)
                 {
@@ -22308,36 +22325,22 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
             if (rect == null)
                 continue;
 
-            Vector2 size = baseSize[i];
             bool isActive = (i == activeIndex);
 
-            // Background: anchor to bottom of parent so active grows upward only
-            rect.anchorMin = new Vector2(0.5f, 0f);
-            rect.anchorMax = new Vector2(0.5f, 0f);
-            rect.pivot = new Vector2(0.5f, 0f);
-            rect.anchoredPosition = Vector2.zero;
-            rect.sizeDelta = new Vector2(
-                rect.sizeDelta.x,
-                isActive ? size.y + activeExtraHeight : size.y
-            );
+            // Active tab gets more width via LayoutElement
+            if (tabLayoutElements[i] != null)
+                tabLayoutElements[i].flexibleWidth = isActive ? 1.5f : 1f;
 
-            // Icon: scale down and shift up for active tab
+            // Icon: shift up for active tab to make room for label
             if (iconRects[i] != null)
             {
-                if (isActive)
-                {
-                    float s = activeIconScale;
-                    iconRects[i].sizeDelta = new Vector2(iconBaseSize[i].x * s, iconBaseSize[i].y * s);
-                    iconRects[i].anchoredPosition = new Vector2(iconBasePos[i].x, iconBasePos[i].y + activeIconYOffset);
-                }
-                else
-                {
-                    iconRects[i].sizeDelta = iconBaseSize[i];
-                    iconRects[i].anchoredPosition = iconBasePos[i];
-                }
+                iconRects[i].sizeDelta = iconBaseSize[i];
+                iconRects[i].anchoredPosition = isActive
+                    ? new Vector2(iconBasePos[i].x, iconBasePos[i].y + activeIconYOffset)
+                    : iconBasePos[i];
             }
 
-            // Label text: create or show/hide
+            // Label text: show only on active tab
             if (isActive)
             {
                 if (tabLabelTexts[i] == null)
@@ -22374,12 +22377,12 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
         if (labelFont != null)
             tmp.font = labelFont;
-        tmp.fontSizeMax = 36f;
+        tmp.fontSizeMax = 28f;
         tmp.fontSizeMin = 12f;
         tmp.enableAutoSizing = true;
         tmp.fontStyle = FontStyles.Bold;
         tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = Color.black;
+        tmp.color = Color.white;
         tmp.raycastTarget = false;
         tmp.enableWordWrapping = false;
         tmp.overflowMode = TextOverflowModes.Overflow;
