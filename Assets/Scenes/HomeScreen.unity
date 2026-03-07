@@ -28918,8 +28918,18 @@ MonoBehaviour:
   - {fileID: 1719974653}
   - {fileID: 1264448910}
   buttonBackgrounds: []
-  activeExtraWidth: 20
   activeExtraHeight: 50
+  tabLabels:
+  - Shop
+  - Units
+  - Battle
+  - Mastery
+  - Events
+  labelFont: {fileID: 11400000, guid: 4ac20c3ce38cd8d439682cfabb6bc2fc, type: 2}
+  activeIconScale: 0.75
+  activeIconYOffset: 20
+  labelFontSize: 24
+  labelYOffset: 30
 --- !u!1 &1313081409
 GameObject:
   m_ObjectHideFlags: 0
