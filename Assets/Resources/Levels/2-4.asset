@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27b8b1859002eab41b443171d8efc618, type: 3}
   m_Name: 2-4
   m_EditorClassIdentifier: Assembly-CSharp::LevelDefinition
+  displayName: Dark Ritual
+  previewImage: {fileID: 21300000, guid: 1d4e6450a01918640baab4bb3843e876, type: 3}
   rounds:
   - souls: 14
     goldOnRoundWin: 20
@@ -104,5 +106,6 @@ MonoBehaviour:
     enemyLevel: 3
     xpOnRoundWin: 35
   xpOnLevelComplete: 125
+  scrollsOnLevelComplete: 5
   goldOnLevelComplete: 200
   alsoRewardGoldPerRound: 1

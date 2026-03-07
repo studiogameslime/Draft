@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27b8b1859002eab41b443171d8efc618, type: 3}
   m_Name: 1-5
   m_EditorClassIdentifier: Assembly-CSharp::LevelDefinition
+  displayName: Ent's Lair
+  previewImage: {fileID: 21300000, guid: 67a063472afcb6c4bb2c6ce5875fed95, type: 3}
   rounds:
   - souls: 12
     goldOnRoundWin: 15
@@ -121,5 +123,6 @@ MonoBehaviour:
     enemyLevel: 3
     xpOnRoundWin: 50
   xpOnLevelComplete: 150
+  scrollsOnLevelComplete: 5
   goldOnLevelComplete: 250
   alsoRewardGoldPerRound: 1

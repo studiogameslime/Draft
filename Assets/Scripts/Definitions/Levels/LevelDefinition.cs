@@ -5,6 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Battle/Level Definition")]
 public class LevelDefinition : ScriptableObject
 {
+    [Header("Display")]
+    public string displayName;
+    public Sprite previewImage;
+
     [Header("Rounds in this level (in order)")]
     public RoundDefinition[] rounds;
 

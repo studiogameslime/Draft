@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27b8b1859002eab41b443171d8efc618, type: 3}
   m_Name: 1-1
   m_EditorClassIdentifier: Assembly-CSharp::LevelDefinition
+  displayName: Goblin Ambush
+  previewImage: {fileID: 21300000, guid: 67a063472afcb6c4bb2c6ce5875fed95, type: 3}
   rounds:
   - souls: 7
     goldOnRoundWin: 5
@@ -41,5 +43,6 @@ MonoBehaviour:
     enemyLevel: 1
     xpOnRoundWin: 15
   xpOnLevelComplete: 50
+  scrollsOnLevelComplete: 5
   goldOnLevelComplete: 100
   alsoRewardGoldPerRound: 1

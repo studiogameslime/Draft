@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27b8b1859002eab41b443171d8efc618, type: 3}
   m_Name: 2-3
   m_EditorClassIdentifier: Assembly-CSharp::LevelDefinition
+  displayName: Skull Valley
+  previewImage: {fileID: 21300000, guid: 1d4e6450a01918640baab4bb3843e876, type: 3}
   rounds:
   - souls: 12
     goldOnRoundWin: 15
@@ -104,5 +106,6 @@ MonoBehaviour:
     enemyLevel: 2
     xpOnRoundWin: 30
   xpOnLevelComplete: 100
+  scrollsOnLevelComplete: 5
   goldOnLevelComplete: 150
   alsoRewardGoldPerRound: 1
