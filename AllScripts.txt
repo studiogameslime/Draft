@@ -22077,6 +22077,7 @@ PATH: D:\a\Draft\Draft\Assets\Scripts\UI\HomeScreen\ScrollSnap.cs
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 using System.Collections.Generic;
 
 public enum HomeScreenPage
@@ -22105,11 +22106,16 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     [Tooltip("Background rects that will change size. Same order as bottomButtons.")]
     [SerializeField] private List<RectTransform> buttonBackgrounds;
 
-    [Tooltip("Extra width in pixels for the active button background.")]
-    [SerializeField] private float activeExtraWidth = 20f;
-
     [Tooltip("Extra height in pixels for the active button background.")]
     [SerializeField] private float activeExtraHeight = 20f;
+
+    [Header("Active Tab Label")]
+    [SerializeField] private string[] tabLabels = { "Shop", "Units", "Battle", "Mastery", "Events" };
+    [SerializeField] private TMP_FontAsset labelFont;
+    [SerializeField] private float activeIconScale = 0.75f;
+    [SerializeField] private float activeIconYOffset = 20f;
+    [SerializeField] private float labelFontSize = 24f;
+    [SerializeField] private float labelYOffset = 30f;
 
     private int pageCount = 0;
     private bool isDragging = false;
@@ -22118,6 +22124,12 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
     // original size of each background
     private Vector2[] baseSize;
+
+    // cached icon transforms and their original positions
+    private RectTransform[] iconRects;
+    private Vector2[] iconBasePos;
+    private Vector2[] iconBaseSize;
+    private TMP_Text[] tabLabelTexts;
 
     private void Awake()
     {
@@ -22137,6 +22149,21 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
         pageCount = bottomButtons.Count;
 
+        // Make nav bar full width: find the HorizontalLayoutGroup on the buttons' grandparent
+        // Structure: BottomNavigationBar (HLG) > ShopButtonTab > Background (button)
+        if (bottomButtons[0] != null)
+        {
+            // Button is on the background, parent is the tab, grandparent is BottomNavigationBar
+            var tabParent = bottomButtons[0].transform.parent;
+            var navBar = tabParent != null ? tabParent.parent : null;
+            var hlg = navBar != null ? navBar.GetComponent<HorizontalLayoutGroup>() : null;
+            if (hlg != null)
+            {
+                hlg.childControlWidth = true;
+                hlg.childForceExpandWidth = true;
+            }
+        }
+
         // If buttonBackgrounds list is missing or wrong size, try auto fill
         if (buttonBackgrounds == null || buttonBackgrounds.Count != pageCount)
         {
@@ -22151,6 +22178,10 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         }
 
         baseSize = new Vector2[pageCount];
+        iconRects = new RectTransform[pageCount];
+        iconBasePos = new Vector2[pageCount];
+        iconBaseSize = new Vector2[pageCount];
+        tabLabelTexts = new TMP_Text[pageCount];
 
         // Register button listeners and cache base sizes
         for (int i = 0; i < pageCount; i++)
@@ -22161,7 +22192,18 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
             RectTransform rect = buttonBackgrounds[i];
             if (rect != null)
+            {
                 baseSize[i] = rect.sizeDelta;
+
+                // Find the icon: first Image child inside the background that isn't the background itself
+                var iconImg = rect.childCount > 0 ? rect.GetChild(0).GetComponent<RectTransform>() : null;
+                if (iconImg != null)
+                {
+                    iconRects[i] = iconImg;
+                    iconBasePos[i] = iconImg.anchoredPosition;
+                    iconBaseSize[i] = iconImg.sizeDelta;
+                }
+            }
         }
     }
 
@@ -22258,7 +22300,6 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         return bottomButtons[index];
     }
 
-    // Make only active background bigger (width and height)
     private void UpdateButtonsUI(int activeIndex)
     {
         for (int i = 0; i < pageCount; i++)
@@ -22268,19 +22309,82 @@ public class ScrollSnap : MonoBehaviour, IBeginDragHandler, IEndDragHandler
                 continue;
 
             Vector2 size = baseSize[i];
+            bool isActive = (i == activeIndex);
 
-            if (i == activeIndex)
+            // Background: anchor to bottom of parent so active grows upward only
+            rect.anchorMin = new Vector2(0.5f, 0f);
+            rect.anchorMax = new Vector2(0.5f, 0f);
+            rect.pivot = new Vector2(0.5f, 0f);
+            rect.anchoredPosition = Vector2.zero;
+            rect.sizeDelta = new Vector2(
+                rect.sizeDelta.x,
+                isActive ? size.y + activeExtraHeight : size.y
+            );
+
+            // Icon: scale down and shift up for active tab
+            if (iconRects[i] != null)
             {
-                rect.sizeDelta = new Vector2(
-                    size.x + activeExtraWidth,
-                    size.y + activeExtraHeight
-                );
+                if (isActive)
+                {
+                    float s = activeIconScale;
+                    iconRects[i].sizeDelta = new Vector2(iconBaseSize[i].x * s, iconBaseSize[i].y * s);
+                    iconRects[i].anchoredPosition = new Vector2(iconBasePos[i].x, iconBasePos[i].y + activeIconYOffset);
+                }
+                else
+                {
+                    iconRects[i].sizeDelta = iconBaseSize[i];
+                    iconRects[i].anchoredPosition = iconBasePos[i];
+                }
+            }
+
+            // Label text: create or show/hide
+            if (isActive)
+            {
+                if (tabLabelTexts[i] == null)
+                    tabLabelTexts[i] = CreateTabLabel(rect, i);
+
+                if (tabLabelTexts[i] != null)
+                {
+                    tabLabelTexts[i].gameObject.SetActive(true);
+                    string label = (tabLabels != null && i < tabLabels.Length) ? tabLabels[i] : "";
+                    tabLabelTexts[i].text = label;
+                }
             }
             else
             {
-                rect.sizeDelta = size;
+                if (tabLabelTexts[i] != null)
+                    tabLabelTexts[i].gameObject.SetActive(false);
             }
         }
+    }
+
+    private TMP_Text CreateTabLabel(RectTransform parent, int index)
+    {
+        var go = new GameObject("TabLabel");
+        go.transform.SetParent(parent, false);
+
+        var tmp = go.AddComponent<TextMeshProUGUI>();
+
+        var rt = go.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0.5f, 0f);
+        rt.anchorMax = new Vector2(0.5f, 0f);
+        rt.pivot = new Vector2(0.5f, 0f);
+        rt.anchoredPosition = new Vector2(0, labelYOffset);
+        rt.sizeDelta = new Vector2(200f, 40f);
+
+        if (labelFont != null)
+            tmp.font = labelFont;
+        tmp.fontSizeMax = 36f;
+        tmp.fontSizeMin = 12f;
+        tmp.enableAutoSizing = true;
+        tmp.fontStyle = FontStyles.Bold;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = Color.black;
+        tmp.raycastTarget = false;
+        tmp.enableWordWrapping = false;
+        tmp.overflowMode = TextOverflowModes.Overflow;
+
+        return tmp;
     }
 }
 
