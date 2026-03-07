@@ -55,6 +55,6 @@ public class WheelOfFortunePopup : MonoBehaviour
             pickerWheel.RebuildFromDatabase(randomizeOrder: true);
 
         UpdateTokensCountText();
-        popupAnimator.OpenFromRect(buttonRect, hideButton: true);
+        popupAnimator.OpenFromRect(buttonRect, hideButton: false);
     }
 }
