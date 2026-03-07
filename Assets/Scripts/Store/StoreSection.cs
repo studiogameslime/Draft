@@ -50,6 +50,8 @@ public class StoreSection : MonoBehaviour
             item.Setup(def);
         }
 
+        ResizeToFitContent(items.Count);
+
         gameObject.SetActive(items.Count > 0);
     }
 
@@ -62,6 +64,28 @@ public class StoreSection : MonoBehaviour
         float cellWidth = (width - totalSpacing) / itemsPerRow;
 
         grid.spacing = new Vector2(cellSpacing, grid.spacing.y);
+    }
+
+    private void ResizeToFitContent(int itemCount)
+    {
+        if (itemCount <= 0) return;
+
+        int rows = Mathf.CeilToInt((float)itemCount / itemsPerRow);
+        float gridHeight = rows * grid.cellSize.y + Mathf.Max(0, rows - 1) * grid.spacing.y;
+
+        RectTransform gridRT = grid.GetComponent<RectTransform>();
+        // Anchor grid to top so it doesn't float when resized
+        gridRT.anchorMin = new Vector2(0.5f, 1f);
+        gridRT.anchorMax = new Vector2(0.5f, 1f);
+        gridRT.pivot = new Vector2(0.5f, 1f);
+        float padding = 30f;
+        gridRT.anchoredPosition = new Vector2(0, -(150f + padding));
+        gridRT.sizeDelta = new Vector2(gridRT.sizeDelta.x, gridHeight);
+
+        float headerHeight = 150f + padding;
+        RectTransform sectionRT = GetComponent<RectTransform>();
+        sectionRT.pivot = new Vector2(0.5f, 1f);
+        sectionRT.sizeDelta = new Vector2(sectionRT.sizeDelta.x, headerHeight + gridHeight);
     }
 
     private void Clear()

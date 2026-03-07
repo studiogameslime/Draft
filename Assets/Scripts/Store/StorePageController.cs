@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StorePageController : MonoBehaviour
 {
@@ -11,7 +12,35 @@ public class StorePageController : MonoBehaviour
 
     private void Start()
     {
+        EnsureContentLayout();
         BuildStore();
+    }
+
+    private void EnsureContentLayout()
+    {
+        var rt = content.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0, 1);
+        rt.anchorMax = new Vector2(1, 1);
+        rt.pivot = new Vector2(0.5f, 1f);
+
+        var vlg = content.GetComponent<VerticalLayoutGroup>();
+        if (vlg == null)
+        {
+            vlg = content.gameObject.AddComponent<VerticalLayoutGroup>();
+            vlg.childAlignment = TextAnchor.UpperCenter;
+            vlg.childControlWidth = false;
+            vlg.childControlHeight = false;
+            vlg.childForceExpandWidth = false;
+            vlg.childForceExpandHeight = false;
+            vlg.spacing = 20f;
+        }
+        vlg.padding = new RectOffset(0, 0, 0, 200);
+
+        if (content.GetComponent<ContentSizeFitter>() == null)
+        {
+            var csf = content.gameObject.AddComponent<ContentSizeFitter>();
+            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        }
     }
 
     private void BuildStore()
