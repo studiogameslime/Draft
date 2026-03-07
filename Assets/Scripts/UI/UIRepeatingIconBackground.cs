@@ -12,7 +12,7 @@ public class UIRepeatingIconBackground : MonoBehaviour
     private const float ScaleVariation = 0.25f;
     private const float AlphaVariation = 0.3f;
     private const int TextureSize = 1024;
-    private static readonly Vector2 ScrollSpeed = new Vector2(0.006f, 0.003f);
+    private static readonly Vector2 ScrollSpeed = new Vector2(0.03f, 0.015f);
     private static readonly Vector2 UvSize = new Vector2(1f, 1f);
 
     private RawImage img;
