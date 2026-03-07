@@ -18,7 +18,7 @@ MonoBehaviour:
   title: Energize
   description: Allies healed by the Fairy become energized, increasing their attack
     speed by 30% for 3 seconds.
-  icon: {fileID: 0}
+  icon: {fileID: -1158855990529030156, guid: 0be402c646101ba4ca0cd5f22f1f9809, type: 3}
   skillPointCost: 1
   soulsCost: 2
   prerequisites:
