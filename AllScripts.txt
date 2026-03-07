@@ -13909,6 +13909,7 @@ public class PlayerXPManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
         LoadFromSave();
+        CheckFeatureUnlocks();
     }
 
     public int GetXPForNextLevel()
@@ -13937,12 +13938,21 @@ public class PlayerXPManager : MonoBehaviour
             currentLevel++;
 
             SaveToGameData();
+            CheckFeatureUnlocks();
 
             OnLevelChanged?.Invoke(currentLevel);
             OnXPChanged?.Invoke(currentXP);
 
             xpNeeded = GetXPForNextLevel();
         }
+    }
+
+    private void CheckFeatureUnlocks()
+    {
+        if (currentLevel >= 3)
+            FeatureUnlockManager.Unlock(GameFeature.Mastery);
+        if (currentLevel >= 5)
+            FeatureUnlockManager.Unlock(GameFeature.Upgrades);
     }
 
     private void LoadFromSave()
